@@ -1,7 +1,12 @@
 Kazdoor::Application.routes.draw do
-  resources :campaigns
+  devise_for :admins
 
-  resources :places
+  devise_for :users
+
+  resources :places do
+    resources :campaigns
+  end
+  resources :campaigns
 
   resources :categories
 
