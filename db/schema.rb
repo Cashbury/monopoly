@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101211165645) do
+ActiveRecord::Schema.define(:version => 20101211170132) do
 
   create_table "businesses", :force => true do |t|
     t.string   "name"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(:version => 20101211165645) do
   create_table "businesses_categories", :id => false, :force => true do |t|
     t.integer "business_id"
     t.integer "category_id"
+  end
+
+  create_table "campaigns", :force => true do |t|
+    t.string   "name"
+    t.string   "action"
+    t.datetime "expire_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "categories", :force => true do |t|
@@ -40,6 +48,11 @@ ActiveRecord::Schema.define(:version => 20101211165645) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "places_campaigns", :id => false, :force => true do |t|
+    t.integer "place_id"
+    t.integer "campaign_id"
   end
 
 end

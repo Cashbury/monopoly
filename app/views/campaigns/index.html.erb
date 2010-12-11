@@ -1,0 +1,21 @@
+<% title "Campaigns" %>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Action</th>
+    <th>Expire At</th>
+  </tr>
+  <% for campaign in @campaigns %>
+    <tr>
+      <td><%= campaign.name %></td>
+      <td><%= campaign.action %></td>
+      <td><%= campaign.expire_at %></td>
+      <td><%= link_to "Show", campaign %></td>
+      <td><%= link_to "Edit", edit_campaign_path(campaign) %></td>
+      <td><%= link_to "Destroy", campaign, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Campaign", new_campaign_path %></p>

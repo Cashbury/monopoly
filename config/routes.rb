@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  resources :campaigns
+
   resources :places
 
   resources :categories
