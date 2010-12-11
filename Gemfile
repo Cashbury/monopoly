@@ -32,3 +32,6 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 
 gem 'devise'
 gem 'nifty-generators'
+
+gem "mocha", :group => :test
+
