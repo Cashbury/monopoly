@@ -1,0 +1,11 @@
+one:
+  name: MyString
+  long: MyString
+  lat: MyString
+  description: MyText
+
+two:
+  name: MyString
+  long: MyString
+  lat: MyString
+  description: MyText

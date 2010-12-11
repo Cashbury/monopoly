@@ -1,0 +1,24 @@
+<% title "Place" %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @place.name %>
+</p>
+<p>
+  <strong>Long:</strong>
+  <%= @place.long %>
+</p>
+<p>
+  <strong>Lat:</strong>
+  <%= @place.lat %>
+</p>
+<p>
+  <strong>Description:</strong>
+  <%= @place.description %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_place_path(@place) %> |
+  <%= link_to "Destroy", @place, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", places_path %>
+</p>
