@@ -1,0 +1,16 @@
+<% title "Engagement" %>
+
+<p>
+  <strong>Engagement Type:</strong>
+  <%= @engagement.engagement_type %>
+</p>
+<p>
+  <strong>Stamp:</strong>
+  <%= @engagement.stamp %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_engagement_path(@engagement) %> |
+  <%= link_to "Destroy", @engagement, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", engagements_path %>
+</p>

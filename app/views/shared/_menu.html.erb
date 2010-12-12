@@ -1,6 +1,12 @@
-<ul>
-	<li><%= link_to "Categories", categories_path %></li>
-	<li><%= link_to "Businesses", businesses_path %></li>
-	<li><%= link_to "Places", places_path %></li>
-	<li><%= link_to "Campaigns", campaigns_path %></li>
-</ul>
+<%= link_to "Categories", categories_path %> | 
+<%= link_to "Businesses", businesses_path %> | 
+<%= link_to "Campaigns", campaigns_path %>
+<hr/>
+<% if user_signed_in? %>
+  Signed in as <%= current_user.email %>. Not you? | 
+	<%= link_to "Sign out", destroy_user_session_path %><br/>
+<% else %>
+  <%= link_to "New user sign up", new_user_registration_path %> or | 
+	<%= link_to "Sign in", new_user_session_path %>
+<% end %>
+<hr/>	

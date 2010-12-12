@@ -1,17 +1,21 @@
 Kazdoor::Application.routes.draw do
-  devise_for :admins
-
-  devise_for :users
-
-  resources :places do
-    resources :campaigns
+  resources :businesses do
+    resources :places, :controller => "businesses/places"
   end
-  resources :campaigns
-
+  
+  match "/places/:long/:lat" => "places#index"
+  match "/places" => "places#index"
+  
+  resources :campaigns do
+    resources :engagements do
+      resources :rewards
+    end
+  end
+  
   resources :categories
-
-  resources :businesses
-
+  
+  devise_for :users
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

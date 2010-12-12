@@ -1,5 +1,11 @@
 <% title "Business" %>
-
+<p>
+	<ol>  
+	  <% for category in @business.categories %>
+	  <li><%= h category.name %></li>  
+	  <% end %>  
+	</ol>
+</p>
 <p>
   <strong>Name:</strong>
   <%= @business.name %>
@@ -8,7 +14,14 @@
   <strong>Description:</strong>
   <%= @business.description %>
 </p>
-
+<%= @business.places.inspect %>
+<p>
+	<ol>  
+	  <% for place in @business.places %>
+	  <li><%= h place.name %></li>  
+	  <% end %>  
+	</ol>
+</p>
 <p>
   <%= link_to "Edit", edit_business_path(@business) %> |
   <%= link_to "Destroy", @business, :confirm => 'Are you sure?', :method => :delete %> |

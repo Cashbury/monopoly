@@ -5,8 +5,8 @@
     <%= f.text_field :name %>
   </p>
   <p>
-    <%= f.label :action %><br />
-    <%= f.text_field :action %>
+    <%= f.label :campaign_type %><br />
+    <%= f.select :campaign_type, @campaign.campaign_types %>
   </p>
   <p>
     <%= f.label :expire_at %><br />

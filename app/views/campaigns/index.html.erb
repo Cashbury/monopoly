@@ -1,6 +1,6 @@
 <% title "Campaigns" %>
 
-<table>
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Action</th>
@@ -9,7 +9,7 @@
   <% for campaign in @campaigns %>
     <tr>
       <td><%= campaign.name %></td>
-      <td><%= campaign.action %></td>
+      <td><%= campaign.campaign_type %></td>
       <td><%= campaign.expire_at %></td>
       <td><%= link_to "Show", campaign %></td>
       <td><%= link_to "Edit", edit_campaign_path(campaign) %></td>

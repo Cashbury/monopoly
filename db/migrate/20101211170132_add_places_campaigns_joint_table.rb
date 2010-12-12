@@ -1,11 +1,11 @@
 class AddPlacesCampaignsJointTable < ActiveRecord::Migration
   def self.up
-    create_table :places_campaigns, :id => false do |t|
+    create_table :campaigns_places, :id => false do |t|
       t.integer :place_id, :campaign_id
     end
   end
 
   def self.down
-    drop_table :places_campaigns
+    drop_table :campaigns_places
   end
 end

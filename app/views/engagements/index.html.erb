@@ -1,0 +1,19 @@
+<% title "Engagements" %>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Engagement Type</th>
+    <th>Stamp</th>
+  </tr>
+  <% for engagement in @engagements %>
+    <tr>
+      <td><%= engagement.engagement_type %></td>
+      <td><%= engagement.stamp %></td>
+      <td><%= link_to "Show", engagement %></td>
+      <td><%= link_to "Edit", edit_engagement_path(engagement) %></td>
+      <td><%= link_to "Destroy", engagement, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Engagement", new_engagement_path %></p>

@@ -1,0 +1,9 @@
+one:
+  engagement_type: MyString
+  stamp: MyString
+  campaign_id: 1
+
+two:
+  engagement_type: MyString
+  stamp: MyString
+  campaign_id: 1

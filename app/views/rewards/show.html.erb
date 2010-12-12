@@ -1,0 +1,16 @@
+<% title "Reward" %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @reward.name %>
+</p>
+<p>
+  <strong>Engagement:</strong>
+  <%= @reward.engagement_id %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_reward_path(@reward) %> |
+  <%= link_to "Destroy", @reward, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", rewards_path %>
+</p>

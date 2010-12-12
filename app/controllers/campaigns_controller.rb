@@ -1,4 +1,6 @@
 class CampaignsController < ApplicationController
+  before_filter :authenticate_user!
+  
   def index
     @campaigns = Campaign.all
   end

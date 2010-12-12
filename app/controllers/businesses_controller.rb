@@ -1,14 +1,23 @@
 class BusinessesController < ApplicationController
+  before_filter :authenticate_user!
+  
   def index
     @businesses = Business.all
+    respond_to do |format|
+      format.html
+      format.xml
+    end
   end
   
   def show
     @business = Business.find(params[:id])
+    @categories = Category.all
   end
   
   def new
     @business = Business.new
+    @categories = Category.all
+    3.times { @business.places.build }
   end
   
   def create
@@ -23,6 +32,8 @@ class BusinessesController < ApplicationController
   
   def edit
     @business = Business.find(params[:id])
+    @categories = Category.all
+    3.times { @business.places.build }
   end
   
   def update
