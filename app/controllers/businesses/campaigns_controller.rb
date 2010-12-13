@@ -3,7 +3,7 @@ class Businesses::CampaignsController < ApplicationController
   before_filter :find_business
   
   def index
-    @campaigns = @business.campaigns
+    @campaigns = Campaign.all
     
     respond_to do |format|
       format.html
