@@ -21,4 +21,4 @@ campaign = Campaign.create("name" => "hamra stuff", :campaign_type => "engage")
 
 engagement1 = campaign.engagements.create(:engagement_type => "stamp", :points => "20")
 
-engagement1.create_reward(:name => "Free cup of coffee")
+engagement1.rewards.create(:name => "Free cup of coffee")

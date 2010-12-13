@@ -47,7 +47,9 @@ ActiveRecord::Schema.define(:version => 20101212123703) do
 
   create_table "engagements", :force => true do |t|
     t.string   "engagement_type"
-    t.string   "stamp"
+    t.string   "points"
+    t.string   "state"
+    t.string   "description"
     t.integer  "campaign_id"
     t.datetime "created_at"
     t.datetime "updated_at"

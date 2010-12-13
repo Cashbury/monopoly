@@ -1,16 +1,28 @@
-<% title "Engagement" %>
+<% title "Business: #{@business.name} / Engagement for campaign: #{@campaign.name}" %>
 
 <p>
   <strong>Engagement Type:</strong>
   <%= @engagement.engagement_type %>
 </p>
 <p>
-  <strong>Stamp:</strong>
-  <%= @engagement.stamp %>
+  <strong>Description:</strong>
+  <%= @engagement.description %>
+</p>
+<p>
+  <strong>State:</strong>
+  <%= @engagement.state %>
+</p>
+<p>
+  <strong>Points:</strong>
+  <%= @engagement.points %>
 </p>
 
 <p>
-  <%= link_to "Edit", edit_engagement_path(@engagement) %> |
-  <%= link_to "Destroy", @engagement, :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", engagements_path %>
+  <%= link_to "Edit", edit_business_campaign_engagement_path(@business, @campaign, @engagement) %> |
+  <%= link_to "Destroy", business_campaign_engagement_path(@business, @campaign, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", business_campaign_engagements_path(@business, @campaign) %>
 </p>
+<hr/>
+<p>
+	<%= link_to "New reward", new_business_campaign_engagement_reward_path(@business, @campaign, @engagement) %>
+<p>

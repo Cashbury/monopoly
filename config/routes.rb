@@ -1,16 +1,16 @@
 Kazdoor::Application.routes.draw do
   resources :businesses do
     resources :places, :controller => "businesses/places"
-  end
-  
-  match "/places/:long/:lat" => "places#index"
-  match "/places" => "places#index"
-  
-  resources :campaigns do
-    resources :engagements do
-      resources :rewards
+    
+    resources :campaigns, :controller => "businesses/campaigns" do
+      resources :engagements do
+        resources :rewards
+      end
     end
   end
+  
+  match "/places/:long/:lat" => "places#show"
+  match "/places" => "places#index"
   
   resources :categories
   

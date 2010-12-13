@@ -1,12 +1,20 @@
-<%= form_for @engagement do |f| %>
+<%= form_for [@business, @campaign, @engagement] do |f| %>
   <%= f.error_messages %>
   <p>
     <%= f.label :engagement_type %><br />
-    <%= f.text_field :engagement_type %>
+    <%= f.select :engagement_type, @engagement.engagement_types %>
   </p>
   <p>
-    <%= f.label :stamp %><br />
-    <%= f.text_field :stamp %>
+    <%= f.label :description %><br />
+    <%= f.text_area :description %>
+  </p>
+  <p>
+    <%= f.label :state %><br />
+    <%= f.select :state, @engagement.get_states %>
+  </p>
+  <p>
+    <%= f.label :points %><br />
+    <%= f.text_field :points %>
   </p>
   <p><%= f.submit %></p>
 <% end %>

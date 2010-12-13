@@ -3,17 +3,14 @@
 <table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
-    <th>Engagement</th>
   </tr>
   <% for reward in @rewards %>
     <tr>
-      <td><%= reward.name %></td>
-      <td><%= reward.engagement_id %></td>
-      <td><%= link_to "Show", reward %></td>
-      <td><%= link_to "Edit", edit_reward_path(reward) %></td>
-      <td><%= link_to "Destroy", reward, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= link_to reward.name, business_campaign_engagement_reward_path(@business, @campaign, @engagement, reward) %></td>
+      <td><%= link_to "Edit", edit_business_campaign_engagement_reward_path(@business, @campaign, @engagement, reward) %></td>
+      <td><%= link_to "Destroy", business_campaign_engagement_reward_path(@business, @campaign, @engagement, reward), :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Reward", new_reward_path %></p>
+<p><%= link_to "New Reward", new_business_campaign_engagement_reward_path(@business, @campaign, @engagement) %></p>

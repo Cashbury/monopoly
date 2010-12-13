@@ -1,6 +1,6 @@
 <% title "Places" %>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="0">
+<table>
   <tr>
     <th>Name</th>
     <th>Long</th>
@@ -13,6 +13,11 @@
       <td><%= place.long %></td>
       <td><%= place.lat %></td>
       <td><%= place.description %></td>
+      <td><%= link_to "Show", place %></td>
+      <td><%= link_to "Edit", edit_place_path(place) %></td>
+      <td><%= link_to "Destroy", place, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
+
+<p><%= link_to "New Place", new_place_path %></p>

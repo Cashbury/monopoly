@@ -1,0 +1,31 @@
+<% title "Campaign" %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @campaign.name %>
+</p>
+<p>
+  <strong>Campaign type:</strong>
+  <%= @campaign.campaign_type %>
+</p>
+<p>
+  <strong>Expire At:</strong>
+  <%= @campaign.expire_at %>
+</p>
+
+<h3>Engagements</h3>
+<ol>
+	<% for engagement in @campaign.engagements %>
+		<li><%= link_to "Engagement #{engagement.id}", business_campaign_engagement_url(@business, @campaign, engagement) %></li>
+	<% end %>
+</ol>
+
+<p>
+  <%= link_to "Edit", edit_business_campaign_path(@business, @campaign) %> |
+  <%= link_to "Destroy", business_campaign_path(@business, @campaign), :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "Back to list", business_campaigns_path(@business) %>
+</p>
+<hr/>
+<p>
+	<%= link_to "New engagement", new_business_campaign_engagement_path(@business, @campaign) %>
+</p>

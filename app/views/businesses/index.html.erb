@@ -7,9 +7,9 @@
   </tr>
   <% for business in @businesses %>
     <tr>
-      <td><%= business.name %></td>
+      <td><%= link_to business.name, business %></td>
       <td><%= business.description %></td>
-      <td><%= link_to "Show", business %></td>
+      <td><%= link_to "All Campaigns", business_campaigns_path(business) %></td>
       <td><%= link_to "Edit", edit_business_path(business) %></td>
       <td><%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

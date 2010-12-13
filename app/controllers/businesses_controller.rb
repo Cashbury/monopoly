@@ -5,7 +5,8 @@ class BusinessesController < ApplicationController
     @businesses = Business.all
     respond_to do |format|
       format.html
-      format.xml
+      format.xml { render :xml => @businesses }
+      format.json { render :text => @businesses.to_json}
     end
   end
   

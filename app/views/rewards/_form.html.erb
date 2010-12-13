@@ -1,12 +1,8 @@
-<%= form_for @reward do |f| %>
+<%= form_for @reward, :url => business_campaign_engagement_rewards_url do |f| %>
   <%= f.error_messages %>
   <p>
     <%= f.label :name %><br />
     <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :engagement_id %><br />
-    <%= f.text_field :engagement_id %>
   </p>
   <p><%= f.submit %></p>
 <% end %>

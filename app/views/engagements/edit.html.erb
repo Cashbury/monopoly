@@ -3,6 +3,6 @@
 <%= render 'form' %>
 
 <p>
-  <%= link_to "Show", @engagement %> |
-  <%= link_to "View All", engagements_path %>
+  <%= link_to "Show", business_campaign_engagement_path(@business, @campaign, @engagement) %> |
+  <%= link_to "View All", business_campaign_engagements_path(@business, @campaign) %>
 </p>
