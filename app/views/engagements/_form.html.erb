@@ -1,5 +1,11 @@
 <%= form_for [@business, @campaign, @engagement] do |f| %>
   <%= f.error_messages %>
+  
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name  %>
+  </p>
+  
   <p>
     <%= f.label :engagement_type %><br />
     <%= f.select :engagement_type, @engagement.engagement_types %>

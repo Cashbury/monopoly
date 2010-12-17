@@ -45,6 +45,11 @@ class EngagementsController < ApplicationController
     redirect_to business_campaign_engagements_url(@business, @campaign)
   end
   
+  
+  # => Author: Rajib Ahmed
+  
+    
+    
   private
   def find_business_and_campaign
     @business = Business.find(params[:business_id])
