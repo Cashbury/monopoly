@@ -4,6 +4,7 @@ Kazdoor::Application.routes.draw do
     
     resources :campaigns, :controller => "businesses/campaigns" do
       resources :engagements do
+        get 'get_qrcode' , :on=>:member
         resources :rewards
       end
     end

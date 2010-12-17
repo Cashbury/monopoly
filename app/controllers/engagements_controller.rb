@@ -1,3 +1,5 @@
+require 'uri'
+
 class EngagementsController < ApplicationController
   before_filter :authenticate_user!
   before_filter :find_business_and_campaign
@@ -47,8 +49,12 @@ class EngagementsController < ApplicationController
   
   
   # => Author: Rajib Ahmed
-  
-    
+  def get_qrcode
+    engagement = Engagement.find(params[:id])
+    place = Place.where(:business_id =>params[:business_id]).limit(1)
+    code = "http://kazdoor.com?place_id=#{place.first.id}&engagement_id=#{engagement.id}&points=#{engagement.points}"
+    @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+  end
     
   private
   def find_business_and_campaign
