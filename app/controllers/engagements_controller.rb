@@ -15,8 +15,6 @@ class EngagementsController < ApplicationController
       code = "http://kazdoor.heroku.com?place_id=#{places.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
       @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
-
-
   end
   
   def new
