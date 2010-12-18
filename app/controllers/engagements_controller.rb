@@ -11,8 +11,10 @@ class EngagementsController < ApplicationController
   def show
     @engagement = Engagement.find(params[:id])
     place = Place.where(:business_id =>params[:business_id]).limit(1)
-    code = "http://kazdoor.heroku.com?place_id=#{place.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
-    @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+    unless place.blank?
+      code = "http://kazdoor.heroku.com?place_id=#{place.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
+      @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+    end
   end
   
   def new
