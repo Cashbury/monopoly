@@ -10,6 +10,7 @@ Kazdoor::Application.routes.draw do
   
   match "/places/:long/:lat" => "places#show"
   match "/places" => "places#index"
+  match "/engagements/:id" => "engagements#display"
   
   resources :categories
   

@@ -1,8 +1,8 @@
 require 'uri'
 
 class EngagementsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :find_business_and_campaign
+  before_filter :authenticate_user!, :except => :display
+  before_filter :find_business_and_campaign, :except => :display
   
   def index
     @engagements = Engagement.all
@@ -53,7 +53,16 @@ class EngagementsController < ApplicationController
     flash[:notice] = "Successfully destroyed engagement."
     redirect_to business_campaign_engagements_url(@business, @campaign)
   end
-  
+
+  def display
+    @engagement = Engagement.find(params[:id])
+    
+    respond_to do |format|
+      format.html
+      format.xml
+      format.json
+    end
+  end
   
   # => Author: Rajib Ahmed
   def get_qrcode
