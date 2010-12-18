@@ -10,9 +10,9 @@ class EngagementsController < ApplicationController
   
   def show
     @engagement = Engagement.find(params[:id])
-    place = Place.where(:business_id =>params[:business_id]).limit(1)
-    unless place.blank?
-      code = "http://kazdoor.heroku.com?place_id=#{place.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
+    places = Place.where(:business_id =>params[:business_id])
+    unless places.blank?
+      code = "http://kazdoor.heroku.com?place_id=#{places.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
       @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
     end
   end
@@ -34,7 +34,7 @@ class EngagementsController < ApplicationController
   
   def edit
     @engagement = Engagement.find(params[:id])
-    
+    @places = Place.where(:business_id => params[:business_id]) 
   end
   
   def update

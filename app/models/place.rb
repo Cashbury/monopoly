@@ -15,6 +15,10 @@
 
 class Place < ActiveRecord::Base
   belongs_to :business
+  has_many :engagements
+  has_many :rewards
+  
+  #has_many :places, :dependent => :destroy
   has_and_belongs_to_many :campaigns
   attr_accessible :name, :long, :lat, :description
 end

@@ -22,7 +22,10 @@
   <strong>Points:</strong>
   <%= @engagement.points %>
 </p>
-  
+<p>
+  <strong>Place:</strong>
+  <%= @engagement.place.name %>
+</p> 
   
 <p>
   <%= link_to "Edit", edit_business_campaign_engagement_path(@business, @campaign, @engagement) %> |

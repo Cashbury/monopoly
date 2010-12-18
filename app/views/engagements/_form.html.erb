@@ -23,5 +23,8 @@
     <%= f.text_field :points %>
   </p>
   <%=  f.hidden_field :campaign_id %>
+  <p>
+    <%=  select("engagement", "place_id", @places.collect {|p| [ p.name, p.id ] }, {:include_blank => 'None'}) %>
+  
   <p><%= f.submit %></p>
 <% end %>
