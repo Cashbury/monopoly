@@ -16,8 +16,8 @@
 
 class Engagement < ActiveRecord::Base
   belongs_to :campaign
-  has_many :rewards
-  attr_accessible :engagement_type,:name,  :stamp, :campaign_id, :state, :points, :description
+  belongs_to :place
+  attr_accessible :engagement_type,:name,  :stamp, :campaign_id, :state, :points, :description , :place_id
  
   validates :name , :presence =>true,
                     :length =>{:within=>3..50}
