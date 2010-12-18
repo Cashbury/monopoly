@@ -1,5 +1,7 @@
 <% title "Business: #{@business.name} / Engagement for campaign: #{@campaign.name}" %>
 
+<%= image_tag "http://qrcode.kaywa.com/img.php?s=6&t=p&d=#{@code}" %>
+
 <p>
   <strong>Engagement Name:</strong>
   <%= @engagement.name %>

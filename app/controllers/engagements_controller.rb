@@ -10,6 +10,9 @@ class EngagementsController < ApplicationController
   
   def show
     @engagement = Engagement.find(params[:id])
+    place = Place.where(:business_id =>params[:business_id]).limit(1)
+    code = "http://kazdoor.heroku.com?place_id=#{place.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
+    @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
   
   def new
@@ -28,6 +31,7 @@ class EngagementsController < ApplicationController
   
   def edit
     @engagement = Engagement.find(params[:id])
+    
   end
   
   def update
@@ -52,7 +56,7 @@ class EngagementsController < ApplicationController
   def get_qrcode
     engagement = Engagement.find(params[:id])
     place = Place.where(:business_id =>params[:business_id]).limit(1)
-    code = "http://kazdoor.com?place_id=#{place.first.id}&engagement_id=#{engagement.id}&points=#{engagement.points}"
+    code = "http://kazdoor.heroku.com?place_id=#{place.first.id}&engagement_id=#{engagement.id}&points=#{engagement.points}"
     @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
     
