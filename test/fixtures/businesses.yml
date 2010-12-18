@@ -1,3 +1,15 @@
+# == Schema Information
+# Schema version: 20101218032208
+#
+# Table name: businesses
+#
+#  id          :integer         primary key
+#  name        :string(255)
+#  description :text
+#  created_at  :timestamp
+#  updated_at  :timestamp
+#
+
 one:
   name: MyString
   description: MyText

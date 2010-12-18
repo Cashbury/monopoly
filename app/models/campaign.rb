@@ -1,3 +1,17 @@
+# == Schema Information
+# Schema version: 20101218032208
+#
+# Table name: campaigns
+#
+#  id            :integer         not null, primary key
+#  name          :string(255)
+#  campaign_type :string(255)
+#  expire_at     :datetime
+#  created_at    :datetime
+#  updated_at    :datetime
+#  business_id   :integer
+#
+
 class Campaign < ActiveRecord::Base
   has_and_belongs_to_many :places
   has_many :engagements
