@@ -16,7 +16,7 @@
 <h3>Engagements</h3>
 <ol>
 	<% for engagement in @campaign.engagements %>
-		<li><%= link_to "Engagement #{engagement.id}", business_campaign_engagement_url(@business, @campaign, engagement) %></li>
+          <li><%= link_to "#{engagement.name}", business_campaign_engagement_url(@business, @campaign, engagement) %></li>
 	<% end %>
 </ol>
 

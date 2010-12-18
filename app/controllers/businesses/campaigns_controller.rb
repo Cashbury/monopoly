@@ -3,7 +3,7 @@ class Businesses::CampaignsController < ApplicationController
   before_filter :find_business
   
   def index
-    @campaigns = Campaign.all
+    @campaigns = Campaign.where(:business_id=>params[:business_id])
     
     respond_to do |format|
       format.html
@@ -23,6 +23,7 @@ class Businesses::CampaignsController < ApplicationController
   
   def create
     @campaign = Campaign.new(params[:campaign])
+    @campaign.business_id = params[:business_id]
     if @campaign.save
       flash[:notice] = "Successfully created campaign."
       redirect_to business_campaign_url(@business, @campaign)

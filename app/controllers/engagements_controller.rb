@@ -19,6 +19,7 @@ class EngagementsController < ApplicationController
   
   def new
     @engagement = Engagement.new
+    @engagement.campaign_id = params[:campaign_id]
   end
   
   def create

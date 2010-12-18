@@ -22,7 +22,8 @@
   <strong>Points:</strong>
   <%= @engagement.points %>
 </p>
-
+  
+  
 <p>
   <%= link_to "Edit", edit_business_campaign_engagement_path(@business, @campaign, @engagement) %> |
   <%= link_to "Destroy", business_campaign_engagement_path(@business, @campaign, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
