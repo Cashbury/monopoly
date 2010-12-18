@@ -5,12 +5,10 @@
   <%= @reward.name %>
 </p>
 <p>
-  <strong>Engagement:</strong>
-  <%= @reward.engagement_id %>
 </p>
 
 <p>
-  <%= link_to "Edit", edit_business_campaign_engagement_reward_path(@business, @campaign, @engagement, @reward) %> |
-  <%= link_to "Destroy", business_campaign_engagement_reward_path(@business, @campaign, @engagement, @reward), :confirm => 'Are you sure?', :method => :delete %> | 
-  <%= link_to "Back to List", business_campaign_engagement_rewards_path(@business, @campaign, @engagement) %>
+  <%= link_to "Edit", edit_business_campaign_reward_path(@business, @campaign, @reward) %> |
+  <%= link_to "Destroy", business_campaign_engagement_path(@business, @campaign,  @reward), :confirm => 'Are you sure?', :method => :delete %> | 
+  <%= link_to "Back to List", business_campaign_rewards_path(@business, @campaign ) %>
 </p>

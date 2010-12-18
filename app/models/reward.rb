@@ -13,5 +13,6 @@
 
 class Reward < ActiveRecord::Base
   belongs_to :engagement
+  belongs_to :campaign
   attr_accessible :name, :engagement_id
 end

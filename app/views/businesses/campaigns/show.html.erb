@@ -14,12 +14,28 @@
 </p>
 
 <h3>Engagements</h3>
-<ol>
-	<% for engagement in @campaign.engagements %>
-          <li><%= link_to "#{engagement.name}", business_campaign_engagement_url(@business, @campaign, engagement) %></li>
+<table>
+  <tr>
+    <th>name </th>
+    <th>points </th>
+    <th>state </th>
+    <th>type </th>
+  </tr>
+<% for engagement in @campaign.engagements %>
+  <tr> <td><%= link_to "#{engagement.name}", business_campaign_engagement_url(@business, @campaign, engagement) %></td>
+    <td>
+      <%= engagement.points %>
+    </td>
+    <td>
+      <%= engagement.state%>
+    </td>
+    <td>
+      <%= engagement.engagement_type %>
+    </td>
+  </tr>
 	<% end %>
-</ol>
-
+  
+</table>
 <p>
   <%= link_to "Edit", edit_business_campaign_path(@business, @campaign) %> |
   <%= link_to "Destroy", business_campaign_path(@business, @campaign), :confirm => 'Are you sure?', :method => :delete %> |
@@ -28,4 +44,20 @@
 <hr/>
 <p>
 	<%= link_to "New engagement", new_business_campaign_engagement_path(@business, @campaign) %>
+</p>
+<hr/>
+<h3>Rewards </h3>
+<table>
+  <tr>
+    <th>name </th>
+  </tr>
+<% for reward in @campaign.rewards %>
+  <tr> <td><%= link_to "#{reward.name}", business_campaign_reward_path(@business, @campaign, reward) %></td>
+<% end %>
+  
+</table>
+
+<hr/>
+<p>
+	<%= link_to "New reward", new_business_campaign_reward_path(@business, @campaign) %>
 </p>

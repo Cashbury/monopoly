@@ -3,10 +3,8 @@ Kazdoor::Application.routes.draw do
     resources :places, :controller => "businesses/places"
     
     resources :campaigns, :controller => "businesses/campaigns" do
-      resources :engagements do
-        get 'get_qrcode' , :on=>:member
-        resources :rewards
-      end
+      resources :engagements
+      resources :rewards
     end
   end
   
