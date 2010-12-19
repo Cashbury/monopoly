@@ -7,7 +7,7 @@
   </p>
   
   <p>
-    <%= f.label :engagement_type %><br />
+    <%= f.label :engagement_t %><br />
     <%= f.select :engagement_type, @engagement.engagement_types %>
   </p>
   <p>
@@ -24,7 +24,16 @@
   </p>
   <%=  f.hidden_field :campaign_id %>
   <p>
-    <%=  select("engagement", "place_id", @places.collect {|p| [ p.name, p.id ] }, {:include_blank => 'None'}) %>
+
+  <p>
+    <%= f.label :places, "Category" %><br />
+		<% @places.each do |place| %>
+			<%= check_box_tag("engagement[places_list][#{place.id}]", 
+                        "1", 
+                        @engagement.places.detect{|c| c.id == place.id}) %>
+			<%= "#{place.name}"%><br />
+		<% end %>
+  </p>
   
   <p><%= f.submit %></p>
 <% end %>

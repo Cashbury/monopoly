@@ -10,16 +10,20 @@ class EngagementsController < ApplicationController
   
   def show
     @engagement = Engagement.find(params[:id])
-    places = Place.where(:business_id =>params[:business_id])
-    unless places.blank?
-      code = "http://kazdoor.heroku.com?place_id=#{places.first.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
-      @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+    places_under_business
+    @codes=[]
+    unless @places.blank?
+      @places.each do |place|
+        code =  "http://kazdoor.heroku.com?place_id=#{place.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
+        @codes << URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+      end
     end
   end
   
   def new
     @engagement = Engagement.new
     @engagement.campaign_id = params[:campaign_id]
+    places_under_business
   end
   
   def create
@@ -34,10 +38,11 @@ class EngagementsController < ApplicationController
   
   def edit
     @engagement = Engagement.find(params[:id])
-    @places = Place.where(:business_id => params[:business_id]) 
+    places_under_business
   end
   
   def update
+    #debugger
     @engagement = Engagement.find(params[:id])
     if @engagement.update_attributes(params[:engagement])
       flash[:notice] = "Successfully updated engagement."
@@ -67,5 +72,9 @@ class EngagementsController < ApplicationController
   def find_business_and_campaign
     @business = Business.find(params[:business_id])
     @campaign = Campaign.find(params[:campaign_id])
+  end
+
+  def places_under_business
+    @places ||= Place.where(:business_id => params[:business_id]) 
   end
 end

@@ -16,8 +16,8 @@
 
 class Engagement < ActiveRecord::Base
   belongs_to :campaign
-  belongs_to :place
-  attr_accessible :engagement_type,:name,  :stamp, :campaign_id, :state, :points, :description , :place_id
+  has_and_belongs_to_many :places
+  #attr_accessible :engagement_type,:name,  :stamp, :campaign_id, :state, :points, :description ,:place_id
  
   validates :name , :presence =>true,
                     :length =>{:within=>3..50}
@@ -29,4 +29,18 @@ class Engagement < ActiveRecord::Base
   def get_states
     ["deployed", "paused", "offline"]
   end
+  
+  attr_accessor :places_list
+
+  
+  after_save :update_categories
+  
+  
+  #  private
+  def update_categories
+    places.delete_all
+    selected_categories = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
+    selected_categories.each {|place| self.places << place}
+  end
+
 end

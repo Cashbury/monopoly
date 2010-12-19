@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101218075054) do
+ActiveRecord::Schema.define(:version => 20101218231955) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -63,6 +63,11 @@ ActiveRecord::Schema.define(:version => 20101218075054) do
     t.timestamp "updated_at"
     t.string    "name"
     t.integer   "place_id"
+  end
+
+  create_table "engagements_places", :force => true do |t|
+    t.integer "engagement_id"
+    t.integer "place_id"
   end
 
   create_table "places", :force => true do |t|

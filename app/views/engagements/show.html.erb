@@ -1,7 +1,8 @@
 <% title "Business: #{@business.name} / Engagement for campaign: #{@campaign.name}" %>
 
-<%= image_tag "http://qrcode.kaywa.com/img.php?s=6&t=p&d=#{@code}" %>
-
+<% for code in @codes %>
+  <%= image_tag "http://qrcode.kaywa.com/img.php?s=6&t=p&d=#{code}" %>
+<% end %>
 <p>
   <strong>Engagement Name:</strong>
   <%= @engagement.name %>
@@ -22,11 +23,13 @@
   <strong>Points:</strong>
   <%= @engagement.points %>
 </p>
-<p>
-  <strong>Place:</strong>
-  <%= @engagement.place.name %>
-</p> 
   
+<p>
+  <strong>Places:</strong>
+  <% for place in @engagement.places %>
+    <h3><%= place.name %></h3>
+  <% end %>
+</p>
 <p>
   <%= link_to "Edit", edit_business_campaign_engagement_path(@business, @campaign, @engagement) %> |
   <%= link_to "Destroy", business_campaign_engagement_path(@business, @campaign, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
