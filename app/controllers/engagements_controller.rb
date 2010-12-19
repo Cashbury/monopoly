@@ -19,6 +19,7 @@ class EngagementsController < ApplicationController
       end
     end
   end
+
   
   def new
     @engagement = Engagement.new
@@ -70,11 +71,11 @@ class EngagementsController < ApplicationController
   end
   
   # => Author: Rajib Ahmed
-  def get_qrcode
-    engagement = Engagement.find(params[:id])
-    place = Place.where(:business_id =>params[:business_id]).limit(1)
-    code = "http://kazdoor.heroku.com?place_id=#{place.first.id}&engagement_id=#{engagement.id}&points=#{engagement.points}"
-    @code = URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+  def stamps
+    @engagements = Campaign.where(params[:campaign_id]).first.engagements.where(:engagement_type=>"stamp")
+    respond_to do |format|
+      format.js
+    end
   end
     
   private

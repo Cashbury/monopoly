@@ -1,141 +1,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>
-			Rewards
-		</title>
-		<link href="rewards-1.css" rel="stylesheet" type="text/css" />
-		<link href="global.css" rel="stylesheet" type="text/css" />
-		<script type="text/javascript" src="js/jquery.min.js"></script>
-		<%= yield(:head) %>
-	</head>
-	<body>
-		<div id="wrap">
-			<div id="header"></div><!-- end of header -->
-			<div id="main">
-				<div id="main_header">
-					<div id="canvas container">
-							<% flash.each do |name, msg| %>
-								<%= content_tag :div, msg, :id => "flash_#{name}" %>
-							<% end %>
-							<%= content_tag :h1, yield(:title) if show_title? %>
-							<%= render "shared/menu" %>
-							<%= yield %>
-						<form method="post" id="new_reward" class="new_reward" action="">
-							<h2 title="Add Reward" class="rewardheading">
-								Add a Reward
-							</h2>
-							<p class="subcap">
-								Rewards are items that your customers can redeem after earning enough points or stamps.
-							</p>
-							<div id="left_main">
-								<div class="row">
-									<div class="basic_info_caption1">
-										What is the Reward?
-									</div><input type="text" size="30" name="reward[title]" id="reward_title" class="basic_info_input" />
-								</div>
-								<div class="row">
-									<div class="basic_info_caption1">
-										Add a Short Message
-									</div>
-									<textarea rows="2" name="reward[text]" id="reward_text" cols="100" class="basic_info_input">
-</textarea>
-								</div>
-								<div class="row">
-									<div class="basic_info_caption1">
-										Add the venues that will offer this reward
-									</div><input type="text" name="reward_place_name" id="reward_place_name" disabled="disabled" class="basic_info_input disabled" /><input type="button" class="select_place_open" value="" />
-								</div>
-								<div class="row">
-									<div class="basic_info_caption1">
-										Set the goal required to unlock this reward
-									</div>
-									<div id="Enter_Num_Stamp">
-										<input type="text" name="reward[Stamps]" id="reward_stamps" class="enter_value_g" />
-									</div><select class="selectgoaltype" id="goal_type">
-										<option value="points">
-											Points
-										</option>
-										<option value="stamps">
-											Stamps
-										</option>
-									</select>
-									<div id="points" class="setgoaltype"></div>
-									<div id="stamps" class="setgoaltype" style="display:none">
-										<select class="selectStampType" name="" id="reward_stamp_type">
-											<option value="">
-												Type: Visit
-											</option>
-											<option value="">
-												Type: Coffee
-											</option>
-											<option value="">
-												Type: Sandwitch
-											</option>
-										</select>
-									</div>
-								</div>
-								<div class="row">
-									<div class="basic_info_caption1">
-										How many times can this reward be claimed?
-									</div><input type="text" size="30" name="reward[limit]" id="reward_limit" class="basic_info_input" />
-								</div>
-								<div class="row">
-									<div class="basic_info_caption1">
-										This reward will be available untill
-									</div><select class="selectruntime" id="reward_runtill">
-										<option value="stop">
-											I Stop it
-										</option>
-										<option value="stop">
-											A set time
-										</option>
-										<option value="setnum">
-											A set number of people get it
-										</option>
-										<option value="sellout">
-											It sells out
-										</option>
-									</select>
-									<div id="stop" class="runtill"></div>
-									<div id="setnum" class="runtill" style="display:none">
-										Enter the maximum number you want to grant
-									</div>
-									<div id="sellout" class="runtill" style="display:none">
-										Enter the maximum number available
-									</div>
-								</div>
-								<div class="row">
-									<input type="submit" value="" name="commit" id="save_cont_btn" class="save" /><a class="cancel right" href="/rewards/new">Cancel</a>
-								</div>
-							</div>
-						</form>
-					</div><!-- end of left main -->
-					<div id="right_main">
-						<img class="smartdevice" src="images/icon_iphone.gif" />
-					</div>
-				</div><!-- end of Canvase -->
-			</div>
-		</div><!-- end of Main -->
-<script language="javascript" type="text/javascript">
-//<![CDATA[
-		$(function() {
-				$('#goal_type').change(function(){
-						$('.setgoaltype').hide();
-						$('#' + $(this).val()).show();
-				});
-		});
-
-
-		$(function() {
-				$('#reward_runtill').change(function(){
-						$('.runtill').hide();
-						$('#' + $(this).val()).show();
-				});
-		});
-		//]]>
-		</script><!-- End of Wrap -->
-	</body>
+<head>
+  <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
+  <%= stylesheet_link_tag "rewards-1","global" %>
+  <%= javascript_include_tag :defaults %>
+  <%= csrf_meta_tag %>
+  <%= yield(:head) %>
+</head>
+<body>
+  <div id="wrap">
+    <div id="header"></div><!-- end of header -->
+    <div id="main">
+      <div id="main_header">
+      <div id="canvas container">
+        <% flash.each do |name, msg| %>
+          <%= content_tag :div, msg, :id => "flash_#{name}" %>
+        <% end %>
+        <%= content_tag :h1, yield(:title) if show_title? %>
+        <%= render "shared/menu" %>
+        <%= yield %>
+      </div><!-- end of left main -->
+      <div id="right_main">
+        <%= image_tag "icon_iphone.gif" %>
+      </div>
+    </div><!-- end of Canvase -->
+    </div>
+  </div><!-- end of Main -->
+  </div><!-- wrapper-->
+</body>
 </html>

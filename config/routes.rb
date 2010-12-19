@@ -3,7 +3,9 @@ Kazdoor::Application.routes.draw do
     resources :places, :controller => "businesses/places"
     
     resources :campaigns, :controller => "businesses/campaigns" do
-      resources :engagements
+      resources :engagements do
+        get "stamps", :on =>:collection
+      end
       resources :rewards
     end
   end
