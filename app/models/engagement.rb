@@ -13,6 +13,7 @@
 #  updated_at      :timestamp
 #  name            :string(255)
 #
+require 'uri'
 
 class Engagement < ActiveRecord::Base
   belongs_to :campaign
@@ -37,10 +38,19 @@ class Engagement < ActiveRecord::Base
   
   
   #  private
-  def update_places
+  def update_places    
     places.delete_all
     selected_places = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
-    selected_places.each {|place| self.places << place}
+    selected_places.each{|place|
+      self.places << place
+    }    
+  end  
+  
+  #TODO this may move to model :) 
+  def self.qrcode(place_id,engagement_id,points)
+    code =  "http://kazdoor.heroku.com?place_id=#{place_id}&engagement_id=#{engagement_id}&points=#{points}"    
+    "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
+  
 
 end

@@ -33,6 +33,7 @@ class RewardsController < ApplicationController
   end
   
   def update
+    
     @reward = Reward.find(params[:id])
     if @reward.update_attributes(params[:reward])
       flash[:notice] = "Successfully updated reward."

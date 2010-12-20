@@ -1,8 +1,6 @@
 <% title "Business: #{@business.name} / Engagement for campaign: #{@campaign.name}" %>
 
-<% for code in @codes %>
-  <%= image_tag "http://qrcode.kaywa.com/img.php?s=6&t=p&d=#{code}" %>
-<% end %>
+
 <p>
   <strong>Engagement Name:</strong>
   <%= @engagement.name %>
@@ -27,7 +25,9 @@
 <p>
   <strong>Places:</strong>
   <% for place in @engagement.places %>
-    <h3><%= place.name %></h3>
+    <h3><%= place.name 
+     %></h3>
+    <%= image_tag Engagement.qrcode(place.id,@engagement.id, @engagement.points) %>
   <% end %>
 </p>
 <p>

@@ -1,4 +1,4 @@
-1292837507
+1292844566
 Account	/home/rajib/Sites/rails_apps/kazdoor/app/models/account.rb	class Account 
 AddBusinessesCategoriesJointTable	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101211155542_add_businesses_categories_joint_table.rb	class AddBusinessesCategoriesJointTable 
 AddCampaignId	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218023724_add_campaign_id.rb	class AddCampaignId 
@@ -155,6 +155,7 @@ places_list	/home/rajib/Sites/rails_apps/kazdoor/app/models/engagement.rb	  attr
 places_list	/home/rajib/Sites/rails_apps/kazdoor/app/models/reward.rb	  attr_accessor :places_list
 places_under_business	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/engagements_controller.rb	  def places_under_business
 places_under_business	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/rewards_controller.rb	  def places_under_business
+qrcode	/home/rajib/Sites/rails_apps/kazdoor/app/models/engagement.rb	  def self.qrcode(place_id,engagement_id,points)
 r	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.min.js	function r()
 returnFalse	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.js	function returnFalse()
 returnTrue	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.js	function returnTrue()
@@ -260,5 +261,5 @@ update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/rewards_controller.r
 update_categories	/home/rajib/Sites/rails_apps/kazdoor/app/models/business.rb	  def update_categories
 update_categories	/home/rajib/Sites/rails_apps/kazdoor/app/models/reward.rb	  def update_categories
 update_places	/home/rajib/Sites/rails_apps/kazdoor/app/models/campaign.rb	  def update_places
-update_places	/home/rajib/Sites/rails_apps/kazdoor/app/models/engagement.rb	  def update_places
+update_places	/home/rajib/Sites/rails_apps/kazdoor/app/models/engagement.rb	  def update_places    
 winnow	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.js	function winnow( elements, qualifier, keep )

@@ -11,13 +11,7 @@ class EngagementsController < ApplicationController
   def show
     @engagement = Engagement.find(params[:id])
     places_under_business
-    @codes=[]
-    unless @places.blank?
-      @places.each do |place|
-        code =  "http://kazdoor.heroku.com?place_id=#{place.id}&engagement_id=#{@engagement.id}&points=#{@engagement.points}"
-        @codes << URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
-      end
-    end
+    
   end
 
   
