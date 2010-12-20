@@ -1,7 +1,10 @@
 class RewardsController < ApplicationController
-  before_filter :authenticate_user!
-  before_filter :find_business_and_campaign_and_engagment
+  before_filter :authenticate_user!,
+                :find_business_and_campaign_and_engagment,
+                :places_under_business
+
   #layout "application"
+
   def index
     @rewards = Reward.all
   end
@@ -12,7 +15,6 @@ class RewardsController < ApplicationController
   
   def new
     @reward = Reward.new
-    places_under_business
   end
   
   def create
@@ -34,7 +36,7 @@ class RewardsController < ApplicationController
     @reward = Reward.find(params[:id])
     if @reward.update_attributes(params[:reward])
       flash[:notice] = "Successfully updated reward."
-      redirect_to nil
+      redirect_to business_campaign_reward_url(@business, @campaign, @reward)
     else
       render :action => 'edit'
     end

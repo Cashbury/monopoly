@@ -1,11 +1,41 @@
 <% title "Reward" %>
 
+<% 
+  reward_type = if @reward.engagement.blank? 
+    "Points"
+  else
+    "Stamps" 
+  end            
+%>
+
+
 <p>
   <strong>Name:</strong>
   <%= @reward.name %>
 </p>
 <p>
+  <strong>Description:</strong>
+  <%= @reward.description %>
 </p>
+<p>
+  <strong><%= reward_type %>
+  </strong>
+  <%= @reward.points %>
+</p>
+<% unless @reward.engagement.blank? %>
+<p>
+  <strong>Stamp Description</strong>
+  <%= @reward.engagement.name %>
+</p>
+<% end %>
+<p>
+  <strong>Active Places</strong>
+  <% for place in @reward.places %>
+  <br/><%= place.name %>    
+  <% end %>
+</p>
+
+
 
 <p>
   <%= link_to "Edit", edit_business_campaign_reward_path(@business, @campaign, @reward) %> |

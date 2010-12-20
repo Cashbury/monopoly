@@ -45,6 +45,7 @@ class EngagementsController < ApplicationController
   def update
     #debugger
     @engagement = Engagement.find(params[:id])
+    
     if @engagement.update_attributes(params[:engagement])
       flash[:notice] = "Successfully updated engagement."
       redirect_to business_campaign_engagement_url(@business, @campaign, @engagement)

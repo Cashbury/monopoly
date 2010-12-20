@@ -33,14 +33,14 @@ class Engagement < ActiveRecord::Base
   attr_accessor :places_list
 
   
-  after_save :update_categories
+  after_save :update_places
   
   
   #  private
-  def update_categories
+  def update_places
     places.delete_all
-    selected_categories = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
-    selected_categories.each {|place| self.places << place}
+    selected_places = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
+    selected_places.each {|place| self.places << place}
   end
 
 end
