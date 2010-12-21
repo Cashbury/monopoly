@@ -1,7 +1,8 @@
-1292844566
+1292898055
 Account	/home/rajib/Sites/rails_apps/kazdoor/app/models/account.rb	class Account 
 AddBusinessesCategoriesJointTable	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101211155542_add_businesses_categories_joint_table.rb	class AddBusinessesCategoriesJointTable 
 AddCampaignId	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218023724_add_campaign_id.rb	class AddCampaignId 
+AddClaimAvailabledToRewads	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	class AddClaimAvailabledToRewads 
 AddDescriptionAndGoalToRewards	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_description_and_goal_to_rewards.rb	class AddDescriptionAndGoalToRewards 
 AddJoinTableForEngagementsPlaces	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218231955_add_join_table_for_engagements_places.rb	class AddJoinTableForEngagementsPlaces 
 AddJoinTableForRewardAndPlaces	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	class AddJoinTableForRewardAndPlaces 
@@ -109,6 +110,7 @@ down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218075054_add_place_id
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218231955_add_join_table_for_engagements_places.rb	  def self.down
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_description_and_goal_to_rewards.rb	  def self.down
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	  def self.down
+down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	  def self.down
 e	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.min.js	function e(l){return f.step(l)
 edit	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/campaigns_controller.rb	  def edit
 edit	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/places_controller.rb	  def edit
@@ -252,6 +254,7 @@ up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218075054_add_place_id_t
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218231955_add_join_table_for_engagements_places.rb	  def self.up
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_description_and_goal_to_rewards.rb	  def self.up
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	  def self.up
+up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	  def self.up
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/campaigns_controller.rb	  def update
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/places_controller.rb	  def update
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses_controller.rb	  def update
