@@ -27,7 +27,7 @@
   <% for place in @engagement.places %>
     <h3><%= place.name 
      %></h3>
-    <%= image_tag Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ) %>
+    <%= image_tag Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ,place.created_at) %>
   <% end %>
 </p>
 <p>
