@@ -14,6 +14,7 @@
 #  name            :string(255)
 #
 require 'uri'
+require "digest"
 
 class Engagement < ActiveRecord::Base
   belongs_to :campaign
@@ -47,8 +48,9 @@ class Engagement < ActiveRecord::Base
   end  
   
   #TODO this may move to model :) 
-  def self.qrcode(place_id,engagement_id,points)
-    code =  "http://kazdoor.heroku.com?place_id=#{place_id}&engagement_id=#{engagement_id}&points=#{points}"    
+  def self.qrcode(place_id,engagement_id,points,created_at)
+    uni = Digest::MD5.hexdigest(created_at.to_s)
+    code =  "http://kazdoor.heroku.com?place_id=#{place_id}&engagement_id=#{engagement_id}&points=#{points}&#{uni}"    
     "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
   
