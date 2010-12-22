@@ -25,9 +25,10 @@
 <p>
   <strong>Places:</strong>
   <% for place in @engagement.places %>
-    <h3><%= place.name 
-     %></h3>
-    <%= image_tag Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ,place.created_at) %>
+    <h3><%= place.name %></h3>
+    <% if @engagement.engagement_type.downcase == "stamp" %>
+     <%= image_tag Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ,place.created_at) %>
+    <% end %>  
   <% end %>
 </p>
 <p>

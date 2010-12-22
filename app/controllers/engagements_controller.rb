@@ -1,8 +1,10 @@
 require 'uri'
 
 class EngagementsController < ApplicationController
-  before_filter :authenticate_user!, :except => :display
-  before_filter :find_business_and_campaign, :except => :display
+  before_filter :authenticate_user!,
+                :find_business_and_campaign, 
+                :places_under_business,
+                :except => :display
   
   def index
     @engagements = Engagement.all
@@ -10,15 +12,12 @@ class EngagementsController < ApplicationController
   
   def show
     @engagement = Engagement.find(params[:id])
-    places_under_business
-    
   end
 
   
   def new
     @engagement = Engagement.new
     @engagement.campaign_id = params[:campaign_id]
-    places_under_business
   end
   
   def create
@@ -33,7 +32,6 @@ class EngagementsController < ApplicationController
   
   def edit
     @engagement = Engagement.find(params[:id])
-    places_under_business
   end
   
   def update
@@ -67,7 +65,7 @@ class EngagementsController < ApplicationController
   
   # => Author: Rajib Ahmed
   def stamps
-    @engagements = Campaign.where(params[:campaign_id]).first.engagements.where(:engagement_type=>"stamp")
+    @engagements = Campaign.find(params[:campaign_id]).engagements.where(:engagement_type=>"stamp")
     respond_to do |format|
       format.js
     end
