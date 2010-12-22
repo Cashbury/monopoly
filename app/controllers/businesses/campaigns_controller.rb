@@ -18,7 +18,7 @@ class Businesses::CampaignsController < ApplicationController
   
   def new
     @campaign = Campaign.new
-    debugger
+    # debugger
     @places = @business.places
   end
   
