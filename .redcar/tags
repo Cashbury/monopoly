@@ -1,5 +1,6 @@
-1293043471
+1293050810
 Account	/home/rajib/Sites/rails_apps/kazdoor/app/models/account.rb	class Account 
+AddAddressNeighborhoodCityToPlaces	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222200449_add_address_neighborhood_city_to_places.rb	class AddAddressNeighborhoodCityToPlaces 
 AddBusinessesCategoriesJointTable	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101211155542_add_businesses_categories_joint_table.rb	class AddBusinessesCategoriesJointTable 
 AddCampaignId	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218023724_add_campaign_id.rb	class AddCampaignId 
 AddClaimAvailabledToRewads	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	class AddClaimAvailabledToRewads 
@@ -93,7 +94,6 @@ clone	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	funct
 clone	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function clone()
 clone	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function clone(object)
 cloneCopyEvent	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.js	function cloneCopyEvent(orig, ret)
-code	/home/rajib/Sites/rails_apps/kazdoor/app/models/place.rb	  attr_accessor :code
 collect	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function collect(iterator, context)
 compact	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function compact()
 concat	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function concat()
@@ -149,6 +149,7 @@ down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218231955_add_join_tab
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_description_and_goal_to_rewards.rb	  def self.down
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	  def self.down
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	  def self.down
+down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222200449_add_address_neighborhood_city_to_places.rb	  def self.down
 e	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.min.js	function e(l){return f.step(l)
 each	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function each(iterator)
 each	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function each(iterator, context)
@@ -428,6 +429,7 @@ up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218231955_add_join_table
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_description_and_goal_to_rewards.rb	  def self.up
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	  def self.up
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	  def self.up
+up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222200449_add_address_neighborhood_city_to_places.rb	  def self.up
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/campaigns_controller.rb	  def update
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/places_controller.rb	  def update
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses_controller.rb	  def update

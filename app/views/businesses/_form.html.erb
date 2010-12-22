@@ -18,17 +18,34 @@
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
+  
   <% f.fields_for :places do |builder| %>  
 		<hr/>
-		<h3>Add a place</h3>
-	  <p>
-	    <%= builder.label :name %>
-	    <%= builder.text_field :name %>
-	  </p>
-	  <p>
+		<h3>Add a Branch</h3>
+    
+  
+  <p>
+    <%= builder.label :name %>
+    <%= builder.text_field :name %>
+  </p>
+    <p>
 	    <%= builder.label :description %>
 	    <%= builder.text_field :description %>
+    </p>
+    <p>
+	    <%= builder.label :address %>
+	    <%= builder.text_field :address %>
 	  </p>
+    <p>
+	    <%= builder.label :neighborhood %>
+	    <%= builder.text_field :neighborhood %>
+	  </p>
+    <p>
+	    <%= builder.label :city %>
+	    <%= builder.text_field :city %>
+	  </p>
+    
+    
     <p>
 	    <%= builder.label :longitude %>
 	    <%= builder.text_field :long %>

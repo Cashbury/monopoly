@@ -98,10 +98,8 @@
 //<![CDATA[
 		$(function() {
 				$('#goal_type').change(function(){
-                                    $('.setgoaltype').hide();
-                                    $.getScript("<%= "/businesses/#{params[:business_id]}/campaigns/#{params[:campaign_id]}/engagements/stamps.js"%>",function(data){
-                                      
-                                })
+            $('.setgoaltype').hide();
+            $.getScript("<%= stamps_business_campaign_engagements_path %>.js",function(data){});
 						$('#' + $(this).val()).show();
 				});
 		});

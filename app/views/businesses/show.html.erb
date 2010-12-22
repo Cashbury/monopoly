@@ -1,4 +1,11 @@
 <% title "Business" %>
+<style type="text/css" media="screen">
+  table th,td{
+    width:150px;
+}
+</style>
+
+<h3>Category</h3>  
 <p>
 	<ol>  
 	  <% for category in @business.categories %>
@@ -14,13 +21,24 @@
   <strong>Description:</strong>
   <%= @business.description %>
 </p>
-<h3>Places</h3>
+<h3>Branches</h3>
 <p>
-	<ol>  
+  <table>
+    <tr>
+      <th>Name</th>    
+      <th>Address</th>    
+      <th>Neiborhood</th>    
+      <th>City</th>    
+    </tr>  
 	  <% for place in @business.places %>
-	  <li><%= h place.name %></li>  
+    <tr>
+      <td><%= place.name %></td>    
+      <td><%= place.address %></td>    
+      <td><%= place.neighborhood %></td>    
+      <td><%= place.city %></td>    
+    </tr>
 	  <% end %>  
-	</ol>
+  </table>
 </p>
 <p>
   <%= link_to "Edit", edit_business_path(@business) %> |

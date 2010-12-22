@@ -20,10 +20,6 @@ class Place < ActiveRecord::Base
   has_and_belongs_to_many :rewards
 
   has_and_belongs_to_many :campaigns
-  attr_accessible :name, :long, :lat, :description,:code
-  attr_accessor :code
-
-  
-  
+  attr_accessible :name, :long, :lat, :description,:address, :neighborhood, :city
   
 end
