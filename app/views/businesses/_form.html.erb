@@ -29,7 +29,16 @@
 	    <%= builder.label :description %>
 	    <%= builder.text_field :description %>
 	  </p>
-	  <%= builder.check_box :_destroy %>  
+    <p>
+	    <%= builder.label :longitude %>
+	    <%= builder.text_field :long %>
+	  </p>
+	  <p>
+	    <%= builder.label :latitude %>
+	    <%= builder.text_field :lat %>
+	  </p>
+    
+    <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>
   <% end %>
   <p><%= f.submit %></p>

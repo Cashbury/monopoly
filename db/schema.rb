@@ -20,10 +20,10 @@ ActiveRecord::Schema.define(:version => 20101221014740) do
   end
 
   create_table "businesses", :force => true do |t|
-    t.string    "name"
-    t.text      "description"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "businesses_categories", :id => false, :force => true do |t|
@@ -46,22 +46,23 @@ ActiveRecord::Schema.define(:version => 20101221014740) do
   end
 
   create_table "categories", :force => true do |t|
-    t.string    "name"
-    t.text      "description"
-    t.integer   "parent_id"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
+    t.string   "name"
+    t.text     "description"
+    t.integer  "parent_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "engagements", :force => true do |t|
-    t.string    "engagement_type"
-    t.string    "points"
-    t.string    "state"
-    t.string    "description"
-    t.integer   "campaign_id"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
-    t.string    "name"
+    t.string   "engagement_type"
+    t.string   "points"
+    t.string   "state"
+    t.string   "description"
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "name"
+    t.integer  "place_id"
   end
 
   create_table "engagements_places", :id => false, :force => true do |t|
@@ -70,13 +71,13 @@ ActiveRecord::Schema.define(:version => 20101221014740) do
   end
 
   create_table "places", :force => true do |t|
-    t.string    "name"
-    t.string    "long"
-    t.string    "lat"
-    t.integer   "business_id"
-    t.text      "description"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
+    t.string   "name"
+    t.string   "long"
+    t.string   "lat"
+    t.integer  "business_id"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "places_rewards", :id => false, :force => true do |t|
@@ -92,31 +93,32 @@ ActiveRecord::Schema.define(:version => 20101221014740) do
   end
 
   create_table "rewards", :force => true do |t|
-    t.string    "name"
-    t.integer   "engagement_id"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
-    t.integer   "campaign_id"
-    t.text      "description"
-    t.integer   "points"
-    t.integer   "claim"
-    t.date      "availabled"
+    t.string   "name"
+    t.integer  "engagement_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "campaign_id"
+    t.integer  "place_id"
+    t.text     "description"
+    t.integer  "points"
+    t.integer  "claim"
+    t.date     "availabled"
   end
 
   create_table "users", :force => true do |t|
-    t.string    "email",                               :default => "", :null => false
-    t.string    "encrypted_password",   :limit => 128, :default => "", :null => false
-    t.string    "password_salt",                       :default => "", :null => false
-    t.string    "reset_password_token"
-    t.string    "remember_token"
-    t.timestamp "remember_created_at"
-    t.integer   "sign_in_count",                       :default => 0
-    t.timestamp "current_sign_in_at"
-    t.timestamp "last_sign_in_at"
-    t.string    "current_sign_in_ip"
-    t.string    "last_sign_in_ip"
-    t.timestamp "created_at"
-    t.timestamp "updated_at"
+    t.string   "email",                               :default => "", :null => false
+    t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
+    t.string   "password_salt",                       :default => "", :null => false
+    t.string   "reset_password_token"
+    t.string   "remember_token"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",                       :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
