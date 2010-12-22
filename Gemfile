@@ -39,3 +39,4 @@ gem 'nifty-generators'
 gem "mocha", :group => :test
 gem 'annotate-models'
 gem 'jquery-rails'
+gem 'carmen' #for coutry population

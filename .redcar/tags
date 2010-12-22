@@ -1,4 +1,4 @@
-1293050810
+1293059088
 Account	/home/rajib/Sites/rails_apps/kazdoor/app/models/account.rb	class Account 
 AddAddressNeighborhoodCityToPlaces	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222200449_add_address_neighborhood_city_to_places.rb	class AddAddressNeighborhoodCityToPlaces 
 AddBusinessesCategoriesJointTable	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101211155542_add_businesses_categories_joint_table.rb	class AddBusinessesCategoriesJointTable 
@@ -10,6 +10,7 @@ AddJoinTableForRewardAndPlaces	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/2
 AddNameToEngagement	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101217064849_add_name_to_engagement.rb	class AddNameToEngagement 
 AddPlaceIdToEngagementAndRewards	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218075054_add_place_id_to_engagement_and_rewards.rb	class AddPlaceIdToEngagementAndRewards 
 AddPlacesCampaignsJointTable	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101211170132_add_places_campaigns_joint_table.rb	class AddPlacesCampaignsJointTable 
+AddZipcodeToPlaces	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222212903_add_zipcode_to_places.rb	class AddZipcodeToPlaces 
 AdminTest	/home/rajib/Sites/rails_apps/kazdoor/test/unit/admin_test.rb	class AdminTest 
 Application	/home/rajib/Sites/rails_apps/kazdoor/config/application.rb	  class Application 
 ApplicationController	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/application_controller.rb	class ApplicationController 
@@ -150,6 +151,7 @@ down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_descript
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	  def self.down
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	  def self.down
 down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222200449_add_address_neighborhood_city_to_places.rb	  def self.down
+down	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222212903_add_zipcode_to_places.rb	  def self.down
 e	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/jquery.min.js	function e(l){return f.step(l)
 each	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function each(iterator)
 each	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function each(iterator, context)
@@ -430,6 +432,7 @@ up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219014735_add_descriptio
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101219030219_add_join_table_for_reward_and_places.rb	  def self.up
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101221014740_add_claim_availabled_to_rewads.rb	  def self.up
 up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222200449_add_address_neighborhood_city_to_places.rb	  def self.up
+up	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101222212903_add_zipcode_to_places.rb	  def self.up
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/campaigns_controller.rb	  def update
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses/places_controller.rb	  def update
 update	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/businesses_controller.rb	  def update

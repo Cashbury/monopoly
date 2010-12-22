@@ -1,4 +1,5 @@
 <%= form_for @business do |f| %>
+
   <%= f.error_messages %>
   <p>
     <%= f.label :categories, "Category" %><br />
@@ -23,6 +24,7 @@
 		<hr/>
 		<h3>Add a Branch</h3>
     
+
   
   <p>
     <%= builder.label :name %>
@@ -33,9 +35,15 @@
 	    <%= builder.text_field :description %>
     </p>
     <p>
-	    <%= builder.label :address %>
-	    <%= builder.text_field :address %>
+	    <%= builder.label :address1 %>
+	    <%= builder.text_field :address1 %>
+	  </p>carmen
+
+    <p>
+	    <%= builder.label :address2 %>
+	    <%= builder.text_field :address2 %>
 	  </p>
+
     <p>
 	    <%= builder.label :neighborhood %>
 	    <%= builder.text_field :neighborhood %>
@@ -44,19 +52,25 @@
 	    <%= builder.label :city %>
 	    <%= builder.text_field :city %>
 	  </p>
-    
+    <p>
+	    <%= builder.label :zipcode %>
+	    <%= builder.text_field :zipcode %>
+    </p>  
+    <p>
+	    <%= builder.label :country %>
+    </p>  
     
     <p>
 	    <%= builder.label :longitude %>
 	    <%= builder.text_field :long %>
 	  </p>
-	  <p>
+	  <p>uilder.c
 	    <%= builder.label :latitude %>
 	    <%= builder.text_field :lat %>
 	  </p>
-    
+
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>
   <% end %>
   <p><%= f.submit %></p>
-<% end %>
+  <% end %>
