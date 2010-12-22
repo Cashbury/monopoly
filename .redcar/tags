@@ -1,4 +1,4 @@
-1292978544
+1292981619
 Account	/home/rajib/Sites/rails_apps/kazdoor/app/models/account.rb	class Account 
 AddBusinessesCategoriesJointTable	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101211155542_add_businesses_categories_joint_table.rb	class AddBusinessesCategoriesJointTable 
 AddCampaignId	/home/rajib/Sites/rails_apps/kazdoor/db/migrate/20101218023724_add_campaign_id.rb	class AddCampaignId 
@@ -272,7 +272,6 @@ on	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function
 parseColor	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/effects.js	function parseColor(color)
 parseJSON	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function parseJSON()
 partition	/home/rajib/Sites/rails_apps/kazdoor/public/javascripts/prototype.js	function partition(iterator, context)
-places_list	/home/rajib/Sites/rails_apps/kazdoor/app/models/campaign.rb	  attr_accessor :places_list
 places_list	/home/rajib/Sites/rails_apps/kazdoor/app/models/engagement.rb	  attr_accessor :places_list
 places_list	/home/rajib/Sites/rails_apps/kazdoor/app/models/reward.rb	  attr_accessor :places_list
 places_under_business	/home/rajib/Sites/rails_apps/kazdoor/app/controllers/engagements_controller.rb	  def places_under_business

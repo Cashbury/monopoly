@@ -17,10 +17,11 @@ class Campaign < ActiveRecord::Base
   has_many :engagements
   has_many :rewards
   belongs_to :business
-  attr_accessible :name, :action, :expire_at, :campaign_type, :places_list
-  attr_accessor :places_list
-  
-  after_save :update_places
+  attr_accessible :name, :action, :expire_at, :campaign_type, 
+  #:places_list
+  # attr_accessor :places_list
+  # 
+  # after_save :update_places
   
   def campaign_types
     ["grow", "engage", "re-engage"]
