@@ -37,7 +37,7 @@
     <p>
 	    <%= builder.label :address1 %>
 	    <%= builder.text_field :address1 %>
-	  </p>carmen
+	  </p>
 
     <p>
 	    <%= builder.label :address2 %>
@@ -58,13 +58,14 @@
     </p>  
     <p>
 	    <%= builder.label :country %>
+			<%= builder.select :country, Carmen.countries %>
     </p>  
     
     <p>
 	    <%= builder.label :longitude %>
 	    <%= builder.text_field :long %>
 	  </p>
-	  <p>uilder.c
+	  <p>
 	    <%= builder.label :latitude %>
 	    <%= builder.text_field :lat %>
 	  </p>
