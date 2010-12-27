@@ -15,10 +15,8 @@ class Business < ActiveRecord::Base
   has_many :campaigns
   has_and_belongs_to_many :categories
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
-  
-  #attr_accessible :name, :description, :categories_list
 
-  attr_accessibleor :categories_list
+  attr_accessor :categories_list
   
   after_save :update_categories
   

@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  resources :activities
+
   resources :businesses do
     resources :places, :controller => "businesses/places"
     

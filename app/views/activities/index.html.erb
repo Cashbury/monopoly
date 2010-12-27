@@ -1,0 +1,25 @@
+<% title "Activities" %>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Engagement</th>
+    <th>Place</th>
+    <th>Points</th>
+    <th>Type</th>
+  </tr>
+  <% for activity in @activities %>
+    <tr>
+      <td><%= activity.user %></td>
+      <td><%= activity.engagement %></td>
+      <td><%= activity.place %></td>
+      <td><%= activity.points %></td>
+      <td><%= activity.type %></td>
+      <td><%= link_to "Show", activity %></td>
+      <td><%= link_to "Edit", edit_activity_path(activity) %></td>
+      <td><%= link_to "Destroy", activity, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Activity", new_activity_path %></p>

@@ -35,6 +35,7 @@ end
 gem 'devise'
 gem 'taps'
 gem 'nifty-generators'
+gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
 
 gem "mocha", :group => :test
 gem 'annotate-models'

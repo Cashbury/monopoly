@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/sferik/rails_admin.git
+  revision: 36b6a5f4e67008ea25ae4db1775421a4aafbd70f
+  specs:
+    rails_admin (0.0.1)
+      builder (~> 2.1.0)
+      rails (~> 3.0.3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -117,6 +125,7 @@ DEPENDENCIES
   mocha
   nifty-generators
   rails (= 3.0.3)
+  rails_admin!
   rspec
   rspec-rails
   sqlite3-ruby

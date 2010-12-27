@@ -1,0 +1,444 @@
+@charset "UTF-8";
+@import url("reward.css");
+/* CSS Document */
+
+#main_content {
+  padding: 10px 50px;
+}
+.cancel {
+  color: #CCC;
+  float: right;
+  font-size: 1.3em;
+  margin: 10px 20px 0 0;
+}
+.cancel:hover {
+  border-bottom: 1px dotted #DDD;
+  color: #AAA;
+}
+
+
+.rewardheading {
+
+font: 32px Museo Slab;
+}
+
+
+
+
+
+
+
+.info { 
+background:transparent 
+url(../img/reward.png) no-repeat -50px -100px;
+height: 34px;
+width: 40px;
+display: block;
+}
+
+
+.subcap{
+padding: 0px 0px 25px 0px;
+margin:0px;
+}
+
+#new_reward h2 {
+margin: 25px 0px 0px 0px;
+padding:0px;
+}
+
+
+.no_background {
+  background: none;
+}
+.reward_caption {
+  color: #555;
+  float: left;
+  font-size: 138.5%;
+  margin: 0 10px 10px 0;
+}
+
+#reward_limit,#reward_points, #expires, #reward_stamps {
+  width: 80px;
+}
+#expires {
+  margin-right: 10px;
+}
+input#reward_place_name {
+  margin-right: 10px;
+  width: 270px !important;
+}
+.row {
+  float: left;
+  margin-top: 20px;
+  width: 500px;
+}
+.save {
+  float: right;
+  margin: 0;
+}
+html .ui-datepicker-trigger {
+  cursor: pointer !important;
+}
+.row span {
+  color: #AAA;
+}
+
+
+
+
+/* -- Reward Form ----------------------------------------------------------------------------*/ 
+
+
+.form_item input[type="text"], textarea, input[type="file"], select, radio {
+background:none repeat scroll 0 0 #F8F8F8;
+border:1px solid #BBBBBB;
+color:#777777;
+font-size:108%;
+overflow:visible;
+padding:7px 0 7px 7px;
+width:450px;
+}
+
+
+
+
+
+ .basic_info_caption1, .basic_info_caption2, .basic_info_caption3, .location_caption {
+  
+    font-size:138.5%;
+	color:#555555;
+    width:410px;
+    margin:0px 10px 0px 0px;
+	padding-bottom:5px;
+	float:left;
+    }
+
+.goal_caption {
+	font-size:138.5%;
+	color:#555555;
+    width:410px;
+    margin:0px 10px 0px 0px;
+	float:left;
+    }
+
+  .basic_info_caption1 img, .basic_info_caption3 img { 
+    cursor: pointer; 
+    margin-left: 15px; 
+  }
+  .basic_info_caption2 {
+    width:450px;
+    }
+  .basic_info_caption3 {
+    width:100%;
+    }
+
+
+  .basic_info_input {
+    background:#F8F8F8;
+    border:1px solid #BBBBBB;
+    color:#777777;
+    float:left;
+    font-size:120%;
+    margin:1px 0px 5px 0px;
+    overflow:visible;
+    padding:10px 0px 10px 10px;
+    width:425px;
+  }
+  
+ 
+ 	.basic_info_item textarea { height: 75px !important; }
+
+    .basic_info_input:hover, .location_input:hover {
+      border:1px solid #888888;
+      }
+    .basic_info_input:focus, .basic_info_input:active, .location_input:focus,
+    .location_input:active {
+      border:1px dashed #888888 !important;
+      background:#FDFBEC; !important;
+      color:#555555 !important;
+      }
+
+
+ 
+
+.selectruntime {
+font-size:130%;
+padding-right:7px;
+width:425px !important;
+}
+
+
+
+  .rewardtype_input {
+    background:#FDFBEC;
+    border:2px solid #888888;
+    color:#777777;
+    font-size:130%;
+    margin:1px 10px 5px 0px;
+    padding:10px 40px 10px 10px;
+    }
+  
+ 	.Criterion_Type {
+	background:none repeat scroll 0 0 #F8F8F8;
+	border:1px solid #BBBBBB;
+	color:#777777;
+	float:left;
+	font-size:130%;
+	margin:1px 0 5px 0px;
+	overflow:visible;
+	padding:10px 0 10px 10px;
+	width:425px;
+	  } 
+  
+  
+  
+   #Stamps {  
+   DISPLAY: none; 
+   margin:1px 0 5px 0px;
+   width:417px;
+   } 
+   
+   
+   #Points {  
+   margin:1px 0 5px 0px;
+   width:417px;
+   } 
+
+
+   
+   
+  .basic_info_caption-points {
+   font-size:138.5%;
+   color:#555555;
+   width:450px;
+   margin:0px 10px 0px 0px;
+   float:left;
+   }
+  
+  .points_title {
+   padding-bottom: 10px;
+   margin: 0px;
+   }
+   
+  .stamps_title {
+   padding-bottom: 10px;
+   margin: 0px;
+   }
+   
+   #Enter_Num_Stamp {
+   float:left;
+   padding: 0px; 
+   margin: 0px;
+   } 
+   
+   
+     
+   #Enter_Stamp_Type {
+   float:left;
+   padding: 0px;
+   margin: 0px;
+   } 
+   
+   
+  
+  .enter_value_goal { 
+   background:#FDFBEC;
+   border:1px solid #BBBBBB;
+   color:#777777;
+   float:left;
+   font-size:130%;
+   margin:1px 0px 5px 0px;
+   overflow:visible;
+   padding:7px 0px 7px 7px;
+   width:100px;
+   }
+   
+   
+    .selectgoaltype {
+   float: left;
+   font-size:130%;
+   padding-right:7px;
+   margin-right: 5px;
+   width:100px;
+	}
+
+   .selectStampType {
+   float: left;
+   font-size:130%;
+   padding-right:7px;
+   margin-right: 5px;
+   width:200px;
+   }
+
+
+   .setgoaltype {
+   float: left;
+   font-size:100%;
+   padding-right:7px;
+   margin-right: 5px;
+   width:200px;
+   }
+
+
+  .enter_value { 
+   background:#FDFBEC;
+   border:1px solid #BBBBBB;
+   color:#777777;
+   float:left;
+   font-size:130%;
+   margin:1px 0px 5px 0px;
+   overflow:visible;
+   padding:7px 0px 7px 7px;
+   width:150px;
+   }
+  
+  
+  
+  .enter_value_g { 
+   background:#F8F8F8;
+   border:1px solid #BBBBBB;
+   color:#777777;
+   float:left;
+   font-size:130%;
+   margin:0px 0px 5px 0px;
+   overflow:visible;
+   padding:8px 0px 8px 8px;
+   margin-right: 7px;
+   width:150px;
+   }
+  
+  
+    .enter_value_g:hover  {
+      border:1px solid #888888;
+      }
+  	.enter_value_g:focus, .enter_value_g:active {
+      border:1px dashed #888888 !important;
+      background:#FDFBEC; !important;
+      color:#555555 !important;
+      }
+ 
+  
+   #Select_Stamp_Type { 
+   float:left;
+   padding: 0px;
+   margin: 0px;
+   } 
+   
+   
+   .selectrewardtype {
+      font-size:100%;
+	padding-right:7px;
+	width:100px !important;
+	}
+
+   
+  
+   
+  
+  
+   .rewardtype {
+   background:#F8F8F8;
+   border:1px solid #BBBBBB;
+   color:#777777;
+   float:left;
+   font-size:100%;
+   margin:10px 5px 5px 5px;
+   overflow:visible;
+   padding:15px 0px 15px 15px;
+   width:425px;
+   } 
+  
+  .rewardtype_desc {
+  display:inline-block;
+  float: left;
+  font-size:180%;
+  margin:0px;
+  padding:5px 0px 0px 10px;
+  color: #AAAAAA;
+  } 
+  
+  
+	.select {
+	font-size:100%;
+	padding-right:7px;
+	width:200px !important;
+	.}
+  
+
+ 
+
+
+
+input[type=button], input[type=submit] { border: none !important; cursor: pointer; }
+
+.select_place_open, .save {
+  border: 0 !important;
+  color: #666666;
+  cursor: pointer;
+  line-height: 12px;
+  float: left;
+  width: 144px;
+  height: 37px;
+}
+
+  .select_place_open { background: transparent url("images/hb_create_btn_sprite.png") no-repeat 0 -113px; }
+  .select_place_open:hover, .select_place_open:focus { background-position: 0 -150px; }
+  .select_place_open:active { background-position: 0 -187px; }
+
+  .save {
+    background: transparent url("images/hb_create_btn_sprite.png") no-repeat 0 -1px;
+    float: right;
+    margin-right: 67px;
+    width: 177px;
+  }
+  .save:hover, .save:focus { background-position: 0 -38px; }
+  .save:active { background-position: 0 -75px; }
+
+
+  input[type=button].purchase {
+    background: transparent url("images/hb_create_btn_sprite.png") no-repeat 0 0;
+    width: 140px;
+    height: 32px;
+  }
+    input[type=button].purchase:hover, input[type=button].purchase:focus { background-position: 0 -32px; }
+    input[type=button].purchase:active { background-position: 0 -64px; }
+
+  input[type=submit].update_info {
+    background: transparent url("images/hb_create_btn_sprite.png") no-repeat -141px 0;
+    width: 140px;
+    height: 32px;
+  }
+    input[type=submit].update_info:hover, input[type=submit].update_info:focus { background-position: -141px -32px; }
+    input[type=submit].update_info:active { background-position: -141px -64px; }
+    ) no-repeat 0 -1px;
+    float: right;
+    margin-right: 67px;
+    width: 177px;
+  }
+  .save:hover, .save:focus { background-position: 0 -38px; }
+  .save:active { background-position: 0 -75px; }
+
+
+  input[type=button].purchase {
+    background: transparent url("images/hb_create_btn_sprite.png") no-repeat 0 0;
+    width: 140px;
+    height: 32px;
+  }
+    input[type=button].purchase:hover, input[type=button].purchase:focus { background-position: 0 -32px; }
+    input[type=button].purchase:active { background-position: 0 -64px; }
+
+  input[type=submit].update_info {
+    background: transparent url("images/hb_create_btn_sprite.png") no-repeat -141px 0;
+    width: 140px;
+    height: 32px;
+  }
+    input[type=submit].update_info:hover, input[type=submit].update_info:focus { background-position: -141px -32px; }
+    input[type=submit].update_info:active { background-position: -141px -64px; }
+
+
+.smartdevice { 
+padding-right: 70px;
+padding-top: 60px;
+
+}
