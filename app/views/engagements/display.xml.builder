@@ -13,7 +13,7 @@ xml.response do |response|
       campaign.name @engagement.campaign.name
       campaign.expire_at @engagement.campaign.expire_at
       campaign.places do |p|
-        @engagement.campaign.places.each do |place|
+        @engagement.places.each do |place|
           p.name place.name
           p.coordinates "#{place.long}, #{place.lat}"
         end

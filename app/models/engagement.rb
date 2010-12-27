@@ -19,7 +19,9 @@ require "digest"
 class Engagement < ActiveRecord::Base
   belongs_to :campaign
   has_and_belongs_to_many :places
-  #attr_accessible :engagement_type,:name,  :stamp, :campaign_id, :state, :points, :description ,:place_id
+  
+  attr_accessor :places_list
+  after_save :update_places
  
   validates :name , :presence =>true,
                     :length =>{:within=>3..50}
@@ -31,12 +33,6 @@ class Engagement < ActiveRecord::Base
   def get_states
     ["deployed", "paused", "offline"]
   end
-  
-  attr_accessor :places_list
-
-  
-  after_save :update_places
-  
   
   #  private
   def update_places    
@@ -53,6 +49,4 @@ class Engagement < ActiveRecord::Base
     p code =  "http://kazdoor.heroku.com?place_id=#{place_id}&engagement_id=#{engagement_id}&points=#{points}&#{uni}"    
     "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
-  
-
 end

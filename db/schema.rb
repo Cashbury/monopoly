@@ -70,20 +70,33 @@ ActiveRecord::Schema.define(:version => 20101222212903) do
     t.integer "place_id"
   end
 
-  create_table "places", :force => true do |t|
-    t.string   "name"
-    t.string   "long"
-    t.string   "lat"
-    t.integer  "business_id"
-    t.text     "description"
+  create_table "histories", :force => true do |t|
+    t.string   "message"
+    t.string   "username"
+    t.integer  "item"
+    t.string   "table"
+    t.integer  "month",      :limit => 2
+    t.integer  "year",       :limit => 5
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "address1"
-    t.string   "neighborhood"
-    t.string   "city"
-    t.string   "address2"
-    t.string   "zipcode"
-    t.string   "country"
+  end
+
+  add_index "histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
+
+  create_table "places", :force => true do |t|
+    t.string    "name"
+    t.string    "long"
+    t.string    "lat"
+    t.integer   "business_id"
+    t.text      "description"
+    t.timestamp "created_at"
+    t.timestamp "updated_at"
+    t.string    "address1"
+    t.string    "neighborhood"
+    t.string    "city"
+    t.string    "address2"
+    t.string    "zipcode"
+    t.string    "country"
   end
 
   create_table "places_rewards", :id => false, :force => true do |t|
