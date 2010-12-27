@@ -1,6 +1,8 @@
 Kazdoor::Application.routes.draw do
-  resources :activities
-
+  resources :activities, :only => :create
+  
+  resources :categories
+  
   resources :businesses do
     resources :places, :controller => "businesses/places"
     
@@ -15,8 +17,6 @@ Kazdoor::Application.routes.draw do
   match "/places/:long/:lat" => "places#show"
   match "/places" => "places#index"
   match "/engagements/:id" => "engagements#display"
-  
-  resources :categories
   
   devise_for :users
   
