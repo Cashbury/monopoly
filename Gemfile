@@ -33,9 +33,11 @@ group :development, :test do
 end
 
 gem 'devise'
+gem 'sinatra', '1.0'
 gem 'taps'
 gem 'nifty-generators'
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
+gem "transitions", :require => ["transitions", "active_record/transitions"]
 
 gem "mocha", :group => :test
 gem 'annotate-models'

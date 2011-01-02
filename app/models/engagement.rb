@@ -17,14 +17,35 @@ require 'uri'
 require "digest"
 
 class Engagement < ActiveRecord::Base
+  include ActiveRecord::Transitions
+  
+  state_machine do
+    state :pending
+    state :started
+    state :stopped
+    state :expired
+
+    event :start do
+      transitions :to => :started, :from => [:pending]
+    end
+    
+    event :stop do
+      transitions :to => :stopped, :from => [:started]
+    end
+    
+    event :expire do
+      transitions :to => :expired, :from => [:started, :stopped]
+    end
+  end
+  
   belongs_to :campaign
   has_and_belongs_to_many :places
   
   attr_accessor :places_list
   after_save :update_places
  
-  validates :name , :presence =>true,
-                    :length =>{:within=>3..50}
+  validates :name, :presence =>true,
+                   :length =>{:within=>3..50}
 
   def engagement_types
     ["check-in", "stamp", "question", "spend"]
