@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  resources :reports
+
   resources :activities, :only => :create
   
   resources :categories

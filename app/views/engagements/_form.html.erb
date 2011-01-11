@@ -16,7 +16,7 @@
   </p>
   <p>
     <%= f.label :state %><br />
-    <%= f.select :state, @engagement.get_states %>
+    <%= f.select :state, Engagement.state_machine.states %>
   </p>
   <p>
     <%= f.label :points %><br />

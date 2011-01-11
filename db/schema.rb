@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101227144705) do
+ActiveRecord::Schema.define(:version => 20110111204252) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -117,6 +117,13 @@ ActiveRecord::Schema.define(:version => 20101227144705) do
   create_table "qrcodes", :force => true do |t|
     t.integer  "engagement_id"
     t.string   "photo_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "reports", :force => true do |t|
+    t.string   "name"
+    t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,0 +1,16 @@
+<% title "Report" %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @report.name %>
+</p>
+<p>
+  <strong>Type:</strong>
+  <%= @report.type %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_report_path(@report) %> |
+  <%= link_to "Destroy", @report, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", reports_path %>
+</p>
