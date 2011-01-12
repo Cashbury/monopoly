@@ -1,6 +1,4 @@
 Kazdoor::Application.routes.draw do
-  resources :reports
-
   resources :activities, :only => :create
   
   resources :categories
@@ -9,6 +7,7 @@ Kazdoor::Application.routes.draw do
     resources :places, :controller => "businesses/places"
     
     resources :campaigns, :controller => "businesses/campaigns" do
+      resources :reports
       resources :engagements do
         get "stamps", :on =>:collection
       end
