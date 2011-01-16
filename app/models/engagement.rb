@@ -38,7 +38,7 @@ class Engagement < ActiveRecord::Base
     end
   end
   
-  belongs_to :campaign
+  belongs_to :business
   has_and_belongs_to_many :places
   
   attr_accessor :places_list

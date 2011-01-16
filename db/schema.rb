@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110111204252) do
+ActiveRecord::Schema.define(:version => 20110115145444) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -41,16 +41,7 @@ ActiveRecord::Schema.define(:version => 20110111204252) do
     t.integer "category_id"
   end
 
-  create_table "campaigns", :force => true do |t|
-    t.string   "name"
-    t.string   "campaign_type"
-    t.datetime "expire_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "business_id"
-  end
-
-  create_table "campaigns_places", :id => false, :force => true do |t|
+  create_table "businesses_places", :id => false, :force => true do |t|
     t.integer "place_id"
     t.integer "campaign_id"
   end
@@ -68,7 +59,7 @@ ActiveRecord::Schema.define(:version => 20110111204252) do
     t.string   "points"
     t.string   "state"
     t.string   "description"
-    t.integer  "campaign_id"
+    t.integer  "business_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
@@ -126,19 +117,20 @@ ActiveRecord::Schema.define(:version => 20110111204252) do
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "reportable_id"
+    t.string   "reportable_type"
   end
 
   create_table "rewards", :force => true do |t|
     t.string   "name"
-    t.integer  "engagement_id"
+    t.integer  "business_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "campaign_id"
     t.integer  "place_id"
     t.text     "description"
     t.integer  "points"
     t.integer  "claim"
-    t.date     "availabled"
+    t.datetime "available"
   end
 
   create_table "users", :force => true do |t|

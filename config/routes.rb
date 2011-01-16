@@ -3,16 +3,17 @@ Kazdoor::Application.routes.draw do
   
   resources :categories
   
+  resources :accounts do
+    resources :reports
+  end
+  
   resources :businesses do
     resources :places, :controller => "businesses/places"
-    
-    resources :campaigns, :controller => "businesses/campaigns" do
-      resources :reports
-      resources :engagements do
-        get "stamps", :on =>:collection
-      end
-      resources :rewards
+    resources :reports
+    resources :engagements do
+      get "stamps", :on =>:collection
     end
+    resources :rewards
   end
   
   match "/places/:long/:lat" => "places#show"

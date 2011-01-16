@@ -8,12 +8,4 @@ RailsAdmin.config do |config|
       field :description
     end
   end
-  # config.model Engagement do
-  #   edit do
-  #     # field :state, :has_many_association do
-  #     #     Engagement.state_machine.states
-  #     #   end
-  #     fields
-  #   end
-  # end
 end

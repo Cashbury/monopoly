@@ -1,19 +1,15 @@
 <% title "Reports" %>
 
-<table>
+<table width="100%">
   <tr>
     <th>Name</th>
     <th>Type</th>
   </tr>
   <% for report in @reports %>
     <tr>
-      <td><%= report.name %></td>
+      <td><%= link_to report.name, report %></td>
       <td><%= report.type %></td>
-      <td><%= link_to "Show", report %></td>
-      <td><%= link_to "Edit", edit_report_path(report) %></td>
-      <td><%= link_to "Destroy", report, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
-
-<p><%= link_to "New Report", new_report_path %></p>
+<%= will_paginate @posts %>

@@ -16,11 +16,9 @@
 
 class Reward < ActiveRecord::Base
   belongs_to :engagement
-  belongs_to :campaign
-  belongs_to :reward #FIXME ??? Y this is here
+  belongs_to :business
   has_and_belongs_to_many :places
-
-
+  
   attr_accessor :places_list
   
   after_save :update_categories
