@@ -1,15 +1,28 @@
 class ActivitiesController < ApplicationController
-  def create
-    @activity = Activity.create(params[:activity])
-    # if @activity.save
-    #   redirect_to @activity
-    # else
-    #   render :action => 'new'
-    # end
-    respond_to do |format|
-      format.html { render :text => "Forbidden", :status => :forbidden }
-      format.xml { render :xml => @activity }
-      format.json { render :text => @activity.to_json }
+  def checkin
+    params[:report].delete(:type)
+    
+    @report = Report.new(params[:report])
+    @report.activity_type = "checkin"
+    if @report.save
+      respond_to do |format|
+        format.html { render :text => "Forbidden", :status => :forbidden }
+        format.xml { render :nothing => true, :status => :ok }
+        format.json { render :nothing => true, :status => :ok }
+      end
     end
   end
+  
+  def redeem
+    params[:report].delete(:type)
+    
+    @report = Report.new(params[:report])
+    @report.activity_type = "redeem"
+    if @report.save
+      respond_to do |format|
+        format.html { render :text => "Forbidden", :status => :forbidden }
+        format.xml { render :nothing => true, :status => :ok }
+        format.json { render :nothing => true, :status => :ok }
+      end
+    end
 end

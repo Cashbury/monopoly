@@ -21,8 +21,10 @@ class ReportsController < ApplicationController
   private
   def find_reportable
     if params[:business_id]
+      @title = "Business"
       return Business.where(params[:business_id]).first
     elsif params[:account_id]
+      @title = "Account"
       return Account.where(params[:account_id]).first
     end
     nil

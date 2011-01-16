@@ -2,14 +2,20 @@
 
 <table width="100%">
   <tr>
-    <th>Name</th>
+    <th><%= @title %> Name</th>
     <th>Type</th>
   </tr>
-  <% for report in @reports %>
-    <tr>
-      <td><%= link_to report.name, report %></td>
-      <td><%= report.type %></td>
+	<% unless @reports.empty? %>
+	  <% for report in @reports %>
+	    <tr>
+	      <td><%= link_to report.name, report %></td>
+	      <td><%= report.type %></td>
+	    </tr>
+	  <% end %>
+	<% else %>
+		<tr>
+      <td colspan="2">There are no reports</td>
     </tr>
-  <% end %>
+	<% end %>
 </table>
 <%= will_paginate @posts %>

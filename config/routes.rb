@@ -1,5 +1,8 @@
 Kazdoor::Application.routes.draw do
-  resources :activities, :only => :create
+  resources :activities do
+    post "checkin", :on => :collection
+    post "redeem", :on => :collection
+  end
   
   resources :categories
   
@@ -11,7 +14,7 @@ Kazdoor::Application.routes.draw do
     resources :places, :controller => "businesses/places"
     resources :reports
     resources :engagements do
-      get "stamps", :on =>:collection
+      get "stamps", :on => :collection
     end
     resources :rewards
   end
