@@ -2,7 +2,7 @@ require 'uri'
 
 class EngagementsController < ApplicationController
   before_filter :authenticate_user!,
-                :find_business_and_campaign, 
+                :find_business, 
                 :places_under_business,
                 :except => :display
   
@@ -17,14 +17,13 @@ class EngagementsController < ApplicationController
   
   def new
     @engagement = Engagement.new
-    @engagement.campaign_id = params[:campaign_id]
   end
   
   def create
     @engagement = Engagement.new(params[:engagement])
     if @engagement.save
       flash[:notice] = "Successfully created engagement."
-      redirect_to business_campaign_engagement_url(@business, @campaign, @engagement)
+      redirect_to business_engagement_url(@business, @engagement)
     else
       render :action => 'new'
     end
@@ -40,7 +39,7 @@ class EngagementsController < ApplicationController
     
     if @engagement.update_attributes(params[:engagement])
       flash[:notice] = "Successfully updated engagement."
-      redirect_to business_campaign_engagement_url(@business, @campaign, @engagement)
+      redirect_to business_engagement_url(@business, @engagement)
     else
       render :action => 'edit'
     end
@@ -50,7 +49,7 @@ class EngagementsController < ApplicationController
     @engagement = Engagement.find(params[:id])
     @engagement.destroy
     flash[:notice] = "Successfully destroyed engagement."
-    redirect_to business_campaign_engagements_url(@business, @campaign)
+    redirect_to business_engagements_url(@business)
   end
 
   def display
@@ -72,9 +71,8 @@ class EngagementsController < ApplicationController
   end
     
   private
-  def find_business_and_campaign
+  def find_business
     @business = Business.find(params[:business_id])
-    @campaign = Campaign.find(params[:campaign_id])
   end
 
   def places_under_business
