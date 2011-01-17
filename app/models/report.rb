@@ -4,4 +4,8 @@ class Report < ActiveRecord::Base
   attr_accessible :name, :type
   
   belongs_to :reportable, :polymorphic => true
+  
+  belongs_to :engagement
+  belongs_to :place
+  belongs_to :account
 end

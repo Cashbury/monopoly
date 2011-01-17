@@ -1,8 +1,13 @@
 class ActivitiesController < ApplicationController
+  before_filter :prepare_params
+  
   def checkin
     params[:report].delete(:type)
     
-    @report = Report.new(params[:report])
+    @business.reports.create(params[:report])
+    @account.reports.create(params[:report])
+    @place.reports.create(params[:report])
+    
     @report.activity_type = "checkin"
     if @report.save
       respond_to do |format|
@@ -16,7 +21,10 @@ class ActivitiesController < ApplicationController
   def redeem
     params[:report].delete(:type)
     
-    @report = Report.new(params[:report])
+    @business.reports.create(params[:report])
+    @account.reports.create(params[:report])
+    @place.reports.create(params[:report])
+    
     @report.activity_type = "redeem"
     if @report.save
       respond_to do |format|
@@ -25,4 +33,15 @@ class ActivitiesController < ApplicationController
         format.json { render :nothing => true, :status => :ok }
       end
     end
+  end
+  
+  private
+  def prepare_params
+    business_id = params[:report].delete(:business_id)
+    place_id = params[:report].delete(:place_id)
+    
+    @business = Business.where(business_id)
+    @account  = Account.where(params[:report][:account_id])
+    @place    = Place.where(place_id)
+  end
 end

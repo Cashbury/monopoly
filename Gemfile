@@ -39,6 +39,7 @@ gem 'nifty-generators'
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
 gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
+gem 'jquery-rails'
 
 gem "mocha", :group => :test
 gem 'annotate-models'

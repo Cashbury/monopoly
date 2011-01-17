@@ -1,0 +1,26 @@
+<table width="100%" class="pretty">
+  <tr>
+    <th><%= sortable "reportable_id", "Account" %></th>
+    <th><%= sortable "activity_type", "Type" %></th>
+    <th><%= sortable "engagement_id", "Engagement" %></th>
+    <th><%= sortable "points", "Points" %></th>
+    <th><%= sortable "place_id", "Place" %></th>
+    <th><%= sortable "created_at", "Created" %></th>
+  </tr>
+	<% unless @reports.empty? %>
+	  <% for report in @reports %>
+	    <tr>
+	      <td><%= report.reportable.user %></td>
+	      <td><%= report.activity_type %></td>
+	      <td><%= report.engagement.name %></td>
+	      <td><%= report.points %></td>
+	      <td><%= report.place.name %></td>
+	      <td><%= report.created_at %></td>
+	    </tr>
+	  <% end %>
+	<% else %>
+		<tr>
+      <td colspan="2">There are no reports</td>
+    </tr>
+	<% end %>
+</table>

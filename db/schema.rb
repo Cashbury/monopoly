@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110116192840) do
+ActiveRecord::Schema.define(:version => 20110117102749) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(:version => 20110116192840) do
     t.integer  "place_id"
     t.string   "points"
     t.string   "activity_type"
+    t.integer  "account_id"
   end
 
   create_table "rewards", :force => true do |t|

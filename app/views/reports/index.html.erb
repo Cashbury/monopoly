@@ -1,21 +1,17 @@
-<% title "Reports" %>
+<h3><%= link_to "Go back", :back %></h3>
 
-<table width="100%">
-  <tr>
-    <th><%= @title %> Name</th>
-    <th>Type</th>
-  </tr>
-	<% unless @reports.empty? %>
-	  <% for report in @reports %>
-	    <tr>
-	      <td><%= link_to report.name, report %></td>
-	      <td><%= report.type %></td>
-	    </tr>
-	  <% end %>
-	<% else %>
-		<tr>
-      <td colspan="2">There are no reports</td>
-    </tr>
-	<% end %>
-</table>
-<%= will_paginate @posts %>
+<div id="reports">
+	<%- if @reportable.kind_of?(Place) -%>
+		<%= render "place" -%>
+	<%- end -%>
+
+	<%- if @reportable.kind_of?(Account) -%>
+		<%= render "account" -%>
+	<%- end -%>
+
+	<%- if @reportable.kind_of?(Business) -%>
+		<%= render "business" -%>
+	<%- end -%>
+</div>
+
+<%= will_paginate @reports %>

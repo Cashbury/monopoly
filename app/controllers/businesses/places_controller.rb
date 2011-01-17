@@ -1,5 +1,5 @@
 class Businesses::PlacesController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :find_business
   
   def index
     @places = Place.all
@@ -47,5 +47,10 @@ class Businesses::PlacesController < ApplicationController
     @place.destroy
     flash[:notice] = "Successfully destroyed place."
     redirect_to places_url
+  end
+  
+  private
+  def find_business
+    @business = Business.where(params[:business_id]).first
   end
 end

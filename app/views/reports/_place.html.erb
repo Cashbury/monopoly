@@ -1,0 +1,26 @@
+<% title "Report for #{@business.name} - #{@reportable.name} branch" %>
+
+<table width="100%" class="pretty">
+  <tr>
+    <th><%= sortable "reportable_id", "Branch Name" %></th>
+    <th><%= sortable "activity_type", "Type" %></th>
+    <th><%= sortable "account_id", "Account" %></th>
+    <th><%= sortable "engagement_id", "Engagement" %></th>
+    <th><%= sortable "created_at", "Created" %></th>
+  </tr>
+	<% unless @reports.empty? %>
+	  <% for report in @reports %>
+	    <tr>
+	      <td><%= report.reportable.name %></td>
+	      <td><%= report.activity_type %></td>
+				<td><%= report.account.id %> <%= link_to "(show reports by account)", account_reports_path(report.account.id) %></td>
+	      <td><%= report.engagement.name %></td>
+	      <td><%= report.created_at %></td>
+	    </tr>
+	  <% end %>
+	<% else %>
+		<tr>
+      <td colspan="6">There are no reports at the moment</td>
+    </tr>
+	<% end %>
+</table>
