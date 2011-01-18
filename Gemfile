@@ -36,7 +36,7 @@ gem 'devise'
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
-gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
+gem 'rails_admin'
 gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
 gem 'jquery-rails'
