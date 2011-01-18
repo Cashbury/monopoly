@@ -1,3 +1,5 @@
+require "bundler/capistrano"
+
 set :user, 'kazdoor'  # Your dreamhost account's username
 set :domain, 'ps41154.dreamhostps.com'  # Dreamhost servername where your account is located 
 set :project, 'spinninghats.com'  # Your application as its called in the repository
