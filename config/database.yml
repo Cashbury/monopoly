@@ -19,4 +19,4 @@ production:
   adapter: mysql
   database: datastore.spinninghats.com
   user: user961
-  password: usr961lb
+  password: user961lb
