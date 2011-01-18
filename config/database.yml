@@ -17,6 +17,7 @@ test:
 
 production:
   adapter: mysql
-  database: datastore.spinninghats.com
+  host: datastore.spinninghats.com
+  database: datastore1
   user: user961
   password: user961lb
