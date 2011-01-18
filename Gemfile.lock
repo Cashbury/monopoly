@@ -51,7 +51,6 @@ GEM
     mime-types (1.16)
     mocha (0.9.10)
       rake
-    mysql (2.8.1)
     nifty-generators (0.4.3)
     polyglot (0.3.1)
     rack (1.2.1)
@@ -67,7 +66,6 @@ GEM
       activesupport (= 3.0.3)
       bundler (~> 1.0)
       railties (= 3.0.3)
-    rails_admin (0.0.0)
     railties (3.0.3)
       actionpack (= 3.0.3)
       activesupport (= 3.0.3)
@@ -105,10 +103,8 @@ DEPENDENCIES
   devise
   jquery-rails
   mocha
-  mysql
   nifty-generators
   rails (= 3.0.3)
-  rails_admin
   rspec
   rspec-rails
   transitions

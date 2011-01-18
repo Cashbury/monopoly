@@ -6,7 +6,6 @@ gem 'rails', '3.0.3'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 # gem 'sqlite3-ruby', :require => 'sqlite3'
-gem 'mysql'
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -36,7 +35,7 @@ gem 'devise'
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
-gem 'rails_admin'
+# gem 'rails_admin'
 gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
 gem 'jquery-rails'
