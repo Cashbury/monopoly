@@ -1,4 +1,4 @@
-require "bundler/capistrano"
+# require "bundler/capistrano"
 
 set :user, 'kazdoor'  # Your dreamhost account's username
 set :domain, 'ps41154.dreamhostps.com'  # Dreamhost servername where your account is located 
@@ -35,19 +35,7 @@ set :scm_verbose, true
 #	Post Deploy Hooks
 #############################################################
 
-after "deploy:update_code", "deploy:write_revision"
-before "deploy:gems", "deploy:symlink"
+# after "deploy:update_code", "deploy:write_revision"
+# before "deploy:gems", "deploy:symlink"
 #after "deploy:update_code", "deploy:gems" # You have to run deploy:gems manually after Gemfile changes
 #after "deploy:update_code", "deploy:precache_assets" #not working for rails3 yet
-
-### config/deploy/callbacks.rb
-namespace :deploy do
-
-  desc "expand the gems"
-  task :gems, :roles => :web, :except => { :no_release => true } do
-    run "cd #{current_path}; #{shared_path}/bin/bundle update"
-    run "cd #{current_path}; nice -19 #{shared_path}/bin/bundle install vendor/" # nice -19 is very important otherwise DH will kill the process!
-    run "cd #{current_path}; #{shared_path}/bin/bundle lock"
-  end
-
-end
