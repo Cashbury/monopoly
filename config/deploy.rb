@@ -13,8 +13,15 @@ role :db,  domain, :primary => true
 
 # deploy config
 set :deploy_to, applicationdir
-set :deploy_via, :export
+set :deploy_via, :remote_cache
 set :shared_path, "/home/#{user}/.gems"
+
+set :scm, 'git'
+set :repository,  "git@github.com:Kazdoor/monopoly.git"
+set :git_enable_submodules, 1 # if you have vendored rails
+set :branch, 'master'
+set :git_shallow_clone, 1
+set :scm_verbose, true
 
 # additional settings
 default_run_options[:pty] = true  # Forgo errors when deploying from windows
@@ -22,14 +29,6 @@ default_run_options[:pty] = true  # Forgo errors when deploying from windows
 set :chmod755, "app config db lib public vendor script script/* public/disp*"
 set :use_sudo, false
 ssh_options[:forward_agent] = true
-
-set :scm, 'git'
-set :repository,  "git@github.com:Kazdoor/monopoly.git"
-set :deploy_via, :remote_cache
-set :git_enable_submodules, 1 # if you have vendored rails
-set :branch, 'master'
-set :git_shallow_clone, 1
-set :scm_verbose, true
 
 #############################################################
 #	Post Deploy Hooks
@@ -39,3 +38,26 @@ set :scm_verbose, true
 # before "deploy:gems", "deploy:symlink"
 #after "deploy:update_code", "deploy:gems" # You have to run deploy:gems manually after Gemfile changes
 #after "deploy:update_code", "deploy:precache_assets" #not working for rails3 yet
+
+# tasks
+namespace :deploy do
+  task :start, :roles => :app do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+
+  task :stop, :roles => :app do
+    # Do nothing.
+  end
+
+  desc "Restart Application"
+  task :restart, :roles => :app do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
+
+  desc "Symlink shared resources on each release - not used"
+  task :symlink_shared, :roles => :app do
+    #run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+  end
+end
+
+after 'deploy:update_code', 'deploy:symlink_shared'
