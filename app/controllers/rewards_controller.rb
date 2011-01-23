@@ -1,12 +1,18 @@
 class RewardsController < ApplicationController
-  before_filter :authenticate_user!,
-                :find_business_and_campaign_and_engagment,
-                :places_under_business
+  before_filter :authenticate_user!, :except => [:index]
+  before_filter :find_business, :only => [:index]
+  # before_filter :find_engagement, :only => [:index]
+  before_filter :places_under_business
 
   #layout "application"
 
   def index
-    @rewards = Reward.all
+    @rewards = @business.rewards
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @rewards }
+      format.json { render :text => @rewards.to_json }
+    end
   end
   
   def show
@@ -51,10 +57,12 @@ class RewardsController < ApplicationController
   end
   
   private
-  def find_business_and_campaign_and_engagment
+  def find_business
     @business = Business.find(params[:business_id])
-    @campaign = Campaign.find(params[:campaign_id])
-    #@engagement = Engagement.find(params[:engagement_id])
+  end
+  
+  def find_engagement
+    @engagement = Engagement.find(params[:engagement_id])
   end
 
   def places_under_business

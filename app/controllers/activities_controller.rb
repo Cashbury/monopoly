@@ -1,14 +1,14 @@
 class ActivitiesController < ApplicationController
   before_filter :prepare_params
   
-  def checkin
+  def earn
     params[:report].delete(:type)
     
     @business.reports.create(params[:report])
     @account.reports.create(params[:report])
     @place.reports.create(params[:report])
     
-    @report.activity_type = "checkin"
+    @report.activity_type = "earn"
     if @report.save
       respond_to do |format|
         format.html { render :text => "Forbidden", :status => :forbidden }
@@ -18,14 +18,14 @@ class ActivitiesController < ApplicationController
     end
   end
   
-  def redeem
+  def spend
     params[:report].delete(:type)
     
     @business.reports.create(params[:report])
     @account.reports.create(params[:report])
     @place.reports.create(params[:report])
     
-    @report.activity_type = "redeem"
+    @report.activity_type = "spend"
     if @report.save
       respond_to do |format|
         format.html { render :text => "Forbidden", :status => :forbidden }

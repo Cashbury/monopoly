@@ -13,6 +13,11 @@ class BusinessesController < ApplicationController
   def show
     @business = Business.find(params[:id])
     @categories = Category.all
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @business }
+      format.json { render :text => @business.to_json}
+    end
   end
   
   def new

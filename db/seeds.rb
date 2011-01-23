@@ -16,9 +16,5 @@ b.categories << c1
 b.categories << c2
 
 b.places.create(:name => "Hamra", :description => "Makdessi Street", :long => "33,896499", :lat => "35,480575")
-
-campaign = Campaign.create("name" => "hamra stuff", :campaign_type => "engage")
-
-engagement1 = campaign.engagements.create(:engagement_type => "stamp", :points => "20")
-
-Reward.create(:name => "Free cup of coffee")
+b.engagements.create(:name => "Hello world", :engagement_type => "stamp", :points => "20")
+b.rewards.create(:name => "Free cup of coffee")

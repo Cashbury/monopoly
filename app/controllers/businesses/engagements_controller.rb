@@ -1,10 +1,12 @@
 require 'uri'
 
-class EngagementsController < ApplicationController
-  before_filter :authenticate_user!, :except => [:index, :show, :display]
+class Businesses::EngagementsController < ApplicationController
+  before_filter :authenticate_user!, :except => [:index, :show, :stamps]
+  before_filter :find_business
+  before_filter :except => :display
   
   def index
-    @engagements = Engagement.all
+    @engagements = @business.engagements
     
     respond_to do |format|
       format.html
@@ -14,7 +16,8 @@ class EngagementsController < ApplicationController
   end
   
   def show
-    @engagement = Engagement.find(params[:id])
+    @engagement = @business.engagements.find(params[:id])
+    
     respond_to do |format|
       format.html
       format.xml { render :xml => @engagement }
@@ -65,25 +68,23 @@ class EngagementsController < ApplicationController
     
     respond_to do |format|
       format.html
-      format.xml { render :xml => @engagement }
-      format.json { render :text => @engagement.to_json}
+      format.xml
+      format.json
     end
   end
   
   # => Author: Rajib Ahmed
   def stamps
-    @engagements = Campaign.find(params[:campaign_id]).engagements.where(:engagement_type=>"stamp")
+    @engagements = @business.engagements.where(:engagement_type=>"stamp")
     respond_to do |format|
-      format.js
+      format.html
+      format.xml { render :xml => @engagements }
+      format.json { render :text => @engagements.to_json}
     end
   end
     
   private
   def find_business
     @business = Business.find(params[:business_id])
-  end
-
-  def places_under_business
-    @places ||= Place.where(:business_id => params[:business_id]) 
   end
 end

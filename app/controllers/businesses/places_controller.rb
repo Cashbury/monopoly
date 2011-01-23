@@ -1,17 +1,24 @@
 class Businesses::PlacesController < ApplicationController
-  before_filter :authenticate_user!, :find_business
+  before_filter :authenticate_user!, :except => [:index, :show]
+  before_filter :find_business
   
   def index
-    @places = Place.all
+    @places = @business.places
     
     respond_to do |format|
       format.html
-      format.xml
+      format.xml { render :xml => @places }
+      format.json { render :text => @places.to_json}
     end
   end
   
   def show
     @place = Place.find(params[:id])
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @places }
+      format.json { render :text => @places.to_json}
+    end
   end
   
   def new
