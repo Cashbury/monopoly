@@ -46,6 +46,6 @@ set :ssh_options, {:forward_agent => true}
 #############################################################
 
 after "deploy:update_code", "deploy:write_revision"
-before "deploy:gems", "deploy:symlink"
-after "deploy:update_code", "deploy:gems"
+# before "deploy:gems", "deploy:symlink"
+# after "deploy:update_code", "deploy:gems"
 #after "deploy:update_code", "deploy:precache_assets" #not working for rails3 yet
