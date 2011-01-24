@@ -4,8 +4,10 @@ gem 'rails', '3.0.3'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
-
-# gem 'sqlite3-ruby', :require => 'sqlite3'
+# group :development do
+  gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
+# end
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -27,15 +29,14 @@ gem 'rails', '3.0.3'
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
 group :development, :test do
-  gem 'rspec'
-  gem 'rspec-rails'
+  # gem 'rspec'
+  # gem 'rspec-rails'
 end
 
 gem 'devise'
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
-# gem 'rails_admin'
 gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
 gem 'jquery-rails'
