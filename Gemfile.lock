@@ -1,3 +1,10 @@
+PATH
+  remote: vendor/gems/rails_admin
+  specs:
+    rails_admin (0.0.1)
+      builder (~> 2.1.0)
+      rails (~> 3.0.3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -65,7 +72,6 @@ GEM
       activesupport (= 3.0.3)
       bundler (~> 1.0)
       railties (= 3.0.3)
-    rails_admin (0.0.0)
     railties (3.0.3)
       actionpack (= 3.0.3)
       activesupport (= 3.0.3)
@@ -92,6 +98,6 @@ DEPENDENCIES
   mocha
   nifty-generators
   rails (= 3.0.3)
-  rails_admin
+  rails_admin!
   transitions
   will_paginate (~> 3.0.pre2)
