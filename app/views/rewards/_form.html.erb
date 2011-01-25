@@ -76,7 +76,8 @@
 				</div>
 			</div>
 			<div class="row">
-				<input type="submit" value="" name="commit" id="save_cont_btn" class="save"><a class="cancel right" href="/rewards/new">Cancel</a>
+				<input type="submit" value="" name="commit" id="save_cont_btn" class="save">
+				<%= link_to "Cancel", business_rewards_path(@business), :class => "cancel right" %>
 			</div>
 		</div>
 		<br/>
