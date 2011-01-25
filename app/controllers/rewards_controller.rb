@@ -57,7 +57,7 @@ class RewardsController < ApplicationController
   private
   def find_business_and_engagments
     @business = Business.find(params[:business_id])
-    @engagements = @business.engagements
+    @engagements = @business.engagements.stamps
   end
 
   def places_under_business
