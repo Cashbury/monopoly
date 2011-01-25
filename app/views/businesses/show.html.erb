@@ -47,3 +47,7 @@
   <%= link_to "Destroy", @business, :confirm => 'Are you sure?', :method => :delete %> |
   <%= link_to "View All", businesses_path %>
 </p>
+<p>
+  <%= link_to "Show Engagements", business_engagements_path(@business) %><br />
+	<%= link_to "Show Rewards", business_rewards_path(@business) %>
+</p>

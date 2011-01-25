@@ -6,11 +6,11 @@
   </tr>
   <% for reward in @rewards %>
     <tr>
-      <td><%= link_to reward.name, business_campaign_engagement_reward_path(@business, @campaign, @engagement, reward) %></td>
-      <td><%= link_to "Edit", edit_business_campaign_engagement_reward_path(@business, @campaign, @engagement, reward) %></td>
-      <td><%= link_to "Destroy", business_campaign_engagement_reward_path(@business, @campaign, @engagement, reward), :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= link_to reward.name, business_reward_path(@business, reward) %></td>
+      <td><%= link_to "Edit", edit_business_reward_path(@business, reward) %></td>
+      <td><%= link_to "Destroy", business_reward_path(@business, reward), :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Reward", new_business_campaign_engagement_reward_path(@business, @campaign, @engagement) %></p>
+<p><%= link_to "New Reward", new_business_reward_path(@business) %></p>

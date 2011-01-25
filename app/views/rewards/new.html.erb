@@ -4,7 +4,6 @@
 
 <% title "New Reward" %>
 
-
-<%= render 'form' %>
-
-
+<%= form_for business_rewards_path(@business) do |f| %>
+	<%= render :partial => 'form', :locals => {:f => f} %>
+<% end %>

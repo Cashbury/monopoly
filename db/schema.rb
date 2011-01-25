@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110124211949) do
+ActiveRecord::Schema.define(:version => 20110125180711) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(:version => 20110124211949) do
     t.integer  "points"
     t.integer  "claim"
     t.datetime "available"
+    t.integer  "engagement_id"
   end
 
   create_table "users", :force => true do |t|

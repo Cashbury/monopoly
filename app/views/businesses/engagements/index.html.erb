@@ -1,0 +1,22 @@
+<% title "Engagements" %>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Engagement Type</th>
+    <th>Points</th>
+    <th>State</th>
+  </tr>
+  <% for engagement in @engagements %>
+    <tr>
+      <td><%= link_to engagement.name , business_engagement_url(@business, engagement) %></td>
+      <td><%= link_to engagement.engagement_type, business_engagement_url(@business, engagement) %></td>
+      <td><%= engagement.points %></td>
+      <td><%= engagement.state %></td>
+      <td><%= link_to "Edit", edit_business_engagement_path(@business, engagement) %></td>
+      <td><%= link_to "Destroy", business_engagement_path(@business, engagement), :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Engagement", new_business_engagement_path(@business) %></p>

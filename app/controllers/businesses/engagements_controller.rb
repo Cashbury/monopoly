@@ -2,12 +2,12 @@ require 'uri'
 
 class Businesses::EngagementsController < ApplicationController
   before_filter :authenticate_user!, :except => [:index, :show, :stamps]
-  before_filter :find_business
+  before_filter :find_business_and_places
+  
   before_filter :except => :display
   
   def index
     @engagements = @business.engagements
-    
     respond_to do |format|
       format.html
       format.xml { render :xml => @engagements }
@@ -84,7 +84,8 @@ class Businesses::EngagementsController < ApplicationController
   end
     
   private
-  def find_business
+  def find_business_and_places
     @business = Business.find(params[:business_id])
+    @places = @business.places
   end
 end

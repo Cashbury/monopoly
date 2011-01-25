@@ -1,6 +1,6 @@
 class RewardsController < ApplicationController
   before_filter :authenticate_user!, :except => [:index]
-  before_filter :find_business, :only => [:index]
+  before_filter :find_business
   # before_filter :find_engagement, :only => [:index]
   before_filter :places_under_business
 
@@ -25,10 +25,9 @@ class RewardsController < ApplicationController
   
   def create
     @reward = Reward.new(params[:reward])
-    @reward.campaign_id = params[:campaign_id]
     if @reward.save
       flash[:notice] = "Successfully created reward."
-      redirect_to business_campaign_reward_url(@business, @campaign, @reward)
+      redirect_to business_reward_url(@business, @reward)
     else
       render :action => 'new'
     end
@@ -43,7 +42,7 @@ class RewardsController < ApplicationController
     @reward = Reward.find(params[:id])
     if @reward.update_attributes(params[:reward])
       flash[:notice] = "Successfully updated reward."
-      redirect_to business_campaign_reward_url(@business, @campaign, @reward)
+      redirect_to business_reward_url(@business, @reward)
     else
       render :action => 'edit'
     end
@@ -53,7 +52,7 @@ class RewardsController < ApplicationController
     @reward = Reward.find(params[:id])
     @reward.destroy
     flash[:notice] = "Successfully destroyed reward."
-    redirect_to business_campaign_rewards_url(@business, @campaign)
+    redirect_to business_rewards_url(@business)
   end
   
   private
