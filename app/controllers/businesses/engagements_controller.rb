@@ -31,7 +31,7 @@ class Businesses::EngagementsController < ApplicationController
   end
   
   def create
-    @engagement = Engagement.new(params[:engagement])
+    @engagement = @business.engagements.new(params[:engagement])
     if @engagement.save
       flash[:notice] = "Successfully created engagement."
       redirect_to business_engagement_url(@business, @engagement)

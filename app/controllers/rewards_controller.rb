@@ -24,7 +24,7 @@ class RewardsController < ApplicationController
   end
   
   def create
-    @reward = Reward.new(params[:reward])
+    @reward = @business.rewards.new(params[:reward])
     if @reward.save
       flash[:notice] = "Successfully created reward."
       redirect_to business_reward_url(@business, @reward)
