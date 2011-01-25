@@ -1,7 +1,6 @@
 class RewardsController < ApplicationController
   before_filter :authenticate_user!, :except => [:index]
-  before_filter :find_business
-  # before_filter :find_engagement, :only => [:index]
+  before_filter :find_business_and_engagments
   before_filter :places_under_business
 
   #layout "application"
@@ -56,12 +55,9 @@ class RewardsController < ApplicationController
   end
   
   private
-  def find_business
+  def find_business_and_engagments
     @business = Business.find(params[:business_id])
-  end
-  
-  def find_engagement
-    @engagement = Engagement.find(params[:engagement_id])
+    @engagements = @business.engagements
   end
 
   def places_under_business

@@ -42,7 +42,7 @@
 				</select>
 				<div id="points" class="setgoaltype"></div>
 				<div id="stamps" class="setgoaltype" style="display:none">
-					<%= select :reward, :engagement_id, [], :prompt=>"select one",:id =>'reward_stamp_type',:class=>"selectStampType"%>
+					<%= select :reward, :engagement_id, @engagements.map{|engagement| [engagement.name, engagement.id]}, :prompt=>"select one",:id =>'reward_stamp_type',:class=>"selectStampType"%>
 				</div>
 			</div>
 			<div class="row">
