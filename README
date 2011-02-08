@@ -4,7 +4,7 @@
 	2. Businesses
 		3. List all businesses
 			request:
-				http://username:password@kazdoor.com/businesses [xml]
+				http://username:password@spinninghats.com/businesses [xml]
 			request type:
 				GET
 			response:
@@ -21,7 +21,7 @@
 				
 		3. Display a business properties
 			request:
-				http://kazdoor.com/businesses/1 [xml]
+				http://spinninghats.com/businesses/1 [xml]
 			request type:
 				GET
 			response:
@@ -36,7 +36,7 @@
 				
 		3. Display a list of rewards available for a business
 			request:
-				http://kazdoor.com/businesses/1/rewards [xml]
+				http://spinninghats.com/businesses/1/rewards [xml]
 			request type:
 				GET
 			response:
@@ -58,7 +58,7 @@
 				
 		3. Display a list of places associated with a business
 			request:
-				http://kazdoor.com/businesses/1/places [xml]
+				http://spinninghats.com/businesses/1/places [xml]
 			request type:
 				GET
 			response:
@@ -84,7 +84,7 @@
 				
 		3. Display a list of engagements associated with a business
 			request:
-				http://kazdoor.com/businesses/1/engagements [xml]
+				http://spinninghats.com/businesses/1/engagements [xml]
 			request type:
 				GET
 			response:
@@ -106,7 +106,7 @@
 				
 		3. Display a list of engagements, that are of type stamps, associated with a business
 			request:
-				http://kazdoor.com/businesses/1/engagements/stamps [xml]
+				http://spinninghats.com/businesses/1/engagements/stamps [xml]
 			request type:
 				GET
 			response:
@@ -129,7 +129,7 @@
 	2. places
 		3. Display a place fetched by coordinates
 			request:
-				http://kazdoor.com/places/33,896499/35,480575 [xml]
+				http://spinninghats.com/places/33,896499/35,480575 [xml]
 			request type:
 				GET
 			response:
@@ -153,7 +153,7 @@
 				
 		3. Display a list of places
 			request:
-				http://kazdoor.com/places [xml]
+				http://spinninghats.com/places [xml]
 			request type:
 				GET
 			response:
@@ -180,7 +180,7 @@
 	2. Engagements
 		3. Display an engagement
 			request:
-				http://kazdoor.com/engagements/1 [xml]
+				http://spinninghats.com/engagements/1 [xml]
 			request type:
 				GET
 			response:
@@ -201,7 +201,7 @@
 	2. Activities
 		3. Store an activity of type "EARN"
 			request:
-				http://kazdoor.com/activities/earn [xml]
+				http://spinninghats.com/activities/earn [xml]
 			request type:
 				POST
 			request body:
@@ -216,7 +216,7 @@
 				
 		3. Store an activity of type "SPEND"
 			request:
-				http://kazdoor.com/activities/spend [xml]
+				http://spinninghats.com/activities/spend [xml]
 			request type:
 				POST
 			request body:

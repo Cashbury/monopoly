@@ -97,6 +97,7 @@ DEPENDENCIES
   jquery-rails
   mocha
   nifty-generators
+  rack (= 1.2.1)
   rails (= 3.0.3)
   rails_admin!
   transitions

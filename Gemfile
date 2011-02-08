@@ -1,5 +1,5 @@
 source :gemcutter
-
+gem 'rack', "1.2.1"
 gem 'rails', '3.0.3'
 
 # Bundle edge Rails instead:
@@ -27,10 +27,10 @@ gem 'rails', '3.0.3'
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-group :development, :test do
+# group :development, :test do
   # gem 'rspec'
   # gem 'rspec-rails'
-end
+# end
 
 gem 'devise'
 gem 'rails_admin', :path => 'vendor/gems/rails_admin'
