@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
+    <%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
+    <%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
+    <%= stylesheet_link_tag "home" %>
+    <%= javascript_include_tag :defaults, "cufon-yui" , "z_Arista_Light_300.font" %>
+    <script type="text/javascript">
+			$(function(){
+			});
+		</script>
+    <%= csrf_meta_tag %>
+    <%= yield(:head) %>
+  </head>
+  <body>
+    <div class="container showgrid">
+      <% flash.each do |name, msg| %>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <% end %>
+      <% content_tag :h1, yield(:title) if show_title? #not echoed%>
+      	<div id="content-section" class="span-22 prepend-1 append-1">					
+				<div class="home-menu">
+					<ul class="home right">
+						<li><a href="#">for you</a></li>
+						<li><a href="#">for your buissness</a></li>
+					</ul>
+				</div>
+				<div class="clear"></div>
+				<div id="content" class="prepend-1 append-1 bo clearfix">
+					<div class="span-12 bo">
+						<h2>CashBery</h2>	
+						<span>Reward Cards On Your Phone</span>
+					
+						<p class="home-sprite"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+						sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						</p>
+					</div>
+					<div class="span-20 bo">
+					
+						<div class="span-11 bo">	
+						<p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+						sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						</p>
+						</div>
+						<div class="span-6 push-2 bo">	
+						<p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+						sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+						Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+						</p>
+						</div>
+
+					<div>
+					
+					
+				</div>
+				
+				
+			</div>
+			
+			<div class="footer span-24 last">
+				copyright	
+			</div>
+    </div>
+  </body>
+</html>

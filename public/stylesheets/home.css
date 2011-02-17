@@ -1,0 +1,29 @@
+.container .header{
+	height:120px;
+	
+}
+
+
+#content-section{
+
+}
+
+.home-menu ul li{
+	display:inline;
+	list-
+}
+
+.home-menu ul.home{
+	margin-top:100px;
+}
+#content{
+
+	padding-top:30px;
+}
+.bo{
+	border:green 1px solid;
+}
+
+.home-sprite{
+	background: url(images/homeSprite.png) no-repeat top left;
+}

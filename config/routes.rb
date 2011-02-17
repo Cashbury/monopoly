@@ -1,4 +1,5 @@
 Kazdoor::Application.routes.draw do
+
   resources :activities do
     post "earn", :on => :collection
     post "spend", :on => :collection
@@ -24,7 +25,8 @@ Kazdoor::Application.routes.draw do
   match "/places/:long/:lat" => "places#show"
   match "/places" => "places#index"
   match "/engagements/:id" => "engagements#display"
-  
+  match "/home" => "home#index"
+  match "welcome" => "home#welcome"
   devise_for :users
   
   # The priority is based upon order of creation:
