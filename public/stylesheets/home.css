@@ -1,16 +1,11 @@
-.container .header{
-	height:120px;
-	
-}
-
-
-#content-section{
-
-}
-
 .home-menu ul li{
 	display:inline;
-	list-
+}
+
+.home-menu ul li a{
+  color:red;
+  font-weight:bold;
+  text-decoration:none;
 }
 
 .home-menu ul.home{
@@ -25,5 +20,5 @@
 }
 
 .home-sprite{
-	background: url(images/homeSprite.png) no-repeat top left;
+	background: url(/images/homeSprite.png) no-repeat top left;
 }

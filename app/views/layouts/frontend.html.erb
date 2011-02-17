@@ -7,7 +7,9 @@
     <%= stylesheet_link_tag "home" %>
     <%= javascript_include_tag :defaults, "cufon-yui" , "z_Arista_Light_300.font" %>
     <script type="text/javascript">
-			$(function(){
+      $(function(){
+          Cufon.replace("h2.com-name");
+          Cufon.replace('span.slogan');
 			});
 		</script>
     <%= csrf_meta_tag %>
@@ -29,8 +31,8 @@
 				<div class="clear"></div>
 				<div id="content" class="prepend-1 append-1 bo clearfix">
 					<div class="span-12 bo">
-						<h2>CashBery</h2>	
-						<span>Reward Cards On Your Phone</span>
+						<h2 class="com-name">CashBery</h2>	
+						<span class="slogan">Reward Cards On Your Phone</span>
 					
 						<p class="home-sprite"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
 						sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
@@ -42,7 +44,7 @@
 					<div class="span-20 bo">
 					
 						<div class="span-11 bo">	
-						<p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+						<p class="home-sprite"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
 						sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
 						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
