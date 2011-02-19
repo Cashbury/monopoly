@@ -29,6 +29,9 @@
             </div>
         </div>
         <div class="content">
+        <% flash.each do |name, msg| %>
+          <%= content_tag :div, msg, :id => "flash_#{name}" %>
+        <% end %>
             <img src="images/home/instagramTitle.png" class="instagram-title" alt="Instagram - Fast, beautiful photo sharing for your iPhone"/>
             <div class="tab">
                 <img src="images/home/paperclips.png" class="paper-clips">

@@ -1,0 +1,9 @@
+one:
+  letter_type: false
+  name: MyString
+  email: MyString
+
+two:
+  letter_type: false
+  name: MyString
+  email: MyString

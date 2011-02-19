@@ -6,6 +6,7 @@ class HomeController < ApplicationController
 
   def welcome
     @title = "Home"
+    flash[:notice] = "have to fix this"
 
     render :layout=>"home"
   end

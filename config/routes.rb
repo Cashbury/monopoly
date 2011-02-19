@@ -1,11 +1,14 @@
 Kazdoor::Application.routes.draw do
 
+  resources :newsletters
+
   resources :activities do
     post "earn", :on => :collection
     post "spend", :on => :collection
   end
   
-  resources :categories
+  resources :categories ,:newsletters
+
   
   resources :accounts do
     resources :reports, :only => [:create, :show, :index]

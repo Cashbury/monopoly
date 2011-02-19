@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110125180711) do
+ActiveRecord::Schema.define(:version => 20110219105432) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -73,6 +73,14 @@ ActiveRecord::Schema.define(:version => 20110125180711) do
   end
 
   add_index "histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
+
+  create_table "newsletters", :force => true do |t|
+    t.boolean  "letter_type"
+    t.string   "name"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "places", :force => true do |t|
     t.string   "name"
