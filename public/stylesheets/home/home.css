@@ -1,0 +1,61 @@
+body {
+	color: #563c13;
+	background: url(/images/home/headerBackgroundTall.png) repeat-x;
+}
+
+.wrap {
+    width: 810px;
+    margin: 0 auto;
+}
+
+.iphone {
+    padding-top: 40px;
+    width: 281px;
+    float: left;
+    position:relative;
+}
+.iphone .free-badge {
+    position: absolute;
+    top: 20px;
+    left: -35px;
+}
+.content {
+    float:left;
+    margin-left: 10px;
+    position: relative;
+    width: 509px;
+}
+.content .instagram-title {
+    position: absolute;
+    top: 180px;
+    left: 20px;
+}
+.content .tab {
+    margin-top: 250px;
+    height: 300px;
+    background: url(http://distillery.s3.amazonaws.com/static/home/images/tabBackground.png) 0 0 no-repeat;
+    padding: 30px 7% 0 7%;
+    width: 86%;
+}
+.content .paper-clips {
+    position: absolute;
+    top: 250px;
+    left: 0px;
+}
+.content .tab-content {
+    padding-left: 120px;
+}
+.content p {
+    font-size: 1.2em;
+    line-height: 1.4em;
+    margin-bottom: 1em;
+}
+.tab-content img.meet-instagram {
+    margin-bottom: 1em;
+}
+
+#iphone-overlay {
+    position:absolute;
+    top:137px;
+    left:22px;
+}

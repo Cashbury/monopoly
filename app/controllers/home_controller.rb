@@ -5,6 +5,9 @@ class HomeController < ApplicationController
   end
 
   def welcome
+    @title = "Home"
+
+    render :layout=>"home"
   end
 
 end

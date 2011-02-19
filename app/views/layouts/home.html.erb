@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
+    <%= stylesheet_link_tag "home/reset" ,"home/master" ,"home/home" %>
+    <%= javascript_include_tag :defaults,"slideshow","cufon-yui" , "z_Arista_Light_300.font" %>
+    <script type="text/javascript">
+      $(function(){
+          Cufon.replace("h2.com-name");
+          Cufon.replace('span.slogan');
+          	RunSlideShow("iphone-top", "iphone-overlay", "/images/home/screenshot1.png;/images/home/screenshot2.png;/images/home/screenshot3.png;/images/home/screenshot4.png;/images/home/screenshot5.png", 5); 
+			});
+		</script>
+    <%= csrf_meta_tag %>
+    <%= yield(:head) %>
+  </head>
+  <body>
+         <div id="wrap" class="group">
+        <div id="content">
+            
+    <div class="wrap">
+        <div class="iphone" id="iphone">
+            
+            <a href="http://itunes.com/apps/cashbery/"><img src="/images/home/freeBadge.png" class="free-badge" alt="Free Download"/></a>
+            
+            <img src="images/home/iphone.png"/>
+            <div id="iphone-overlay">
+                <img src="images/home/screenshot1.png" id="iphone-top"/>
+            </div>
+        </div>
+        <div class="content">
+            <img src="images/home/instagramTitle.png" class="instagram-title" alt="Instagram - Fast, beautiful photo sharing for your iPhone"/>
+            <div class="tab">
+                <img src="images/home/paperclips.png" class="paper-clips">
+                <div class="tab-content">
+                    <img src="images/home/meetInstagram.png" class="meet-instagram" alt="Meet cashbery."/>
+                    <p>
+                        It’s a <b>fast</b>, <b>beautiful</b> and <b>fun</b> way to share your life with friends through a series of pictures.
+                    </p>
+                    <p>
+                        Snap a photo with your iPhone, choose a filter to transform the look and feel, send to Facebook, Twitter or Flickr – it’s all as easy as pie. It’s photo sharing, reinvented.
+                    </p>
+                    <p>
+                        Oh yeah, did we mention it’s free?
+                    </p>
+                    <p>
+                        <a href="http://itunes.com/apps/cashbery/"><img src="images/home/appStoreBadge.png" alt="Available on the App Store"/></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </div>
+    
+    <div id="footer" class="group">
+        
+        <p style="color:#999; margin:1em 0; text-align:center; font-size:1.2em;">
+            <a href="/accounts/edit/">Edit Account</a>
+        </p>
+        
+        <p id="footer-links">
+            <a href="/about/">About us</a> &middot;
+			<a href="/blog/">Blog</a> &middot;
+			<a href="/about/faq">FAQ</a> &middot;
+			<a href="/about/jobs/">Jobs</a> <br/>
+        </p>         
+        <p>
+			Copyright 2010, Burbn, Inc. contact@cashbery.com
+		</p>
+    </div>
+  </body>
+</html>
