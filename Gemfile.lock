@@ -65,6 +65,7 @@ GEM
       activesupport (= 3.0.3)
       bundler (~> 1.0)
       railties (= 3.0.3)
+    rails_admin (0.0.0)
     railties (3.0.3)
       actionpack (= 3.0.3)
       activesupport (= 3.0.3)
@@ -95,6 +96,7 @@ DEPENDENCIES
   nifty-generators
   rack (= 1.2.1)
   rails (= 3.0.3)
+  rails_admin
   sqlite3-ruby
   transitions
   will_paginate (~> 3.0.pre2)
