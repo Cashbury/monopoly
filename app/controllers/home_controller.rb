@@ -5,10 +5,18 @@ class HomeController < ApplicationController
   end
 
   def welcome
-    @title = "Home"
-    flash[:notice] = "have to fix this"
+    @newsletter = Newsletter.new 
+    logger.info(@newsletter.inspect)
+  end
 
-    render :layout=>"home"
+  def create
+    @newsletter = Newsletter.new(params[:newsletter])
+    if @newsletter.save
+      flash[:notice] = "Thank you registering in beta program !."
+      redirect_to "index"
+    else
+      render :action =>'welcome'
+    end
   end
 
 end

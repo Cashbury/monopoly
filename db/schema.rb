@@ -77,10 +77,14 @@ ActiveRecord::Schema.define(:version => 20110219105432) do
   create_table "newsletters", :force => true do |t|
     t.boolean  "letter_type"
     t.string   "name"
+    t.string   "city"
+    t.string   "country"
     t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "newsletters", ["email"], :name => "index_newsletters_on_email", :unique => true
 
   create_table "places", :force => true do |t|
     t.string   "name"

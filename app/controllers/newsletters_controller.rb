@@ -1,4 +1,6 @@
 class NewslettersController < ApplicationController
+  layout "frontend"
+
   def index
     @newsletters = Newsletter.all
   end
@@ -14,10 +16,10 @@ class NewslettersController < ApplicationController
   def create
     @newsletter = Newsletter.new(params[:newsletter])
     if @newsletter.save
-      flash[:notice] = "Successfully created newsletter."
-      redirect_to @newsletter
+      flash[:notice] = "Thank you registering in beta program !."
+      redirect_to "index"
     else
-      render :action => 'new'
+      render :action => "new"
     end
   end
 

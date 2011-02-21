@@ -1,24 +1,73 @@
+body{ background:#eef1f3 url(/images/home/yellow.png) repeat-x;}
+.container{
+  width:1210px;
+
+}
+
 .home-menu ul li{
-	display:inline;
+    display:inline;
+    float:left;
 }
 
 .home-menu ul li a{
-  color:red;
-  font-weight:bold;
+  display:block;
   text-decoration:none;
+  height:55px;
+  text-indent:-5000px;
+}
+.home-menu ul li a.for-you{ background:url(/images/home/for_you.png) no-repeat ; width:122px}
+.home-menu ul li a.for-your-business{background:url(/images/home/foryourbiz.png) no-repeat;width:142px; margin-left:10px;} 
+
+.home-menu{ height:100px;}
+.home-menu ul.home{
+  width:280px;
 }
 
-.home-menu ul.home{
-	margin-top:100px;
-}
 #content{
 
 	padding-top:30px;
 }
 .bo{
-	border:green 1px solid;
+  /*border: green 1px solid;*/
 }
 
-.home-sprite{
-	background: url(/images/homeSprite.png) no-repeat top left;
+
+.right-column{
+  margin-top:95px;
+}
+.hide{
+  display:none;
+}
+
+.content-box{
+  margin-top:20px;
+  background: url(/images/home/header.png) no-repeat;
+  padding-top: 100px;
+}
+
+.white-container{
+  background:#fff;
+  padding: 20px;
+  margin-left:12px;
+  margin-right:3px;
+}
+.content-box p{
+
+  font-size:1.3em;
+}
+
+.error_messages ul{
+  margin:0; padding:0;
+}
+
+.error_messages ul li {
+  margin-bottom:3px;
+  list-style:none;
+  padding:3px 8px;
+  list-position:outside;
+  height:20px;
+  border:1px groove green;
+  background: yellow;
+  line-height:20px;
+  font-size:1em;
 }
