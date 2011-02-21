@@ -71,3 +71,7 @@ body{ background:#eef1f3 url(/images/home/yellow.png) repeat-x;}
   line-height:20px;
   font-size:1em;
 }
+
+.company-name{
+  font-weight:bold;
+}
