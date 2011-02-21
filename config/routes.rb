@@ -26,7 +26,6 @@ Kazdoor::Application.routes.draw do
   end
   
 
-  match "/for_you"=>"newsletters#index"
   match "/places/:long/:lat" => "places#show"
   match "/places" => "places#index"
   match "/engagements/:id" => "engagements#display"
