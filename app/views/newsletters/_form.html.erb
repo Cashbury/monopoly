@@ -1,9 +1,9 @@
 <%= form_for @newsletter do |f| %>
   <%= f.error_messages %>
-  <p>
+  <!--<p>
     <%= f.label :letter_type ,"I am personally interested" %><br />
     <%= f.check_box :letter_type %>
-  </p>
+  </p>-->
   <p>
     <%= f.label :name , "Business Name" %><br />
     <%= f.text_field :name , :class => "text"%>
@@ -16,11 +16,11 @@
     <%= f.label :city %><br/>
     <%= f.text_field :city , :class =>"text" %>
   </p>
- <p>
+ <!--<p>
    <%= f.label :country %><br/>
    <%= f.text_field :country  , :class=>"text"%>
   </p>
-
+  -->
 
   <p><%= f.submit %></p>
 <% end %>

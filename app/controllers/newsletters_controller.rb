@@ -1,5 +1,6 @@
 class NewslettersController < ApplicationController
   layout "frontend"
+  before_filter :authenticated_user! , :only=>[:index , :destroy]
 
   def index
     @newsletters = Newsletter.all

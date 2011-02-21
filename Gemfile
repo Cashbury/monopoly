@@ -21,7 +21,7 @@ gem 'rails', '3.0.3'
 # Bundle the extra gems:
 # gem 'bj'
 # gem 'nokogiri'
-gem 'sqlite3-ruby', :require => 'sqlite3'
+#gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 
 # Bundle gems for the local environment. Make sure to
@@ -33,7 +33,8 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 # end
 
 gem 'devise'
-gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git'
+gem 'rails_admin' ,:path=>'vendor/gems/rails_admin'
+#:git => 'git://github.com/sferik/rails_admin.git'
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
