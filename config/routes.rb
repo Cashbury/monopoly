@@ -25,11 +25,12 @@ Kazdoor::Application.routes.draw do
     resources :rewards
   end
   
+
+  match "/for_you"=>"newsletters#index"
   match "/places/:long/:lat" => "places#show"
   match "/places" => "places#index"
   match "/engagements/:id" => "engagements#display"
-  match "/home" => "home#index"
-  match "welcome" => "home#welcome"
+  
   devise_for :users
   
   # The priority is based upon order of creation:
