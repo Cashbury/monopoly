@@ -23,7 +23,7 @@
 }
 
 .total{
-  padding: 5px 0;
+  padding:5px 0;
 }
 
 .fan_box .connections .connections_grid {
@@ -35,7 +35,6 @@
 .fan_box .connections_grid .grid_item .name{
   font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
   font-weight: normal;
-  color: #666 !important;
   padding-top: 1px !important;
 }
 

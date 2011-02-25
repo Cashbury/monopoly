@@ -5,6 +5,7 @@ class Newsletter < ActiveRecord::Base
 
   validates :name , :presence => true
   validates :email, :presence => true,
+                    :uniqueness=> true,
                     :format   => {:with=> email_regex}
 
   def self.get_names

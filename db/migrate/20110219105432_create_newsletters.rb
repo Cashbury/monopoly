@@ -12,7 +12,7 @@ class CreateNewsletters < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :newsletters
     remove_index :newsletters , :email
+    drop_table :newsletters
   end
 end

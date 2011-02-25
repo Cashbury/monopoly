@@ -18,7 +18,7 @@ class NewslettersController < ApplicationController
     @newsletter = Newsletter.new(params[:newsletter])
     if @newsletter.save
       flash[:notice] = "Thank you registering in beta program !."
-      redirect_to "index"
+      redirect_to :action=>'index'
     else
       render :action => "new"
     end
