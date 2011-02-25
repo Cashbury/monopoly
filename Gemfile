@@ -35,8 +35,6 @@ gem 'rails', '3.0.3'
 gem 'devise'
 gem 'rails_admin' , :path=>'vendor/gems/rails_admin'
 #:git => 'git://github.com/sferik/rails_admin.git'
-#:git => 'git://github.com/sferik/rails_admin.git'
-
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
@@ -47,3 +45,4 @@ gem 'jquery-rails'
 gem "mocha", :group => :test
 gem 'annotate-models'
 gem 'jquery-rails'
+gem 'carmen' #for coutry population

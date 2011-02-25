@@ -1,0 +1,41 @@
+/* 3.1 Facebook Like Box */
+.fan_box .full_widget{
+  border:0 !important;
+}
+
+.fan_box .connect_top{
+  background: none !important;
+  padding: 0 !important;
+}
+.fan_box .profileimage, .fan_box .name_block{
+  display: none;
+}
+.fan_box .connect_action{
+  padding: 0 !important;
+}
+
+.fan_box .connections{
+  padding: 0 !important;
+  border: 0 !important;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.total{
+  padding: 5px 0;
+}
+
+.fan_box .connections .connections_grid {
+  padding-top: 10px !important;
+}
+.fan_box .connections_grid .grid_item{
+  padding: 0 10px 10px 0 !important;
+}
+.fan_box .connections_grid .grid_item .name{
+  font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+  font-weight: normal;
+  color: #666 !important;
+  padding-top: 1px !important;
+}
+

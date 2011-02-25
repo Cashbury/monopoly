@@ -40,7 +40,6 @@ GEM
     arel (2.0.7)
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
-    carmen (0.2.4)
     devise (1.1.5)
       bcrypt-ruby (~> 2.1.2)
       warden (~> 1.0.2)
@@ -96,7 +95,6 @@ PLATFORMS
 
 DEPENDENCIES
   annotate-models
-  carmen
   devise
   jquery-rails
   mocha

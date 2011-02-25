@@ -6,30 +6,96 @@
   }
 </style>
 
-            <div class="logo">
-              <%= image_tag "home/cashbery-hp-logo.png", :width =>"200px"%>
-              <h2 class="hide">CashBery.com</h2>
-            </div>
-            <div class="slogan buggy">
-              <%= image_tag "home/rewardcardonyourphoneinasnap.png" %>
-            </div>
-            <div class="content-box bo">
-              <div class="content-header">
-                <%= image_tag "home/funfreeforvergreen.png" %>
-              </div>
-                <div class="white-container">
+<div class="logo">
+  <%= image_tag "home/cashbery-hp-logo.png", :width =>"200px"%>
+  <h2 class="hide">CashBery.com</h2>
+</div>
+<div class="slogan buggy">
+  <%= image_tag "home/rewardcardonyourphoneinasnap.png" %>
+</div>
+<div class="content-box bo">
+  <div class="content-header">
+    <%= image_tag "home/funfreeforvergreen.png" %>
+  </div>
+    <div class="white-container">
 <p> With <span class="company-name">Cashbery</span> on your phone, carrying your reward cards has never been easier. No more paper cards to bring, no more forgetting, no more fat wallets to deal with. Cashbery, the smarter way to go. 
 </p>
 <p>
   <span class="company-name">Cashbery</span> is in private beta today, Like us on facebook to stay tuned.
 </p>
-            <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script>
-            <fb:like-box href="http://www.facebook.com/pages/Cashbery/148587535202968" width="570" connections="10" show_faces="true" stream="false" header="false"></fb:like-box>
-            <style type="text/css" media="screen">
-              .fbConnectWidgetTopmost{ border-width:0;}
-            </style>
-                <div>
+          <div class="clsFacebookLikePart">
+          	<div id="fb-root"></div>
+    	    <script language="javascript" type="text/javascript">
+		      window.fbAsyncInit = function() {
+		        FB.init({
+		          appId   : '172871719404948',
+		          status  : true, // check login status
+		          cookie  : true, // enable cookies to allow the server to access the session
+		          xfbml   : true // parse XFBML
+		        });
 
-            </div>
-            </div>
+				// whenever the user logs in, we refresh the page
+		        FB.Event.subscribe('auth.login', function() {
+				  //document.getElementId('id-log').disabled = true;
+				  publishMyExample();
+				  //window.location.reload();
+		        });
+		      };
+
+		      (function() {
+		        var e = document.createElement('script');
+		        e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+		        e.async = true;
+		        document.getElementById('fb-root').appendChild(e);
+		      }());
+
+		      function publishMyExample() {
+		  		  if (!FB.getSession()) {
+
+		  		  FB.login(publishMyExample, {perms: 'read_stream,publish_stream'})
+				  }
+				  else{
+				  FB.ui(
+					   {
+					     method: 'stream.publish',
+					     attachment: {
+								       name: 'I just earned this awsome badge from Kazdoor.com',
+								       caption: 'Get yours today to start discovering beirut the fun way',
+								       description: (
+								         'www.kazdoor.com'
+								       ),
+								       href: 'http://kazdoor.com',
+									   media: [
+											      {
+											        type: 'image',
+											        href: 'http://kazdoor.com',
+											        src: 'http://kazdoor.com/app/webroot/img/blue-theme/beirut.png'
+											      }
+											    ]
+					     			  },
+
+						 action_links: [
+					       				{ text: 'Kazdoor', href: 'http://kazdoor.com' }
+					     			   ],
+					     user_message_prompt: 'Share your thoughts about Kazdoor.com'
+					   },
+
+					   function(response) {
+					     if (response && response.post_id) {
+					       //alert('Post was published.');
+					     } else {
+					       //alert('Post was not published.');
+					     }
+					   }
+					 );
+				}
+			}
+		    </script>
+
+			<fb:fan profile_id="146639035373581"  stream="false" connections="9" height="100" logobar="0" width="500" css="http://rajib.d32.com.bd/facebook.css?id=12"></fb:fan>
+
+          
+<div>
+</div>
+</div>
 
