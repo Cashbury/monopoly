@@ -8,8 +8,5 @@ class Newsletter < ActiveRecord::Base
                     :uniqueness=> true,
                     :format   => {:with=> email_regex}
 
-  def self.get_names
-    Carmen.countries
-  end
 
 end
