@@ -26,9 +26,11 @@ Kazdoor::Application.routes.draw do
   end
   
 
-  match "/places/:long/:lat" => "places#show"
-  match "/places" => "places#index"
-  match "/engagements/:id" => "engagements#display"
+  match "/places/:long/:lat"  => "places#show"
+  match "/places"             => "places#index"
+  match "/engagements/:id"    => "engagements#display"
+  match '/foryou'             => "newsletters#index" ,:as =>:foryou
+  match '/foryourbiz'         => "newsletters#new"   , :as =>:foryourbiz
   
   devise_for :users
   
