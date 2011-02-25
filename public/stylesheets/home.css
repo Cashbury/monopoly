@@ -1,9 +1,11 @@
-body{ background:#eef1f3 url(/images/home/green.png) repeat-x;}
+body{ background: #FFFFFF url(/images/home/green.png) repeat-x;}
 .container{
   width:1210px;
-
 }
-
+#content-section{
+  width:1000px;
+  margin: 0 auto;
+}
 .home-menu ul li{
     display:inline;
     float:left;
@@ -32,6 +34,7 @@ body{ background:#eef1f3 url(/images/home/green.png) repeat-x;}
 
 
 .right-column{
+  padding-top:60px;
 }
 .hide{
   display:none;
@@ -89,7 +92,7 @@ div.iphone{
   padding-left:30px;
 }
 .slogan.buggy{
-  padding-left:28px;
+  padding-left:26px;
 }
 input.submit{
   background:url(/images/home/joinbt.png) no-repeat transparent center top;
@@ -103,3 +106,10 @@ input.submit{
   cursor: hand; /* for IE 5.x */
 
 }
+.footer{
+  width:1000px;
+  margin:0 auto;
+  text-align:center;
+  padding:3px 0;
+}
+
