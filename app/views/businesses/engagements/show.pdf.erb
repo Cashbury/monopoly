@@ -1,0 +1,6 @@
+  <% for place in @engagement.places %>
+    <h3><%= place.name %></h3>
+    <% if @engagement.engagement_type.downcase == "stamp" %>
+     <%= wicked_pdf_image_tag "qrcodes/image.png" %>
+    <% end %>  
+  <% end %>

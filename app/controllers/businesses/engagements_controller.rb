@@ -1,4 +1,5 @@
 require 'uri'
+require 'open-uri'
 
 class Businesses::EngagementsController < ApplicationController
   before_filter :authenticate_user!, :except => [:index, :show, :stamps]
@@ -19,6 +20,13 @@ class Businesses::EngagementsController < ApplicationController
     @engagement = @business.engagements.find(params[:id])
     
     respond_to do |format|
+      format.pdf do
+        for place in @engagement.places do
+           url = Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ,place.created_at)
+           save_image(url)
+        end
+        render  :pdf => "#{@business.name}_qrcode"
+      end
       format.html
       format.xml { render :xml => @engagement }
       format.json { render :text => @engagement.to_json}
@@ -83,9 +91,17 @@ class Businesses::EngagementsController < ApplicationController
     end
   end
     
+
   private
   def find_business_and_places
     @business = Business.find(params[:business_id])
     @places = @business.places
   end
+  
+  def save_image(url)
+     open("#{RAILS_ROOT}/public/images/qrcodes/image.png","wb")  do |io|
+       io << open(URI.parse(url)).read
+     end
+  end
+  
 end

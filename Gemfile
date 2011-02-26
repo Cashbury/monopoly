@@ -21,7 +21,7 @@ gem 'rails', '3.0.3'
 # Bundle the extra gems:
 # gem 'bj'
 # gem 'nokogiri'
-#gem 'sqlite3-ruby', :require => 'sqlite3'
+gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 
 # Bundle gems for the local environment. Make sure to
@@ -31,10 +31,15 @@ gem 'rails', '3.0.3'
   # gem 'rspec'
   # gem 'rspec-rails'
 # end
+#
+
+group :development do
+  gem "railroady"  
+end
 
 gem 'devise'
-gem 'rails_admin' , :path=>'vendor/gems/rails_admin' 
-#:git => 'git://github.com/sferik/rails_admin.git'
+gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git' 
+# :path=>'vendor/gems/rails_admin' 
 
 # gem 'sinatra', '1.0'
 # gem 'taps'
@@ -48,4 +53,4 @@ gem 'annotate-models'
 gem 'jquery-rails'
 gem 'attr_encrypted'
 gem 'carmen' , '>0.2.4'
-#gem 'wicked_pdf'
+gem 'wicked_pdf'
