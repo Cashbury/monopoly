@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/sferik/rails_admin.git
+  revision: e92b56bfdbb81a229ac69233985d7f3de54079f7
+  specs:
+    rails_admin (0.0.1)
+      builder (~> 2.1.0)
+      rails (~> 3.0.3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -30,12 +38,18 @@ GEM
     activesupport (3.0.3)
     annotate-models (1.0.4)
     arel (2.0.7)
+    attr_encrypted (1.1.2)
+      eigenclass (>= 1.1.1)
+      encryptor (>= 1.1.0)
+      mocha (>= 0.9.8)
     bcrypt-ruby (2.1.4)
     builder (2.1.2)
-    carmen (0.2.5)
+    carmen (0.2.4)
     devise (1.1.5)
       bcrypt-ruby (~> 2.1.2)
       warden (~> 1.0.2)
+    eigenclass (1.1.1)
+    encryptor (1.1.1)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     i18n (0.5.0)
@@ -81,6 +95,7 @@ GEM
     tzinfo (0.3.24)
     warden (1.0.3)
       rack (>= 1.0.0)
+    wicked_pdf (0.6.0)
     will_paginate (3.0.pre2)
 
 PLATFORMS
@@ -88,13 +103,16 @@ PLATFORMS
 
 DEPENDENCIES
   annotate-models
-  carmen
+  attr_encrypted
+  carmen (= 0.2.4)
   devise
   jquery-rails
   mocha
   nifty-generators
   rack (= 1.2.1)
   rails (= 3.0.3)
+  rails_admin!
   sqlite3-ruby
   transitions
+  wicked_pdf
   will_paginate (~> 3.0.pre2)
