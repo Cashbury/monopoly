@@ -37,4 +37,5 @@
   <%= link_to "Edit", edit_business_engagement_path(@business, @engagement) %> |
   <%= link_to "Destroy", business_engagement_path(@business, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
   <%= link_to "View All", business_engagements_path(@business) %>
+  <%= link_to "Download(pdf)", business_engagement_path(@business,@engagement , :format=>:pdf ) %>
 </p>
