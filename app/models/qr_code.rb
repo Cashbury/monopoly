@@ -1,7 +1,7 @@
 require 'uri'
 class QrCode < ActiveRecord::Base
   belongs_to :place
-  belongs_to :engagement
+  belongs_to :engagement, :dependent => :destroy
 
   before_save :encrypt_code
 
@@ -10,7 +10,6 @@ class QrCode < ActiveRecord::Base
     save_image(self.hash_code)
     self.hash_code
   end
-
 
   def self.encrypt(text)
     @key = OpenSSL::Digest::SHA256.new("hassan").digest
