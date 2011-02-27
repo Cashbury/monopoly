@@ -40,6 +40,9 @@ class Engagement < ActiveRecord::Base
   
   belongs_to :business
   has_and_belongs_to_many :places
+
+  has_many :qr_codes
+
   
   scope :stamps, where(:engagement_type => "stamp") 
   
@@ -73,23 +76,6 @@ class Engagement < ActiveRecord::Base
     "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(self.encrypt(code),Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
   end
 
-  def self.encrypt(text)
-    @key = OpenSSL::Digest::SHA256.new("hassan").digest
-    @cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
-    @cipher.encrypt
-    @cipher.key = @key
-
-    @cipher.update(text) 
-    @cipher.final
-  end
-
-  def self.decrypt(text)
-    @cipher.decrypt
-    @cipher.key = @key
-
-    @cipher.update(text) 
-    @cipher.final
-  end
   
 
 end

@@ -1,0 +1,27 @@
+<h1>Listing qr_codes</h1>
+
+<table>
+  <tr>
+    <th>Place</th>
+    <th>Engagment</th>
+    <th>Hash code</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @qr_codes.each do |qr_code| %>
+  <tr>
+    <td><%= qr_code.place_id %></td>
+    <td><%= qr_code.engagement_id %></td>
+    <td><%= qr_code.hash_code %></td>
+    <td><%= link_to 'Show', qr_code %></td>
+    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
+    <td><%= link_to 'Destroy', qr_code, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Qr code', new_qr_code_path %>

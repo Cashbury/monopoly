@@ -1,6 +1,7 @@
 Kazdoor::Application.routes.draw do
 
   resources :newsletters
+  resources :qr_codes
 
   resources :activities do
     post "earn", :on => :collection
@@ -21,6 +22,9 @@ Kazdoor::Application.routes.draw do
     resources :reports, :only => [:create, :show, :index]
     resources :engagements, :controller => "businesses/engagements" do
       get "stamps", :on => :collection
+      resources :places , :only=>[:issue_code], :controller => 'businesses/engagements' do 
+        get "issue_code" ,:on =>:member
+      end
     end
     resources :rewards
   end

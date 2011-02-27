@@ -1,2 +1,39 @@
+require 'uri'
 class QrCode < ActiveRecord::Base
+  belongs_to :place
+  belongs_to :engagement
+
+  before_save :encrypt_code
+
+  def encrypt_code
+    self.hash_code = ActiveSupport::SecureRandom.hex(50)
+  end
+
+
+  #def encrypt(text)
+    #@key = OpenSSL::Digest::SHA256.new("hassan").digest
+    #@cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    #@cipher.encrypt
+    #@cipher.key = @key
+
+    #@cipher.update(text) 
+    #@cipher.final
+  #end
+
+  #def self.decrypt(text)
+    #@cipher.decrypt
+    #@cipher.key = @key
+
+    #@cipher.update(text) 
+    #@cipher.final
+  #end
+  #
+
+  def self.image(hash)
+   "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(hash,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+  end
+
+  def self.code(engagement_id, place_id)
+    where({:place_id=>place_id , :engagement_id=>engagement_id }).first 
+  end
 end

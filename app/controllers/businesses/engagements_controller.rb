@@ -90,6 +90,21 @@ class Businesses::EngagementsController < ApplicationController
       format.json { render :text => @engagements.to_json}
     end
   end
+
+  
+  def issue_code
+    @qrcode = QrCode.where( :place_id => params[:id], :engagement_id=>params[:engagement_id] ).first
+    if @qrcode.blank? 
+        @qrcode = QrCode.create( :place_id=>params[:id] , :engagement_id=> params[:engagement_id]).save!
+    else 
+      @qrcode.save
+    end
+
+    respond_to do |format|
+      format.html
+      format.js
+    end    
+  end
     
 
   private

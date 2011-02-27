@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110226055716) do
+ActiveRecord::Schema.define(:version => 20110227053530) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -95,9 +95,9 @@ ActiveRecord::Schema.define(:version => 20110226055716) do
   end
 
   create_table "qr_codes", :force => true do |t|
-    t.string   "code"
     t.integer  "place_id"
     t.integer  "engagement_id"
+    t.string   "hash_code"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

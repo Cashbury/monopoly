@@ -24,10 +24,12 @@
   
 <p>
   <strong>Places:</strong>
+  <% qrcodes =  @engagement.qr_codes  %>
   <% for place in @engagement.places %>
     <h3><%= place.name %></h3>
     <% if @engagement.engagement_type.downcase == "stamp" %>
-     <%= image_tag Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ,place.created_at) %>
+      <%= image_tag QrCode.image(QrCode.code(place.id , @engagement.id).hash_code) %>
+      <%= link_to "Issue Code",  issue_code_business_engagement_place_path(@business, @engagement , place) , :remote=>true%> 
     <% end %>  
   <% end %>
 </p>

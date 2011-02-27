@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Place:</b>
+  <%= @qr_code.place_id %>
+</p>
+
+<p>
+  <b>Engagment:</b>
+  <%= @qr_code.engagement_id %>
+</p>
+
+<p>
+  <b>Hash code:</b>
+  <%= @qr_code.hash_code %>
+</p>
+
+
+<%= link_to 'Edit', edit_qr_code_path(@qr_code) %> |
+<%= link_to 'Back', qr_codes_path %>
