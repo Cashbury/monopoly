@@ -13,7 +13,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1
   # GET /qr_codes/1.xml
   def show
-    @qr_code = QrCode.find(params[:id])
+    @qr_code = QrCode.where(:hash_code =>params[:id]).first
 
     respond_to do |format|
       format.html # show.html.erb

@@ -21,10 +21,6 @@ class Businesses::EngagementsController < ApplicationController
     
     respond_to do |format|
       format.pdf do
-        for place in @engagement.places do
-           url = Engagement.qrcode(place.id,@engagement.id, @engagement.points , @engagement.created_at ,place.created_at)
-           save_image(url)
-        end
         render  :pdf => "#{@business.name}_qrcode"
       end
       format.html
