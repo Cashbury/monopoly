@@ -52,5 +52,5 @@ gem "mocha", :group => :test
 gem 'annotate-models'
 gem 'jquery-rails'
 gem 'attr_encrypted'
-gem 'carmen' , '>0.2.4'
+#gem 'carmen' , '>0.2.4'
 gem 'wicked_pdf'
