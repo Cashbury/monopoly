@@ -49,6 +49,5 @@ gem 'jquery-rails'
 gem "mocha", :group => :test
 gem 'annotate-models'
 gem 'jquery-rails'
-gem 'attr_encrypted'
 gem 'carmen'
-#gem 'wicked_pdf'
+gem 'wicked_pdf'
