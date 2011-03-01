@@ -33,9 +33,7 @@ gem 'rails', '3.0.3'
 # end
 #
 
-group :development do
-  gem "railroady"  
-end
+
 
 gem 'devise'
 gem 'rails_admin' ,:path=>'vendor/gems/rails_admin' 
