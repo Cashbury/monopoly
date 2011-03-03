@@ -23,7 +23,18 @@
     <%= f.label :hash_code %><br />
     <%= f.text_field :hash_code %>
   </div>
-  <div class="actions">
+   <div class="field">
+    <%= f.label :status %><br />
+    <%= f.check_box :status %>
+    </div> 
+   <div class="field">
+    <%= f.label :single %><br />
+    <%= f.check_box :type   %>
+  </div>   
+   <div class="field">
+    <%= f.label :point %><br />
+    <%= f.text_field :point %>
+  </div>   <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>

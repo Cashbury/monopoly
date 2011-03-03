@@ -23,7 +23,7 @@
     <%= f.text_field :points %>
   </p>
   <p>
-    <%= f.label :places, "Category" %><br />
+    <%= f.label :places, "Places" %><br />
 		<% @places.each do |place| %>
 			<%= check_box_tag("engagement[places_list][#{place.id}]", 
                         "1", 

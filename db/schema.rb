@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110227193829) do
+ActiveRecord::Schema.define(:version => 20110303080540) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -101,6 +101,9 @@ ActiveRecord::Schema.define(:version => 20110227193829) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "path"
+    t.boolean  "type"
+    t.boolean  "status"
+    t.integer  "point"
   end
 
   create_table "qrcodes", :force => true do |t|

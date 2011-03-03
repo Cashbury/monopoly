@@ -27,8 +27,10 @@
   <% qrcodes =  @engagement.qr_codes  %>
   <% for place in @engagement.places %>
     <h3><%= place.name %></h3>
-    <% if @engagement.engagement_type.downcase == "stamp" %>
-      <%= image_tag  "qrcodes/#{QrCode.code(@engagement.id,place.id).hash_code }.png" if QrCode.code(@engagement.id,place.id).respond_to?(:hash_code) %>
+    <% if @engagement.engagement_type == QrCode::STAMP %>
+      <%  qrcode = QrCode.code(@engagement.id,place.id) %>
+      <%= image_tag  "qrcodes/#{ qrcode.hash_code }.png" if qrcode.respond_to?(:hash_code) %>
+      <%= link_to "Show Code info", qr_code_path(qrcode.hash_code) %>
       <%= link_to "Issue Code",  issue_code_business_engagement_place_path(@business, @engagement , place) , :remote=>true%> 
     <% end %>  
   <% end %>

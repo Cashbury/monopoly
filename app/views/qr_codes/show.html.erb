@@ -14,6 +14,21 @@
   <b>Hash code:</b>
   <%= @qr_code.hash_code %>
 </p>
+<p>
+  <b>Qr status :</b>
+  <%= @qr_code.status %>
+</p>
+<p>
+  <b>Qr Type:</b>
+  <%= @qr_code.type %>
+</p>
+<p>
+  <b>Qr Points:</b>
+  <%= @qr_code.point %>
+</p>
+
+
+
 
 
 <%= link_to 'Edit', edit_qr_code_path(@qr_code) %> |

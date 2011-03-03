@@ -4,9 +4,9 @@ gem 'rails', '3.0.3'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
-# group :development do
-#gem 'sqlite3-ruby', :require => 'sqlite3'
-# end
+group :development do
+ gem 'sqlite3-ruby', :require => 'sqlite3'
+end
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -33,12 +33,9 @@ gem 'rails', '3.0.3'
 # end
 #
 
-
-
 gem 'devise'
-gem 'rails_admin' ,:path=>'vendor/gems/rails_admin' 
-#:git => 'git://github.com/sferik/rails_admin.git' 
-
+gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git' 
+#:path=>'vendor/gems/rails_admin' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'

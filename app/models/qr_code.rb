@@ -1,12 +1,15 @@
 require 'uri'
 class QrCode < ActiveRecord::Base
+  STAMP = "Buy a product/service"
+  attr_accessible :place_id , :engagement_id , :hash_code , :point , :type , :status
+
   belongs_to :place
   belongs_to :engagement, :dependent => :destroy
 
   before_save :encrypt_code
 
   def encrypt_code
-    self.hash_code = ActiveSupport::SecureRandom.hex(50)
+    self.hash_code = ActiveSupport::SecureRandom.hex(10)
     save_image(self.hash_code)
     self.hash_code
   end

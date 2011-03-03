@@ -53,7 +53,7 @@ class Engagement < ActiveRecord::Base
                    :length =>{:within=>3..50}
 
   def engagement_types
-    ["check-in", "stamp", "question", "spend"]
+    ["check-in", QrCode::STAMP , "question", "spend"]
   end
   
   def get_states
