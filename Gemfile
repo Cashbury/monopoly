@@ -34,8 +34,8 @@ end
 #
 
 gem 'devise'
-gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git' 
-#:path=>'vendor/gems/rails_admin' 
+gem 'rails_admin' ,:path=>'vendor/gems/rails_admin' 
+#:git => 'git://github.com/sferik/rails_admin.git' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
