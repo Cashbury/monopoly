@@ -1,6 +1,11 @@
 <%= form_for @business do |f| %>
 
   <%= f.error_messages %>
+
+  <p>
+    <%= f.label :brands %>
+    <%= f.select :brand_id , @brands.collect{|b| [ b.name , b.id]} %>
+  </p>
   <p>
     <%= f.label :categories, "Category" %><br />
 		<% @categories.each do |category| %>

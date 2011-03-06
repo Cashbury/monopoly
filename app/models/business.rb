@@ -14,6 +14,8 @@ class Business < ActiveRecord::Base
   has_many :places, :dependent => :destroy
   has_many :engagements
   has_many :rewards
+  belongs_to :brand
+
   has_and_belongs_to_many :categories
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
   

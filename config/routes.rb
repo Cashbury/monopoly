@@ -1,5 +1,7 @@
 Kazdoor::Application.routes.draw do
 
+  resources :brands
+
   resources :newsletters
   resources :qr_codes
 

@@ -10,10 +10,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110303080540) do
+ActiveRecord::Schema.define(:version => 20110306110820) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "brands", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -24,6 +32,7 @@ ActiveRecord::Schema.define(:version => 20110303080540) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "brand_id"
   end
 
   create_table "businesses_categories", :id => false, :force => true do |t|
@@ -100,8 +109,8 @@ ActiveRecord::Schema.define(:version => 20110303080540) do
     t.string   "hash_code"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "path"
-    t.boolean  "type"
+    t.string   "unique_code"
+    t.boolean  "code_type"
     t.boolean  "status"
     t.integer  "point"
   end

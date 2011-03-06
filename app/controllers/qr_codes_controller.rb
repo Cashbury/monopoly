@@ -2,8 +2,8 @@ class QrCodesController < ApplicationController
   # GET /qr_codes
   # GET /qr_codes.xml
   def index
-    @qr_codes = QrCode.all
-
+    search = { :engagement_id => params[:engagement_id ]}
+    @qr_codes = QrCode.where search
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @qr_codes }
@@ -78,6 +78,15 @@ class QrCodesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(qr_codes_url) }
       format.xml  { head :ok }
+    end
+  end
+
+
+
+  def scanner
+
+    respond_to do |wants|
+      wants.html {  }
     end
   end
 end

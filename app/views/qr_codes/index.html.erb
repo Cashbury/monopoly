@@ -1,10 +1,20 @@
 <h1>Listing qr_codes</h1>
-
+<style type="text/css" media="screen">
+  table , tr , td{
+    border:1px #ccc solid
+  }
+</style>
 <table>
   <tr>
+    <th>Code</th>
     <th>Place</th>
     <th>Engagment</th>
     <th>Hash code</th>
+    <th>Status</th>
+    <th>Qr Points</th>
+    <th>Secret Code</th>
+    <th>Type</th>
+    <th>Business</th>
     <th></th>
     <th></th>
     <th></th>
@@ -12,12 +22,41 @@
 
 <% @qr_codes.each do |qr_code| %>
   <tr>
-    <td><%= qr_code.place_id %></td>
-    <td><%= qr_code.engagement_id %></td>
+    <td><%= image_tag "qrcodes/#{qr_code.hash_code}.png" , :width=>"50%"  %></td>
+    <td><%= qr_code.place.name %></td>
+    <td><%= qr_code.engagement.name %></td>
     <td><%= qr_code.hash_code %></td>
-    <td><%= link_to 'Show', qr_code %></td>
+    <td><%= qr_code.status ? "Active" : "Inactive" %></td>
+    <td><%= qr_code.point %></td>
+    <td><%= sanitize qr_code.unique_code %></td>
+    <td>
+      <% if (qr_code.code_type) %>
+        Multi Use
+      <% else %>
+        Single Use
+      <% end %>
+    </td>
+    <td>
+       <%= qr_code.business_name  %>
+    </td>
+    <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+  <tr>
+    <td>code</td>
+    <td>places</td>
+    <td>Engagements</td>
+    <td>Hash</td>
+    <td>Status</td>
+    <td>point</td>
+    <td>unique code</td>
+    <td>Code type</td>
+    <td>Business</td>
+    <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
+    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
+    <td><%= link_to 'Destroy', qr_code, :confirm => 'Are you sure?', :method => :delete %></td>
+ 
   </tr>
 <% end %>
 </table>
@@ -25,3 +64,4 @@
 <br />
 
 <%= link_to 'New Qr code', new_qr_code_path %>
+<%= link_to 'Add Multiple Single Use QrCodes' , "#"  %>

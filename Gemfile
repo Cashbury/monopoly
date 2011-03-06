@@ -16,7 +16,7 @@ end
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 #gem 'ruby-debug'
-# gem 'ruby-debug19'
+#gem 'ruby-debug19' ,:group => :development
 
 # Bundle the extra gems:
 # gem 'bj'
@@ -34,8 +34,8 @@ end
 #
 
 gem 'devise'
-gem 'rails_admin' ,:path=>'vendor/gems/rails_admin' 
-#:git => 'git://github.com/sferik/rails_admin.git' 
+gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git' 
+#:path=>'vendor/gems/rails_admin' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
@@ -48,3 +48,4 @@ gem 'annotate-models'
 gem 'jquery-rails'
 gem 'carmen'
 gem 'wicked_pdf'
+gem 'simple_form'

@@ -91,7 +91,7 @@ class Businesses::EngagementsController < ApplicationController
   def issue_code
     @qrcode = QrCode.where( :place_id => params[:id], :engagement_id=>params[:engagement_id] ).first
     if @qrcode.blank? 
-        @qrcode = QrCode.create( :place_id=>params[:id] , :engagement_id=> params[:engagement_id]).save!
+      @qrcode = QrCode.create( :place_id=>params[:id] , :engagement_id=> params[:engagement_id]).save!
     else 
       @qrcode.save
     end
