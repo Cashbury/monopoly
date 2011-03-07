@@ -82,7 +82,19 @@
 				</div>
         <%= f.text_area :legal_term %>
       </div>
-			<div class="row">
+      <div class="row">
+        <div class="basic_info_caption1">
+          Product Price
+        </div>
+        <%= f.text_field :price ,:class=>'basic_info_input'%>
+      </div>
+	      <div class="row">
+        <div class="basic_info_caption1">
+          Product ID
+        </div>
+        <%= f.text_field :product_id , :class=>'basic_info_input'%>
+        </div>	
+        <div class="row">
 				<input type="submit" value="" name="commit" id="save_cont_btn" class="save">
 				<%= link_to "Cancel", business_rewards_path(@business), :class => "cancel right" %>
 			</div>
