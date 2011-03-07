@@ -72,7 +72,7 @@ class EngagementsController < ApplicationController
   
   # => Author: Rajib Ahmed
   def stamps
-    @engagements = Campaign.find(params[:campaign_id]).engagements.where(:engagement_type=>"stamp")
+    @engagements = Campaign.find(params[:campaign_id]).engagements.where(:engagement_type=>QrCode::STAMP)
     respond_to do |format|
       format.js
     end

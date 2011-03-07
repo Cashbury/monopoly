@@ -81,10 +81,40 @@ class QrCodesController < ApplicationController
     end
   end
 
+  
+  def panel
+    if request.post?
+      quantity =  params[:quantity]
+      engagement_type = params[:engagement_type]
+      qrcodes = []
+      quantity.to_i.times{
+        #working
+      }
+    else
+      @brands = Brand.where(:user_id => current_user.id)  
+    end
+  end
 
+  def update_businesses
+    @businesses = Business.where(:brand_id=> params[:id]) 
+    
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
+
+  def update_engagements
+    @engagements = Engagement.where(:business_id=> params[:id])   
+    respond_to do |format|
+      format.js 
+    end
+  end
 
   def scanner
-
+    #QrCode already has a scan method
+    #which depending on the type 
+    #sets the status to active / inactive
     respond_to do |wants|
       wants.html {  }
     end

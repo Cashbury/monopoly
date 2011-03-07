@@ -1,0 +1,57 @@
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+$(function(){
+    $('select#brand_id').bind('change',function(){
+      var brand_id = $(":selected", this).val();
+      $.getScript("/qr_codes/update_businesses/"+brand_id);
+    });        
+    
+    $('select#business_id').bind('change',function(){
+      var business_id = $(":selected", this).val();
+      $.getScript("/qr_codes/update_engagements/"+business_id);
+    });   
+})
+//]]>
+</script>
+
+<%= form_tag do %>
+  <p class="row">
+    <strong>
+      QrCode Type
+    </strong> <br/>
+    <%=  select_tag :qrcode_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },1) %>
+  </p>
+
+  <p class="row">
+    <strong>
+      Quantity
+    </strong><br/>
+    <%=  text_field_tag :quantity , 1 , :class => "basic_info_input"%> *(max 100)
+  </p>
+    
+  <div class="row" style="border:#ccc 1px solid">
+    <strong>Associate with:</strong><br/>
+        <p class="row">
+    <strong>
+    Brands
+    </strong> <br/>
+      <%= select_tag :brand_id , options_from_collection_for_select(@brands , :id, :name) %>
+    </p>
+    <p class="row">
+    <strong>
+      Businesses
+    </strong> <br/>
+      <%= select_tag :business_id , options_from_collection_for_select(@brands.first.businesses , :id, :name) %>
+    </p>
+
+    <p class="row">
+    <strong>
+      Engagements
+    </strong> <br/>
+      <%= select_tag :engagement_id , options_from_collection_for_select(@brands.first.businesses.first.engagements , :id, :name) %>
+    </p>
+  </div>
+  <p class="row">
+    <%= submit_tag "Submit" %>
+  </p>
+<% end %>

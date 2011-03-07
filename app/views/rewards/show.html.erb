@@ -35,8 +35,15 @@
   <% end %>
 </p>
 
+<p>
+  <strong>Price</strong>
+  <%= @reward.price %>
+</p>
 
-
+<p>
+  <strong>Product Id</strong>
+  <%= @reward.product_id %>
+</p>
 <p>
   <%= link_to "Edit", edit_business_reward_path(@business, @reward) %> |
   <%= link_to "Destroy", business_engagement_path(@business, @reward), :confirm => 'Are you sure?', :method => :delete %> | 

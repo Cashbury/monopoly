@@ -3,7 +3,13 @@ Kazdoor::Application.routes.draw do
   resources :brands
 
   resources :newsletters
-  resources :qr_codes
+  resources :qr_codes do
+    post "panel" , :on =>:collection 
+    get "panel"  , :on =>:collection
+
+    match "update_businesses/:id" ,:action=>:update_businesses , :on =>:collection
+    match "update_engagements/:id" ,:action=>:update_engagements , :on =>:collection
+  end
 
   resources :activities do
     post "earn", :on => :collection

@@ -43,25 +43,9 @@
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
-  <tr>
-    <td>code</td>
-    <td>places</td>
-    <td>Engagements</td>
-    <td>Hash</td>
-    <td>Status</td>
-    <td>point</td>
-    <td>unique code</td>
-    <td>Code type</td>
-    <td>Business</td>
-    <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
-    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Destroy', qr_code, :confirm => 'Are you sure?', :method => :delete %></td>
- 
-  </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Qr code', new_qr_code_path %>
-<%= link_to 'Add Multiple Single Use QrCodes' , "#"  %>
+<%= link_to 'Add QrCodes' , "#"  %>

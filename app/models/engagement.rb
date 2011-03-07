@@ -44,7 +44,7 @@ class Engagement < ActiveRecord::Base
   has_many :qr_codes
 
   
-  scope :stamps, where(:engagement_type => "stamp") 
+  scope :stamps, where(:engagement_type => QrCode::STAMP) 
   
   attr_accessor :places_list
   after_save :update_places
