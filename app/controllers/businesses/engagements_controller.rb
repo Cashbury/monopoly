@@ -79,7 +79,7 @@ class Businesses::EngagementsController < ApplicationController
   
   # => Author: Rajib Ahmed
   def stamps
-    @engagements = @business.engagements.where(:engagement_type=>"stamp")
+    @engagements = Engagement.where(:business_id=>params[:business_id] , :engagement_type => QrCode::STAMP)    
     respond_to do |format|
       format.html
       format.xml { render :xml => @engagements }
