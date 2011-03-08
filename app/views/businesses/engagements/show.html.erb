@@ -34,8 +34,7 @@
         <%= image_tag  "qrcodes/#{ qrcode.hash_code }.png" %>
       <% end %>
 
-      <%= link_to "Manage QrCodes ", qr_codes_path({:engagement_id=>@engagement.id})   %>
-      <%= link_to "Issue Code",  issue_code_business_engagement_place_path(@business, @engagement , place) , :remote=>true%> 
+      <%= link_to "Manage QrCodes ", "/qr_codes?engagement_id="+ @engagement.id.to_s %>
     <% end %>  
   <% end %>
 </p>
