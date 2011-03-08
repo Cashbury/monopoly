@@ -19,9 +19,14 @@ $(function(){
     <strong>
       QrCode Type
     </strong> <br/>
-    <%=  select_tag :qrcode_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },1) %>
+    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },1) %>
   </p>
-
+  <p class="row">
+    <strong>
+      QrCode Status
+    </strong> <br/>
+    <%=  select_tag :status , options_for_select( {"Inactive"=>0, "Active"=>1 },1) %>
+  </p>
   <p class="row">
     <strong>
       Quantity

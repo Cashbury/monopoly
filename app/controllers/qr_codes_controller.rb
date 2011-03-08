@@ -85,14 +85,15 @@ class QrCodesController < ApplicationController
   def panel
     if request.post?
       quantity =  params[:quantity]
-      engagement_type = params[:engagement_type]
-      qrcodes = []
+      engagement = Engagement.find(params[:engagement_id])
+
       quantity.to_i.times{
-        #working
+        engagement.qr_codes << QrCode.new(:code_type=>params[:code_type].to_i,:status=>params[:status].to_i)
       }
-    else
-      @brands = Brand.where(:user_id => current_user.id)  
+      engagement.save!
+      redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
     end
+    @brands = Brand.where(:user_id => current_user.id)  
   end
 
   def update_businesses
