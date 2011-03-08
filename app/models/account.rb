@@ -12,5 +12,6 @@
 
 class Account < ActiveRecord::Base
   belongs_to :user
+  belongs_to :program
   has_many :reports, :as => :reportable
 end

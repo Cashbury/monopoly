@@ -1,0 +1,49 @@
+<%= form_for(@program) do |f| %>
+  <% if @program.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@program.errors.count, "error") %> prohibited this program from being saved:</h2>
+
+      <ul>
+      <% @program.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><%= mark_required(@program, :name) %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :type_id %><%= mark_required(@program, :type_id) %><br />
+    <%= f.select :type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]} %>
+  </div>
+  <div class="field">
+    <%= f.label :auto_enroll %><br />
+    <%= f.check_box :auto_enroll %>
+  </div>
+  <div class="field">
+    <%= f.label :start_date %><br />
+    <%= f.date_select :start_date %>
+  </div>
+  <div class="field">
+    <%= f.label :end_date %><br />
+    <%= f.date_select :end_date %>
+  </div>
+  <div class="field">
+    <%= f.label :business_id %><%= mark_required(@program, :business_id) %><br />
+    <%= f.select :business_id,Business.all.collect {|b| [b.name,b.id]} %>
+  </div>
+  <div class="field">
+    <%= f.label :initial_points %><br />
+    <%= f.text_field :initial_points %>
+  </div>
+  <div class="field">
+    <%= f.label :max_points %><br />
+    <%= f.text_field :max_points %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

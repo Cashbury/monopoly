@@ -1,5 +1,9 @@
 Kazdoor::Application.routes.draw do
 
+  resources :program_types
+
+  resources :programs
+
   resources :brands
 
   resources :newsletters

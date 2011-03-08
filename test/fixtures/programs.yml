@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  type_id: 1
+  auto_enroll: false
+  start_date: 2011-03-08
+  end_date: 2011-03-08
+  business_id: 1
+  initial_points: 1
+  max_points: 1
+
+two:
+  name: MyString
+  type_id: 1
+  auto_enroll: false
+  start_date: 2011-03-08
+  end_date: 2011-03-08
+  business_id: 1
+  initial_points: 1
+  max_points: 1
