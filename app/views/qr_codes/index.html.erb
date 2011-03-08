@@ -7,7 +7,6 @@
 <table>
   <tr>
     <th>Code</th>
-    <th>Place</th>
     <th>Engagment</th>
     <th>Hash code</th>
     <th>Status</th>
@@ -22,18 +21,17 @@
 
 <% @qr_codes.each do |qr_code| %>
   <tr>
-    <td><%= image_tag "qrcodes/#{qr_code.hash_code}.png" , :width=>"50%"  %></td>
-    <td><%= qr_code.place.name %></td>
+    <td><%= image_tag qr_code.qr_image, :width=>"50%"  %></td>
     <td><%= qr_code.engagement.name %></td>
     <td><%= qr_code.hash_code %></td>
-    <td><%= qr_code.status ? "Active" : "Inactive" %></td>
+    <td><%= raw qr_code.status ? "<strong style='color:green'>Active</strong>" : "<strong style='color:red'>Inactive</strong>" %></td>
     <td><%= qr_code.point %></td>
     <td><%= sanitize qr_code.unique_code %></td>
     <td>
       <% if (qr_code.code_type) %>
-        Multi Use
+        <strong style="color:blue">Multi Use</strong>
       <% else %>
-        Single Use
+        <strong> Single Use</strong>
       <% end %>
     </td>
     <td>
@@ -48,4 +46,4 @@
 
 <br />
 
-<%= link_to 'Add QrCodes' , "#"  %>
+<%= link_to 'Add QrCodes' , panel_qr_codes_path  %>

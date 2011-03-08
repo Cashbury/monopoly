@@ -18,6 +18,8 @@ class EngagementsController < ApplicationController
     respond_to do |format|
       format.html
       format.xml { render :xml => @engagement }
+
+
       format.json { render :text => @engagement.to_json}
     end
   end
@@ -90,7 +92,7 @@ class EngagementsController < ApplicationController
 	  
   private
   def find_business
-    @business = Business.find(params[:business_id])
+    @business ||= Business.find(params[:business_id])
   end
 
   def places_under_business
