@@ -1,12 +1,12 @@
 source :gemcutter
 gem 'rack', "1.2.1"
 gem 'rails', '3.0.3'
-
+gem 'mysql'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 group :development do
   gem 'railroady'
-  gem 'sqlite3-ruby', :require => 'sqlite3'
+  #gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
 # Use unicorn as the web server
@@ -44,9 +44,15 @@ gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
 gem 'jquery-rails'
 
-gem "mocha", :group => :test
+group :test do
+	gem 'shoulda'
+	gem 'mocha'
+	gem 'factory_girl_rails'
+end
+
 gem 'annotate-models'
 gem 'jquery-rails'
 gem 'carmen'
 gem 'wicked_pdf'
 gem 'simple_form'
+gem 'geokit-rails3'

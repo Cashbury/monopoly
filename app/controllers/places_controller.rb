@@ -12,12 +12,14 @@ class PlacesController < ApplicationController
   end
   
   def show
-    @place = Place.find_by_long_and_lat(params[:long], params[:lat])
-    
+    @places=[]
+    unless params[:long].blank? and  params[:lat].blank?
+			@places = Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order('distance ASC')
+    end
     respond_to do |format|
       format.html
-      format.xml { render :xml => @place }
-      format.json { render :text => @place.to_json }
+      format.xml { render :xml => @places }
+      format.json { render :text => @places.to_json }
     end
   end
 end

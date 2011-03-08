@@ -14,6 +14,7 @@
 #
 
 class Place < ActiveRecord::Base
+	acts_as_mappable  :lng_column_name => :long
   belongs_to :business
   
   has_and_belongs_to_many :engagements
@@ -21,5 +22,5 @@ class Place < ActiveRecord::Base
   
   has_many :reports, :as => :reportable
   has_many :qr_codes
-  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode  
+  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :distance  
 end

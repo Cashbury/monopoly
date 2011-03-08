@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110307114429) do
+ActiveRecord::Schema.define(:version => 20110308002857) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -70,6 +70,19 @@ ActiveRecord::Schema.define(:version => 20110307114429) do
     t.integer "place_id"
   end
 
+  create_table "histories", :force => true do |t|
+    t.string   "message"
+    t.string   "username"
+    t.integer  "item"
+    t.string   "table"
+    t.integer  "month",      :limit => 2
+    t.integer  "year",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
+
   create_table "newsletters", :force => true do |t|
     t.boolean  "letter_type"
     t.string   "name"
@@ -84,8 +97,8 @@ ActiveRecord::Schema.define(:version => 20110307114429) do
 
   create_table "places", :force => true do |t|
     t.string   "name"
-    t.string   "long"
-    t.string   "lat"
+    t.decimal  "long",         :precision => 15, :scale => 10
+    t.decimal  "lat",          :precision => 15, :scale => 10
     t.integer  "business_id"
     t.text     "description"
     t.datetime "created_at"
@@ -96,7 +109,10 @@ ActiveRecord::Schema.define(:version => 20110307114429) do
     t.string   "address2"
     t.string   "zipcode"
     t.string   "country"
+    t.string   "distance",                                     :default => "0"
   end
+
+  add_index "places", ["lat", "long"], :name => "index_places_on_lat_and_long"
 
   create_table "places_rewards", :id => false, :force => true do |t|
     t.integer "place_id"
@@ -121,19 +137,6 @@ ActiveRecord::Schema.define(:version => 20110307114429) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "rails_admin_histories", :force => true do |t|
-    t.string   "message"
-    t.string   "username"
-    t.integer  "item"
-    t.string   "table"
-    t.integer  "month",      :limit => 2
-    t.integer  "year",       :limit => 5
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
 
   create_table "reports", :force => true do |t|
     t.string   "name"
@@ -160,7 +163,7 @@ ActiveRecord::Schema.define(:version => 20110307114429) do
     t.datetime "available"
     t.integer  "engagement_id"
     t.text     "legal_term"
-    t.decimal  "price"
+    t.decimal  "price",         :precision => 10, :scale => 0
     t.string   "product_id"
   end
 

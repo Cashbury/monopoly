@@ -18,7 +18,8 @@ require "digest"
 
 class Engagement < ActiveRecord::Base
   include ActiveRecord::Transitions
-  
+  STARTED="started"
+  STOPPED="stopped"
   state_machine do
     state :pending
     state :started
@@ -26,7 +27,8 @@ class Engagement < ActiveRecord::Base
     state :expired
 
     event :start do
-      transitions :to => :started, :from => [:pending]
+      #transitions :to => :started, :from => [:pending]
+      transitions :to=> :started, :from=>[:stopped]
     end
     
     event :stop do

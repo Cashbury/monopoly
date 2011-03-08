@@ -77,7 +77,17 @@ class EngagementsController < ApplicationController
       format.js
     end
   end
-    
+  
+  def change_status
+		@engagement = Engagement.find(params[:id])
+		if @engagement.state == Engagement::STOPPED
+			@engagement.start!
+		elsif @engagement.state == Engagement::STARTED
+			@engagement.stop!
+		end
+		render :nothing => true, :status => :ok
+	end
+	  
   private
   def find_business
     @business = Business.find(params[:business_id])
