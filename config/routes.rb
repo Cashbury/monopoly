@@ -1,5 +1,7 @@
 Kazdoor::Application.routes.draw do
 
+  resources :templates
+
   resources :program_types
 
   resources :programs
@@ -8,11 +10,11 @@ Kazdoor::Application.routes.draw do
 
   resources :newsletters
   resources :qr_codes do
-    match "update_businesses/:id" ,:action=>:update_businesses , :on =>:collection
-    match "update_engagements/:id" ,:action=>:update_engagements , :on =>:collection
+    get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection
+    get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection
     post "panel" , :on =>:collection 
     get "panel"  , :on =>:collection
-
+    post "printable", :on=>:collection
   end
 
   resources :activities do

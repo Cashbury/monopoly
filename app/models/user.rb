@@ -29,5 +29,6 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me
   
   has_one :account
-  has_many :brands
+  has_many :brands 
+  has_many :templates
 end

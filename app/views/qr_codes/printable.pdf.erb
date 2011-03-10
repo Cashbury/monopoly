@@ -1,0 +1,10 @@
+ <style type="text/css" media="screen">
+ .qrcode{ width:400px; height:400px; background:#ccc }
+ </style>
+<% for qrcode in @qrcodes %>
+  <div class="qrcode">
+    <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
+  </div> 
+<% end %>
+
+

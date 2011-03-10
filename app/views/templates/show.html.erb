@@ -1,0 +1,10 @@
+<p id="notice"><%= notice %></p>
+<p>
+  <%= @template.name %>
+</p>
+<p>
+  <%= image_tag @template.photo_url.to_s %>
+</p>
+
+<%= link_to 'Edit', edit_template_path(@template) %> |
+<%= link_to 'Back', templates_path %>

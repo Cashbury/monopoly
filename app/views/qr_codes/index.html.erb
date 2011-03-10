@@ -4,7 +4,32 @@
     border:1px #ccc solid
   }
 </style>
+
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+$(function(){
+    //$('form input[name=utf8]').remove();
+    //$('form input[name=authenticity_token]').remove();
+    $('select#code_type, select#status').bind('change',function(){
+      var url = $(this).closest('form').serialize();
+      window.location="/qr_codes?"+url;
+    })   
+})
+//]]>
+</script>
+
+<div id="filters">
+  <%= form_tag(:action=>:printable, :format=>:pdf) do %>
+    <%= select_tag :template_id , options_from_collection_for_select(@templates,:id,:name) %>
+    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s) %>
+    <%=  select_tag :status , options_for_select( {"Inactive"=>0, "Active"=>1 },params[:status].to_s) %>
+    <%=  hidden_field_tag :engagement_id, params[:engagement_id]   %>
+    <%= submit_tag "Get Pdf" %>
+  <% end %>
+    
+</div>
 <table>
+
   <tr>
     <th>Code</th>
     <th>Engagment</th>
@@ -43,5 +68,5 @@
 </table>
 
 <br />
-
+<%= link_to "Show All", :action=>:index , :engagement_id =>params[:engagement_id] %>
 <%= link_to 'Add QrCodes' , panel_qr_codes_path  %>

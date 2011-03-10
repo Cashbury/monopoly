@@ -1,0 +1,26 @@
+<%= form_for(@template ,:html=>{:multipart=>true}) do |f| %>
+  <% if @template.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@template.errors.count, "error") %> prohibited this template from being saved:</h2>
+
+      <ul>
+      <% @template.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+
+    </div>
+  <% end %>
+  
+  <p>
+    <%= f.label :name %><br/>
+    <%= f.text_field :name  %>
+  </p>
+  <p>
+    <%= f.label :photo %>
+    <%= f.file_field :photo %>
+  </p>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

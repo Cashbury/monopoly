@@ -56,3 +56,6 @@ gem 'carmen'
 gem 'wicked_pdf'
 gem 'simple_form'
 gem 'geokit-rails3'
+
+gem 'rmagick'
+gem 'carrierwave'

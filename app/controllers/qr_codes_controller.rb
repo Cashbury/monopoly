@@ -2,8 +2,9 @@ class QrCodesController < ApplicationController
   # GET /qr_codes
   # GET /qr_codes.xml
   def index
-    search = { :engagement_id => params[:engagement_id ]}
-    @qr_codes = QrCode.where search
+    @qr_codes = search_qrs 
+    @templates = Template.where(:user_id =>current_user.id)
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @qr_codes }
@@ -16,6 +17,9 @@ class QrCodesController < ApplicationController
     @qr_code = QrCode.where(:hash_code =>params[:id]).first
 
     respond_to do |format|
+      format.pdf do
+        render  :pdf => "qrcode"
+      end
       format.html # show.html.erb
       format.xml  { render :xml => @qr_code }
     end
@@ -103,8 +107,20 @@ class QrCodesController < ApplicationController
 
     end
 
-
     @brands = Brand.where(:user_id => current_user.id)  
+  end
+
+  def printable
+    if request.post?
+      @qrcodes = search_qrs
+      respond_to do |format|
+        format.pdf do
+        render  :pdf => "qrcode"
+      end   
+     end
+    else
+      redirect_to nil
+    end
   end
 
   def update_businesses
@@ -131,4 +147,12 @@ class QrCodesController < ApplicationController
       wants.html {  }
     end
   end
+
+  def search_qrs
+    search = {:engagement_id =>params[:engagement_id]}
+    search = search.merge({:status=>params[:status]}) unless params[:status].blank?
+    search = search.merge({:code_type=>params[:code_type]}) unless params[:code_type].blank?
+    QrCode.where search
+  end
+
 end

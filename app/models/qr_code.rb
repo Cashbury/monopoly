@@ -13,22 +13,15 @@ class QrCode < ActiveRecord::Base
   before_save :encrypt_code
 
   def encrypt_code
-    self.hash_code = ActiveSupport::SecureRandom.hex(10)
-    #save_image(self.hash_code)
+    self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 
     unique_code = { :engagement_id => engagement.id}.to_yaml
-    self.unique_code = encrypt(unique_code)
+    self.save_image                                           #save image to server
+    self.unique_code = encrypt(unique_code)                   # generates a unique code :)
     self.hash_code
   end
 
   def qr_image 
-   "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(hash_code,Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
-   
    "https://chart.googleapis.com/chart?chs=150x150&cht=qr&choe=UTF-8&chl="+hash_code
-
-  end
-
-  def self.code(engagement_id, place_id)
-    where({:place_id=>place_id , :engagement_id=>engagement_id }).first 
   end
 
 
@@ -37,7 +30,6 @@ class QrCode < ActiveRecord::Base
     self.status = 0
     save!
    end
-
    #have add logger methods to logg here
   end
 
@@ -46,12 +38,14 @@ class QrCode < ActiveRecord::Base
    engagement.business.name 
   end
 
-  def save_image(hash_code)
-    url = self.class.image(hash_code) 
-    open("#{RAILS_ROOT}/public/images/qrcodes/#{hash_code}.png","wb")  do |io|
-      io << open(URI.parse(url.to_s)).read
+  def save_image
+    open("#{Rails.public_path}/images/qrcodes/#{hash_code}.png","wb")  do |io|
+      io << open(URI.parse( self.qr_image )).read
     end
   end
+
+
+
 
   private #=============================================================
 

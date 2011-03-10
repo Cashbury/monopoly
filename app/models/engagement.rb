@@ -71,13 +71,5 @@ class Engagement < ActiveRecord::Base
     }    
   end  
   
-  #TODO this may move to model :) 
-  def self.qrcode(place_id,engagement_id,points,created_at,pc)
-    uni = Digest::MD5.hexdigest(created_at.to_s+pc.to_s)
-    code =  "http://www.spinninghats.com?place_id=#{place_id}&engagement_id=#{engagement_id}&points=#{points}&#{uni}"    
-    "http://qrcode.kaywa.com/img.php?s=6&t=p&d="+URI.escape(self.encrypt(code),Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
-  end
-
-  
 
 end
