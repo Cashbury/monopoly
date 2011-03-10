@@ -73,10 +73,10 @@ class QrCodesController < ApplicationController
   # DELETE /qr_codes/1.xml
   def destroy
     @qr_code = QrCode.find(params[:id])
+    engagement_id = @qr_code.engagement_id
     @qr_code.destroy
-
     respond_to do |format|
-      format.html { redirect_to(qr_codes_url) }
+      format.html { redirect_to :action=>:index , :engagement_id =>engagement_id }
       format.xml  { head :ok }
     end
   end
@@ -84,15 +84,26 @@ class QrCodesController < ApplicationController
   
   def panel
     if request.post?
-      quantity =  params[:quantity]
-      engagement = Engagement.find(params[:engagement_id])
+      quantity =  params[:quantity].to_i
+      engagement = Engagement.where(:id=> params[:engagement_id]).first
+     
+      if engagement.blank?
+        redirect_to :action =>:panel ,:notice => "No egagement exists"
+      else
+        #when everything is ok
+        quantity.times{
+          engagement.qr_codes << QrCode.new(:code_type=>params[:code_type].to_i,:status=>params[:status].to_i)
+        }
+        if engagement.save
+          redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
+        else
+          render :action => :panel
+        end
+      end
 
-      quantity.to_i.times{
-        engagement.qr_codes << QrCode.new(:code_type=>params[:code_type].to_i,:status=>params[:status].to_i)
-      }
-      engagement.save!
-      redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
     end
+
+
     @brands = Brand.where(:user_id => current_user.id)  
   end
 

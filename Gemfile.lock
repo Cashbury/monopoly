@@ -68,7 +68,6 @@ GEM
     mocha (0.9.10)
       rake
     mysql (2.8.1)
-    mysql (2.8.1-x86-mingw32)
     nifty-generators (0.4.4)
     polyglot (0.3.1)
     rack (1.2.1)
@@ -76,7 +75,6 @@ GEM
       rack (>= 1.0.0)
     rack-test (0.5.7)
       rack (>= 1.0)
-    railroady (1.0.1)
     rails (3.0.3)
       actionmailer (= 3.0.3)
       actionpack (= 3.0.3)
@@ -118,7 +116,6 @@ DEPENDENCIES
   mysql
   nifty-generators
   rack (= 1.2.1)
-  railroady
   rails (= 3.0.3)
   rails_admin!
   shoulda

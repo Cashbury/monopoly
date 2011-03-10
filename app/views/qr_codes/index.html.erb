@@ -10,7 +10,6 @@
     <th>Engagment</th>
     <th>Hash code</th>
     <th>Status</th>
-    <th>Qr Points</th>
     <th>Secret Code</th>
     <th>Type</th>
     <th>Business</th>
@@ -25,7 +24,6 @@
     <td><%= qr_code.engagement.name %></td>
     <td><%= qr_code.hash_code %></td>
     <td><%= raw qr_code.status ? "<strong style='color:green'>Active</strong>" : "<strong style='color:red'>Inactive</strong>" %></td>
-    <td><%= qr_code.point %></td>
     <td><%= sanitize qr_code.unique_code %></td>
     <td>
       <% if (qr_code.code_type) %>
@@ -39,7 +37,7 @@
     </td>
     <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Destroy', qr_code, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>

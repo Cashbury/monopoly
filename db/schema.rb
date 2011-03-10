@@ -10,13 +10,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110308002857) do
+ActiveRecord::Schema.define(:version => 20110308143451) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "program_id"
   end
 
   create_table "brands", :force => true do |t|
@@ -117,6 +118,25 @@ ActiveRecord::Schema.define(:version => 20110308002857) do
   create_table "places_rewards", :id => false, :force => true do |t|
     t.integer "place_id"
     t.integer "reward_id"
+  end
+
+  create_table "program_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "programs", :force => true do |t|
+    t.string   "name",                          :null => false
+    t.integer  "type_id",                       :null => false
+    t.boolean  "auto_enroll"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.integer  "business_id",                   :null => false
+    t.integer  "initial_points", :default => 0
+    t.integer  "max_points",     :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "qr_codes", :force => true do |t|

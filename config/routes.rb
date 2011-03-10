@@ -8,11 +8,11 @@ Kazdoor::Application.routes.draw do
 
   resources :newsletters
   resources :qr_codes do
+    match "update_businesses/:id" ,:action=>:update_businesses , :on =>:collection
+    match "update_engagements/:id" ,:action=>:update_engagements , :on =>:collection
     post "panel" , :on =>:collection 
     get "panel"  , :on =>:collection
 
-    match "update_businesses/:id" ,:action=>:update_businesses , :on =>:collection
-    match "update_engagements/:id" ,:action=>:update_engagements , :on =>:collection
   end
 
   resources :activities do

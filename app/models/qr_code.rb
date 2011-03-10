@@ -8,7 +8,7 @@ class QrCode < ActiveRecord::Base
   attr_accessible :place_id , :engagement_id , :hash_code , :point , :status ,:code_type
 
   belongs_to :place
-  belongs_to :engagement, :dependent => :destroy
+  belongs_to :engagement
 
   before_save :encrypt_code
 
