@@ -113,6 +113,8 @@ class QrCodesController < ApplicationController
   def printable
     if request.post?
       @qrcodes = search_qrs
+      @template = Template.find(params[:template_id])
+
       respond_to do |format|
         format.pdf do
         render  :pdf => "qrcode"

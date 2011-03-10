@@ -1,9 +1,22 @@
  <style type="text/css" media="screen">
- .qrcode{ width:400px; height:400px; background:#ccc }
+ .qrcode{
+    border:#000 2px solid;
+    width:300px; 
+    height:300px; 
+    margin-bottom:15px; 
+    text-align:center ;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    padding-top:20px;
+    background: url(file://<%= Rails.public_path %>/images/share.png) no-repeat;
+    }
  </style>
+
 <% for qrcode in @qrcodes %>
-  <div class="qrcode">
-    <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
+  <div class="qrcode" id="qr_<%= qrcode.id %> ">
+  <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
+  <br/>
+    <strong><%= @template.name %></strong>
   </div> 
 <% end %>
 
