@@ -6,6 +6,13 @@ GIT
       builder (~> 2.1.0)
       rails (~> 3.0.3)
 
+GIT
+  remote: http://github.com/paneq/calendar_date_select.git
+  revision: 8e7ec79435a68665df40b14bd90f47e6ac5e9135
+  branch: rails3test
+  specs:
+    calendar_date_select (1.16.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -76,7 +83,6 @@ GEM
       rack (>= 1.0.0)
     rack-test (0.5.7)
       rack (>= 1.0)
-    railroady (1.0.1)
     rails (3.0.3)
       actionmailer (= 3.0.3)
       actionpack (= 3.0.3)
@@ -109,6 +115,7 @@ PLATFORMS
 
 DEPENDENCIES
   annotate-models
+  calendar_date_select!
   carmen
   devise
   factory_girl_rails
@@ -118,7 +125,6 @@ DEPENDENCIES
   mysql
   nifty-generators
   rack (= 1.2.1)
-  railroady
   rails (= 3.0.3)
   rails_admin!
   shoulda

@@ -10,13 +10,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110308002857) do
+ActiveRecord::Schema.define(:version => 20110309153134) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "program_id"
   end
 
   create_table "brands", :force => true do |t|
@@ -119,6 +120,25 @@ ActiveRecord::Schema.define(:version => 20110308002857) do
     t.integer "reward_id"
   end
 
+  create_table "program_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "programs", :force => true do |t|
+    t.string   "name",                          :null => false
+    t.integer  "type_id",                       :null => false
+    t.boolean  "auto_enroll"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.integer  "business_id",                   :null => false
+    t.integer  "initial_points", :default => 0
+    t.integer  "max_points",     :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "qr_codes", :force => true do |t|
     t.integer  "place_id"
     t.integer  "engagement_id"
@@ -181,9 +201,22 @@ ActiveRecord::Schema.define(:version => 20110308002857) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "full_name"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
   end
 
+  add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "users_snaps", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.integer  "qr_code_id", :null => false
+    t.datetime "used_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

@@ -1,0 +1,20 @@
+class UsersSessionsController < ApplicationController
+
+  def login  	
+  	@user=User.find_by_email(params[:email])
+  	if @user.blank?
+    	@user = User.new(:email=>params[:email],
+											 :password=>params[:password],
+											 :password_confirmation =>params[:password],
+    									 :full_name=>params[:full_name])
+			@user.save    										   
+		end
+		sign_in @user
+    respond_to do |format|
+      format.html
+      format.xml { render :xml => @user }
+      format.json { render :text => @user.to_json }
+    end
+  end
+  
+end

@@ -9,7 +9,8 @@ class QrCode < ActiveRecord::Base
 
   belongs_to :place
   belongs_to :engagement, :dependent => :destroy
-
+	has_many :users_snaps,:conditions =>"code_type=#{MULTI_USE}"
+	has_one :users_snap,:conditions =>"code_type=#{SINGLE_USE}"
   before_save :encrypt_code
 
   def encrypt_code
@@ -43,7 +44,7 @@ class QrCode < ActiveRecord::Base
 
 
   def business_name
-   engagement.business.name 
+		engagement.business.name 
   end
 
   def save_image(hash_code)

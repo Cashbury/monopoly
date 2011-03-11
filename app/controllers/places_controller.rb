@@ -1,5 +1,5 @@
 class PlacesController < ApplicationController
-  before_filter :authenticate_user!, :except => [:index, :show]
+  before_filter :authenticate_user!, :except => [:index, :show,:for_businessid]
   
   def index
     @places = Place.all
@@ -22,4 +22,11 @@ class PlacesController < ApplicationController
       format.json { render :text => @places.to_json }
     end
   end
+  
+  def for_businessid
+		@places = Place.where("business_id = ?", params[:id]).sort_by{ |k| k['name'] }    
+		respond_to do |format|
+			format.json  { render :json => @places }      
+		end
+	end
 end

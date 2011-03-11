@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 1
+  qr_code_id: 1
+  used_at: 2011-03-09 11:39:42
+
+two:
+  user_id: 1
+  qr_code_id: 1
+  used_at: 2011-03-09 11:39:42
