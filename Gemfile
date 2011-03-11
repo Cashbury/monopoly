@@ -35,8 +35,8 @@ end
 #
 
 gem 'devise'
-gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git'
-#:path=>'vendor/gems/rails_admin' 
+gem 'rails_admin' ,:path=>'vendor/gems/rails_admin' 
+#:git => 'git://github.com/sferik/rails_admin.git' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'
@@ -57,3 +57,5 @@ gem 'wicked_pdf'
 gem 'simple_form'
 gem 'geokit-rails3'
 gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch =>'rails3test'
+gem 'rmagick'
+gem 'carrierwave'

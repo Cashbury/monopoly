@@ -30,5 +30,7 @@ class User < ActiveRecord::Base
   
   has_one :account
   has_many :brands
-  has_many :users_snaps
+  has_many :users_snaps 
+  has_many :templates
+
 end
