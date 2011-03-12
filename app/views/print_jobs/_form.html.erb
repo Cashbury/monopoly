@@ -1,0 +1,34 @@
+<%= form_for(@print_job) do |f| %>
+  <% if @print_job.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@print_job.errors.count, "error") %> prohibited this print_job from being saved:</h2>
+
+      <ul>
+      <% @print_job.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :ran %><br />
+    <%= f.text_field :ran %>
+  </div>
+  <div class="field">
+    <%= f.label :log %><br />
+    <%= f.text_area :log %>
+  </div>
+  <div class="field">
+    <%= f.label :display , "Do not display on the list"%><br />
+    <%= f.check_box :display %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

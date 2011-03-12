@@ -13,18 +13,15 @@
 
   <div class="field">
     <%= f.label :engagement_id %><br />
-    <%= f.text_field :engagement_id %>
+    <%= f.collection_select :engagement_id , @engagements ,:id , :name%>
   </div>
-  <div class="field">
-    <%= f.label :hash_code %><br />
-    <%= f.text_field :hash_code %>
-  </div>
+
    <div class="field">
-    <%= f.label :status %><br />
+    <%= f.label :status , "Active" %><br />
     <%= f.check_box :status %>
     </div> 
     <div class="field">
-    <%= f.label :code_type %><br />
+    <%= f.label :code_type , "Multi use" %><br />
     <%= f.check_box :code_type %>
     </div> 
  

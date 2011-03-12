@@ -2,7 +2,7 @@ class TemplatesController < ApplicationController
   # GET /templates
   # GET /templates.xml
   def index
-    @templates = Template.where(:user_id=>current_user.id)
+    @templates = Template.all
 
     respond_to do |format|
       format.html # index.html.erb

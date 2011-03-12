@@ -1,8 +1,34 @@
 <h1>Listing qr_codes</h1>
 <style type="text/css" media="screen">
-  table , tr , td{
-    border:1px #ccc solid
+  table {
+    margin-top:10px;
+    border:1px #ccc solid;
   }
+  th,td{
+    border-right:1px #ccc solid;
+    border-bottom:1px #ccc solid;
+    text-align:center;
+    padding:5px;
+  }
+  th{
+    background:#d2d2d2;
+  }
+  select#template_id,select.filter{
+    width:150px;
+  }
+
+  a{
+    padding:3px;
+    text-decoration:none;
+  }
+  a:hover{
+    background:#9BE1FB;
+  }
+  #test{
+    margin-bottom:10px;
+    
+  }
+
 </style>
 
 <script type="text/javascript" language="javascript" charset="utf-8">
@@ -10,35 +36,49 @@
 $(function(){
     //$('form input[name=utf8]').remove();
     //$('form input[name=authenticity_token]').remove();
-    $('select#code_type, select#status').bind('change',function(){
+    $('select.filter').bind('change',function(){
       var url = $(this).closest('form').serialize();
       window.location="/qr_codes?"+url;
     })   
 })
 //]]>
 </script>
-
+<div id="test">
+  <%= link_to 'Issue QrCodes' , panel_qr_codes_path  %>
+</div>
 <div id="filters">
   <%= form_tag(:action=>:printable, :format=>:pdf) do %>
+    <% empty_select = '<option value="">....Select....</option>'.html_safe %>
     <%= select_tag :template_id , options_from_collection_for_select(@templates,:id,:name) %>
-    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s) %>
-    <%=  select_tag :status , options_for_select( {"Inactive"=>0, "Active"=>1 },params[:status].to_s) %>
-    <%=  hidden_field_tag :engagement_id, params[:engagement_id]   %>
-    <%= submit_tag "Get Pdf" %>
+    <%=  select_tag :code_type , options_for_select( {"Select ..."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"filter" %>
+    
+    
+    <%=  select_tag :status , options_for_select( {"Select ..."=>"", "Inactive"=>0, "Active"=>1 },params[:status].to_s) ,:class=>"filter"%>
+    
+    <% engagement_options = empty_select + options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id].to_s)  %>
+
+    <%= select_tag :engagement_id , engagement_options,:class=>"filter"  %>
+    <% print_options = empty_select + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
+    <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
+    
+    <%= submit_tag "Export to template" %>
   <% end %>
     
 </div>
-<table>
+<table cellpadding="0" cellspacing="0">
 
   <tr>
     <th>Code</th>
     <th>Engagment</th>
+    <th>Eng. Type</th>
     <th>Hash code</th>
     <th>Status</th>
-    <th>Secret Code</th>
-    <th>Type</th>
+    <th>QrType</th>
     <th>Business</th>
-    <th></th>
+    <th>Brand</th>
+    <th>Printed</th>
+    <th>Issue Date</th>
+     <th></th>
     <th></th>
     <th></th>
   </tr>
@@ -46,10 +86,22 @@ $(function(){
 <% @qr_codes.each do |qr_code| %>
   <tr>
     <td><%= image_tag qr_code.qr_image, :width=>"50%"  %></td>
-    <td><%= qr_code.engagement.name %></td>
+    <td>
+      <% if qr_code.engagement.blank? %>
+        not associated
+      <% else %>
+        <%= qr_code.engagement.name %>
+      <% end %>
+    </td>
+     <td>
+      <% if qr_code.engagement.blank? %>
+        "not"
+      <% else %>
+        <%= qr_code.engagement.engagement_type %>
+      <% end %>
+    </td>   
     <td><%= qr_code.hash_code %></td>
-    <td><%= raw qr_code.status ? "<strong style='color:green'>Active</strong>" : "<strong style='color:red'>Inactive</strong>" %></td>
-    <td><%= sanitize qr_code.unique_code %></td>
+    <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>
       <% if (qr_code.code_type) %>
         <strong style="color:blue">Multi Use</strong>
@@ -57,9 +109,27 @@ $(function(){
         <strong> Single Use</strong>
       <% end %>
     </td>
+
     <td>
        <%= qr_code.business_name  %>
-    </td>
+     </td>
+     <td>
+      <% if qr_code.engagement.blank? %>
+        N/A
+      <% else %>
+        <%= qr_code.engagement.business.brand.name %>
+      <% end %>
+      </td>
+      <td>
+       <% if qr_code.print_job_id.blank? %>
+         not printed
+       <% else %>
+         printed
+        <% end %>
+      </td>
+      <td>
+        <%= qr_code.created_at.to_formatted_s(:long) %>
+      </td>
     <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
@@ -68,5 +138,3 @@ $(function(){
 </table>
 
 <br />
-<%= link_to "Show All", :action=>:index , :engagement_id =>params[:engagement_id] %>
-<%= link_to 'Add QrCodes' , panel_qr_codes_path  %>

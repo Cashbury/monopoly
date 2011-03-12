@@ -120,6 +120,15 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.integer "reward_id"
   end
 
+  create_table "print_jobs", :force => true do |t|
+    t.string   "name"
+    t.integer  "ran"
+    t.text     "log"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "display"
+  end
+
   create_table "program_types", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -149,6 +158,7 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.boolean  "code_type"
     t.boolean  "status"
     t.integer  "point"
+    t.integer  "print_job_id"
   end
 
   create_table "qrcodes", :force => true do |t|
@@ -195,6 +205,7 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "front_photo"
+    t.text     "description"
   end
 
   create_table "users", :force => true do |t|
@@ -212,13 +223,9 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "full_name"
-    t.string   "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
     t.boolean  "admin"
   end
 
-  add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 

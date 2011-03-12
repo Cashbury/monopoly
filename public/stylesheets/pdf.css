@@ -1,3 +1,20 @@
-body{
-  background: green;
+/** front face of card**/
+#front{
+
 }
+
+/**back face of the card**/
+#back{
+
+
+}
+/** text box in qr code**/
+.qr_text{
+  
+
+}
+
+div.row{
+  
+}
+

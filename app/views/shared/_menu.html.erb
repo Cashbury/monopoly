@@ -2,6 +2,11 @@
 <%= link_to "Businesses", businesses_path %> |
 <%= link_to "Programs", programs_path %>     |
 <%= link_to "Reports", users_snaps_path %>     
+<%= link_to "Programs", programs_path %>    | 
+<%= link_to "Brands", brands_path %>     |
+<%= link_to "Templates", templates_path %> | 
+<%= link_to "QrCodes", qr_codes_path %> |
+<%= link_to "Print Jobs", print_jobs_path %>
 
 <hr/>
 <% if user_signed_in? %>
@@ -9,6 +14,6 @@
 	<%= link_to "Sign out", destroy_user_session_path %><br/>
 <% else %>
   <%= link_to "New user sign up", new_user_registration_path %> or | 
-	<%= link_to "Sign in", new_user_session_path %>
+  <%= link_to "Sign in", new_user_session_path %>
 <% end %>
 <hr/>	

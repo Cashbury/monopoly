@@ -8,10 +8,14 @@ Kazdoor::Application.routes.draw do
 	resources :users
 	resources :users_snaps
 	match '/login.(:format)' => "users_sessions#login" #this route is for quick testing fb connect and should be disabled later
+
 	match '/users_snaps/:user_id/:qr_code_id/:used_at'=>"users_snaps#snap"
 	match '/places/for_businessid/:id' =>"places#for_businessid"
 	match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
   resources :templates
+
+  resources :print_jobs
+
 
   resources :program_types
 
@@ -21,10 +25,10 @@ Kazdoor::Application.routes.draw do
 
   resources :newsletters
   resources :qr_codes do
-    get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection
-    get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection
+    get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
+    get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
     post "panel" , :on =>:collection 
-    get "panel"  , :on =>:collection
+    get "panel"  , :on =>:collection 
     post "printable", :on=>:collection
   end
 
