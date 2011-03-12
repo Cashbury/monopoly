@@ -3,7 +3,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes.xml
   def index
     @qr_codes = search_qrs 
-    @templates = Template.where(:user_id =>current_user.id)
+    @templates = Template.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -114,11 +114,17 @@ class QrCodesController < ApplicationController
     if request.post?
       @qrcodes = search_qrs
       @template = Template.find(params[:template_id])
-
+      
       respond_to do |format|
-        format.pdf do
-        render  :pdf => "qrcode"
-      end   
+        @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}")
+        if @pj.save
+           @qrcodes.update_all :print_job_id =>@pj.id
+           format.pdf do
+           render  :pdf => "qrcode"         
+          end
+        else
+          render 404
+        end   
      end
     else
       redirect_to nil
@@ -151,9 +157,14 @@ class QrCodesController < ApplicationController
   end
 
   def search_qrs
-    search = {:engagement_id =>params[:engagement_id]}
-    search = search.merge({:status=>params[:status]}) unless params[:status].blank?
-    search = search.merge({:code_type=>params[:code_type]}) unless params[:code_type].blank?
+    @engagements ||= Engagement.all
+    @print_jobs ||= PrintJob.where(:display=>false)
+    search = {}
+
+    search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
+    search = search.merge({:print_job_id=>params[:print_job_id]}) unless params[:print_job_id].blank?
+    search = search.merge({:status=>params[:status]})             unless params[:status].blank?
+    search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
     QrCode.where search
   end
 

@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  resources :print_jobs
+
 	#resources :users_snaps
 	match '/login.:format' =>"users_sessions#login"
 	match '/users_snaps/:user_id/:qr_code_id/:used_at'=>"users_snaps#snap"
@@ -23,10 +25,10 @@ Kazdoor::Application.routes.draw do
 
   resources :newsletters
   resources :qr_codes do
-    get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection
-    get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection
+    get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
+    get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
     post "panel" , :on =>:collection 
-    get "panel"  , :on =>:collection
+    get "panel"  , :on =>:collection 
     post "printable", :on=>:collection
   end
 

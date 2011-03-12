@@ -3,6 +3,9 @@
   table , tr , td{
     border:1px #ccc solid
   }
+  select#template_id,select.filter{
+    width:150px;
+  }
 </style>
 
 <script type="text/javascript" language="javascript" charset="utf-8">
@@ -10,7 +13,7 @@
 $(function(){
     //$('form input[name=utf8]').remove();
     //$('form input[name=authenticity_token]').remove();
-    $('select#code_type, select#status').bind('change',function(){
+    $('select.filter').bind('change',function(){
       var url = $(this).closest('form').serialize();
       window.location="/qr_codes?"+url;
     })   
@@ -20,10 +23,19 @@ $(function(){
 
 <div id="filters">
   <%= form_tag(:action=>:printable, :format=>:pdf) do %>
+    <% empty_select = '<option value="">....Select....</option>'.html_safe %>
     <%= select_tag :template_id , options_from_collection_for_select(@templates,:id,:name) %>
-    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s) %>
-    <%=  select_tag :status , options_for_select( {"Inactive"=>0, "Active"=>1 },params[:status].to_s) %>
-    <%=  hidden_field_tag :engagement_id, params[:engagement_id]   %>
+    <%=  select_tag :code_type , options_for_select( {"Select ..."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"filter" %>
+    
+    
+    <%=  select_tag :status , options_for_select( {"Select ..."=>"", "Inactive"=>0, "Active"=>1 },params[:status].to_s) ,:class=>"filter"%>
+    
+    <% engagement_options = empty_select + options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id].to_s)  %>
+
+    <%= select_tag :engagement_id , engagement_options,:class=>"filter"  %>
+    <% print_options = empty_select + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
+    <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
+    
     <%= submit_tag "Get Pdf" %>
   <% end %>
     
@@ -38,6 +50,7 @@ $(function(){
     <th>Secret Code</th>
     <th>Type</th>
     <th>Business</th>
+    <th>Printed</th>
     <th></th>
     <th></th>
     <th></th>
@@ -59,7 +72,14 @@ $(function(){
     </td>
     <td>
        <%= qr_code.business_name  %>
-    </td>
+     </td>
+     <td>
+       <% if qr_code.print_job_id.blank? %>
+         not printed
+       <% else %>
+         printed
+        <% end %>
+     </td>
     <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
@@ -68,5 +88,4 @@ $(function(){
 </table>
 
 <br />
-<%= link_to "Show All", :action=>:index , :engagement_id =>params[:engagement_id] %>
 <%= link_to 'Add QrCodes' , panel_qr_codes_path  %>
