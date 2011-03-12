@@ -48,7 +48,7 @@ $(function(){
     <strong>
     Brands
     </strong> <br/>
-      <%= select_tag :brand_id , options_from_collection_for_select(@brands , :id, :name) %>
+    <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>
     </p>
     <p class="row">
     <strong>

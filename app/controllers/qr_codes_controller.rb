@@ -65,7 +65,7 @@ class QrCodesController < ApplicationController
 
     respond_to do |format|
       if @qr_code.update_attributes(params[:qr_code])
-        format.html { redirect_to(@qr_code, :notice => 'Qr code was successfully updated.') }
+        format.html { redirect_to(qr_codes_path, :notice => 'Qr code was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -113,8 +113,7 @@ class QrCodesController < ApplicationController
       end
 
     end
-
-    @brands = Brand.where(:user_id => current_user.id)  
+    @brands = Brand.all
   end
 
   def printable
@@ -127,7 +126,7 @@ class QrCodesController < ApplicationController
         if @pj.save
            @qrcodes.update_all :print_job_id =>@pj.id
            format.pdf do
-           render  :pdf => "qrcode"         
+           render  :pdf => "#{@template.name}_qrcodes"         
           end
         else
           render 404
@@ -165,7 +164,7 @@ class QrCodesController < ApplicationController
 
   def search_qrs
     @engagements ||= Engagement.all
-    @print_jobs ||= PrintJob.where(:display=>false)
+    @print_jobs ||= PrintJob.all
     search = {}
 
     search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?

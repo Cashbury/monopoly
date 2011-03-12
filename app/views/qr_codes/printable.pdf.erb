@@ -5,10 +5,7 @@
  .qrcode_front{
     width:300px; 
     height:300px; 
-    margin-bottom:15px; 
     text-align:center ;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
     padding-top:20px;
     background: url(file://<%= Rails.public_path + @template.front_photo_url(:thumb).to_s%>) no-repeat;
     float:left;
@@ -16,27 +13,31 @@
  .qrcode_back{
     width:300px; 
     height:300px; 
-    margin-bottom:15px; 
     text-align:center ;
-    -moz-border-radius: 15px;
-    border-radius: 15px;
     padding-top:20px;
     background: url(file://<%= Rails.public_path + @template.back_photo_url(:thumb).to_s%>) no-repeat;
     float:left;
     }
+    
  </style>
 
 <% for qrcode in @qrcodes %>
   <div class="qrcode_front" id="qr_<%= qrcode.id %>">
   <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
   <br/>
-    <strong><%= @template.name %></strong>
+    <div id="front" class="qr_text">
+      earn +<%= pluralize(qrcode.engagement.points, "point")%><br/>
+      <%= qrcode.business_name %><br/>
+      <%= qrcode.engagement.name %>
+    </div>
   </div> 
   
   <div class="qrcode_back" id="qr_<%= qrcode.id %>">
     <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
   <br/>
-    <strong><%= @template.name %></strong>
+    <div id="back" class="qr_text">
+    <%= raw @template.description %>
+    </div>
   </div> 
 
   <div class="clear">

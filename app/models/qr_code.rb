@@ -38,9 +38,9 @@ class QrCode < ActiveRecord::Base
 
   def business_name
     if engagement.blank?
-      "Not Associated"
+      "NA"
     else
-		  engagement.business.name 
+      engagement.business.name 
     end
   end
 

@@ -12,11 +12,20 @@
 </p>
 <p>
   <b>Qr status :</b>
-  <%= @qr_code.status %>
+  <% if @qr_code.status %>
+    Active
+  <% else %>
+    Inactive
+  <% end %>
 </p>
 <p>
   <b>Qr Type:</b>
-  <%= @qr_code.code_type %>
+  <% if @qr_code.code_type %>
+    Multi Use
+  <% else %>
+    OneTime Use
+  <% end %>
+
 </p>
 
 
