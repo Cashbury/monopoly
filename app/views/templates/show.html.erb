@@ -3,7 +3,8 @@
   <%= @template.name %>
 </p>
 <p>
-  <%= image_tag @template.photo_url.to_s %>
+  <%= image_tag @template.front_photo_url.to_s %>
+  <%= image_tag @template.back_photo_url.to_s %>
 </p>
 
 <%= link_to 'Edit', edit_template_path(@template) %> |

@@ -10,7 +10,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20110311235734) do
+=======
+ActiveRecord::Schema.define(:version => 20110311034823) do
+>>>>>>> 8195a60591f4ba6a9b03b6dd3122d9395b1725d7
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -189,11 +193,12 @@ ActiveRecord::Schema.define(:version => 20110311235734) do
 
   create_table "templates", :force => true do |t|
     t.string   "name"
-    t.string   "photo"
+    t.string   "back_photo"
     t.boolean  "active"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "front_photo"
   end
 
   create_table "users", :force => true do |t|
@@ -211,12 +216,8 @@ ActiveRecord::Schema.define(:version => 20110311235734) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "full_name"
-    t.string   "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
   end
 
-  add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
