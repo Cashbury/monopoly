@@ -10,8 +10,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110309153134) do
-	
+ActiveRecord::Schema.define(:version => 20110311235734) do
+
   create_table "accounts", :force => true do |t|
     t.integer  "points"
     t.integer  "user_id"
@@ -223,7 +223,7 @@ ActiveRecord::Schema.define(:version => 20110309153134) do
   create_table "users_snaps", :force => true do |t|
     t.integer  "user_id",    :null => false
     t.integer  "qr_code_id", :null => false
-    t.datetime "used_at"
+    t.date     "used_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

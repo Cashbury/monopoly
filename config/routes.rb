@@ -1,18 +1,9 @@
 Kazdoor::Application.routes.draw do
-	#resources :users_snaps
+	resources :users_snaps
 	match '/login.:format' =>"users_sessions#login"
 	match '/users_snaps/:user_id/:qr_code_id/:used_at'=>"users_snaps#snap"
 	match '/places/for_businessid/:id' =>"places#for_businessid"
-	match '/users_snaps/businesses/:business_id/places/:place_id' =>"users_snaps#index"
-	
-	resources :users_snaps do
-		resources :businesses do
-      resources :places do 
-					resources :index
-				end
-		end
-	end
-
+	match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
   resources :templates
 
   resources :program_types

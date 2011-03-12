@@ -1,3 +1,7 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+
 <%= form_for(@program) do |f| %>
   <% if @program.errors.any? %>
     <div id="error_explanation">
@@ -12,37 +16,40 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :name %><%= mark_required(@program, :name) %><br />
+    <%= f.label :name %><%= mark_required(@program, :name) %>
     <%= f.text_field :name %>
   </div>
+  <br />
   <div class="field">
-    <%= f.label :type_id %><%= mark_required(@program, :type_id) %><br />
+    <%= f.label :type_id %><%= mark_required(@program, :type_id) %>
     <%= f.select :type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]} %>
-  </div>
+  </div><br />
   <div class="field">
-    <%= f.label :auto_enroll %><br />
+    <%= f.label :auto_enroll %>
     <%= f.check_box :auto_enroll %>
-  </div>
+  </div><br />
   <div class="field">
-    <%= f.label :start_date %><br />
-    <%= f.date_select :start_date %>
-  </div>
+    <%= f.label :start_date %>
+    <%= f.calendar_date_select :start_date%>
+  </div><br />
   <div class="field">
-    <%= f.label :end_date %><br />
-    <%= f.date_select :end_date %>
-  </div>
+    <%= f.label :end_date %>
+    <%= f.calendar_date_select :end_date%>
+  </div><br />
   <div class="field">
-    <%= f.label :business_id %><%= mark_required(@program, :business_id) %><br />
+    <%= f.label :business_id %><%= mark_required(@program, :business_id) %>
     <%= f.select :business_id,Business.all.collect {|b| [b.name,b.id]} %>
-  </div>
+  </div><br />
   <div class="field">
-    <%= f.label :initial_points %><br />
+    <%= f.label :initial_points %>
     <%= f.text_field :initial_points %>
-  </div>
+  </div><br />
   <div class="field">
-    <%= f.label :max_points %><br />
+    <%= f.label :max_points %>
     <%= f.text_field :max_points %>
   </div>
+  <br/><br />
+  
   <div class="actions">
     <%= f.submit %>
   </div>

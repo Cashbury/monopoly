@@ -8,8 +8,9 @@ class QrCode < ActiveRecord::Base
   attr_accessible :place_id , :engagement_id , :hash_code , :point , :status ,:code_type
 
   belongs_to :place
-	has_many :users_snaps,:conditions =>"code_type=#{MULTI_USE}"
-	has_one :users_snap,:conditions =>"code_type=#{SINGLE_USE}"
+  
+	has_many :users_snaps
+	
   belongs_to :engagement
   
   before_save :encrypt_code

@@ -58,7 +58,9 @@ function change_engagement_status(id)
 }
 
 var submitUsersSnapsSearch = function(form, sortingBy, page, direction){
-	businessId = jQuery('select#filters_business_id').val();
-	placeId    = jQuery('select#filters_place_id').val();
-	window.location = "/users_snaps/businesses/" + businessId + "/places/" + placeId;
+	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
+	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
+	startDate  = (jQuery('#filters_start_date').val()=="") ? 0 : jQuery('#filters_start_date').val();
+	endDate    = (jQuery('#filters_end_date').val()=="")? 0 : jQuery('#filters_end_date').val();
+	window.location = "/users_snaps/businesses/" + businessId + "/places/" + placeId + "/start_date/" + startDate + "/end_date/"+ endDate;
 }
