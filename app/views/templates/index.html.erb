@@ -5,6 +5,12 @@
     <th>
       Name
     </th>
+     <th>
+      front
+    </th>   
+     <th>
+      Back
+    </th>
     <th></th>
     <th></th>
     <th></th>
@@ -13,7 +19,8 @@
 <% @templates.each do |template| %>
   <tr>
     <td> <%= template.name %></td>
-    <td> <%= image_tag template.photo_url(:thumb).to_s %></td>
+    <td> <%= image_tag template.front_photo_url(:thumb).to_s %></td>
+    <td> <%= image_tag template.back_photo_url(:thumb).to_s %></td>
     <td><%= link_to 'Show', template %></td>
     <td><%= link_to 'Edit', edit_template_path(template) %></td>
     <td><%= link_to 'Destroy', template, :confirm => 'Are you sure?', :method => :delete %></td>
