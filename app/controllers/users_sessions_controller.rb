@@ -1,5 +1,5 @@
 class UsersSessionsController < ApplicationController
-
+  #This class is for quick testing fb connect and should be disabled later
   def login  	
   	@user=User.find_by_email(params[:email])
   	if @user.blank?
