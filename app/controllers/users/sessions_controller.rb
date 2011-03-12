@@ -13,7 +13,7 @@ class Users::SessionsController < Devise::SessionsController
 						sign_in @user
 						render :xml => @user,:status=>200
 					else
-						render :text => @user.errors.full_message,:status=>500
+						render :text => @user.errors.full_messages,:status=>500
 					end
         else
 					sign_in @user

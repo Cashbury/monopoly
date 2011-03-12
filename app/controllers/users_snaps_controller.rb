@@ -21,7 +21,7 @@ class UsersSnapsController < ApplicationController
 			if @snap.save
       	format.xml {render :xml => @snap, :status => :created}
      	else
-     		format.xml {render :text => @snap.errors.full_message, :status => 500}
+     		format.xml {render :text => @snap.errors.full_messages, :status => 500}
      	end
     end											 
   end

@@ -19,3 +19,4 @@ vendor/cache/geokit-rails3-0.1.2.gem
 vendor/cache/shoulda-2.11.3.gem
 config/database.yml
 public/images/qrcodes/*.png
+.project
