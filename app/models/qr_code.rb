@@ -16,9 +16,9 @@ class QrCode < ActiveRecord::Base
 
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 
-    unique_code = { :engagement_id => engagement.id}.to_yaml
+    #unique_code = { :engagement_id => engagement.id}.to_yaml
     self.save_image                                           #save image to server
-    self.unique_code = encrypt(unique_code)                   # generates a unique code :)
+    #self.unique_code = encrypt(unique_code)                   # generates a unique code :)
     self.hash_code
   end
 
@@ -37,7 +37,11 @@ class QrCode < ActiveRecord::Base
 
 
   def business_name
-		engagement.business.name 
+    if engagement.blank?
+      "Not Associated"
+    else
+		  engagement.business.name 
+    end
   end
 
   def save_image

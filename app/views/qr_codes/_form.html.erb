@@ -13,12 +13,9 @@
 
   <div class="field">
     <%= f.label :engagement_id %><br />
-    <%= f.text_field :engagement_id %>
+    <%= f.collection_select :engagement_id , @engagements ,:id , :name%>
   </div>
-  <div class="field">
-    <%= f.label :hash_code %><br />
-    <%= f.text_field :hash_code %>
-  </div>
+
    <div class="field">
     <%= f.label :status %><br />
     <%= f.check_box :status %>

@@ -1,13 +1,9 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <b>Place:</b>
-  <%= @qr_code.place_id %>
-</p>
 
 <p>
   <b>Engagment:</b>
-  <%= @qr_code.engagement_id %>
+  <%= @qr_code.engagement.name %>
 </p>
 
 <p>
@@ -21,10 +17,6 @@
 <p>
   <b>Qr Type:</b>
   <%= @qr_code.code_type %>
-</p>
-<p>
-  <b>Qr Points:</b>
-  <%= @qr_code.point %>
 </p>
 
 

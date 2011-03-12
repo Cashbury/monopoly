@@ -59,7 +59,13 @@ $(function(){
 <% @qr_codes.each do |qr_code| %>
   <tr>
     <td><%= image_tag qr_code.qr_image, :width=>"50%"  %></td>
-    <td><%= qr_code.engagement.name %></td>
+    <td>
+      <% if qr_code.engagement.blank? %>
+        not associated
+      <% else %>
+        <%= qr_code.engagement.name %>
+      <% end %>
+    </td>
     <td><%= qr_code.hash_code %></td>
     <td><%= raw qr_code.status ? "<strong style='color:green'>Active</strong>" : "<strong style='color:red'>Inactive</strong>" %></td>
     <td><%= sanitize qr_code.unique_code %></td>

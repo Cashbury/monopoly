@@ -39,6 +39,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1/edit
   def edit
     @qr_code = QrCode.find(params[:id])
+    @engagements = Engagement.all
   end
 
   # POST /qr_codes
@@ -92,7 +93,13 @@ class QrCodesController < ApplicationController
       engagement = Engagement.where(:id=> params[:engagement_id]).first
      
       if engagement.blank?
-        redirect_to :action =>:panel ,:notice => "No egagement exists"
+       codes = []
+        quantity.times{
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i}
+        }
+        if QrCode.create(codes)
+          redirect_to :action=>:index
+        end
       else
         #when everything is ok
         quantity.times{
