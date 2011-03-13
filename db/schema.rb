@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110312144340) do
+ActiveRecord::Schema.define(:version => 20110313101252) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -64,25 +64,13 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.datetime "updated_at"
     t.string   "name"
     t.integer  "place_id"
+    t.integer  "program_id"
   end
 
   create_table "engagements_places", :id => false, :force => true do |t|
     t.integer "engagement_id"
     t.integer "place_id"
   end
-
-  create_table "histories", :force => true do |t|
-    t.string   "message"
-    t.string   "username"
-    t.integer  "item"
-    t.string   "table"
-    t.integer  "month",      :limit => 2
-    t.integer  "year",       :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
 
   create_table "newsletters", :force => true do |t|
     t.boolean  "letter_type"
@@ -127,14 +115,14 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
   end
 
   create_table "programs", :force => true do |t|
-    t.string   "name",                          :null => false
-    t.integer  "type_id",                       :null => false
+    t.string   "name",                           :null => false
+    t.integer  "program_type_id",                :null => false
     t.boolean  "auto_enroll"
     t.date     "start_date"
     t.date     "end_date"
-    t.integer  "business_id",                   :null => false
-    t.integer  "initial_points", :default => 0
-    t.integer  "max_points",     :default => 0
+    t.integer  "business_id",                    :null => false
+    t.integer  "initial_points",  :default => 0
+    t.integer  "max_points",      :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -157,6 +145,19 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "rails_admin_histories", :force => true do |t|
+    t.string   "message"
+    t.string   "username"
+    t.integer  "item"
+    t.string   "table"
+    t.integer  "month",      :limit => 2
+    t.integer  "year",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
 
   create_table "reports", :force => true do |t|
     t.string   "name"
