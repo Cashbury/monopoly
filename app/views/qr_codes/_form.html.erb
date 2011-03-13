@@ -13,7 +13,7 @@
 
   <div class="field">
     <%= f.label :engagement_id %><br />
-    <%= f.collection_select :engagement_id , @engagements ,:id , :name%>
+    <%= f.collection_select :engagement_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
   </div>
 
    <div class="field">

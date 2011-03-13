@@ -15,7 +15,7 @@ class QrCode < ActiveRecord::Base
   
   before_create :encrypt_code
 
-  scope :associate_with_engagements , where("qr_codes.engagement_id IS NOT NULL")
+  scope :associated_with_engagements , where("qr_codes.engagement_id IS NOT NULL")
 
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 

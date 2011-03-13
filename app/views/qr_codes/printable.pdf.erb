@@ -4,37 +4,59 @@
  }
 
  .qrcode_back{
-    width:334px; 
-    height:200px; 
-    text-align:center ;
-    padding-top:20px;
-    background: url(file://<%= Rails.public_path + @template.back_photo_url(:thumb).to_s%>) no-repeat;
+    width:338px; 
+    height:201px; 
+    #background: url(file://<%= Rails.public_path + @template.back_photo_url(:thumb).to_s%>) no-repeat;
     float:left;
-    }
+    border-top:#ccc 1px solid;
+    border-rigth:#ccc 1px solid;
+    border-left:#ccc 1px solid;
+  }
+
+  .qrcode_back img{
+    margin-left:24px;
+    margin-top:74px;
+    float:left;
+  }
     
  </style>
-
+<% i=1 %>
 <% for qrcode in @qrcodes %>
-  <div class="qrcode_front" id="qr_<%= qrcode.id %>">
-  <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
-  <br/>
-    <div id="front" class="qr_text">
-      earn +<%= pluralize(qrcode.engagement.points, "point")%><br/>
-      <%= qrcode.business_name %><br/>
-      <%= qrcode.engagement.name %>
-    </div>
-  </div> 
+  Gloria Jeans Coffee
+  <span>Buy 10 Coffee Drinks, Snap 10 points, Unlock a free Coffee Drink</span> 
+  <div>
+    Cashbury - Loyality Cards on your iPhone
+    <p>
+    It's free as easy as snaping a picture ... here's how to get started 
+    <span>
+      step 1.
+      </span>
+      <p>
+      Download your free cashbury iPhone app <br />
+      download it from cashbury or app store 
+      </p>
+      <span>
+        Step 2.
+        </span>
+        <p>
+          Snap this code and earn points 
+          </p>
+          Using your cashbury App press "SNAP it" button and scan the code to earn points. Earn enough points and Unlock rewards.
+
+          </p>
+          www.cashbury.com - questions@cashbury.com
+  </div>
   
   <div class="qrcode_back" id="qr_<%= qrcode.id %>">
-    <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png"  %>
-  <br/>
-    <div id="back" class="qr_text">
-    <%= raw @template.description %>
-    </div>
+    <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png" , :width=>"30%" %>
+    
   </div> 
-
-  <div class="clear">
-  </div>
+  
+  <% if i%2 ==0 %>
+    <div class="clear">
+    </div>
+  <% end %>
+  <% i+=1 %>
 <% end %>
 
 

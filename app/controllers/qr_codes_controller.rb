@@ -123,11 +123,14 @@ class QrCodesController < ApplicationController
       @template = Template.find(params[:template_id])
        
       respond_to do |format|
-        @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}")
+        engagement_ids = @qrcodes.collect(&:id).to_yaml
+        @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}" , :log=>engagement_ids)
         if @pj.save
-           @qrcodes.update_all :print_job_id =>@pj.id
-           format.pdf do
-           render  :pdf => "#{@template.name}_qrcodes"         
+          
+          format.pdf do
+            render  :pdf => "#{@template.name}_qrcodes",
+                    :dpi =>200,
+                    :low_quality=>false
           end
         else
           render 404
@@ -170,7 +173,12 @@ class QrCodesController < ApplicationController
     search = {}
 
     search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
-    search = search.merge({:print_job_id=>params[:print_job_id]}) unless params[:print_job_id].blank?
+    unless params[:print_job_id].blank?
+      pj = PrintJob.where(:id=>params[:print_job_id]).first  
+      qr_code_ids = YAML.load(pj.log)               if pj.respond_to? :log  
+      search = search.merge({:id => qr_code_ids })  unless qr_code_ids.blank? 
+      p qr_code_ids.inspect
+    end
     search = search.merge({:status=>params[:status]})             unless params[:status].blank?
     search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
     QrCode.where search
