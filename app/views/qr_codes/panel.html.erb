@@ -9,7 +9,7 @@ $(function(){
     $('select#business_id').bind('change',function(){
       var business_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_engagements/"+business_id);
-      });   
+    });   
 
     $("#associate_link").click(function(){
       $(this).html("hide");
@@ -67,4 +67,4 @@ $(function(){
   <p class="row">
     <%= submit_tag "Submit" %>
   </p>
-<% end %>
+<% end %>    <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe + options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id].to_s)  %>

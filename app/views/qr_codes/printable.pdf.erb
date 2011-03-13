@@ -2,17 +2,10 @@
  .clear{
   clear:both;
  }
- .qrcode_front{
-    width:300px; 
-    height:300px; 
-    text-align:center ;
-    padding-top:20px;
-    background: url(file://<%= Rails.public_path + @template.front_photo_url(:thumb).to_s%>) no-repeat;
-    float:left;
-    }
+
  .qrcode_back{
-    width:300px; 
-    height:300px; 
+    width:334px; 
+    height:200px; 
     text-align:center ;
     padding-top:20px;
     background: url(file://<%= Rails.public_path + @template.back_photo_url(:thumb).to_s%>) no-repeat;
@@ -41,7 +34,6 @@
   </div> 
 
   <div class="clear">
-    
   </div>
 <% end %>
 

@@ -118,9 +118,10 @@ class QrCodesController < ApplicationController
 
   def printable
     if request.post?
-      @qrcodes = search_qrs
+      @qrcodes = search_qrs.associated_with_engagements
+
       @template = Template.find(params[:template_id])
-      
+       
       respond_to do |format|
         @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}")
         if @pj.save
