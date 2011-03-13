@@ -1,10 +1,10 @@
 Kazdoor::Application.routes.draw do
-	devise_for :users, :controllers => { :sessions => "users/sessions" }
-	devise_scope :user do
-    namespace :users do
-      resources :sessions, :only => [:create, :destroy]  
-  	end
-	end
+  devise_for :users, :controllers => { :sessions => "users/sessions" }
+  devise_scope :user do
+      namespace :users do
+        resources :sessions, :only => [:create, :destroy]  
+      end
+    end
 	resources :users
 	resources :users_snaps
 	match '/login.(:format)' => "users_sessions#login" #this route is for quick testing fb connect and should be disabled later
@@ -12,6 +12,7 @@ Kazdoor::Application.routes.draw do
 	match '/users_snaps/:user_id/:qr_code_id/:used_at'=>"users_snaps#snap"
 	match '/places/for_businessid/:id' =>"places#for_businessid"
 	match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
+  
   resources :templates
 
   resources :print_jobs
