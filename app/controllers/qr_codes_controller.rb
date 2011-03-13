@@ -163,8 +163,9 @@ class QrCodesController < ApplicationController
   end
 
   def search_qrs
-    @engagements ||= Engagement.all
-    @print_jobs ||= PrintJob.all
+    @print_jobs   ||= PrintJob.all
+    @brands       ||= Brand.all  
+    @engagements  ||= Engagement.all 
     search = {}
 
     search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
