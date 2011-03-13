@@ -20,7 +20,7 @@ class UsersSnap < ActiveRecord::Base
     @filters << "used_at >= ?"      and @params << options[:start_date]  unless options[:start_date].nil?
     @filters << "used_at <= ?"      and @params << options[:end_date]    unless options[:end_date].nil?
     @params.insert(0, @filters.join(" AND ")) 
-    @results = UsersSnap.select("user_id,qr_code_id,used_at,businesses.id,places.id,engagements.name as ename,businesses.name as bname,point,places.name as pname,users.full_name,programs.name as pname")
+    @results = UsersSnap.select("user_id,qr_code_id,used_at,businesses.id,places.id,engagements.name as ename,businesses.name as bname,point,places.name as pname,users.full_name,programs.name as program_name")
     									  .joins([:user,:qr_code=>[:engagement=>:program,:place=>:business]])
     									  .where(@params)
     									  .order("users.full_name DESC")

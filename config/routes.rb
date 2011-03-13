@@ -4,6 +4,7 @@ Kazdoor::Application.routes.draw do
     controller "users_snaps" do
       match "/users_snaps", :to => :index
       match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date', :to=> :index
+      
     end
   end
     

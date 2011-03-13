@@ -22,5 +22,6 @@ class Place < ActiveRecord::Base
   
   has_many :reports, :as => :reportable
   has_many :qr_codes
-  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :distance  
+  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :distance
+  validates_presence_of :name, :long, :lat  
 end

@@ -54,7 +54,7 @@ function change_engagement_status(id)
 				jQuery('#current_status_'+id).text("stopped");
 			}
   	}
-	});
+	});return false;
 }
 
 var submitUsersSnapsSearch = function(form, sortingBy, page, direction){

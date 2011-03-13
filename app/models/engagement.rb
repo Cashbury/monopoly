@@ -20,11 +20,11 @@ class Engagement < ActiveRecord::Base
   include ActiveRecord::Transitions
   STARTED="started"
   STOPPED="stopped"
-  state_machine do
-    state :pending
+  state_machine :initial => :started do
+    #state :pending
     state :started
     state :stopped
-    state :expired
+    #state :expired
 
     event :start do
       #transitions :to => :started, :from => [:pending]
@@ -35,9 +35,9 @@ class Engagement < ActiveRecord::Base
       transitions :to => :stopped, :from => [:started]
     end
     
-    event :expire do
-      transitions :to => :expired, :from => [:started, :stopped]
-    end
+    # event :expire do
+    #   transitions :to => :expired, :from => [:started, :stopped]
+    # end
   end
   
   belongs_to :business
