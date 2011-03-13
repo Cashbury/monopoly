@@ -3,7 +3,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes.xml
   def index
     @qr_codes = search_qrs 
-    @templates = Template.where(:user_id =>current_user.id)
+    @templates = Template.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -39,6 +39,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1/edit
   def edit
     @qr_code = QrCode.find(params[:id])
+    @engagements = Engagement.all
   end
 
   # POST /qr_codes
@@ -64,7 +65,7 @@ class QrCodesController < ApplicationController
 
     respond_to do |format|
       if @qr_code.update_attributes(params[:qr_code])
-        format.html { redirect_to(@qr_code, :notice => 'Qr code was successfully updated.') }
+        format.html { redirect_to(qr_codes_path, :notice => 'Qr code was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -92,7 +93,13 @@ class QrCodesController < ApplicationController
       engagement = Engagement.where(:id=> params[:engagement_id]).first
      
       if engagement.blank?
-        redirect_to :action =>:panel ,:notice => "No egagement exists"
+       codes = []
+        quantity.times{
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i}
+        }
+        if QrCode.create(codes)
+          redirect_to :action=>:index
+        end
       else
         #when everything is ok
         quantity.times{
@@ -106,19 +113,24 @@ class QrCodesController < ApplicationController
       end
 
     end
-
-    @brands = Brand.where(:user_id => current_user.id)  
+    @brands = Brand.all
   end
 
   def printable
     if request.post?
       @qrcodes = search_qrs
       @template = Template.find(params[:template_id])
-
+      
       respond_to do |format|
-        format.pdf do
-        render  :pdf => "qrcode"
-      end   
+        @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}")
+        if @pj.save
+           @qrcodes.update_all :print_job_id =>@pj.id
+           format.pdf do
+           render  :pdf => "#{@template.name}_qrcodes"         
+          end
+        else
+          render 404
+        end   
      end
     else
       redirect_to nil
@@ -151,9 +163,14 @@ class QrCodesController < ApplicationController
   end
 
   def search_qrs
-    search = {:engagement_id =>params[:engagement_id]}
-    search = search.merge({:status=>params[:status]}) unless params[:status].blank?
-    search = search.merge({:code_type=>params[:code_type]}) unless params[:code_type].blank?
+    @engagements ||= Engagement.all
+    @print_jobs ||= PrintJob.all
+    search = {}
+
+    search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
+    search = search.merge({:print_job_id=>params[:print_job_id]}) unless params[:print_job_id].blank?
+    search = search.merge({:status=>params[:status]})             unless params[:status].blank?
+    search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
     QrCode.where search
   end
 

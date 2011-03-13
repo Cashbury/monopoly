@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @print_job.name %>
+</p>
+
+<p>
+  <b>Ran:</b>
+  <%= @print_job.ran %>
+</p>
+
+<p>
+  <b>Log:</b>
+  <%= @print_job.log %>
+</p>
+
+
+<%= link_to 'Edit', edit_print_job_path(@print_job) %> |
+<%= link_to 'Back', print_jobs_path %>

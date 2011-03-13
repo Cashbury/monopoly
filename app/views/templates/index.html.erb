@@ -1,4 +1,22 @@
+<style type="text/css" media="screen">
+    table {
+    margin-top:10px;
+    border:1px #ccc solid;
+  }
+  th,td{
+    border-right:1px #ccc solid;
+    border-bottom:1px #ccc solid;
+    text-align:center;
+    padding:5px;
+  }
+  th{
+    background:#d2d2d2;
+  }
+</style>
+
 <h1>Listing templates</h1>
+
+
 
 <table>
   <tr>
@@ -11,6 +29,9 @@
      <th>
       Back
     </th>
+    <th>
+      Back Text
+    </th>
     <th></th>
     <th></th>
     <th></th>
@@ -21,6 +42,7 @@
     <td> <%= template.name %></td>
     <td> <%= image_tag template.front_photo_url(:thumb).to_s %></td>
     <td> <%= image_tag template.back_photo_url(:thumb).to_s %></td>
+    <td> <%= raw template.description %></td>
     <td><%= link_to 'Show', template %></td>
     <td><%= link_to 'Edit', edit_template_path(template) %></td>
     <td><%= link_to 'Destroy', template, :confirm => 'Are you sure?', :method => :delete %></td>

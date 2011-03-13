@@ -35,7 +35,8 @@ end
 #
 
 gem 'devise'
-gem 'rails_admin' ,"~> 0.0.1", :git => 'git://github.com/sferik/rails_admin.git' 
+gem 'rails_admin' ,"~> 0.0.1", :git => 'git://github.com/sferik/rails_admin.git'  
+#:path=>'vendor/gems/rails_admin' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators'

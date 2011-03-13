@@ -18,5 +18,9 @@ vendor/cache/geokit-1.5.0.gem
 vendor/cache/geokit-rails3-0.1.2.gem
 vendor/cache/shoulda-2.11.3.gem
 config/database.yml
+<<<<<<< HEAD
 
+=======
+public/images/qrcodes/*.png
+>>>>>>> 960e25754e757ae44afeccd5313adb3f8d4f56d3
 .project

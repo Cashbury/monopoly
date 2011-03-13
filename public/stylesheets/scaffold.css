@@ -54,3 +54,16 @@ div.field, div.actions {
   font-size: 12px;
   list-style: square;
 }
+  table {
+    margin-top:10px;
+    border:1px #ccc solid;
+  }
+  th,td{
+    border-right:1px #ccc solid;
+    border-bottom:1px #ccc solid;
+    text-align:center;
+    padding:5px;
+  }
+  th{
+    background:#d2d2d2;
+  }
