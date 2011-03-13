@@ -22,7 +22,7 @@
     </div> 
     <div class="field">
     <%= f.label :code_type , "Multi use" %><br />
-    <%= f.check_box :code_type %>
+    <%= f.select :code_type , [["Single Use",0],["MultiUse", 1] ]%>
     </div> 
  
   <div class="actions">

@@ -13,7 +13,7 @@ class QrCode < ActiveRecord::Base
 	
   belongs_to :engagement
   
-  before_save :encrypt_code
+  before_create :encrypt_code
 
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 

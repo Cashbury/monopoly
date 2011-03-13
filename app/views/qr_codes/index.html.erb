@@ -63,7 +63,7 @@ $(function(){
 </div>
 <div id="filters">
   <%= form_tag(:action=>:printable, :format=>:pdf) do %>
-    <%= select_tag :template_id ,  "<option value=''>..Templates..</option>".html_safe + options_from_collection_for_select(@templates,:id,:name) %>
+    <%= select_tag :template_id ,  options_from_collection_for_select(@templates,:id,:name) %>
     <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"filter" %>
     
     
