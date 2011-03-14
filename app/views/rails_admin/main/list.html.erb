@@ -129,6 +129,7 @@
 			new Ajax.Request("/engagements/"+id+"/change_status", {
 		      asynchronus: 'true',
 		      method: 'POST',
+		      type: 'js',
 		      parameters: {} ,
 		      onSuccess:function(response){
 			      if($('#current_status_'+id).text()=="stopped"){

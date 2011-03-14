@@ -87,7 +87,9 @@ class EngagementsController < ApplicationController
 		elsif @engagement.state == Engagement::STARTED
 			@engagement.stop!
 		end
-		render :nothing => true, :status => :ok
+		respond_to do |format|
+			format.json { render :nothing=>true ,:status=>:ok}
+    end
 	end
 	  
   private
