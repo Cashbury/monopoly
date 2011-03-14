@@ -70,7 +70,7 @@ $(function(){
     <%=  select_tag :status , options_for_select( {"..Status.."=>"", "Inactive"=>0, "Active"=>1 },params[:status].to_s) ,:class=>"filter"%>
     
 
-    <% print_options =   "<option value=''> ..PrintJobs.. </option>".html_safe + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
+    <% print_options =   "<option value=''> ..ExportJob.. </option>".html_safe + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
     <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
     <br/>
 

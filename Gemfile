@@ -35,7 +35,7 @@ end
 #
 
 gem 'devise'
-gem 'rails_admin' ,:git => 'git://github.com/sferik/rails_admin.git' 
+gem 'rails_admin' ,"~> 0.0.1", :git => 'git://github.com/sferik/rails_admin.git'  
 #:path=>'vendor/gems/rails_admin' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
@@ -58,6 +58,5 @@ gem 'simple_form'
 gem 'geokit-rails3'
 gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch =>'rails3test'
 
-gem 'rmagick'
 gem 'carrierwave'
-
+gem 'rmagick' #server has this
