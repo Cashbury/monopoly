@@ -79,7 +79,8 @@ $(function(){
     <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe , :class=>"efilter" %>
 
     <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id].to_s) , :class=>"filter"  %>
-    
+
+    <%= select_tag :layout , options_for_select({ "Single Use Layout"=>0,"Multi Use Layout "=>1 }),:class=>"efilter" %>
     <%= submit_tag "Export to template" %>
   <% end %>
     

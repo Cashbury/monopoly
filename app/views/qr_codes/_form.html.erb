@@ -1,3 +1,5 @@
+
+
 <%= form_for(@qr_code) do |f| %>
   <% if @qr_code.errors.any? %>
     <div id="error_explanation">
@@ -11,12 +13,13 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :engagement_id %><br />
-    <%= f.collection_select :engagement_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
-  </div>
+  
+  <%= render "shared/engagement_selector" %>
+<div class="">
+  <%= f.collection_select :engagement_id ,[], [],{:id=>"engagement_id"} %>
+</div>
 
-   <div class="field">
+<div class="field">
     <%= f.label :status , "Active" %><br />
     <%= f.check_box :status %>
     </div> 
