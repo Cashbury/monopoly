@@ -24,7 +24,17 @@
     <%= f.label :back_photo %>
     <%= f.file_field :back_photo %>
   </p>
-   <p>
+ 
+  <p>
+    <%= f.label :title , "Print Qr Title" %>
+    <%= f.text_field :title %>
+  </p>
+  <p>
+    <%= f.label :tag , "Print Qr Tagline" %>
+    <%= f.text_field :tag %>
+  </p>
+ 
+  <p>
     <%= f.label :description %>
     <%= f.text_area :description %>
     </p>

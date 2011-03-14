@@ -15,7 +15,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1.xml
   def show
     @qr_code = QrCode.where(:hash_code =>params[:id]).first
-
+     
     respond_to do |format|
       format.pdf do
         render  :pdf => "qrcode"
@@ -29,7 +29,8 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/new.xml
   def new
     @qr_code = QrCode.new
-
+    @brands  = Brand.all
+    @engagements = Engagement.all
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @qr_code }
@@ -39,6 +40,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1/edit
   def edit
     @qr_code = QrCode.find(params[:id])
+    @brands = Brand.all
     @engagements = Engagement.all
   end
 
@@ -126,11 +128,13 @@ class QrCodesController < ApplicationController
         engagement_ids = @qrcodes.collect(&:id).to_yaml
         @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}" , :log=>engagement_ids)
         if @pj.save
-          
           format.pdf do
-            render  :pdf => "#{@template.name}_qrcodes",
-                    :dpi =>200,
-                    :low_quality=>false
+            if params[:layout].to_i == 1
+              render  :pdf => "test",
+                      :template=>"qr_codes/multi_printable.pdf.erb"
+            else 
+              render  :pdf => "#{@template.name}_qrcodes"
+            end            
           end
         else
           render 404

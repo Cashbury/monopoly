@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110312144340) do
+ActiveRecord::Schema.define(:version => 20110313181705) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -206,6 +206,8 @@ ActiveRecord::Schema.define(:version => 20110312144340) do
     t.datetime "updated_at"
     t.string   "front_photo"
     t.text     "description"
+    t.string   "title"
+    t.string   "tag"
   end
 
   create_table "users", :force => true do |t|

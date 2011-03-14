@@ -9,7 +9,7 @@ class QrCode < ActiveRecord::Base
 
   belongs_to :place
   
-	has_many :users_snaps
+  has_many :users_snaps
 	
   belongs_to :engagement
   
@@ -20,13 +20,15 @@ class QrCode < ActiveRecord::Base
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 
     #unique_code = { :engagement_id => engagement.id}.to_yaml
-    self.save_image                                           #save image to server
-    #self.unique_code = encrypt(unique_code)                   # generates a unique code :)
+    save_image_server_path                                        
+    #self.unique_code = encrypt(unique_code)          
     self.hash_code
   end
 
   def qr_image 
-   "https://chart.googleapis.com/chart?chs=150x150&cht=qr&choe=UTF-8&chl="+hash_code
+    qr_dimension = "100x100"
+    qr_dimension = "300x300" if code_type #true means multiUse
+   "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code
   end
 
 
@@ -47,9 +49,9 @@ class QrCode < ActiveRecord::Base
     end
   end
 
-  def save_image
+  def save_image_server_path
     open("#{Rails.public_path}/images/qrcodes/#{hash_code}.png","wb")  do |io|
-      io << open(URI.parse( self.qr_image )).read
+      io << open(URI.parse(qr_image )).read
     end
   end
 
