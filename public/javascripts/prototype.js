@@ -1,4 +1,4 @@
-/*  Prototype JavaScript framework, version 1.7_rc2
+/*  Prototype JavaScript framework, version 1.7
  *  (c) 2005-2010 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
@@ -8,7 +8,7 @@
 
 var Prototype = {
 
-  Version: '1.7_rc2',
+  Version: '1.7',
 
   Browser: (function(){
     var ua = navigator.userAgent;
@@ -166,10 +166,12 @@ var Class = (function() {
       NUMBER_TYPE = 'Number',
       STRING_TYPE = 'String',
       OBJECT_TYPE = 'Object',
+      FUNCTION_CLASS = '[object Function]',
       BOOLEAN_CLASS = '[object Boolean]',
       NUMBER_CLASS = '[object Number]',
       STRING_CLASS = '[object String]',
       ARRAY_CLASS = '[object Array]',
+      DATE_CLASS = '[object Date]',
       NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON &&
         typeof JSON.stringify === 'function' &&
         JSON.stringify(0) === '0' &&
@@ -322,7 +324,7 @@ var Class = (function() {
   }
 
   function isFunction(object) {
-    return typeof object === "function";
+    return _toString.call(object) === FUNCTION_CLASS;
   }
 
   function isString(object) {
@@ -331,6 +333,10 @@ var Class = (function() {
 
   function isNumber(object) {
     return _toString.call(object) === NUMBER_CLASS;
+  }
+
+  function isDate(object) {
+    return _toString.call(object) === DATE_CLASS;
   }
 
   function isUndefined(object) {
@@ -352,6 +358,7 @@ var Class = (function() {
     isFunction:    isFunction,
     isString:      isString,
     isNumber:      isNumber,
+    isDate:        isDate,
     isUndefined:   isUndefined
   });
 })();
@@ -1079,9 +1086,10 @@ Array.from = $A;
       slice = arrayProto.slice,
       _each = arrayProto.forEach; // use native browser JS 1.6 implementation if available
 
-  function each(iterator) {
-    for (var i = 0, length = this.length; i < length; i++)
-      iterator(this[i]);
+  function each(iterator, context) {
+    for (var i = 0, length = this.length >>> 0; i < length; i++) {
+      if (i in this) iterator.call(context, this[i], i, this);
+    }
   }
   if (!_each) _each = each;
 
@@ -1287,8 +1295,14 @@ var Hash = Class.create(Enumerable, (function() {
       var key = encodeURIComponent(pair.key), values = pair.value;
 
       if (values && typeof values == 'object') {
-        if (Object.isArray(values))
-          return results.concat(values.map(toQueryPair.curry(key)));
+        if (Object.isArray(values)) {
+          var queryValues = [];
+          for (var i = 0, len = values.length, value; i < len; i++) {
+            value = values[i];
+            queryValues.push(toQueryPair(key, value));
+          }
+          return results.concat(queryValues);
+        }
       } else results.push(toQueryPair(key, values));
       return results;
     }).join('&');
@@ -1468,9 +1482,7 @@ Ajax.Base = Class.create({
 
     this.options.method = this.options.method.toLowerCase();
 
-    if (Object.isString(this.options.parameters))
-      this.options.parameters = this.options.parameters.toQueryParams();
-    else if (Object.isHash(this.options.parameters))
+    if (Object.isHash(this.options.parameters))
       this.options.parameters = this.options.parameters.toObject();
   }
 });
@@ -1486,21 +1498,20 @@ Ajax.Request = Class.create(Ajax.Base, {
   request: function(url) {
     this.url = url;
     this.method = this.options.method;
-    var params = Object.clone(this.options.parameters);
+    var params = Object.isString(this.options.parameters) ?
+          this.options.parameters :
+          Object.toQueryString(this.options.parameters);
 
     if (!['get', 'post'].include(this.method)) {
-      params['_method'] = this.method;
+      params += (params ? '&' : '') + "_method=" + this.method;
       this.method = 'post';
     }
 
-    this.parameters = params;
-
-    if (params = Object.toQueryString(params)) {
-      if (this.method == 'get')
-        this.url += (this.url.include('?') ? '&' : '?') + params;
-      else if (/Konqueror|Safari|KHTML/.test(navigator.userAgent))
-        params += '&_=';
+    if (params && this.method === 'get') {
+      this.url += (this.url.include('?') ? '&' : '?') + params;
     }
+
+    this.parameters = params.toQueryParams();
 
     try {
       var response = new Ajax.Response(this);
@@ -1570,11 +1581,12 @@ Ajax.Request = Class.create(Ajax.Base, {
 
   success: function() {
     var status = this.getStatus();
-    return !status || (status >= 200 && status < 300);
+    return !status || (status >= 200 && status < 300) || status == 304;
   },
 
   getStatus: function() {
     try {
+      if (this.transport.status === 1223) return 204;
       return this.transport.status || 0;
     } catch (e) { return 0 }
   },
@@ -1849,6 +1861,11 @@ if (!Node.ELEMENT_NODE) {
 
 
 (function(global) {
+  function shouldUseCache(tagName, attributes) {
+    if (tagName === 'select') return false;
+    if ('type' in attributes) return false;
+    return true;
+  }
 
   var HAS_EXTENDED_CREATE_ELEMENT_SYNTAX = (function(){
     try {
@@ -1866,13 +1883,19 @@ if (!Node.ELEMENT_NODE) {
     attributes = attributes || { };
     tagName = tagName.toLowerCase();
     var cache = Element.cache;
+
     if (HAS_EXTENDED_CREATE_ELEMENT_SYNTAX && attributes.name) {
       tagName = '<' + tagName + ' name="' + attributes.name + '">';
       delete attributes.name;
       return Element.writeAttribute(document.createElement(tagName), attributes);
     }
+
     if (!cache[tagName]) cache[tagName] = Element.extend(document.createElement(tagName));
-    return Element.writeAttribute(cache[tagName].cloneNode(false), attributes);
+
+    var node = shouldUseCache(tagName, attributes) ?
+     cache[tagName].cloneNode(false) : document.createElement(tagName);
+
+    return Element.writeAttribute(node, attributes);
   };
 
   Object.extend(global.Element, element || { });
@@ -1883,7 +1906,7 @@ if (!Node.ELEMENT_NODE) {
 Element.idCounter = 1;
 Element.cache = { };
 
-function purgeElement(element) {
+Element._purgeElement = function(element) {
   var uid = element._prototypeUID;
   if (uid) {
     Element.stopObserving(element);
@@ -1948,6 +1971,21 @@ Element.Methods = {
       }
     })();
 
+    var LINK_ELEMENT_INNERHTML_BUGGY = (function() {
+      try {
+        var el = document.createElement('div');
+        el.innerHTML = "<link>";
+        var isBuggy = (el.childNodes.length === 0);
+        el = null;
+        return isBuggy;
+      } catch(e) {
+        return true;
+      }
+    })();
+
+    var ANY_INNERHTML_BUGGY = SELECT_ELEMENT_INNERHTML_BUGGY ||
+     TABLE_ELEMENT_INNERHTML_BUGGY || LINK_ELEMENT_INNERHTML_BUGGY;
+
     var SCRIPT_ELEMENT_REJECTS_TEXTNODE_APPENDING = (function () {
       var s = document.createElement("script"),
           isBuggy = false;
@@ -1962,8 +2000,10 @@ Element.Methods = {
       return isBuggy;
     })();
 
+
     function update(element, content) {
       element = $(element);
+      var purgeElement = Element._purgeElement;
 
       var descendants = element.getElementsByTagName('*'),
        i = descendants.length;
@@ -1984,7 +2024,7 @@ Element.Methods = {
         return element;
       }
 
-      if (SELECT_ELEMENT_INNERHTML_BUGGY || TABLE_ELEMENT_INNERHTML_BUGGY) {
+      if (ANY_INNERHTML_BUGGY) {
         if (tagName in Element._insertionTranslations.tags) {
           while (element.firstChild) {
             element.removeChild(element.firstChild);
@@ -1993,6 +2033,12 @@ Element.Methods = {
             .each(function(node) {
               element.appendChild(node)
             });
+        } else if (LINK_ELEMENT_INNERHTML_BUGGY && Object.isString(content) && content.indexOf('<link') > -1) {
+          while (element.firstChild) {
+            element.removeChild(element.firstChild);
+          }
+          var nodes = Element._getContentFromAnonymousElement(tagName, content.stripScripts(), true);
+          nodes.each(function(node) { element.appendChild(node) });
         }
         else {
           element.innerHTML = content.stripScripts();
@@ -2402,117 +2448,6 @@ Element.Methods = {
     return element;
   },
 
-  cumulativeOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    if (element.parentNode) {
-      do {
-        valueT += element.offsetTop  || 0;
-        valueL += element.offsetLeft || 0;
-        element = element.offsetParent;
-      } while (element);
-    }
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  positionedOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-      if (element) {
-        if (element.tagName.toUpperCase() == 'BODY') break;
-        var p = Element.getStyle(element, 'position');
-        if (p !== 'static') break;
-      }
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  absolutize: function(element) {
-    element = $(element);
-    if (Element.getStyle(element, 'position') == 'absolute') return element;
-
-    var offsets = Element.positionedOffset(element),
-        top     = offsets[1],
-        left    = offsets[0],
-        width   = element.clientWidth,
-        height  = element.clientHeight;
-
-    element._originalLeft   = left - parseFloat(element.style.left  || 0);
-    element._originalTop    = top  - parseFloat(element.style.top || 0);
-    element._originalWidth  = element.style.width;
-    element._originalHeight = element.style.height;
-
-    element.style.position = 'absolute';
-    element.style.top    = top + 'px';
-    element.style.left   = left + 'px';
-    element.style.width  = width + 'px';
-    element.style.height = height + 'px';
-    return element;
-  },
-
-  relativize: function(element) {
-    element = $(element);
-    if (Element.getStyle(element, 'position') == 'relative') return element;
-
-    element.style.position = 'relative';
-    var top  = parseFloat(element.style.top  || 0) - (element._originalTop || 0),
-        left = parseFloat(element.style.left || 0) - (element._originalLeft || 0);
-
-    element.style.top    = top + 'px';
-    element.style.left   = left + 'px';
-    element.style.height = element._originalHeight;
-    element.style.width  = element._originalWidth;
-    return element;
-  },
-
-  cumulativeScrollOffset: function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.scrollTop  || 0;
-      valueL += element.scrollLeft || 0;
-      element = element.parentNode;
-    } while (element);
-    return Element._returnOffset(valueL, valueT);
-  },
-
-  getOffsetParent: function(element) {
-    if (element.offsetParent) return $(element.offsetParent);
-    if (element == document.body) return $(element);
-
-    while ((element = element.parentNode) && element != document.body)
-      if (Element.getStyle(element, 'position') != 'static')
-        return $(element);
-
-    return $(document.body);
-  },
-
-  viewportOffset: function(forElement) {
-    var valueT = 0,
-        valueL = 0,
-        element = forElement;
-
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-
-      if (element.offsetParent == document.body &&
-        Element.getStyle(element, 'position') == 'absolute') break;
-
-    } while (element = element.offsetParent);
-
-    element = forElement;
-    do {
-      if (!Prototype.Browser.Opera || (element.tagName && (element.tagName.toUpperCase() == 'BODY'))) {
-        valueT -= element.scrollTop  || 0;
-        valueL -= element.scrollLeft || 0;
-      }
-    } while (element = element.parentNode);
-
-    return Element._returnOffset(valueL, valueT);
-  },
-
   clonePosition: function(element, source) {
     var options = Object.extend({
       setLeft:    true,
@@ -2566,8 +2501,6 @@ if (Prototype.Browser.Opera) {
   Element.Methods.getStyle = Element.Methods.getStyle.wrap(
     function(proceed, element, style) {
       switch (style) {
-        case 'left': case 'top': case 'right': case 'bottom':
-          if (proceed(element, 'position') === 'static') return null;
         case 'height': case 'width':
           if (!Element.visible(element)) return null;
 
@@ -2603,37 +2536,6 @@ if (Prototype.Browser.Opera) {
 }
 
 else if (Prototype.Browser.IE) {
-  Element.Methods.getOffsetParent = Element.Methods.getOffsetParent.wrap(
-    function(proceed, element) {
-      element = $(element);
-      if (!element.parentNode) return $(document.body);
-      var position = element.getStyle('position');
-      if (position !== 'static') return proceed(element);
-      element.setStyle({ position: 'relative' });
-      var value = proceed(element);
-      element.setStyle({ position: position });
-      return value;
-    }
-  );
-
-  $w('positionedOffset viewportOffset').each(function(method) {
-    Element.Methods[method] = Element.Methods[method].wrap(
-      function(proceed, element) {
-        element = $(element);
-        if (!element.parentNode) return Element._returnOffset(0, 0);
-        var position = element.getStyle('position');
-        if (position !== 'static') return proceed(element);
-        var offsetParent = element.getOffsetParent();
-        if (offsetParent && offsetParent.getStyle('position') === 'fixed')
-          offsetParent.setStyle({ zoom: 1 });
-        element.setStyle({ position: 'relative' });
-        var value = proceed(element);
-        element.setStyle({ position: position });
-        return value;
-      }
-    );
-  });
-
   Element.Methods.getStyle = function(element, style) {
     element = $(element);
     style = (style == 'float' || style == 'cssFloat') ? 'styleFloat' : style.camelize();
@@ -2862,20 +2764,6 @@ else if (Prototype.Browser.WebKit) {
 
     return element;
   };
-
-  Element.Methods.cumulativeOffset = function(element) {
-    var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      if (element.offsetParent == document.body)
-        if (Element.getStyle(element, 'position') == 'absolute') break;
-
-      element = element.offsetParent;
-    } while (element);
-
-    return Element._returnOffset(valueL, valueT);
-  };
 }
 
 if ('outerHTML' in document.documentElement) {
@@ -2914,11 +2802,20 @@ Element._returnOffset = function(l, t) {
   return result;
 };
 
-Element._getContentFromAnonymousElement = function(tagName, html) {
+Element._getContentFromAnonymousElement = function(tagName, html, force) {
   var div = new Element('div'),
       t = Element._insertionTranslations.tags[tagName];
-  if (t) {
-    div.innerHTML = t[0] + html + t[1];
+
+  var workaround = false;
+  if (t) workaround = true;
+  else if (force) {
+    workaround = true;
+    t = ['', '', 0];
+  }
+
+  if (workaround) {
+    div.innerHTML = '&nbsp;' + t[0] + html + t[1];
+    div.removeChild(div.firstChild);
     for (var i = t[2]; i--; ) {
       div = div.firstChild;
     }
@@ -3077,7 +2974,8 @@ Element.addMethods = function(methods) {
       "FORM":     Object.clone(Form.Methods),
       "INPUT":    Object.clone(Form.Element.Methods),
       "SELECT":   Object.clone(Form.Element.Methods),
-      "TEXTAREA": Object.clone(Form.Element.Methods)
+      "TEXTAREA": Object.clone(Form.Element.Methods),
+      "BUTTON":   Object.clone(Form.Element.Methods)
     });
   }
 
@@ -3264,6 +3162,8 @@ Element.addMethods({
 
   purge: function(element) {
     if (!(element = $(element))) return;
+    var purgeElement = Element._purgeElement;
+
     purgeElement(element);
 
     var descendants = element.getElementsByTagName('*'),
@@ -3283,11 +3183,13 @@ Element.addMethods({
     return (Number(match[1]) / 100);
   }
 
-  function getPixelValue(value, property) {
+  function getPixelValue(value, property, context) {
+    var element = null;
     if (Object.isElement(value)) {
       element = value;
       value = element.getStyle(property);
     }
+
     if (value === null) {
       return null;
     }
@@ -3296,7 +3198,9 @@ Element.addMethods({
       return window.parseFloat(value);
     }
 
-    if (/\d/.test(value) && element.runtimeStyle) {
+    var isPercentage = value.include('%'), isViewport = (context === document.viewport);
+
+    if (/\d/.test(value) && element && element.runtimeStyle && !(isPercentage && isViewport)) {
       var style = element.style.left, rStyle = element.runtimeStyle.left;
       element.runtimeStyle.left = element.currentStyle.left;
       element.style.left = value || 0;
@@ -3307,18 +3211,33 @@ Element.addMethods({
       return value;
     }
 
-    if (value.include('%')) {
+    if (element && isPercentage) {
+      context = context || element.parentNode;
       var decimal = toDecimal(value);
-      var whole;
-      if (property.include('left') || property.include('right') ||
-       property.include('width')) {
-        whole = $(element.parentNode).measure('width');
-      } else if (property.include('top') || property.include('bottom') ||
-       property.include('height')) {
-        whole = $(element.parentNode).measure('height');
+      var whole = null;
+      var position = element.getStyle('position');
+
+      var isHorizontal = property.include('left') || property.include('right') ||
+       property.include('width');
+
+      var isVertical =  property.include('top') || property.include('bottom') ||
+        property.include('height');
+
+      if (context === document.viewport) {
+        if (isHorizontal) {
+          whole = document.viewport.getWidth();
+        } else if (isVertical) {
+          whole = document.viewport.getHeight();
+        }
+      } else {
+        if (isHorizontal) {
+          whole = $(context).measure('width');
+        } else if (isVertical) {
+          whole = $(context).measure('height');
+        }
       }
 
-      return whole * decimal;
+      return (whole === null) ? 0 : whole * decimal;
     }
 
     return 0;
@@ -3410,6 +3329,14 @@ Element.addMethods({
       var position = element.getStyle('position'),
        width = element.getStyle('width');
 
+      if (width === "0px" || width === null) {
+        element.style.display = 'block';
+        width = element.getStyle('width');
+      }
+
+      var context = (position === 'fixed') ? document.viewport :
+       element.parentNode;
+
       element.setStyle({
         position:   'absolute',
         visibility: 'hidden',
@@ -3420,9 +3347,9 @@ Element.addMethods({
 
       var newWidth;
       if (width && (positionedWidth === width)) {
-        newWidth = getPixelValue(width);
-      } else if (width && (position === 'absolute' || position === 'fixed')) {
-        newWidth = getPixelValue(width);
+        newWidth = getPixelValue(element, 'width', context);
+      } else if (position === 'absolute' || position === 'fixed') {
+        newWidth = getPixelValue(element, 'width', context);
       } else {
         var parent = element.parentNode, pLayout = $(parent).getLayout();
 
@@ -3453,6 +3380,7 @@ Element.addMethods({
       if (!(property in COMPUTATIONS)) {
         throw "Property not found.";
       }
+
       return this._set(property, COMPUTATIONS[property].call(this, this.element));
     },
 
@@ -3505,7 +3433,10 @@ Element.addMethods({
         if (!this._preComputing) this._begin();
 
         var bHeight = this.get('border-box-height');
-        if (bHeight <= 0) return 0;
+        if (bHeight <= 0) {
+          if (!this._preComputing) this._end();
+          return 0;
+        }
 
         var bTop = this.get('border-top'),
          bBottom = this.get('border-bottom');
@@ -3522,7 +3453,10 @@ Element.addMethods({
         if (!this._preComputing) this._begin();
 
         var bWidth = this.get('border-box-width');
-        if (bWidth <= 0) return 0;
+        if (bWidth <= 0) {
+          if (!this._preComputing) this._end();
+          return 0;
+        }
 
         var bLeft = this.get('border-left'),
          bRight = this.get('border-right');
@@ -3552,11 +3486,17 @@ Element.addMethods({
       },
 
       'border-box-height': function(element) {
-        return element.offsetHeight;
+        if (!this._preComputing) this._begin();
+        var height = element.offsetHeight;
+        if (!this._preComputing) this._end();
+        return height;
       },
 
       'border-box-width': function(element) {
-        return element.offsetWidth;
+        if (!this._preComputing) this._begin();
+        var width = element.offsetWidth;
+        if (!this._preComputing) this._end();
+        return width;
       },
 
       'margin-box-height': function(element) {
@@ -3626,23 +3566,19 @@ Element.addMethods({
       },
 
       'border-top': function(element) {
-        return Object.isNumber(element.clientTop) ? element.clientTop :
-         getPixelValue(element, 'borderTopWidth');
+        return getPixelValue(element, 'borderTopWidth');
       },
 
       'border-bottom': function(element) {
-        return Object.isNumber(element.clientBottom) ? element.clientBottom :
-         getPixelValue(element, 'borderBottomWidth');
+        return getPixelValue(element, 'borderBottomWidth');
       },
 
       'border-left': function(element) {
-        return Object.isNumber(element.clientLeft) ? element.clientLeft :
-         getPixelValue(element, 'borderLeftWidth');
+        return getPixelValue(element, 'borderLeftWidth');
       },
 
       'border-right': function(element) {
-        return Object.isNumber(element.clientRight) ? element.clientRight :
-         getPixelValue(element, 'borderRightWidth');
+        return getPixelValue(element, 'borderRightWidth');
       },
 
       'margin-top': function(element) {
@@ -3721,23 +3657,52 @@ Element.addMethods({
   }
 
   function getDimensions(element) {
-    var layout = $(element).getLayout();
-    return {
-      width:  layout.get('width'),
-      height: layout.get('height')
+    element = $(element);
+    var display = Element.getStyle(element, 'display');
+
+    if (display && display !== 'none') {
+      return { width: element.offsetWidth, height: element.offsetHeight };
+    }
+
+    var style = element.style;
+    var originalStyles = {
+      visibility: style.visibility,
+      position:   style.position,
+      display:    style.display
     };
+
+    var newStyles = {
+      visibility: 'hidden',
+      display:    'block'
+    };
+
+    if (originalStyles.position !== 'fixed')
+      newStyles.position = 'absolute';
+
+    Element.setStyle(element, newStyles);
+
+    var dimensions = {
+      width:  element.offsetWidth,
+      height: element.offsetHeight
+    };
+
+    Element.setStyle(element, originalStyles);
+
+    return dimensions;
   }
 
   function getOffsetParent(element) {
-    if (isDetached(element)) return $(document.body);
+    element = $(element);
+
+    if (isDocument(element) || isDetached(element) || isBody(element) || isHtml(element))
+      return $(document.body);
 
     var isInline = (Element.getStyle(element, 'display') === 'inline');
     if (!isInline && element.offsetParent) return $(element.offsetParent);
-    if (element === document.body) return $(element);
 
     while ((element = element.parentNode) && element !== document.body) {
       if (Element.getStyle(element, 'position') !== 'static') {
-        return (element.nodeName === 'HTML') ? $(document.body) : $(element);
+        return isHtml(element) ? $(document.body) : $(element);
       }
     }
 
@@ -3746,16 +3711,21 @@ Element.addMethods({
 
 
   function cumulativeOffset(element) {
+    element = $(element);
     var valueT = 0, valueL = 0;
-    do {
-      valueT += element.offsetTop  || 0;
-      valueL += element.offsetLeft || 0;
-      element = element.offsetParent;
-    } while (element);
+    if (element.parentNode) {
+      do {
+        valueT += element.offsetTop  || 0;
+        valueL += element.offsetLeft || 0;
+        element = element.offsetParent;
+      } while (element);
+    }
     return new Element.Offset(valueL, valueT);
   }
 
   function positionedOffset(element) {
+    element = $(element);
+
     var layout = element.getLayout();
 
     var valueT = 0, valueL = 0;
@@ -3787,6 +3757,7 @@ Element.addMethods({
   }
 
   function viewportOffset(forElement) {
+    element = $(element);
     var valueT = 0, valueL = 0, docBody = document.body;
 
     var element = forElement;
@@ -3852,6 +3823,57 @@ Element.addMethods({
     return element;
   }
 
+  if (Prototype.Browser.IE) {
+    getOffsetParent = getOffsetParent.wrap(
+      function(proceed, element) {
+        element = $(element);
+
+        if (isDocument(element) || isDetached(element) || isBody(element) || isHtml(element))
+          return $(document.body);
+
+        var position = element.getStyle('position');
+        if (position !== 'static') return proceed(element);
+
+        element.setStyle({ position: 'relative' });
+        var value = proceed(element);
+        element.setStyle({ position: position });
+        return value;
+      }
+    );
+
+    positionedOffset = positionedOffset.wrap(function(proceed, element) {
+      element = $(element);
+      if (!element.parentNode) return new Element.Offset(0, 0);
+      var position = element.getStyle('position');
+      if (position !== 'static') return proceed(element);
+
+      var offsetParent = element.getOffsetParent();
+      if (offsetParent && offsetParent.getStyle('position') === 'fixed')
+        hasLayout(offsetParent);
+
+      element.setStyle({ position: 'relative' });
+      var value = proceed(element);
+      element.setStyle({ position: position });
+      return value;
+    });
+  } else if (Prototype.Browser.Webkit) {
+    cumulativeOffset = function(element) {
+      element = $(element);
+      var valueT = 0, valueL = 0;
+      do {
+        valueT += element.offsetTop  || 0;
+        valueL += element.offsetLeft || 0;
+        if (element.offsetParent == document.body)
+          if (Element.getStyle(element, 'position') == 'absolute') break;
+
+        element = element.offsetParent;
+      } while (element);
+
+      return new Element.Offset(valueL, valueT);
+    };
+  }
+
+
   Element.addMethods({
     getLayout:              getLayout,
     measure:                measure,
@@ -3869,6 +3891,14 @@ Element.addMethods({
     return element.nodeName.toUpperCase() === 'BODY';
   }
 
+  function isHtml(element) {
+    return element.nodeName.toUpperCase() === 'HTML';
+  }
+
+  function isDocument(element) {
+    return element.nodeType === Node.DOCUMENT_NODE;
+  }
+
   function isDetached(element) {
     return element !== document.body &&
      !Element.descendantOf(element, document.body);
@@ -3880,32 +3910,10 @@ Element.addMethods({
         element = $(element);
         if (isDetached(element)) return new Element.Offset(0, 0);
 
-        var rect  = element.getBoundingClientRect(),
+        var rect = element.getBoundingClientRect(),
          docEl = document.documentElement;
         return new Element.Offset(rect.left - docEl.clientLeft,
          rect.top - docEl.clientTop);
-      },
-
-      positionedOffset: function(element) {
-        element = $(element);
-        var parent = element.getOffsetParent();
-        if (isDetached(element)) return new Element.Offset(0, 0);
-
-        if (element.offsetParent &&
-         element.offsetParent.nodeName.toUpperCase() === 'HTML') {
-          return positionedOffset(element);
-        }
-
-        var eOffset = element.viewportOffset(),
-         pOffset = isBody(parent) ? viewportOffset(parent) :
-          parent.viewportOffset();
-        var retOffset = eOffset.relativeTo(pOffset);
-
-        var layout = element.getLayout();
-        var top  = retOffset.top  - layout.get('margin-top');
-        var left = retOffset.left - layout.get('margin-left');
-
-        return new Element.Offset(left, top);
       }
     });
   }
@@ -3964,968 +3972,968 @@ Prototype._original_property = window.Sizzle;
 (function(){
 
 var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^[\]]*\]|['"][^'"]*['"]|[^[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g,
-  done = 0,
-  toString = Object.prototype.toString,
-  hasDuplicate = false,
-  baseHasDuplicate = true;
+	done = 0,
+	toString = Object.prototype.toString,
+	hasDuplicate = false,
+	baseHasDuplicate = true;
 
 [0, 0].sort(function(){
-  baseHasDuplicate = false;
-  return 0;
+	baseHasDuplicate = false;
+	return 0;
 });
 
 var Sizzle = function(selector, context, results, seed) {
-  results = results || [];
-  var origContext = context = context || document;
+	results = results || [];
+	var origContext = context = context || document;
 
-  if ( context.nodeType !== 1 && context.nodeType !== 9 ) {
-    return [];
-  }
+	if ( context.nodeType !== 1 && context.nodeType !== 9 ) {
+		return [];
+	}
 
-  if ( !selector || typeof selector !== "string" ) {
-    return results;
-  }
+	if ( !selector || typeof selector !== "string" ) {
+		return results;
+	}
 
-  var parts = [], m, set, checkSet, check, mode, extra, prune = true, contextXML = isXML(context),
-    soFar = selector;
+	var parts = [], m, set, checkSet, check, mode, extra, prune = true, contextXML = isXML(context),
+		soFar = selector;
 
-  while ( (chunker.exec(""), m = chunker.exec(soFar)) !== null ) {
-    soFar = m[3];
+	while ( (chunker.exec(""), m = chunker.exec(soFar)) !== null ) {
+		soFar = m[3];
 
-    parts.push( m[1] );
+		parts.push( m[1] );
 
-    if ( m[2] ) {
-      extra = m[3];
-      break;
-    }
-  }
+		if ( m[2] ) {
+			extra = m[3];
+			break;
+		}
+	}
 
-  if ( parts.length > 1 && origPOS.exec( selector ) ) {
-    if ( parts.length === 2 && Expr.relative[ parts[0] ] ) {
-      set = posProcess( parts[0] + parts[1], context );
-    } else {
-      set = Expr.relative[ parts[0] ] ?
-        [ context ] :
-        Sizzle( parts.shift(), context );
+	if ( parts.length > 1 && origPOS.exec( selector ) ) {
+		if ( parts.length === 2 && Expr.relative[ parts[0] ] ) {
+			set = posProcess( parts[0] + parts[1], context );
+		} else {
+			set = Expr.relative[ parts[0] ] ?
+				[ context ] :
+				Sizzle( parts.shift(), context );
 
-      while ( parts.length ) {
-        selector = parts.shift();
+			while ( parts.length ) {
+				selector = parts.shift();
 
-        if ( Expr.relative[ selector ] )
-          selector += parts.shift();
+				if ( Expr.relative[ selector ] )
+					selector += parts.shift();
 
-        set = posProcess( selector, set );
-      }
-    }
-  } else {
-    if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
-        Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
-      var ret = Sizzle.find( parts.shift(), context, contextXML );
-      context = ret.expr ? Sizzle.filter( ret.expr, ret.set )[0] : ret.set[0];
-    }
+				set = posProcess( selector, set );
+			}
+		}
+	} else {
+		if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
+				Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
+			var ret = Sizzle.find( parts.shift(), context, contextXML );
+			context = ret.expr ? Sizzle.filter( ret.expr, ret.set )[0] : ret.set[0];
+		}
 
-    if ( context ) {
-      var ret = seed ?
-        { expr: parts.pop(), set: makeArray(seed) } :
-        Sizzle.find( parts.pop(), parts.length === 1 && (parts[0] === "~" || parts[0] === "+") && context.parentNode ? context.parentNode : context, contextXML );
-      set = ret.expr ? Sizzle.filter( ret.expr, ret.set ) : ret.set;
+		if ( context ) {
+			var ret = seed ?
+				{ expr: parts.pop(), set: makeArray(seed) } :
+				Sizzle.find( parts.pop(), parts.length === 1 && (parts[0] === "~" || parts[0] === "+") && context.parentNode ? context.parentNode : context, contextXML );
+			set = ret.expr ? Sizzle.filter( ret.expr, ret.set ) : ret.set;
 
-      if ( parts.length > 0 ) {
-        checkSet = makeArray(set);
-      } else {
-        prune = false;
-      }
+			if ( parts.length > 0 ) {
+				checkSet = makeArray(set);
+			} else {
+				prune = false;
+			}
 
-      while ( parts.length ) {
-        var cur = parts.pop(), pop = cur;
+			while ( parts.length ) {
+				var cur = parts.pop(), pop = cur;
 
-        if ( !Expr.relative[ cur ] ) {
-          cur = "";
-        } else {
-          pop = parts.pop();
-        }
+				if ( !Expr.relative[ cur ] ) {
+					cur = "";
+				} else {
+					pop = parts.pop();
+				}
 
-        if ( pop == null ) {
-          pop = context;
-        }
+				if ( pop == null ) {
+					pop = context;
+				}
 
-        Expr.relative[ cur ]( checkSet, pop, contextXML );
-      }
-    } else {
-      checkSet = parts = [];
-    }
-  }
+				Expr.relative[ cur ]( checkSet, pop, contextXML );
+			}
+		} else {
+			checkSet = parts = [];
+		}
+	}
 
-  if ( !checkSet ) {
-    checkSet = set;
-  }
+	if ( !checkSet ) {
+		checkSet = set;
+	}
 
-  if ( !checkSet ) {
-    throw "Syntax error, unrecognized expression: " + (cur || selector);
-  }
+	if ( !checkSet ) {
+		throw "Syntax error, unrecognized expression: " + (cur || selector);
+	}
 
-  if ( toString.call(checkSet) === "[object Array]" ) {
-    if ( !prune ) {
-      results.push.apply( results, checkSet );
-    } else if ( context && context.nodeType === 1 ) {
-      for ( var i = 0; checkSet[i] != null; i++ ) {
-        if ( checkSet[i] && (checkSet[i] === true || checkSet[i].nodeType === 1 && contains(context, checkSet[i])) ) {
-          results.push( set[i] );
-        }
-      }
-    } else {
-      for ( var i = 0; checkSet[i] != null; i++ ) {
-        if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
-          results.push( set[i] );
-        }
-      }
-    }
-  } else {
-    makeArray( checkSet, results );
-  }
+	if ( toString.call(checkSet) === "[object Array]" ) {
+		if ( !prune ) {
+			results.push.apply( results, checkSet );
+		} else if ( context && context.nodeType === 1 ) {
+			for ( var i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && (checkSet[i] === true || checkSet[i].nodeType === 1 && contains(context, checkSet[i])) ) {
+					results.push( set[i] );
+				}
+			}
+		} else {
+			for ( var i = 0; checkSet[i] != null; i++ ) {
+				if ( checkSet[i] && checkSet[i].nodeType === 1 ) {
+					results.push( set[i] );
+				}
+			}
+		}
+	} else {
+		makeArray( checkSet, results );
+	}
 
-  if ( extra ) {
-    Sizzle( extra, origContext, results, seed );
-    Sizzle.uniqueSort( results );
-  }
+	if ( extra ) {
+		Sizzle( extra, origContext, results, seed );
+		Sizzle.uniqueSort( results );
+	}
 
-  return results;
+	return results;
 };
 
 Sizzle.uniqueSort = function(results){
-  if ( sortOrder ) {
-    hasDuplicate = baseHasDuplicate;
-    results.sort(sortOrder);
+	if ( sortOrder ) {
+		hasDuplicate = baseHasDuplicate;
+		results.sort(sortOrder);
 
-    if ( hasDuplicate ) {
-      for ( var i = 1; i < results.length; i++ ) {
-        if ( results[i] === results[i-1] ) {
-          results.splice(i--, 1);
-        }
-      }
-    }
-  }
+		if ( hasDuplicate ) {
+			for ( var i = 1; i < results.length; i++ ) {
+				if ( results[i] === results[i-1] ) {
+					results.splice(i--, 1);
+				}
+			}
+		}
+	}
 
-  return results;
+	return results;
 };
 
 Sizzle.matches = function(expr, set){
-  return Sizzle(expr, null, null, set);
+	return Sizzle(expr, null, null, set);
 };
 
 Sizzle.find = function(expr, context, isXML){
-  var set, match;
+	var set, match;
 
-  if ( !expr ) {
-    return [];
-  }
+	if ( !expr ) {
+		return [];
+	}
 
-  for ( var i = 0, l = Expr.order.length; i < l; i++ ) {
-    var type = Expr.order[i], match;
+	for ( var i = 0, l = Expr.order.length; i < l; i++ ) {
+		var type = Expr.order[i], match;
 
-    if ( (match = Expr.leftMatch[ type ].exec( expr )) ) {
-      var left = match[1];
-      match.splice(1,1);
+		if ( (match = Expr.leftMatch[ type ].exec( expr )) ) {
+			var left = match[1];
+			match.splice(1,1);
 
-      if ( left.substr( left.length - 1 ) !== "\\" ) {
-        match[1] = (match[1] || "").replace(/\\/g, "");
-        set = Expr.find[ type ]( match, context, isXML );
-        if ( set != null ) {
-          expr = expr.replace( Expr.match[ type ], "" );
-          break;
-        }
-      }
-    }
-  }
+			if ( left.substr( left.length - 1 ) !== "\\" ) {
+				match[1] = (match[1] || "").replace(/\\/g, "");
+				set = Expr.find[ type ]( match, context, isXML );
+				if ( set != null ) {
+					expr = expr.replace( Expr.match[ type ], "" );
+					break;
+				}
+			}
+		}
+	}
 
-  if ( !set ) {
-    set = context.getElementsByTagName("*");
-  }
+	if ( !set ) {
+		set = context.getElementsByTagName("*");
+	}
 
-  return {set: set, expr: expr};
+	return {set: set, expr: expr};
 };
 
 Sizzle.filter = function(expr, set, inplace, not){
-  var old = expr, result = [], curLoop = set, match, anyFound,
-    isXMLFilter = set && set[0] && isXML(set[0]);
+	var old = expr, result = [], curLoop = set, match, anyFound,
+		isXMLFilter = set && set[0] && isXML(set[0]);
 
-  while ( expr && set.length ) {
-    for ( var type in Expr.filter ) {
-      if ( (match = Expr.match[ type ].exec( expr )) != null ) {
-        var filter = Expr.filter[ type ], found, item;
-        anyFound = false;
+	while ( expr && set.length ) {
+		for ( var type in Expr.filter ) {
+			if ( (match = Expr.match[ type ].exec( expr )) != null ) {
+				var filter = Expr.filter[ type ], found, item;
+				anyFound = false;
 
-        if ( curLoop == result ) {
-          result = [];
-        }
+				if ( curLoop == result ) {
+					result = [];
+				}
 
-        if ( Expr.preFilter[ type ] ) {
-          match = Expr.preFilter[ type ]( match, curLoop, inplace, result, not, isXMLFilter );
+				if ( Expr.preFilter[ type ] ) {
+					match = Expr.preFilter[ type ]( match, curLoop, inplace, result, not, isXMLFilter );
 
-          if ( !match ) {
-            anyFound = found = true;
-          } else if ( match === true ) {
-            continue;
-          }
-        }
+					if ( !match ) {
+						anyFound = found = true;
+					} else if ( match === true ) {
+						continue;
+					}
+				}
 
-        if ( match ) {
-          for ( var i = 0; (item = curLoop[i]) != null; i++ ) {
-            if ( item ) {
-              found = filter( item, match, i, curLoop );
-              var pass = not ^ !!found;
+				if ( match ) {
+					for ( var i = 0; (item = curLoop[i]) != null; i++ ) {
+						if ( item ) {
+							found = filter( item, match, i, curLoop );
+							var pass = not ^ !!found;
 
-              if ( inplace && found != null ) {
-                if ( pass ) {
-                  anyFound = true;
-                } else {
-                  curLoop[i] = false;
-                }
-              } else if ( pass ) {
-                result.push( item );
-                anyFound = true;
-              }
-            }
-          }
-        }
+							if ( inplace && found != null ) {
+								if ( pass ) {
+									anyFound = true;
+								} else {
+									curLoop[i] = false;
+								}
+							} else if ( pass ) {
+								result.push( item );
+								anyFound = true;
+							}
+						}
+					}
+				}
 
-        if ( found !== undefined ) {
-          if ( !inplace ) {
-            curLoop = result;
-          }
+				if ( found !== undefined ) {
+					if ( !inplace ) {
+						curLoop = result;
+					}
 
-          expr = expr.replace( Expr.match[ type ], "" );
+					expr = expr.replace( Expr.match[ type ], "" );
 
-          if ( !anyFound ) {
-            return [];
-          }
+					if ( !anyFound ) {
+						return [];
+					}
 
-          break;
-        }
-      }
-    }
+					break;
+				}
+			}
+		}
 
-    if ( expr == old ) {
-      if ( anyFound == null ) {
-        throw "Syntax error, unrecognized expression: " + expr;
-      } else {
-        break;
-      }
-    }
+		if ( expr == old ) {
+			if ( anyFound == null ) {
+				throw "Syntax error, unrecognized expression: " + expr;
+			} else {
+				break;
+			}
+		}
 
-    old = expr;
-  }
+		old = expr;
+	}
 
-  return curLoop;
+	return curLoop;
 };
 
 var Expr = Sizzle.selectors = {
-  order: [ "ID", "NAME", "TAG" ],
-  match: {
-    ID: /#((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
-    CLASS: /\.((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
-    NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF-]|\\.)+)['"]*\]/,
-    ATTR: /\[\s*((?:[\w\u00c0-\uFFFF-]|\\.)+)\s*(?:(\S?=)\s*(['"]*)(.*?)\3|)\s*\]/,
-    TAG: /^((?:[\w\u00c0-\uFFFF\*-]|\\.)+)/,
-    CHILD: /:(only|nth|last|first)-child(?:\((even|odd|[\dn+-]*)\))?/,
-    POS: /:(nth|eq|gt|lt|first|last|even|odd)(?:\((\d*)\))?(?=[^-]|$)/,
-    PSEUDO: /:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\((['"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/
-  },
-  leftMatch: {},
-  attrMap: {
-    "class": "className",
-    "for": "htmlFor"
-  },
-  attrHandle: {
-    href: function(elem){
-      return elem.getAttribute("href");
-    }
-  },
-  relative: {
-    "+": function(checkSet, part, isXML){
-      var isPartStr = typeof part === "string",
-        isTag = isPartStr && !/\W/.test(part),
-        isPartStrNotTag = isPartStr && !isTag;
+	order: [ "ID", "NAME", "TAG" ],
+	match: {
+		ID: /#((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
+		CLASS: /\.((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
+		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF-]|\\.)+)['"]*\]/,
+		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF-]|\\.)+)\s*(?:(\S?=)\s*(['"]*)(.*?)\3|)\s*\]/,
+		TAG: /^((?:[\w\u00c0-\uFFFF\*-]|\\.)+)/,
+		CHILD: /:(only|nth|last|first)-child(?:\((even|odd|[\dn+-]*)\))?/,
+		POS: /:(nth|eq|gt|lt|first|last|even|odd)(?:\((\d*)\))?(?=[^-]|$)/,
+		PSEUDO: /:((?:[\w\u00c0-\uFFFF-]|\\.)+)(?:\((['"]*)((?:\([^\)]+\)|[^\2\(\)]*)+)\2\))?/
+	},
+	leftMatch: {},
+	attrMap: {
+		"class": "className",
+		"for": "htmlFor"
+	},
+	attrHandle: {
+		href: function(elem){
+			return elem.getAttribute("href");
+		}
+	},
+	relative: {
+		"+": function(checkSet, part, isXML){
+			var isPartStr = typeof part === "string",
+				isTag = isPartStr && !/\W/.test(part),
+				isPartStrNotTag = isPartStr && !isTag;
 
-      if ( isTag && !isXML ) {
-        part = part.toUpperCase();
-      }
+			if ( isTag && !isXML ) {
+				part = part.toUpperCase();
+			}
 
-      for ( var i = 0, l = checkSet.length, elem; i < l; i++ ) {
-        if ( (elem = checkSet[i]) ) {
-          while ( (elem = elem.previousSibling) && elem.nodeType !== 1 ) {}
+			for ( var i = 0, l = checkSet.length, elem; i < l; i++ ) {
+				if ( (elem = checkSet[i]) ) {
+					while ( (elem = elem.previousSibling) && elem.nodeType !== 1 ) {}
 
-          checkSet[i] = isPartStrNotTag || elem && elem.nodeName === part ?
-            elem || false :
-            elem === part;
-        }
-      }
+					checkSet[i] = isPartStrNotTag || elem && elem.nodeName === part ?
+						elem || false :
+						elem === part;
+				}
+			}
 
-      if ( isPartStrNotTag ) {
-        Sizzle.filter( part, checkSet, true );
-      }
-    },
-    ">": function(checkSet, part, isXML){
-      var isPartStr = typeof part === "string";
+			if ( isPartStrNotTag ) {
+				Sizzle.filter( part, checkSet, true );
+			}
+		},
+		">": function(checkSet, part, isXML){
+			var isPartStr = typeof part === "string";
 
-      if ( isPartStr && !/\W/.test(part) ) {
-        part = isXML ? part : part.toUpperCase();
+			if ( isPartStr && !/\W/.test(part) ) {
+				part = isXML ? part : part.toUpperCase();
 
-        for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-          var elem = checkSet[i];
-          if ( elem ) {
-            var parent = elem.parentNode;
-            checkSet[i] = parent.nodeName === part ? parent : false;
-          }
-        }
-      } else {
-        for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-          var elem = checkSet[i];
-          if ( elem ) {
-            checkSet[i] = isPartStr ?
-              elem.parentNode :
-              elem.parentNode === part;
-          }
-        }
+				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+					var elem = checkSet[i];
+					if ( elem ) {
+						var parent = elem.parentNode;
+						checkSet[i] = parent.nodeName === part ? parent : false;
+					}
+				}
+			} else {
+				for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+					var elem = checkSet[i];
+					if ( elem ) {
+						checkSet[i] = isPartStr ?
+							elem.parentNode :
+							elem.parentNode === part;
+					}
+				}
 
-        if ( isPartStr ) {
-          Sizzle.filter( part, checkSet, true );
-        }
-      }
-    },
-    "": function(checkSet, part, isXML){
-      var doneName = done++, checkFn = dirCheck;
+				if ( isPartStr ) {
+					Sizzle.filter( part, checkSet, true );
+				}
+			}
+		},
+		"": function(checkSet, part, isXML){
+			var doneName = done++, checkFn = dirCheck;
 
-      if ( !/\W/.test(part) ) {
-        var nodeCheck = part = isXML ? part : part.toUpperCase();
-        checkFn = dirNodeCheck;
-      }
+			if ( !/\W/.test(part) ) {
+				var nodeCheck = part = isXML ? part : part.toUpperCase();
+				checkFn = dirNodeCheck;
+			}
 
-      checkFn("parentNode", part, doneName, checkSet, nodeCheck, isXML);
-    },
-    "~": function(checkSet, part, isXML){
-      var doneName = done++, checkFn = dirCheck;
+			checkFn("parentNode", part, doneName, checkSet, nodeCheck, isXML);
+		},
+		"~": function(checkSet, part, isXML){
+			var doneName = done++, checkFn = dirCheck;
 
-      if ( typeof part === "string" && !/\W/.test(part) ) {
-        var nodeCheck = part = isXML ? part : part.toUpperCase();
-        checkFn = dirNodeCheck;
-      }
+			if ( typeof part === "string" && !/\W/.test(part) ) {
+				var nodeCheck = part = isXML ? part : part.toUpperCase();
+				checkFn = dirNodeCheck;
+			}
 
-      checkFn("previousSibling", part, doneName, checkSet, nodeCheck, isXML);
-    }
-  },
-  find: {
-    ID: function(match, context, isXML){
-      if ( typeof context.getElementById !== "undefined" && !isXML ) {
-        var m = context.getElementById(match[1]);
-        return m ? [m] : [];
-      }
-    },
-    NAME: function(match, context, isXML){
-      if ( typeof context.getElementsByName !== "undefined" ) {
-        var ret = [], results = context.getElementsByName(match[1]);
+			checkFn("previousSibling", part, doneName, checkSet, nodeCheck, isXML);
+		}
+	},
+	find: {
+		ID: function(match, context, isXML){
+			if ( typeof context.getElementById !== "undefined" && !isXML ) {
+				var m = context.getElementById(match[1]);
+				return m ? [m] : [];
+			}
+		},
+		NAME: function(match, context, isXML){
+			if ( typeof context.getElementsByName !== "undefined" ) {
+				var ret = [], results = context.getElementsByName(match[1]);
 
-        for ( var i = 0, l = results.length; i < l; i++ ) {
-          if ( results[i].getAttribute("name") === match[1] ) {
-            ret.push( results[i] );
-          }
-        }
+				for ( var i = 0, l = results.length; i < l; i++ ) {
+					if ( results[i].getAttribute("name") === match[1] ) {
+						ret.push( results[i] );
+					}
+				}
 
-        return ret.length === 0 ? null : ret;
-      }
-    },
-    TAG: function(match, context){
-      return context.getElementsByTagName(match[1]);
-    }
-  },
-  preFilter: {
-    CLASS: function(match, curLoop, inplace, result, not, isXML){
-      match = " " + match[1].replace(/\\/g, "") + " ";
+				return ret.length === 0 ? null : ret;
+			}
+		},
+		TAG: function(match, context){
+			return context.getElementsByTagName(match[1]);
+		}
+	},
+	preFilter: {
+		CLASS: function(match, curLoop, inplace, result, not, isXML){
+			match = " " + match[1].replace(/\\/g, "") + " ";
 
-      if ( isXML ) {
-        return match;
-      }
+			if ( isXML ) {
+				return match;
+			}
 
-      for ( var i = 0, elem; (elem = curLoop[i]) != null; i++ ) {
-        if ( elem ) {
-          if ( not ^ (elem.className && (" " + elem.className + " ").indexOf(match) >= 0) ) {
-            if ( !inplace )
-              result.push( elem );
-          } else if ( inplace ) {
-            curLoop[i] = false;
-          }
-        }
-      }
+			for ( var i = 0, elem; (elem = curLoop[i]) != null; i++ ) {
+				if ( elem ) {
+					if ( not ^ (elem.className && (" " + elem.className + " ").indexOf(match) >= 0) ) {
+						if ( !inplace )
+							result.push( elem );
+					} else if ( inplace ) {
+						curLoop[i] = false;
+					}
+				}
+			}
 
-      return false;
-    },
-    ID: function(match){
-      return match[1].replace(/\\/g, "");
-    },
-    TAG: function(match, curLoop){
-      for ( var i = 0; curLoop[i] === false; i++ ){}
-      return curLoop[i] && isXML(curLoop[i]) ? match[1] : match[1].toUpperCase();
-    },
-    CHILD: function(match){
-      if ( match[1] == "nth" ) {
-        var test = /(-?)(\d*)n((?:\+|-)?\d*)/.exec(
-          match[2] == "even" && "2n" || match[2] == "odd" && "2n+1" ||
-          !/\D/.test( match[2] ) && "0n+" + match[2] || match[2]);
+			return false;
+		},
+		ID: function(match){
+			return match[1].replace(/\\/g, "");
+		},
+		TAG: function(match, curLoop){
+			for ( var i = 0; curLoop[i] === false; i++ ){}
+			return curLoop[i] && isXML(curLoop[i]) ? match[1] : match[1].toUpperCase();
+		},
+		CHILD: function(match){
+			if ( match[1] == "nth" ) {
+				var test = /(-?)(\d*)n((?:\+|-)?\d*)/.exec(
+					match[2] == "even" && "2n" || match[2] == "odd" && "2n+1" ||
+					!/\D/.test( match[2] ) && "0n+" + match[2] || match[2]);
 
-        match[2] = (test[1] + (test[2] || 1)) - 0;
-        match[3] = test[3] - 0;
-      }
+				match[2] = (test[1] + (test[2] || 1)) - 0;
+				match[3] = test[3] - 0;
+			}
 
-      match[0] = done++;
+			match[0] = done++;
 
-      return match;
-    },
-    ATTR: function(match, curLoop, inplace, result, not, isXML){
-      var name = match[1].replace(/\\/g, "");
+			return match;
+		},
+		ATTR: function(match, curLoop, inplace, result, not, isXML){
+			var name = match[1].replace(/\\/g, "");
 
-      if ( !isXML && Expr.attrMap[name] ) {
-        match[1] = Expr.attrMap[name];
-      }
+			if ( !isXML && Expr.attrMap[name] ) {
+				match[1] = Expr.attrMap[name];
+			}
 
-      if ( match[2] === "~=" ) {
-        match[4] = " " + match[4] + " ";
-      }
+			if ( match[2] === "~=" ) {
+				match[4] = " " + match[4] + " ";
+			}
 
-      return match;
-    },
-    PSEUDO: function(match, curLoop, inplace, result, not){
-      if ( match[1] === "not" ) {
-        if ( ( chunker.exec(match[3]) || "" ).length > 1 || /^\w/.test(match[3]) ) {
-          match[3] = Sizzle(match[3], null, null, curLoop);
-        } else {
-          var ret = Sizzle.filter(match[3], curLoop, inplace, true ^ not);
-          if ( !inplace ) {
-            result.push.apply( result, ret );
-          }
-          return false;
-        }
-      } else if ( Expr.match.POS.test( match[0] ) || Expr.match.CHILD.test( match[0] ) ) {
-        return true;
-      }
+			return match;
+		},
+		PSEUDO: function(match, curLoop, inplace, result, not){
+			if ( match[1] === "not" ) {
+				if ( ( chunker.exec(match[3]) || "" ).length > 1 || /^\w/.test(match[3]) ) {
+					match[3] = Sizzle(match[3], null, null, curLoop);
+				} else {
+					var ret = Sizzle.filter(match[3], curLoop, inplace, true ^ not);
+					if ( !inplace ) {
+						result.push.apply( result, ret );
+					}
+					return false;
+				}
+			} else if ( Expr.match.POS.test( match[0] ) || Expr.match.CHILD.test( match[0] ) ) {
+				return true;
+			}
 
-      return match;
-    },
-    POS: function(match){
-      match.unshift( true );
-      return match;
-    }
-  },
-  filters: {
-    enabled: function(elem){
-      return elem.disabled === false && elem.type !== "hidden";
-    },
-    disabled: function(elem){
-      return elem.disabled === true;
-    },
-    checked: function(elem){
-      return elem.checked === true;
-    },
-    selected: function(elem){
-      elem.parentNode.selectedIndex;
-      return elem.selected === true;
-    },
-    parent: function(elem){
-      return !!elem.firstChild;
-    },
-    empty: function(elem){
-      return !elem.firstChild;
-    },
-    has: function(elem, i, match){
-      return !!Sizzle( match[3], elem ).length;
-    },
-    header: function(elem){
-      return /h\d/i.test( elem.nodeName );
-    },
-    text: function(elem){
-      return "text" === elem.type;
-    },
-    radio: function(elem){
-      return "radio" === elem.type;
-    },
-    checkbox: function(elem){
-      return "checkbox" === elem.type;
-    },
-    file: function(elem){
-      return "file" === elem.type;
-    },
-    password: function(elem){
-      return "password" === elem.type;
-    },
-    submit: function(elem){
-      return "submit" === elem.type;
-    },
-    image: function(elem){
-      return "image" === elem.type;
-    },
-    reset: function(elem){
-      return "reset" === elem.type;
-    },
-    button: function(elem){
-      return "button" === elem.type || elem.nodeName.toUpperCase() === "BUTTON";
-    },
-    input: function(elem){
-      return /input|select|textarea|button/i.test(elem.nodeName);
-    }
-  },
-  setFilters: {
-    first: function(elem, i){
-      return i === 0;
-    },
-    last: function(elem, i, match, array){
-      return i === array.length - 1;
-    },
-    even: function(elem, i){
-      return i % 2 === 0;
-    },
-    odd: function(elem, i){
-      return i % 2 === 1;
-    },
-    lt: function(elem, i, match){
-      return i < match[3] - 0;
-    },
-    gt: function(elem, i, match){
-      return i > match[3] - 0;
-    },
-    nth: function(elem, i, match){
-      return match[3] - 0 == i;
-    },
-    eq: function(elem, i, match){
-      return match[3] - 0 == i;
-    }
-  },
-  filter: {
-    PSEUDO: function(elem, match, i, array){
-      var name = match[1], filter = Expr.filters[ name ];
+			return match;
+		},
+		POS: function(match){
+			match.unshift( true );
+			return match;
+		}
+	},
+	filters: {
+		enabled: function(elem){
+			return elem.disabled === false && elem.type !== "hidden";
+		},
+		disabled: function(elem){
+			return elem.disabled === true;
+		},
+		checked: function(elem){
+			return elem.checked === true;
+		},
+		selected: function(elem){
+			elem.parentNode.selectedIndex;
+			return elem.selected === true;
+		},
+		parent: function(elem){
+			return !!elem.firstChild;
+		},
+		empty: function(elem){
+			return !elem.firstChild;
+		},
+		has: function(elem, i, match){
+			return !!Sizzle( match[3], elem ).length;
+		},
+		header: function(elem){
+			return /h\d/i.test( elem.nodeName );
+		},
+		text: function(elem){
+			return "text" === elem.type;
+		},
+		radio: function(elem){
+			return "radio" === elem.type;
+		},
+		checkbox: function(elem){
+			return "checkbox" === elem.type;
+		},
+		file: function(elem){
+			return "file" === elem.type;
+		},
+		password: function(elem){
+			return "password" === elem.type;
+		},
+		submit: function(elem){
+			return "submit" === elem.type;
+		},
+		image: function(elem){
+			return "image" === elem.type;
+		},
+		reset: function(elem){
+			return "reset" === elem.type;
+		},
+		button: function(elem){
+			return "button" === elem.type || elem.nodeName.toUpperCase() === "BUTTON";
+		},
+		input: function(elem){
+			return /input|select|textarea|button/i.test(elem.nodeName);
+		}
+	},
+	setFilters: {
+		first: function(elem, i){
+			return i === 0;
+		},
+		last: function(elem, i, match, array){
+			return i === array.length - 1;
+		},
+		even: function(elem, i){
+			return i % 2 === 0;
+		},
+		odd: function(elem, i){
+			return i % 2 === 1;
+		},
+		lt: function(elem, i, match){
+			return i < match[3] - 0;
+		},
+		gt: function(elem, i, match){
+			return i > match[3] - 0;
+		},
+		nth: function(elem, i, match){
+			return match[3] - 0 == i;
+		},
+		eq: function(elem, i, match){
+			return match[3] - 0 == i;
+		}
+	},
+	filter: {
+		PSEUDO: function(elem, match, i, array){
+			var name = match[1], filter = Expr.filters[ name ];
 
-      if ( filter ) {
-        return filter( elem, i, match, array );
-      } else if ( name === "contains" ) {
-        return (elem.textContent || elem.innerText || "").indexOf(match[3]) >= 0;
-      } else if ( name === "not" ) {
-        var not = match[3];
+			if ( filter ) {
+				return filter( elem, i, match, array );
+			} else if ( name === "contains" ) {
+				return (elem.textContent || elem.innerText || "").indexOf(match[3]) >= 0;
+			} else if ( name === "not" ) {
+				var not = match[3];
 
-        for ( var i = 0, l = not.length; i < l; i++ ) {
-          if ( not[i] === elem ) {
-            return false;
-          }
-        }
+				for ( var i = 0, l = not.length; i < l; i++ ) {
+					if ( not[i] === elem ) {
+						return false;
+					}
+				}
 
-        return true;
-      }
-    },
-    CHILD: function(elem, match){
-      var type = match[1], node = elem;
-      switch (type) {
-        case 'only':
-        case 'first':
-          while ( (node = node.previousSibling) )  {
-            if ( node.nodeType === 1 ) return false;
-          }
-          if ( type == 'first') return true;
-          node = elem;
-        case 'last':
-          while ( (node = node.nextSibling) )  {
-            if ( node.nodeType === 1 ) return false;
-          }
-          return true;
-        case 'nth':
-          var first = match[2], last = match[3];
+				return true;
+			}
+		},
+		CHILD: function(elem, match){
+			var type = match[1], node = elem;
+			switch (type) {
+				case 'only':
+				case 'first':
+					while ( (node = node.previousSibling) )  {
+						if ( node.nodeType === 1 ) return false;
+					}
+					if ( type == 'first') return true;
+					node = elem;
+				case 'last':
+					while ( (node = node.nextSibling) )  {
+						if ( node.nodeType === 1 ) return false;
+					}
+					return true;
+				case 'nth':
+					var first = match[2], last = match[3];
 
-          if ( first == 1 && last == 0 ) {
-            return true;
-          }
+					if ( first == 1 && last == 0 ) {
+						return true;
+					}
 
-          var doneName = match[0],
-            parent = elem.parentNode;
+					var doneName = match[0],
+						parent = elem.parentNode;
 
-          if ( parent && (parent.sizcache !== doneName || !elem.nodeIndex) ) {
-            var count = 0;
-            for ( node = parent.firstChild; node; node = node.nextSibling ) {
-              if ( node.nodeType === 1 ) {
-                node.nodeIndex = ++count;
-              }
-            }
-            parent.sizcache = doneName;
-          }
+					if ( parent && (parent.sizcache !== doneName || !elem.nodeIndex) ) {
+						var count = 0;
+						for ( node = parent.firstChild; node; node = node.nextSibling ) {
+							if ( node.nodeType === 1 ) {
+								node.nodeIndex = ++count;
+							}
+						}
+						parent.sizcache = doneName;
+					}
 
-          var diff = elem.nodeIndex - last;
-          if ( first == 0 ) {
-            return diff == 0;
-          } else {
-            return ( diff % first == 0 && diff / first >= 0 );
-          }
-      }
-    },
-    ID: function(elem, match){
-      return elem.nodeType === 1 && elem.getAttribute("id") === match;
-    },
-    TAG: function(elem, match){
-      return (match === "*" && elem.nodeType === 1) || elem.nodeName === match;
-    },
-    CLASS: function(elem, match){
-      return (" " + (elem.className || elem.getAttribute("class")) + " ")
-        .indexOf( match ) > -1;
-    },
-    ATTR: function(elem, match){
-      var name = match[1],
-        result = Expr.attrHandle[ name ] ?
-          Expr.attrHandle[ name ]( elem ) :
-          elem[ name ] != null ?
-            elem[ name ] :
-            elem.getAttribute( name ),
-        value = result + "",
-        type = match[2],
-        check = match[4];
+					var diff = elem.nodeIndex - last;
+					if ( first == 0 ) {
+						return diff == 0;
+					} else {
+						return ( diff % first == 0 && diff / first >= 0 );
+					}
+			}
+		},
+		ID: function(elem, match){
+			return elem.nodeType === 1 && elem.getAttribute("id") === match;
+		},
+		TAG: function(elem, match){
+			return (match === "*" && elem.nodeType === 1) || elem.nodeName === match;
+		},
+		CLASS: function(elem, match){
+			return (" " + (elem.className || elem.getAttribute("class")) + " ")
+				.indexOf( match ) > -1;
+		},
+		ATTR: function(elem, match){
+			var name = match[1],
+				result = Expr.attrHandle[ name ] ?
+					Expr.attrHandle[ name ]( elem ) :
+					elem[ name ] != null ?
+						elem[ name ] :
+						elem.getAttribute( name ),
+				value = result + "",
+				type = match[2],
+				check = match[4];
 
-      return result == null ?
-        type === "!=" :
-        type === "=" ?
-        value === check :
-        type === "*=" ?
-        value.indexOf(check) >= 0 :
-        type === "~=" ?
-        (" " + value + " ").indexOf(check) >= 0 :
-        !check ?
-        value && result !== false :
-        type === "!=" ?
-        value != check :
-        type === "^=" ?
-        value.indexOf(check) === 0 :
-        type === "$=" ?
-        value.substr(value.length - check.length) === check :
-        type === "|=" ?
-        value === check || value.substr(0, check.length + 1) === check + "-" :
-        false;
-    },
-    POS: function(elem, match, i, array){
-      var name = match[2], filter = Expr.setFilters[ name ];
+			return result == null ?
+				type === "!=" :
+				type === "=" ?
+				value === check :
+				type === "*=" ?
+				value.indexOf(check) >= 0 :
+				type === "~=" ?
+				(" " + value + " ").indexOf(check) >= 0 :
+				!check ?
+				value && result !== false :
+				type === "!=" ?
+				value != check :
+				type === "^=" ?
+				value.indexOf(check) === 0 :
+				type === "$=" ?
+				value.substr(value.length - check.length) === check :
+				type === "|=" ?
+				value === check || value.substr(0, check.length + 1) === check + "-" :
+				false;
+		},
+		POS: function(elem, match, i, array){
+			var name = match[2], filter = Expr.setFilters[ name ];
 
-      if ( filter ) {
-        return filter( elem, i, match, array );
-      }
-    }
-  }
+			if ( filter ) {
+				return filter( elem, i, match, array );
+			}
+		}
+	}
 };
 
 var origPOS = Expr.match.POS;
 
 for ( var type in Expr.match ) {
-  Expr.match[ type ] = new RegExp( Expr.match[ type ].source + /(?![^\[]*\])(?![^\(]*\))/.source );
-  Expr.leftMatch[ type ] = new RegExp( /(^(?:.|\r|\n)*?)/.source + Expr.match[ type ].source );
+	Expr.match[ type ] = new RegExp( Expr.match[ type ].source + /(?![^\[]*\])(?![^\(]*\))/.source );
+	Expr.leftMatch[ type ] = new RegExp( /(^(?:.|\r|\n)*?)/.source + Expr.match[ type ].source );
 }
 
 var makeArray = function(array, results) {
-  array = Array.prototype.slice.call( array, 0 );
+	array = Array.prototype.slice.call( array, 0 );
 
-  if ( results ) {
-    results.push.apply( results, array );
-    return results;
-  }
+	if ( results ) {
+		results.push.apply( results, array );
+		return results;
+	}
 
-  return array;
+	return array;
 };
 
 try {
-  Array.prototype.slice.call( document.documentElement.childNodes, 0 );
+	Array.prototype.slice.call( document.documentElement.childNodes, 0 );
 
 } catch(e){
-  makeArray = function(array, results) {
-    var ret = results || [];
+	makeArray = function(array, results) {
+		var ret = results || [];
 
-    if ( toString.call(array) === "[object Array]" ) {
-      Array.prototype.push.apply( ret, array );
-    } else {
-      if ( typeof array.length === "number" ) {
-        for ( var i = 0, l = array.length; i < l; i++ ) {
-          ret.push( array[i] );
-        }
-      } else {
-        for ( var i = 0; array[i]; i++ ) {
-          ret.push( array[i] );
-        }
-      }
-    }
+		if ( toString.call(array) === "[object Array]" ) {
+			Array.prototype.push.apply( ret, array );
+		} else {
+			if ( typeof array.length === "number" ) {
+				for ( var i = 0, l = array.length; i < l; i++ ) {
+					ret.push( array[i] );
+				}
+			} else {
+				for ( var i = 0; array[i]; i++ ) {
+					ret.push( array[i] );
+				}
+			}
+		}
 
-    return ret;
-  };
+		return ret;
+	};
 }
 
 var sortOrder;
 
 if ( document.documentElement.compareDocumentPosition ) {
-  sortOrder = function( a, b ) {
-    if ( !a.compareDocumentPosition || !b.compareDocumentPosition ) {
-      if ( a == b ) {
-        hasDuplicate = true;
-      }
-      return 0;
-    }
+	sortOrder = function( a, b ) {
+		if ( !a.compareDocumentPosition || !b.compareDocumentPosition ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
 
-    var ret = a.compareDocumentPosition(b) & 4 ? -1 : a === b ? 0 : 1;
-    if ( ret === 0 ) {
-      hasDuplicate = true;
-    }
-    return ret;
-  };
+		var ret = a.compareDocumentPosition(b) & 4 ? -1 : a === b ? 0 : 1;
+		if ( ret === 0 ) {
+			hasDuplicate = true;
+		}
+		return ret;
+	};
 } else if ( "sourceIndex" in document.documentElement ) {
-  sortOrder = function( a, b ) {
-    if ( !a.sourceIndex || !b.sourceIndex ) {
-      if ( a == b ) {
-        hasDuplicate = true;
-      }
-      return 0;
-    }
+	sortOrder = function( a, b ) {
+		if ( !a.sourceIndex || !b.sourceIndex ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
 
-    var ret = a.sourceIndex - b.sourceIndex;
-    if ( ret === 0 ) {
-      hasDuplicate = true;
-    }
-    return ret;
-  };
+		var ret = a.sourceIndex - b.sourceIndex;
+		if ( ret === 0 ) {
+			hasDuplicate = true;
+		}
+		return ret;
+	};
 } else if ( document.createRange ) {
-  sortOrder = function( a, b ) {
-    if ( !a.ownerDocument || !b.ownerDocument ) {
-      if ( a == b ) {
-        hasDuplicate = true;
-      }
-      return 0;
-    }
+	sortOrder = function( a, b ) {
+		if ( !a.ownerDocument || !b.ownerDocument ) {
+			if ( a == b ) {
+				hasDuplicate = true;
+			}
+			return 0;
+		}
 
-    var aRange = a.ownerDocument.createRange(), bRange = b.ownerDocument.createRange();
-    aRange.setStart(a, 0);
-    aRange.setEnd(a, 0);
-    bRange.setStart(b, 0);
-    bRange.setEnd(b, 0);
-    var ret = aRange.compareBoundaryPoints(Range.START_TO_END, bRange);
-    if ( ret === 0 ) {
-      hasDuplicate = true;
-    }
-    return ret;
-  };
+		var aRange = a.ownerDocument.createRange(), bRange = b.ownerDocument.createRange();
+		aRange.setStart(a, 0);
+		aRange.setEnd(a, 0);
+		bRange.setStart(b, 0);
+		bRange.setEnd(b, 0);
+		var ret = aRange.compareBoundaryPoints(Range.START_TO_END, bRange);
+		if ( ret === 0 ) {
+			hasDuplicate = true;
+		}
+		return ret;
+	};
 }
 
 (function(){
-  var form = document.createElement("div"),
-    id = "script" + (new Date).getTime();
-  form.innerHTML = "<a name='" + id + "'/>";
+	var form = document.createElement("div"),
+		id = "script" + (new Date).getTime();
+	form.innerHTML = "<a name='" + id + "'/>";
 
-  var root = document.documentElement;
-  root.insertBefore( form, root.firstChild );
+	var root = document.documentElement;
+	root.insertBefore( form, root.firstChild );
 
-  if ( !!document.getElementById( id ) ) {
-    Expr.find.ID = function(match, context, isXML){
-      if ( typeof context.getElementById !== "undefined" && !isXML ) {
-        var m = context.getElementById(match[1]);
-        return m ? m.id === match[1] || typeof m.getAttributeNode !== "undefined" && m.getAttributeNode("id").nodeValue === match[1] ? [m] : undefined : [];
-      }
-    };
+	if ( !!document.getElementById( id ) ) {
+		Expr.find.ID = function(match, context, isXML){
+			if ( typeof context.getElementById !== "undefined" && !isXML ) {
+				var m = context.getElementById(match[1]);
+				return m ? m.id === match[1] || typeof m.getAttributeNode !== "undefined" && m.getAttributeNode("id").nodeValue === match[1] ? [m] : undefined : [];
+			}
+		};
 
-    Expr.filter.ID = function(elem, match){
-      var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
-      return elem.nodeType === 1 && node && node.nodeValue === match;
-    };
-  }
+		Expr.filter.ID = function(elem, match){
+			var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
+			return elem.nodeType === 1 && node && node.nodeValue === match;
+		};
+	}
 
-  root.removeChild( form );
-  root = form = null; // release memory in IE
+	root.removeChild( form );
+	root = form = null; // release memory in IE
 })();
 
 (function(){
 
-  var div = document.createElement("div");
-  div.appendChild( document.createComment("") );
+	var div = document.createElement("div");
+	div.appendChild( document.createComment("") );
 
-  if ( div.getElementsByTagName("*").length > 0 ) {
-    Expr.find.TAG = function(match, context){
-      var results = context.getElementsByTagName(match[1]);
+	if ( div.getElementsByTagName("*").length > 0 ) {
+		Expr.find.TAG = function(match, context){
+			var results = context.getElementsByTagName(match[1]);
 
-      if ( match[1] === "*" ) {
-        var tmp = [];
+			if ( match[1] === "*" ) {
+				var tmp = [];
 
-        for ( var i = 0; results[i]; i++ ) {
-          if ( results[i].nodeType === 1 ) {
-            tmp.push( results[i] );
-          }
-        }
+				for ( var i = 0; results[i]; i++ ) {
+					if ( results[i].nodeType === 1 ) {
+						tmp.push( results[i] );
+					}
+				}
 
-        results = tmp;
-      }
+				results = tmp;
+			}
 
-      return results;
-    };
-  }
+			return results;
+		};
+	}
 
-  div.innerHTML = "<a href='#'></a>";
-  if ( div.firstChild && typeof div.firstChild.getAttribute !== "undefined" &&
-      div.firstChild.getAttribute("href") !== "#" ) {
-    Expr.attrHandle.href = function(elem){
-      return elem.getAttribute("href", 2);
-    };
-  }
+	div.innerHTML = "<a href='#'></a>";
+	if ( div.firstChild && typeof div.firstChild.getAttribute !== "undefined" &&
+			div.firstChild.getAttribute("href") !== "#" ) {
+		Expr.attrHandle.href = function(elem){
+			return elem.getAttribute("href", 2);
+		};
+	}
 
-  div = null; // release memory in IE
+	div = null; // release memory in IE
 })();
 
 if ( document.querySelectorAll ) (function(){
-  var oldSizzle = Sizzle, div = document.createElement("div");
-  div.innerHTML = "<p class='TEST'></p>";
+	var oldSizzle = Sizzle, div = document.createElement("div");
+	div.innerHTML = "<p class='TEST'></p>";
 
-  if ( div.querySelectorAll && div.querySelectorAll(".TEST").length === 0 ) {
-    return;
-  }
+	if ( div.querySelectorAll && div.querySelectorAll(".TEST").length === 0 ) {
+		return;
+	}
 
-  Sizzle = function(query, context, extra, seed){
-    context = context || document;
+	Sizzle = function(query, context, extra, seed){
+		context = context || document;
 
-    if ( !seed && context.nodeType === 9 && !isXML(context) ) {
-      try {
-        return makeArray( context.querySelectorAll(query), extra );
-      } catch(e){}
-    }
+		if ( !seed && context.nodeType === 9 && !isXML(context) ) {
+			try {
+				return makeArray( context.querySelectorAll(query), extra );
+			} catch(e){}
+		}
 
-    return oldSizzle(query, context, extra, seed);
-  };
+		return oldSizzle(query, context, extra, seed);
+	};
 
-  for ( var prop in oldSizzle ) {
-    Sizzle[ prop ] = oldSizzle[ prop ];
-  }
+	for ( var prop in oldSizzle ) {
+		Sizzle[ prop ] = oldSizzle[ prop ];
+	}
 
-  div = null; // release memory in IE
+	div = null; // release memory in IE
 })();
 
 if ( document.getElementsByClassName && document.documentElement.getElementsByClassName ) (function(){
-  var div = document.createElement("div");
-  div.innerHTML = "<div class='test e'></div><div class='test'></div>";
+	var div = document.createElement("div");
+	div.innerHTML = "<div class='test e'></div><div class='test'></div>";
 
-  if ( div.getElementsByClassName("e").length === 0 )
-    return;
+	if ( div.getElementsByClassName("e").length === 0 )
+		return;
 
-  div.lastChild.className = "e";
+	div.lastChild.className = "e";
 
-  if ( div.getElementsByClassName("e").length === 1 )
-    return;
+	if ( div.getElementsByClassName("e").length === 1 )
+		return;
 
-  Expr.order.splice(1, 0, "CLASS");
-  Expr.find.CLASS = function(match, context, isXML) {
-    if ( typeof context.getElementsByClassName !== "undefined" && !isXML ) {
-      return context.getElementsByClassName(match[1]);
-    }
-  };
+	Expr.order.splice(1, 0, "CLASS");
+	Expr.find.CLASS = function(match, context, isXML) {
+		if ( typeof context.getElementsByClassName !== "undefined" && !isXML ) {
+			return context.getElementsByClassName(match[1]);
+		}
+	};
 
-  div = null; // release memory in IE
+	div = null; // release memory in IE
 })();
 
 function dirNodeCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
-  var sibDir = dir == "previousSibling" && !isXML;
-  for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-    var elem = checkSet[i];
-    if ( elem ) {
-      if ( sibDir && elem.nodeType === 1 ){
-        elem.sizcache = doneName;
-        elem.sizset = i;
-      }
-      elem = elem[dir];
-      var match = false;
+	var sibDir = dir == "previousSibling" && !isXML;
+	for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+		var elem = checkSet[i];
+		if ( elem ) {
+			if ( sibDir && elem.nodeType === 1 ){
+				elem.sizcache = doneName;
+				elem.sizset = i;
+			}
+			elem = elem[dir];
+			var match = false;
 
-      while ( elem ) {
-        if ( elem.sizcache === doneName ) {
-          match = checkSet[elem.sizset];
-          break;
-        }
+			while ( elem ) {
+				if ( elem.sizcache === doneName ) {
+					match = checkSet[elem.sizset];
+					break;
+				}
 
-        if ( elem.nodeType === 1 && !isXML ){
-          elem.sizcache = doneName;
-          elem.sizset = i;
-        }
+				if ( elem.nodeType === 1 && !isXML ){
+					elem.sizcache = doneName;
+					elem.sizset = i;
+				}
 
-        if ( elem.nodeName === cur ) {
-          match = elem;
-          break;
-        }
+				if ( elem.nodeName === cur ) {
+					match = elem;
+					break;
+				}
 
-        elem = elem[dir];
-      }
+				elem = elem[dir];
+			}
 
-      checkSet[i] = match;
-    }
-  }
+			checkSet[i] = match;
+		}
+	}
 }
 
 function dirCheck( dir, cur, doneName, checkSet, nodeCheck, isXML ) {
-  var sibDir = dir == "previousSibling" && !isXML;
-  for ( var i = 0, l = checkSet.length; i < l; i++ ) {
-    var elem = checkSet[i];
-    if ( elem ) {
-      if ( sibDir && elem.nodeType === 1 ) {
-        elem.sizcache = doneName;
-        elem.sizset = i;
-      }
-      elem = elem[dir];
-      var match = false;
+	var sibDir = dir == "previousSibling" && !isXML;
+	for ( var i = 0, l = checkSet.length; i < l; i++ ) {
+		var elem = checkSet[i];
+		if ( elem ) {
+			if ( sibDir && elem.nodeType === 1 ) {
+				elem.sizcache = doneName;
+				elem.sizset = i;
+			}
+			elem = elem[dir];
+			var match = false;
 
-      while ( elem ) {
-        if ( elem.sizcache === doneName ) {
-          match = checkSet[elem.sizset];
-          break;
-        }
+			while ( elem ) {
+				if ( elem.sizcache === doneName ) {
+					match = checkSet[elem.sizset];
+					break;
+				}
 
-        if ( elem.nodeType === 1 ) {
-          if ( !isXML ) {
-            elem.sizcache = doneName;
-            elem.sizset = i;
-          }
-          if ( typeof cur !== "string" ) {
-            if ( elem === cur ) {
-              match = true;
-              break;
-            }
+				if ( elem.nodeType === 1 ) {
+					if ( !isXML ) {
+						elem.sizcache = doneName;
+						elem.sizset = i;
+					}
+					if ( typeof cur !== "string" ) {
+						if ( elem === cur ) {
+							match = true;
+							break;
+						}
 
-          } else if ( Sizzle.filter( cur, [elem] ).length > 0 ) {
-            match = elem;
-            break;
-          }
-        }
+					} else if ( Sizzle.filter( cur, [elem] ).length > 0 ) {
+						match = elem;
+						break;
+					}
+				}
 
-        elem = elem[dir];
-      }
+				elem = elem[dir];
+			}
 
-      checkSet[i] = match;
-    }
-  }
+			checkSet[i] = match;
+		}
+	}
 }
 
 var contains = document.compareDocumentPosition ?  function(a, b){
-  return a.compareDocumentPosition(b) & 16;
+	return a.compareDocumentPosition(b) & 16;
 } : function(a, b){
-  return a !== b && (a.contains ? a.contains(b) : true);
+	return a !== b && (a.contains ? a.contains(b) : true);
 };
 
 var isXML = function(elem){
-  return elem.nodeType === 9 && elem.documentElement.nodeName !== "HTML" ||
-    !!elem.ownerDocument && elem.ownerDocument.documentElement.nodeName !== "HTML";
+	return elem.nodeType === 9 && elem.documentElement.nodeName !== "HTML" ||
+		!!elem.ownerDocument && elem.ownerDocument.documentElement.nodeName !== "HTML";
 };
 
 var posProcess = function(selector, context){
-  var tmpSet = [], later = "", match,
-    root = context.nodeType ? [context] : context;
+	var tmpSet = [], later = "", match,
+		root = context.nodeType ? [context] : context;
 
-  while ( (match = Expr.match.PSEUDO.exec( selector )) ) {
-    later += match[0];
-    selector = selector.replace( Expr.match.PSEUDO, "" );
-  }
+	while ( (match = Expr.match.PSEUDO.exec( selector )) ) {
+		later += match[0];
+		selector = selector.replace( Expr.match.PSEUDO, "" );
+	}
 
-  selector = Expr.relative[selector] ? selector + "*" : selector;
+	selector = Expr.relative[selector] ? selector + "*" : selector;
 
-  for ( var i = 0, l = root.length; i < l; i++ ) {
-    Sizzle( selector, root[i], tmpSet );
-  }
+	for ( var i = 0, l = root.length; i < l; i++ ) {
+		Sizzle( selector, root[i], tmpSet );
+	}
 
-  return Sizzle.filter( later, tmpSet );
+	return Sizzle.filter( later, tmpSet );
 };
 
 
@@ -4962,24 +4970,34 @@ var Form = {
   serializeElements: function(elements, options) {
     if (typeof options != 'object') options = { hash: !!options };
     else if (Object.isUndefined(options.hash)) options.hash = true;
-    var key, value, submitted = false, submit = options.submit;
+    var key, value, submitted = false, submit = options.submit, accumulator, initial;
 
-    var data = elements.inject({ }, function(result, element) {
+    if (options.hash) {
+      initial = {};
+      accumulator = function(result, key, value) {
+        if (key in result) {
+          if (!Object.isArray(result[key])) result[key] = [result[key]];
+          result[key].push(value);
+        } else result[key] = value;
+        return result;
+      };
+    } else {
+      initial = '';
+      accumulator = function(result, key, value) {
+        return result + (result ? '&' : '') + encodeURIComponent(key) + '=' + encodeURIComponent(value);
+      }
+    }
+
+    return elements.inject(initial, function(result, element) {
       if (!element.disabled && element.name) {
         key = element.name; value = $(element).getValue();
         if (value != null && element.type != 'file' && (element.type != 'submit' || (!submitted &&
             submit !== false && (!submit || key == submit) && (submitted = true)))) {
-          if (key in result) {
-            if (!Object.isArray(result[key])) result[key] = [result[key]];
-            result[key].push(value);
-          }
-          else result[key] = value;
+          result = accumulator(result, key, value);
         }
       }
       return result;
     });
-
-    return options.hash ? data : Object.toQueryString(data);
   }
 };
 
@@ -5046,7 +5064,8 @@ Form.Methods = {
 
   focusFirstElement: function(form) {
     form = $(form);
-    form.findFirstElement().activate();
+    var element = form.findFirstElement();
+    if (element) element.activate();
     return form;
   },
 
@@ -5153,67 +5172,77 @@ var $F = Form.Element.Methods.getValue;
 
 /*--------------------------------------------------------------------------*/
 
-Form.Element.Serializers = {
-  input: function(element, value) {
+Form.Element.Serializers = (function() {
+  function input(element, value) {
     switch (element.type.toLowerCase()) {
       case 'checkbox':
       case 'radio':
-        return Form.Element.Serializers.inputSelector(element, value);
+        return inputSelector(element, value);
       default:
-        return Form.Element.Serializers.textarea(element, value);
+        return valueSelector(element, value);
     }
-  },
+  }
 
-  inputSelector: function(element, value) {
-    if (Object.isUndefined(value)) return element.checked ? element.value : null;
+  function inputSelector(element, value) {
+    if (Object.isUndefined(value))
+      return element.checked ? element.value : null;
     else element.checked = !!value;
-  },
+  }
 
-  textarea: function(element, value) {
+  function valueSelector(element, value) {
     if (Object.isUndefined(value)) return element.value;
     else element.value = value;
-  },
+  }
 
-  select: function(element, value) {
+  function select(element, value) {
     if (Object.isUndefined(value))
-      return this[element.type == 'select-one' ?
-        'selectOne' : 'selectMany'](element);
-    else {
-      var opt, currentValue, single = !Object.isArray(value);
-      for (var i = 0, length = element.length; i < length; i++) {
-        opt = element.options[i];
-        currentValue = this.optionValue(opt);
-        if (single) {
-          if (currentValue == value) {
-            opt.selected = true;
-            return;
-          }
+      return (element.type === 'select-one' ? selectOne : selectMany)(element);
+
+    var opt, currentValue, single = !Object.isArray(value);
+    for (var i = 0, length = element.length; i < length; i++) {
+      opt = element.options[i];
+      currentValue = this.optionValue(opt);
+      if (single) {
+        if (currentValue == value) {
+          opt.selected = true;
+          return;
         }
-        else opt.selected = value.include(currentValue);
       }
+      else opt.selected = value.include(currentValue);
     }
-  },
+  }
 
-  selectOne: function(element) {
+  function selectOne(element) {
     var index = element.selectedIndex;
-    return index >= 0 ? this.optionValue(element.options[index]) : null;
-  },
+    return index >= 0 ? optionValue(element.options[index]) : null;
+  }
 
-  selectMany: function(element) {
+  function selectMany(element) {
     var values, length = element.length;
     if (!length) return null;
 
     for (var i = 0, values = []; i < length; i++) {
       var opt = element.options[i];
-      if (opt.selected) values.push(this.optionValue(opt));
+      if (opt.selected) values.push(optionValue(opt));
     }
     return values;
-  },
-
-  optionValue: function(opt) {
-    return Element.extend(opt).hasAttribute('value') ? opt.value : opt.text;
   }
-};
+
+  function optionValue(opt) {
+    return Element.hasAttribute(opt, 'value') ? opt.value : opt.text;
+  }
+
+  return {
+    input:         input,
+    inputSelector: inputSelector,
+    textarea:      valueSelector,
+    select:        select,
+    selectOne:     selectOne,
+    selectMany:    selectMany,
+    optionValue:   optionValue,
+    button:        valueSelector
+  };
+})();
 
 /*--------------------------------------------------------------------------*/
 
@@ -5324,24 +5353,53 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
   var MOUSEENTER_MOUSELEAVE_EVENTS_SUPPORTED = 'onmouseenter' in docEl
     && 'onmouseleave' in docEl;
 
+
+
+  var isIELegacyEvent = function(event) { return false; };
+
+  if (window.attachEvent) {
+    if (window.addEventListener) {
+      isIELegacyEvent = function(event) {
+        return !(event instanceof window.Event);
+      };
+    } else {
+      isIELegacyEvent = function(event) { return true; };
+    }
+  }
+
   var _isButton;
-  if (Prototype.Browser.IE) {
-    var buttonMap = { 0: 1, 1: 4, 2: 2 };
-    _isButton = function(event, code) {
-      return event.button === buttonMap[code];
-    };
-  } else if (Prototype.Browser.WebKit) {
-    _isButton = function(event, code) {
-      switch (code) {
-        case 0: return event.which == 1 && !event.metaKey;
-        case 1: return event.which == 1 && event.metaKey;
-        default: return false;
+
+  function _isButtonForDOMEvents(event, code) {
+    return event.which ? (event.which === code + 1) : (event.button === code);
+  }
+
+  var legacyButtonMap = { 0: 1, 1: 4, 2: 2 };
+  function _isButtonForLegacyEvents(event, code) {
+    return event.button === legacyButtonMap[code];
+  }
+
+  function _isButtonForWebKit(event, code) {
+    switch (code) {
+      case 0: return event.which == 1 && !event.metaKey;
+      case 1: return event.which == 2 || (event.which == 1 && event.metaKey);
+      case 2: return event.which == 3;
+      default: return false;
+    }
+  }
+
+  if (window.attachEvent) {
+    if (!window.addEventListener) {
+      _isButton = _isButtonForLegacyEvents;
+    } else {
+      _isButton = function(event, code) {
+        return isIELegacyEvent(event) ? _isButtonForLegacyEvents(event, code) :
+         _isButtonForDOMEvents(event, code);
       }
-    };
+    }
+  } else if (Prototype.Browser.WebKit) {
+    _isButton = _isButtonForWebKit;
   } else {
-    _isButton = function(event, code) {
-      return event.which ? (event.which === code + 1) : (event.button === code);
-    };
+    _isButton = _isButtonForDOMEvents;
   }
 
   function isLeftClick(event)   { return _isButton(event, 0) }
@@ -5371,6 +5429,7 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
 
   function findElement(event, expression) {
     var element = Event.element(event);
+
     if (!expression) return element;
     while (element) {
       if (Object.isElement(element) && Prototype.Selector.match(element, expression)) {
@@ -5411,49 +5470,59 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
     event.stopped = true;
   }
 
-  Event.Methods = {
-    isLeftClick: isLeftClick,
-    isMiddleClick: isMiddleClick,
-    isRightClick: isRightClick,
 
-    element: element,
+  Event.Methods = {
+    isLeftClick:   isLeftClick,
+    isMiddleClick: isMiddleClick,
+    isRightClick:  isRightClick,
+
+    element:     element,
     findElement: findElement,
 
-    pointer: pointer,
+    pointer:  pointer,
     pointerX: pointerX,
     pointerY: pointerY,
 
     stop: stop
   };
 
-
   var methods = Object.keys(Event.Methods).inject({ }, function(m, name) {
     m[name] = Event.Methods[name].methodize();
     return m;
   });
 
-  if (Prototype.Browser.IE) {
+  if (window.attachEvent) {
     function _relatedTarget(event) {
       var element;
       switch (event.type) {
-        case 'mouseover': element = event.fromElement; break;
-        case 'mouseout':  element = event.toElement;   break;
-        default: return null;
+        case 'mouseover':
+        case 'mouseenter':
+          element = event.fromElement;
+          break;
+        case 'mouseout':
+        case 'mouseleave':
+          element = event.toElement;
+          break;
+        default:
+          return null;
       }
       return Element.extend(element);
     }
 
-    Object.extend(methods, {
+    var additionalMethods = {
       stopPropagation: function() { this.cancelBubble = true },
       preventDefault:  function() { this.returnValue = false },
       inspect: function() { return '[object Event]' }
-    });
+    };
 
     Event.extend = function(event, element) {
       if (!event) return false;
-      if (event._extendedByPrototype) return event;
 
+      if (!isIELegacyEvent(event)) return event;
+
+      if (event._extendedByPrototype) return event;
       event._extendedByPrototype = Prototype.emptyFunction;
+
       var pointer = Event.pointer(event);
 
       Object.extend(event, {
@@ -5463,12 +5532,18 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
         pageY:  pointer.y
       });
 
-      return Object.extend(event, methods);
+      Object.extend(event, methods);
+      Object.extend(event, additionalMethods);
+
+      return event;
     };
   } else {
+    Event.extend = Prototype.K;
+  }
+
+  if (window.addEventListener) {
     Event.prototype = window.Event.prototype || document.createEvent('HTMLEvents').__proto__;
     Object.extend(Event.prototype, methods);
-    Event.extend = Prototype.K;
   }
 
   function _createResponder(element, eventName, handler) {
@@ -5567,7 +5642,7 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
         element.addEventListener("dataavailable", responder, false);
       else {
         element.attachEvent("ondataavailable", responder);
-        element.attachEvent("onfilterchange", responder);
+        element.attachEvent("onlosecapture", responder);
       }
     } else {
       var actualEventName = _getDOMEventName(eventName);
@@ -5605,7 +5680,13 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
       return element;
     }
 
-    var responder = responders.find( function(r) { return r.handler === handler; });
+    var i = responders.length, responder;
+    while (i--) {
+      if (responders[i].handler === handler) {
+        responder = responders[i];
+        break;
+      }
+    }
     if (!responder) return element;
 
     if (eventName.include(':')) {
@@ -5613,7 +5694,7 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
         element.removeEventListener("dataavailable", responder, false);
       else {
         element.detachEvent("ondataavailable", responder);
-        element.detachEvent("onfilterchange",  responder);
+        element.detachEvent("onlosecapture", responder);
       }
     } else {
       var actualEventName = _getDOMEventName(eventName);
@@ -5640,10 +5721,10 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
     var event;
     if (document.createEvent) {
       event = document.createEvent('HTMLEvents');
-      event.initEvent('dataavailable', true, true);
+      event.initEvent('dataavailable', bubble, true);
     } else {
       event = document.createEventObject();
-      event.eventType = bubble ? 'ondataavailable' : 'onfilterchange';
+      event.eventType = bubble ? 'ondataavailable' : 'onlosecapture';
     }
 
     event.eventName = eventName;
@@ -5677,7 +5758,7 @@ Form.EventObserver = Class.create(Abstract.EventObserver, {
     },
 
     handleEvent: function(event) {
-      var element = event.findElement(this.selector);
+      var element = Event.findElement(event, this.selector);
       if (element) this.callback.call(this.element, event, element);
     }
   });

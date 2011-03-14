@@ -1,13 +1,7 @@
+<% title "Reports" %>
 <%= javascript_include_tag 'prototype' %>
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
-<%= javascript_include_tag :defaults ,'jquery-ui'%>
-<div id="contentHeader">
-	<h2>Reports</h2>
-</div>
-<%= render(:partial => 'layouts/rails_admin/flash', :locals => {:flash => flash}) -%>
-<div id="contentMain">
-<div class="searchBox" style="height:110px">
 <%= field_set_tag do %>
 	<h2>Filter By</h2>
 	<form id="snaps_filter_form">
@@ -15,24 +9,20 @@
 			<label style="margin:10px;">Start Date</label><%= calendar_date_select_tag "filters_start_date", @start_date %>
 			<label style="margin:10px;">Business</label><%= select_tag "filters_business_id", options_for_select(Business.all.collect {|b| [ b.name, b.id ] },@business_id),{:include_blank=>true} %>
 		</p>
-		<br />
     <p>
     	<label style="margin:10px;">End Date</label><%= calendar_date_select_tag "filters_end_date", @end_date %>
     	<label style="margin:10px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
     </p>
-    <br />
-		<p><a id="searchbar_btn" href="#" onclick="submitUsersSnapsSearch($('#snaps_filter_form'), ' ', 1)">Filter</a></p>
-		<br />
+		<p><a href="#" onclick="submitUsersSnapsSearch($('#snaps_filter_form'), ' ', 1)">Filter</a></p>
 	</form>
 <%end%>
-</div>
 <%if @results.empty?%>
 	<p>No results found</p>
 <%else%>
 	<br />
 	<%= will_paginate @results %>
 	<br/>
-	<table width="100%" border="1" cellspacing="0" cellpadding="0" class="grid">
+	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 	  <tr>
 	    <th>Name</th>
 	    <th>Points</th>
@@ -43,14 +33,14 @@
 	    <th>Date</th>
 	  </tr>
   <% for result in @results %>
-    <tr class="<%= cycle 'odd', 'even' %>">
-      <td class="modelNameRow"><%= result.full_name %></td>
-      <td class="modelNameRow"><%= result.point     %></td>
-      <td class="modelNameRow"><%= result.ename     %></td>
-      <td class="modelNameRow"><%= result.program_name %></td>
-      <td class="modelNameRow"><%= result.bname     %></td>
-      <td class="modelNameRow"><%= result.pname     %></td>
-      <td class="modelNameRow"><%= result.used_at   %></td>
+    <tr>
+      <td><%= result.full_name %></td>
+      <td><%= result.point     %></td>
+      <td><%= result.ename     %></td>
+      <td><%= result.program_name %></td>
+      <td><%= result.bname     %></td>
+      <td><%= result.pname     %></td>
+      <td><%= result.used_at   %></td>
     </tr>
   <% end %>
 </table>
@@ -59,4 +49,3 @@
 <br />
 <%= will_paginate @results %>
 <br />
-</div>

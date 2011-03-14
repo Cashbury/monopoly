@@ -80,16 +80,14 @@ class EngagementsController < ApplicationController
     end
   end
   
-  def change_status
+	def change_status
 		@engagement = Engagement.find(params[:id])
 		if @engagement.state == Engagement::STOPPED
 			@engagement.start!
 		elsif @engagement.state == Engagement::STARTED
 			@engagement.stop!
 		end
-		respond_to do |format|
-			format.json { render :nothing=>true ,:status=>:ok}
-    end
+		render :nothing=>true ,:status=>:ok
 	end
 	  
   private

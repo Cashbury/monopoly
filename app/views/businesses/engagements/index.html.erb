@@ -12,9 +12,16 @@
       <td><%= link_to engagement.name , business_engagement_url(@business, engagement) %></td>
       <td><%= link_to engagement.engagement_type, business_engagement_url(@business, engagement) %></td>
       <td><%= engagement.points %></td>
-      <td ><%= engagement.state %></td>
+      <td id="current_status_<%=engagement.id%>"><%= engagement.state %></td>
       <td><%= link_to "Edit", edit_business_engagement_path(@business, engagement) %></td>
       <td><%= link_to "Destroy", business_engagement_path(@business, engagement), :confirm => 'Are you sure?', :method => :delete %></td>
+      <td>
+      	<%if engagement.state == "started"%>
+      		<%= link_to "Stop",  "#", :onclick=>"change_engagement_status('#{engagement.id}')",:id=>"status_#{engagement.id}"%>
+      	<%else%>
+      		<%= link_to "Start","#", :onclick=>"change_engagement_status('#{engagement.id}')" ,:id=>"status_#{engagement.id}"%>
+				<%end%>
+			</td>
     </tr>
   <% end %>
 </table>
