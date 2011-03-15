@@ -40,7 +40,6 @@ class Engagement < ActiveRecord::Base
     # end
   end
   
-  belongs_to :business
   belongs_to :program
   
   has_and_belongs_to_many :places

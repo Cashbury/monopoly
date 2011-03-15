@@ -30,7 +30,7 @@
   <% end %>
 </p>
 <p>
-  <%= link_to "Edit", edit_business_engagement_path(@business, @engagement) %> |
-  <%= link_to "Destroy", business_engagement_path(@business, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", business_engagements_path(@business) %>
+  <%= link_to "Edit", edit_business_program_engagement_path(@business, @program, @engagement) %> |
+  <%= link_to "Destroy", business_program_engagement_path(@business, @program, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", business_program_engagements_path(@business,@program) %>
 </p>

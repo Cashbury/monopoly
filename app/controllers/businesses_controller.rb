@@ -1,5 +1,5 @@
 class BusinessesController < ApplicationController
-  before_filter :authenticate_user!, :except => [:index, :show]
+  before_filter :authenticate_user!, :require_admin, :except => [:index, :show]
   
   def index
     @businesses = Business.all

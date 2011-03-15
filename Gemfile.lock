@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/sferik/rails_admin.git
-  revision: e92b56bfdbb81a229ac69233985d7f3de54079f7
-  specs:
-    rails_admin (0.0.1)
-      builder (~> 2.1.0)
-      rails (~> 3.0.3)
-
-GIT
   remote: http://github.com/paneq/calendar_date_select.git
   revision: 8e7ec79435a68665df40b14bd90f47e6ac5e9135
   branch: rails3test
@@ -129,7 +121,6 @@ DEPENDENCIES
   nifty-generators
   rack (= 1.2.1)
   rails (= 3.0.3)
-  rails_admin!
   shoulda
   simple_form
   transitions

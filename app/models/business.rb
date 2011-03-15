@@ -12,7 +12,6 @@
 
 class Business < ActiveRecord::Base
   has_many :places, :dependent => :destroy
-  has_many :engagements
   has_many :rewards
   has_many :programs,:dependent => :destroy
   belongs_to :brand

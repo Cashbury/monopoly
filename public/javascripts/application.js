@@ -62,5 +62,5 @@ var submitUsersSnapsSearch = function(form, sortingBy, page, direction){
 	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
 	startDate  = (jQuery('#filters_start_date').val()=="") ? 0 : jQuery('#filters_start_date').val();
 	endDate    = (jQuery('#filters_end_date').val()=="")? 0 : jQuery('#filters_end_date').val();
-	window.location = "/admin/users_snaps/businesses/" + businessId + "/places/" + placeId + "/start_date/" + startDate + "/end_date/"+ endDate;
+	window.location = "/users_snaps/businesses/" + businessId + "/places/" + placeId + "/start_date/" + startDate + "/end_date/"+ endDate;
 }

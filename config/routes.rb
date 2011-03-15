@@ -1,34 +1,52 @@
 Kazdoor::Application.routes.draw do
-	
-    
 	devise_for :users, :controllers => { :sessions => "users/sessions" }
+	
 	devise_scope :user do
-    namespace :users do
-      resources :sessions, :only => [:create, :destroy]  
-  	end
+		namespace :users do
+			resources :sessions, :only => [:create, :destroy]  
+		end
 	end
 	
-	namespace :admin do
+	namespace :users do
 		resources :users_snaps do
-			match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date', :to=>:index
+			get '/qr_code/:qr_code_id.(:format)'   ,:action=>:snap, :on =>:collection
 		end 
+		resources :places do
+			get '/:long/:lat.:format', :action=>:show, :on=>:collection, :constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
+		end
+		resources :businesses do
+			resources :rewards
+		end
+		resources :programs do  
+			get "/enroll.:format" , :action=>:enroll, :on =>:member
+		end
 	end
-  	
+	
+  resources :users_snaps
+	resources :users_snaps do
+		get '/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date'   ,:action=>:index, :on =>:collection
+	end 
+	resources :program_types
+	resources :programs
+	# resources :programs do
+	# 	resources :engagements, :controller => "programs/engagements" do
+	#       get "stamps", :on => :collection
+	#       resources :places , :only=>[:issue_code], :controller => 'programs/engagements' do 
+	#         get "issue_code" ,:on =>:member
+	#       end
+	#     end
+	# end
+	resources :places do
+		get '/for_businessid/:id' ,:action=>:for_businessid, :on =>:collection
+	end
+  		
 	resources :users
 
 	match '/login.(:format)' => "users_sessions#login" #this route is for quick testing fb connect and should be disabled later
 
-	match '/users_snaps/:user_id/:qr_code_id/:used_at'=>"users_snaps#snap"
-	match '/places/for_businessid/:id' =>"places#for_businessid"
-	#match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
   resources :templates
 
   resources :print_jobs
-
-
-  resources :program_types
-
-  resources :programs
 
   resources :brands
 
@@ -58,18 +76,21 @@ Kazdoor::Application.routes.draw do
       resources :reports, :only => [:create, :show, :index]
     end
     resources :reports, :only => [:create, :show, :index]
-    resources :engagements, :controller => "businesses/engagements" do
-      get "stamps", :on => :collection
-      resources :places , :only=>[:issue_code], :controller => 'businesses/engagements' do 
-        get "issue_code" ,:on =>:member
-      end
+    
+    resources :programs , :controller => "businesses/programs" do
+	    resources :engagements,:controller => "businesses/programs/engagements" do
+	      get "stamps", :on => :collection
+	      resources :places , :only=>[:issue_code] do 
+	        get "issue_code" ,:on =>:member
+	      end
+	    end
     end
     resources :rewards
   end
   
-	resources :places
-	match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
-  match "/places"             						=> "places#index"
+	# resources :places
+	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
+	#   match "/places"             						=> "places#index"
   match "/engagements/:id"    						=> "engagements#display"
   match "/engagements/:id/change_status"   => "engagements#change_status"
   match '/foryou'             						=> "newsletters#index" ,:as =>:foryou

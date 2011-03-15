@@ -3,3 +3,4 @@
 
 en:
   hello: "Hello world"
+  not_authorized: "You are not authorized for this action"

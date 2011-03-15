@@ -104,19 +104,19 @@
 		<br/>
 		<script language="javascript" type="text/javascript">
 //<![CDATA[
-		$(function() {
-				$('#goal_type').change(function(){
-						$('.setgoaltype').hide();
-						$.getScript("<%= stamps_business_engagements_path %>.js",function(data){});
-						$('#' + $(this).val()).show();
+		jQuery(function() {
+				jQuery('#goal_type').change(function(){
+						jQuery('.setgoaltype').hide();
+						jQuery.getScript("<%= stamps_business_engagements_path %>.js",function(data){});
+						jQuery('#' + jQuery(this).val()).show();
 				});
 		});
 
 
-		$(function() {
-				$('#reward_runtill').change(function(){
-						$('.runtill').hide();
-						$('#' + $(this).val()).show();
+		jQuery(function() {
+				jQuery('#reward_runtill').change(function(){
+						jQuery('.runtill').hide();
+						jQuery('#' + $(this).val()).show();
 				});
 		});
 		//]]>
