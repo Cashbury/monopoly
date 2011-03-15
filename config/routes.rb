@@ -1,13 +1,4 @@
 Kazdoor::Application.routes.draw do
-  scope "admin", :module => :rails_admin, :as => "rails_admin" do
-    # Routes for rails_admin controller
-    controller "users_snaps" do
-      match "/users_snaps", :to => :index
-      match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date', :to=> :index
-      
-    end
-  end
-   
 	devise_for :users, :controllers => { :sessions => "users/sessions" }
 	
 	devise_scope :user do
@@ -53,10 +44,6 @@ Kazdoor::Application.routes.draw do
 
 	match '/login.(:format)' => "users_sessions#login" #this route is for quick testing fb connect and should be disabled later
 
-
-	match '/users_snaps/:user_id/:qr_code_id/:used_at'=>"users_snaps#snap"
-	match '/places/for_businessid/:id' =>"places#for_businessid"
-
 	#match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
 
   resources :templates
@@ -99,6 +86,7 @@ Kazdoor::Application.routes.draw do
 	        get "issue_code" ,:on =>:member
 	      end
 	    end
+	    resources :rewards, :controller=>"businesses/programs/rewards"
     end
     resources :rewards
   end

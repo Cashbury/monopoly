@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110315093649) do
+ActiveRecord::Schema.define(:version => 20110315171810) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -182,6 +182,7 @@ ActiveRecord::Schema.define(:version => 20110315093649) do
     t.text     "legal_term"
     t.decimal  "price",         :precision => 10, :scale => 0
     t.string   "product_id"
+    t.integer  "program_id"
   end
 
   create_table "templates", :force => true do |t|

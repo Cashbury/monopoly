@@ -1,0 +1,5 @@
+<% title "Edit Reward" %>
+
+<%= form_for @reward, :url => business_reward_path(@business, @reward), :html => {:multipart => true, :method => :put}  do |f| %>
+	<%= render :partial => 'form', :locals => {:f => f} %>
+<% end %>

@@ -4,6 +4,7 @@ class Program < ActiveRecord::Base
 	has_many :engagements,:foreign_key=>'program_id'
 	belongs_to :business
 	belongs_to :program_type
+	has_many   :rewards
 	
 	validates_presence_of :name,:program_type_id,:business_id
 	validates_format_of :start_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
