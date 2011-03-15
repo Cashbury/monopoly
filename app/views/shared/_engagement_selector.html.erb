@@ -19,30 +19,7 @@ $(function(){
 })
 //]]>
 </script>
-
-<%= form_tag do %>
-  <p class="row">
-    <strong>
-      QrCode Type
-    </strong> <br/>
-    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },1) %>
-  </p>
-  <p class="row">
-    <strong>
-      QrCode Status
-    </strong> <br/>
-    <%=  select_tag :status , options_for_select( {"Inactive"=>0, "Active"=>1 },1) %>
-  </p>
-  <p class="row">
-    <strong>
-      Quantity
-    </strong><br/>
-    <%=  text_field_tag :quantity , 1 , :class => "basic_info_input"%> *(max 100)
-  </p>
-  <p class="row">
-  <a id="associate_link" href="#">Show</a>
-  </p>
-  <div id="associate_box" class="row" style="border:#ccc 1px solid;display:none">
+<div id="associate_box" class="row">
     <strong>Associate with:</strong><br/>
         <p class="row">
     <strong>
@@ -56,15 +33,5 @@ $(function(){
     </strong> <br/>
       <%= select_tag :business_id , ""%>
     </p>
-    <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe   %>
-    <p class="row">
-    <strong>
-      Engagements
-    </strong> <br/>
-      <%= select_tag :engagement_id , engagement_options %>
-    </p>
+
   </div>
-  <p class="row">
-    <%= submit_tag "Submit" %>
-  </p>
-  <% end %>

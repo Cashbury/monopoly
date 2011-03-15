@@ -15,7 +15,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1.xml
   def show
     @qr_code = QrCode.where(:hash_code =>params[:id]).first
-
+     
     respond_to do |format|
       format.pdf do
         render  :pdf => "qrcode"
@@ -29,7 +29,8 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/new.xml
   def new
     @qr_code = QrCode.new
-
+    @brands  = Brand.all
+    @engagements = Engagement.all
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @qr_code }
@@ -39,6 +40,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1/edit
   def edit
     @qr_code = QrCode.find(params[:id])
+    @brands = Brand.all
     @engagements = Engagement.all
   end
 
@@ -118,15 +120,21 @@ class QrCodesController < ApplicationController
 
   def printable
     if request.post?
-      @qrcodes = search_qrs
+      @qrcodes = search_qrs.associated_with_engagements
+
       @template = Template.find(params[:template_id])
-      
+       
       respond_to do |format|
-        @pj= PrintJob.new(:name=>"#{@template.name}_#{Time.now.strftime("%m-%d-%Y")}")
+        engagement_ids = @qrcodes.collect(&:id).to_yaml
+        @pj= PrintJob.new(:name=>"#{Time.now.strftime("%m-%d-%Y %H:%M")}" , :log=>engagement_ids)
         if @pj.save
-           @qrcodes.update_all :print_job_id =>@pj.id
-           format.pdf do
-           render  :pdf => "#{@template.name}_qrcodes"         
+          format.pdf do
+            if params[:layout].to_i == 1
+              render  :pdf => "test",
+                      :template=>"qr_codes/multi_printable.pdf.erb"
+            else 
+              render  :pdf => "#{@template.name}_qrcodes"
+            end            
           end
         else
           render 404
@@ -163,12 +171,18 @@ class QrCodesController < ApplicationController
   end
 
   def search_qrs
-    @engagements ||= Engagement.all
-    @print_jobs ||= PrintJob.all
+    @print_jobs   ||= PrintJob.all
+    @brands       ||= Brand.all  
+    @engagements  ||= Engagement.all 
     search = {}
 
     search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
-    search = search.merge({:print_job_id=>params[:print_job_id]}) unless params[:print_job_id].blank?
+    unless params[:print_job_id].blank?
+      pj = PrintJob.where(:id=>params[:print_job_id]).first  
+      qr_code_ids = YAML.load(pj.log)               if pj.respond_to? :log  
+      search = search.merge({:id => qr_code_ids })  unless qr_code_ids.blank? 
+      p qr_code_ids.inspect
+    end
     search = search.merge({:status=>params[:status]})             unless params[:status].blank?
     search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
     QrCode.where search

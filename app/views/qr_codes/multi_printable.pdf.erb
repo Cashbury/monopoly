@@ -1,0 +1,23 @@
+ <style type="text/css" media="screen">
+ .single_card{
+    width:600px;
+  text-align:center; 
+ }
+
+ </style>
+<% for qrcode in @qrcodes %>
+
+
+   <div class="greenBorder" style="display: table; height: 1020px; #position: relative; overflow: hidden;">
+    <div style=" #position: absolute; #top: 50%;display: table-cell; vertical-align: middle;">
+      <div class="greenBorder" style=" #position: relative; #top: -50%">
+          <div class="single_card">
+            <%= wicked_pdf_image_tag "qrcodes/#{qrcode.hash_code}.png" %>
+          </div>
+
+      </div>
+    </div>
+  </div>
+<% end %>
+
+

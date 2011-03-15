@@ -193,6 +193,8 @@ ActiveRecord::Schema.define(:version => 20110315093649) do
     t.datetime "updated_at"
     t.string   "front_photo"
     t.text     "description"
+    t.string   "title"
+    t.string   "tag"
   end
 
   create_table "users", :force => true do |t|
