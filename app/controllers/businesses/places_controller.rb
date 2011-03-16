@@ -29,7 +29,7 @@ class Businesses::PlacesController < ApplicationController
     @place = Place.new(params[:place])
     if @place.save
       flash[:notice] = "Successfully created place."
-      redirect_to @place
+      redirect_to business_place_url(@business,@place)
     else
       render :action => 'new'
     end
@@ -43,7 +43,7 @@ class Businesses::PlacesController < ApplicationController
     @place = Place.find(params[:id])
     if @place.update_attributes(params[:place])
       flash[:notice] = "Successfully updated place."
-      redirect_to @place
+      redirect_to business_place_url(@business,@place)
     else
       render :action => 'edit'
     end
@@ -53,7 +53,7 @@ class Businesses::PlacesController < ApplicationController
     @place = Place.find(params[:id])
     @place.destroy
     flash[:notice] = "Successfully destroyed place."
-    redirect_to places_url
+    redirect_to business_places_url(@business)
   end
   
   private
