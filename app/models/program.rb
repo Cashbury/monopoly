@@ -1,7 +1,7 @@
 class Program < ActiveRecord::Base
 	include ActiveModel::Validations
-	has_many :accounts,:foreign_key=>'program_id'
-	has_many :engagements,:foreign_key=>'program_id'
+	has_many   :accounts,:foreign_key=>'program_id'
+	has_many   :engagements,:foreign_key=>'program_id'
 	belongs_to :business
 	belongs_to :program_type
 	has_many   :rewards
@@ -12,5 +12,10 @@ class Program < ActiveRecord::Base
 	validates_numericality_of :initial_points,:max_points
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	validates_with PointsValidator, :initial => :initial_points, :max => :max_points
-
+	
+	scope :auto_enrolled_ones , where(:auto_enroll=>true)
+	
+	def has_auto_unlock_reward?
+		!self.rewards.where(:auto_unlock=>true).empty?
+	end
 end

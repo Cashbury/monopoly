@@ -41,11 +41,10 @@ class Engagement < ActiveRecord::Base
   end
   
   belongs_to :program
-  
+  belongs_to  :reward
   has_and_belongs_to_many :places
 
   has_many :qr_codes
-
   
   scope :stamps, where(:engagement_type => QrCode::STAMP) 
   
@@ -54,7 +53,9 @@ class Engagement < ActiveRecord::Base
  
   validates :name, :presence =>true,
                    :length =>{:within=>3..50}
-
+  validates_presence_of :engagement_type,:description,:points                   
+  validates_numericality_of :points
+  
   def engagement_types
     ["check-in", QrCode::STAMP , "question", "spend"]
   end

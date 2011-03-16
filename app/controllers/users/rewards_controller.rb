@@ -8,7 +8,11 @@ class Users::RewardsController < Users::BaseController
       format.xml { render :xml => @rewards }
     end
   end
-
+	
+	def claim
+		#here should deduce from account points
+	end
+	
   private
   def find_business_and_engagments
     @business = Business.find(params[:business_id])

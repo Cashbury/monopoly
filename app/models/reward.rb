@@ -15,16 +15,20 @@
 #
 
 class Reward < ActiveRecord::Base
-  belongs_to :engagement
   belongs_to :business
   belongs_to :program
-  
+	has_many   :engagements
+  has_many :user_actions
   has_and_belongs_to_many :places
   
   attr_accessor :places_list
   
   after_save :update_categories
-  
+  validates_presence_of :program_id,:name,:points,:description,:price
+  validates_numericality_of :price,:points
+  validate do |reward|
+    reward.errors.add_to_base("#{reward.program.name} already has an auto unlock reward") if reward.auto_unlock && reward.program.has_auto_unlock_reward?
+  end
   #  private
   def update_categories
     places.delete_all

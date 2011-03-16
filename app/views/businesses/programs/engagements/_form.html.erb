@@ -23,6 +23,10 @@
     <%= f.text_field :points %>
   </p>
   <p>
+    <%= f.label :reward %><br />
+    <%= f.select :reward_id, options_for_select(@program.rewards.collect {|r| [ r.name, r.id ] }),{:include_blank=>true}%>
+  </p>
+  <p>
     <%= f.label :places, "Places" %><br />
 		<% @places.each do |place| %>
 			<%= check_box_tag("engagement[places_list][#{place.id}]", 

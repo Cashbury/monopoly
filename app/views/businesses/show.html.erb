@@ -44,10 +44,9 @@
 </p>
 <p>
   <%= link_to "Edit", edit_business_path(@business) %> |
-  <%= link_to "Destroy", @business, :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", businesses_path %>
+  <%= link_to "View All", businesses_path %> |
+  <%= button_to "Destroy", @business, :confirm => 'Are you sure?', :method => :delete %>
 </p>
 <p>
   <%= link_to "Show Programs", business_programs_path(@business) %><br />
-	<%= link_to "Show Rewards", business_rewards_path(@business) %>
 </p>

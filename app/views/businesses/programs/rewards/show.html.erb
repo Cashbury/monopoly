@@ -10,11 +10,11 @@
 
 
 <p>
-  <strong>Name:</strong>
+  <strong>Name: </strong>
   <%= @reward.name %>
 </p>
 <p>
-  <strong>Description:</strong>
+  <strong>Description: </strong>
   <%= @reward.description %>
 </p>
 <p>
@@ -24,24 +24,27 @@
 </p>
 <% unless @reward.engagement.blank? %>
 <p>
-  <strong>Stamp Description</strong>
+  <strong>Stamp Description: </strong>
   <%= @reward.engagement.name %>
 </p>
 <% end %>
 <p>
-  <strong>Active Places</strong>
+  <strong>Active Places: </strong>
   <% for place in @reward.places %>
   <br/><%= place.name %>    
   <% end %>
 </p>
 
 <p>
-  <strong>Price</strong>
+  <strong>Price: </strong>
   <%= @reward.price %>
 </p>
-
 <p>
-  <strong>Product Id</strong>
+  <strong>Auto Unlock: </strong>
+  <%= @reward.auto_unlock %>
+</p>
+<p>
+  <strong>Product Id: </strong>
   <%= @reward.product_id %>
 </p>
 <p>

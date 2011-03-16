@@ -1,6 +1,7 @@
+<% title "Brands" %>
 <h1>Listing brands</h1>
 
-<table>
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Description</th>
@@ -15,7 +16,7 @@
     <td><%= brand.description %></td>
     <td><%= link_to 'Show', brand %></td>
     <td><%= link_to 'Edit', edit_brand_path(brand) %></td>
-    <td><%= link_to 'Destroy', brand, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= button_to 'Destroy', brand, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>

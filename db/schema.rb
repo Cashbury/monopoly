@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110315171810) do
+ActiveRecord::Schema.define(:version => 20110316122107) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20110315171810) do
     t.string   "name"
     t.integer  "place_id"
     t.integer  "program_id"
+    t.integer  "reward_id"
   end
 
   create_table "engagements_places", :id => false, :force => true do |t|
@@ -183,6 +184,7 @@ ActiveRecord::Schema.define(:version => 20110315171810) do
     t.decimal  "price",         :precision => 10, :scale => 0
     t.string   "product_id"
     t.integer  "program_id"
+    t.boolean  "auto_unlock",                                  :default => false
   end
 
   create_table "templates", :force => true do |t|
@@ -197,6 +199,21 @@ ActiveRecord::Schema.define(:version => 20110315171810) do
     t.string   "title"
     t.string   "tag"
   end
+
+  create_table "user_actions", :force => true do |t|
+    t.integer  "user_id",     :null => false
+    t.integer  "qr_code_id"
+    t.integer  "business_id"
+    t.integer  "reward_id"
+    t.date     "used_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_actions", ["business_id"], :name => "index_user_actions_on_business_id"
+  add_index "user_actions", ["qr_code_id"], :name => "index_user_actions_on_qr_code_id"
+  add_index "user_actions", ["reward_id"], :name => "index_user_actions_on_reward_id"
+  add_index "user_actions", ["user_id"], :name => "index_user_actions_on_user_id"
 
   create_table "users", :force => true do |t|
     t.string   "email",                               :default => "", :null => false
@@ -218,13 +235,5 @@ ActiveRecord::Schema.define(:version => 20110315171810) do
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  create_table "users_snaps", :force => true do |t|
-    t.integer  "user_id",    :null => false
-    t.integer  "qr_code_id", :null => false
-    t.date     "used_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
 end

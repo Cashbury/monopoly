@@ -1,14 +1,5 @@
 <% title "Reward" %>
 
-<% 
-  reward_type = if @reward.engagement.blank? 
-    "Points"
-  else
-    "Stamps" 
-  end            
-%>
-
-
 <p>
   <strong>Name:</strong>
   <%= @reward.name %>
@@ -18,14 +9,17 @@
   <%= @reward.description %>
 </p>
 <p>
-  <strong><%= reward_type %>
-  </strong>
+  <strong>Program:</strong>
+  <%= @reward.program.name %>
+</p>
+<p>
+  <strong>Points</strong>
   <%= @reward.points %>
 </p>
-<% unless @reward.engagement.blank? %>
+<% @reward.engagements.each do |en| %>
 <p>
   <strong>Stamp Description</strong>
-  <%= @reward.engagement.name %>
+  <%= en.name %>
 </p>
 <% end %>
 <p>
@@ -45,7 +39,7 @@
   <%= @reward.product_id %>
 </p>
 <p>
-  <%= link_to "Edit", edit_business_reward_path(@business, @reward) %> |
-  <%= link_to "Destroy", business_engagement_path(@business, @reward), :confirm => 'Are you sure?', :method => :delete %> | 
-  <%= link_to "Back to List", business_rewards_path(@business) %>
+  <%= link_to "Edit", edit_reward_path(@reward) %> |
+  <%= button_to "Destroy", reward_path(@reward), :confirm => 'Are you sure?', :method => :delete %> | 
+  <%= link_to "Back to List", rewards_path %>
 </p>

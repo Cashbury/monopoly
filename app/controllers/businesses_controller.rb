@@ -21,7 +21,8 @@ class BusinessesController < ApplicationController
   end
   
   def new
-    @brands  = current_user.brands
+    #@brands  = current_user.brands
+    @brands  = Brand.all
     @business = Business.new
     @categories = Category.all
     3.times { @business.places.build }
@@ -38,7 +39,8 @@ class BusinessesController < ApplicationController
   end
   
   def edit
-    @brands  = current_user.brands
+    #@brands  = current_user.brands
+    @brands  = Brand.all
     @business = Business.find(params[:id])
     @categories = Category.all
     3.times { @business.places.build }

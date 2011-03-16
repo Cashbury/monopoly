@@ -14,6 +14,7 @@ class Business < ActiveRecord::Base
   has_many :places, :dependent => :destroy
   has_many :rewards
   has_many :programs,:dependent => :destroy
+  has_many :user_actions
   belongs_to :brand
 
   has_and_belongs_to_many :categories
@@ -24,7 +25,7 @@ class Business < ActiveRecord::Base
   attr_accessor :categories_list
   
   after_save :update_categories
-  
+
   private
   def update_categories
     categories.delete_all

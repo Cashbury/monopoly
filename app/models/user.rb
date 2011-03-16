@@ -30,7 +30,10 @@ class User < ActiveRecord::Base
   
   has_many :accounts
   has_many :brands
-  has_many :users_snaps 
+  has_many :user_actions 
   has_many :templates
-
+  
+	def has_account_with_program?(program_id)
+		!self.accounts.where(:program_id=>program_id).empty?
+	end
 end

@@ -24,10 +24,11 @@ Kazdoor::Application.routes.draw do
 	
   resources :users_snaps
 	resources :users_snaps do
-		get '/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date'   ,:action=>:index, :on =>:collection
+		get '/businesses/:business_id/places/:place_id/from_date/:from_date/to_date/:to_date'   ,:action=>:index, :on =>:collection
 	end 
 	resources :program_types
 	resources :programs
+	resources :rewards
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
 	#       get "stamps", :on => :collection
@@ -85,6 +86,7 @@ Kazdoor::Application.routes.draw do
 	      resources :places , :only=>[:issue_code] do 
 	        get "issue_code" ,:on =>:member
 	      end
+	      resources :rewards, :controller=>"businesses/programs/engagements/rewards"
 	    end
 	    resources :rewards, :controller=>"businesses/programs/rewards"
     end

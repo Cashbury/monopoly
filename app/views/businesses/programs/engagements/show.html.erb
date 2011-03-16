@@ -21,16 +21,22 @@
   <strong>Points:</strong>
   <%= @engagement.points %>
 </p>
+
+<p>
+  <strong>Reward:</strong>
+  <%= @engagement.reward.try(:name)%>
+</p>
   
 <p>
   <strong>Places:</strong>
   <% qrcodes =  @engagement.qr_codes  %>
   <% for place in @engagement.places %>
-    <h3><%= place.name %></h3>
+    <%= place.name %><br />
   <% end %>
 </p>
+
 <p>
   <%= link_to "Edit", edit_business_program_engagement_path(@business, @program, @engagement) %> |
-  <%= link_to "Destroy", business_program_engagement_path(@business, @program, @engagement), :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", business_program_engagements_path(@business,@program) %>
+  <%= link_to "View All", business_program_engagements_path(@business,@program) %> |
+  <%= button_to "Destroy", business_program_engagement_path(@business, @program, @engagement), :confirm => 'Are you sure?', :method => :delete %>
 </p>
