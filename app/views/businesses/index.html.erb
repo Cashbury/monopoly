@@ -20,3 +20,10 @@
 </table>
 
 <p><%= link_to "New Business", new_business_path %></p>
+<% form_tag "/users/sessions.xml",:method=>'POST' do %>
+   <%= text_field_tag "email" %>
+   
+   <%= text_field_tag "password" %>
+   
+   <%= submit_tag 'Submit' %>
+<%end%>

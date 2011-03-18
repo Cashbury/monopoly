@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
 	protect_from_forgery
 	
+	protected
 	def require_admin
 		unless current_user.nil? || current_user.admin? 
 			sign_out current_user

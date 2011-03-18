@@ -9,18 +9,45 @@ class Users::PlacesController < Users::BaseController
   end
   
   def show
+		@result={}
+  	@result["places"]=[]
     @places=[]
+    current_user=User.find_by_id(params[:uid]) unless params[:uid].blank? 
     unless params[:long].blank? and  params[:lat].blank?
 			@places = Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order('distance ASC')
 	  else
-	  	@places = Place.all
+	  	@places = Place.order("name desc")
     end
+    @places.each_with_index do |place,index|
+    	@result["places"] << place.attributes
+    	@result["places"][index]["accounts"]=[]
+			accounts=place.business.programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
+			accounts.each do |account|
+				@result["places"][index]["accounts"] << account.attributes
+			end
+			@result["places"][index]["rewards"]=[] 
+			rewards=place.engagements.joins(:reward).select('rewards.*')
+			normal_ones=rewards.where("rewards.auto_unlock=false")
+			normal_ones.each do |reward|
+				@result["places"][index]["rewards"] << reward.attributes
+			end
+			@result["places"][index]["auto_unlock_rewards"]=[] 
+			unlock_ones=rewards.where("rewards.auto_unlock=true")
+			unlock_ones.each do |reward|
+				unless current_user.is_engaged_to?(place.business.id)
+					@result["places"][index]["auto_unlock_rewards"] << reward.attributes
+				end
+			end
+		end
+		puts ">>>>>>>>>>>>>>>>#{cookies.inspect}"
+		puts ">>>>>>>>>>>>>>>>#{session[:session_id]}"
     respond_to do |format|
-      format.xml { render :xml => @places }
+      format.xml { render :xml => @result }
     end
   end
   
   private
+  #This method should run within background job
   def auto_enroll_user
   	begin
 			ids=@places.collect{|p| p.business_id}

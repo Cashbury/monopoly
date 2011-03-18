@@ -12,7 +12,7 @@ class UsersSessionsController < ApplicationController
 		sign_in @user
     respond_to do |format|
       format.html
-      format.xml { render :xml => @user }
+      format.xml { render :xml => @user.to_xml(:only=>[:id]) }
       format.json { render :text => @user.to_json }
     end
   end

@@ -9,8 +9,6 @@ class QrCode < ActiveRecord::Base
 
   belongs_to :place
   
-  has_many :users_snaps
-  
 	has_many :user_actions
 	
   belongs_to :engagement

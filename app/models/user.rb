@@ -22,7 +22,7 @@
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable,:token_authenticatable,
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
@@ -35,5 +35,9 @@ class User < ActiveRecord::Base
   
 	def has_account_with_program?(program_id)
 		!self.accounts.where(:program_id=>program_id).empty?
+	end
+	
+	def is_engaged_to?(business_id)
+		!self.user_actions.where(:business_id=>business_id).empty?
 	end
 end
