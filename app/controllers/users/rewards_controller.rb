@@ -1,7 +1,6 @@
 class Users::RewardsController < Users::BaseController
 	def claim
 		begin
-			current_user=User.find_by_id(params[:uid]) unless params[:uid].blank?
 			reward=Reward.find(params[:id])
 			if reward.program.nil?
 				respond_to do |format|

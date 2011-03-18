@@ -11,6 +11,7 @@ class Users::SessionsController < Devise::SessionsController
                            :password=>params[:password],
                            :password_confirmation =>params[:password],
                            :full_name=>params[:full_name])
+					@user.ensure_authentication_token!
 					if @user.save!
 						sign_in @user
 						render :xml => current_user.to_xml(:only=>[:id,:authentication_token]),:status=>200
@@ -18,9 +19,9 @@ class Users::SessionsController < Devise::SessionsController
 						render :text => @user.errors.full_messages,:status=>500
 					end
         else
+        	@user.reset_authentication_token!
 					sign_in @user
-					#puts ">>>>>>>>>>>>#{current_user.authentication_token}"
-					render :xml => current_user.to_xml(:only=>[:id] ),:status=>200   										   
+					render :xml => current_user.to_xml(:only=>[:id,:authentication_token] ),:status=>200   										   
 				end  
 			}  
 		end  

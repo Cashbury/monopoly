@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me,:full_name
+  attr_accessible :email, :password, :password_confirmation, :remember_me,:full_name,:authentication_token
   
   has_many :accounts
   has_many :brands
@@ -40,4 +40,9 @@ class User < ActiveRecord::Base
 	def is_engaged_to?(business_id)
 		!self.user_actions.where(:business_id=>business_id).empty?
 	end
+	
+	def ensure_authentication_token!
+    reset_authentication_token! if authentication_token.blank?
+  end
+  
 end

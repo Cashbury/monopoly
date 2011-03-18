@@ -1,7 +1,6 @@
 class Users::UsersSnapsController < Users::BaseController
 	def snap
 		begin
-			current_user=User.find(params[:uid]) unless params[:uid].blank?
  			result =Program.joins(:engagements=>:qr_codes).where(:qr_codes => { :hash_code => params[:qr_code_hash] }).select("programs.id,programs.initial_points,engagements.points").first
 			account=Account.where(:user_id=>current_user.id,:program_id=>result.id).first
 			date=Date.today.to_s

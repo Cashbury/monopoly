@@ -11,8 +11,7 @@ class Users::PlacesController < Users::BaseController
   def show
 		@result={}
   	@result["places"]=[]
-    @places=[]
-    current_user=User.find_by_id(params[:uid]) unless params[:uid].blank? 
+    @places=[] 
     unless params[:long].blank? and  params[:lat].blank?
 			@places = Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order('distance ASC')
 	  else
@@ -39,8 +38,6 @@ class Users::PlacesController < Users::BaseController
 				end
 			end
 		end
-		puts ">>>>>>>>>>>>>>>>#{cookies.inspect}"
-		puts ">>>>>>>>>>>>>>>>#{session[:session_id]}"
     respond_to do |format|
       format.xml { render :xml => @result }
     end
