@@ -28,6 +28,22 @@ class Users::SessionsController < Devise::SessionsController
   end
     
   def destroy  
-    super  
+		respond_to do |format|  
+			format.html { super }  
+			format.xml { #request from iphone  
+				if current_user
+					user=current_user
+					user.authentication_token=nil
+					sign_out user
+					if user.save!
+						render :text=>"User Signed out",:status=>200
+					else
+						render :text => user.errors.full_messages,:status=>500
+					end
+				else
+					render :text => "User already signed out",:status=>500
+			 	end
+			}  
+		end   
   end
 end
