@@ -94,6 +94,7 @@ $(function(){
     <th>Hash code</th>
     <th>Status</th>
     <th>QrType</th>
+    <th>Program</th>
     <th>Business</th>
     <th>Brand</th>
     <th>Printed</th>
@@ -129,7 +130,9 @@ $(function(){
         <strong> Single Use</strong>
       <% end %>
     </td>
-
+		<td>
+       <%= qr_code.engagement.try(:program).try(:name)  %>
+		</td>
     <td>
        <%= qr_code.business_name  %>
      </td>
@@ -137,7 +140,7 @@ $(function(){
       <% if qr_code.engagement.blank? %>
         N/A
       <% else %>
-        <%= qr_code.engagement.business.brand.name %>
+        <%= qr_code.engagement.try(:program).try(:business).try(:brand).try(:name) %>
       <% end %>
       </td>
       <td>
