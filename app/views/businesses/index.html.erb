@@ -20,9 +20,3 @@
 </table>
 
 <p><%= link_to "New Business", new_business_path %></p>
-<% form_tag "/users/sign_in.xml",:method=>'POST' do %>
-   <%= text_field_tag "email" %>
-   <%= text_field_tag "password" %>
-   <%= text_field_tag "full_name" %>
-   <%= submit_tag 'Submit' %>
-<%end%>
