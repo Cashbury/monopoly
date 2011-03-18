@@ -57,10 +57,18 @@ function change_engagement_status(id)
 	});return false;
 }
 
-var submitUsersSnapsSearch = function(form, sortingBy, page, direction){
+var submitUsersSnapsSearch = function(form,page){
 	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
 	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
 	fromDate  = (jQuery('#filters_from_date').val()=="") ? 0 : jQuery('#filters_from_date').val();
 	toDate    = (jQuery('#filters_to_date').val()=="")? 0 : jQuery('#filters_to_date').val();
 	window.location = "/users_snaps/businesses/" + businessId + "/places/" + placeId + "/from_date/" + fromDate + "/to_date/"+ toDate;
+}
+
+var submitLoyalCustomersSearch = function(form,page){
+	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
+	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
+	fromDate  = (jQuery('#filters_from_date').val()=="") ? 0 : jQuery('#filters_from_date').val();
+	toDate    = (jQuery('#filters_to_date').val()=="")? 0 : jQuery('#filters_to_date').val();
+	window.location = "/loyal_customers/businesses/" + businessId + "/places/" + placeId + "/from_date/" + fromDate + "/to_date/"+ toDate;
 }

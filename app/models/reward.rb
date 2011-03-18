@@ -38,14 +38,13 @@ class Reward < ActiveRecord::Base
     selected_categories.each {|place| self.places << place}
   end
   
-  def is_claimed_by(user)
-  	account=nil
-		Account.transaction do
-			account=user.accounts.where(:program_id=>self.program.id).first 
+  def is_claimed_by(user,account)
+		Account.transaction do 
 			account.increment!(:points,self.points) if self.auto_unlock
 			account.decrement!(:points,self.points)
-			UserAction.create!(:user_id=>user.id,:reward_id=>self.id,:used_at=>Date.today)
+			UserAction.create!(:user_id=>user.id,:reward_id=>self.id,
+												 :business_id=>self.program.business.id,
+												 :used_at=>Date.today)
 		end
-		account
   end
 end

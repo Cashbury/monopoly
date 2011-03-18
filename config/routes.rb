@@ -26,6 +26,10 @@ Kazdoor::Application.routes.draw do
 	resources :users_snaps do
 		get '/businesses/:business_id/places/:place_id/from_date/:from_date/to_date/:to_date'   ,:action=>:index, :on =>:collection
 	end 
+	resources :loyal_customers
+	resources :loyal_customers do
+		get '/businesses/:business_id/places/:place_id/from_date/:from_date/to_date/:to_date'   ,:action=>:index, :on =>:collection
+	end 
 	resources :program_types
 	resources :programs
 	resources :rewards

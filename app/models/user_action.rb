@@ -17,6 +17,9 @@ class UserAction < ActiveRecord::Base
   cattr_reader :per_page
   @@per_page = 20
   
+  LIST_SNAPS=1
+  LIST_TOP_LOYAL_CUSTOMERS=2
+  
   def self.search(options)
     @filters = []
     @params  = []
@@ -31,13 +34,21 @@ class UserAction < ActiveRecord::Base
 			@filters << "user_actions.used_at = ?"  and @params << options[:to_date]
     end
     @params.insert(0, @filters.join(" AND ")) 
-    @results = UserAction.snaps_actions
-    										 .select("user_actions.used_at,engagements.name as ename,businesses.name as bname,engagements.points,places.name as pname,users.full_name,programs.name as program_name")
-    									   .joins([:user,:qr_code=>[:engagement=>:program,:place=>:business]])
-    									   .where(@params)
-    									   .order("users.full_name DESC")
-    									   .paginate(:page => options[:page],:per_page => per_page )
+    if options[:type]==LIST_SNAPS
+	    @results = UserAction.snaps_actions
+	    										 .select("user_actions.used_at,engagements.name as ename,businesses.name as bname,engagements.points,places.name as pname,users.full_name,programs.name as program_name")
+	    									   .joins([:user,:qr_code=>[:engagement=>:program,:place=>:business]])
+	    									   .where(@params)
+	    									   .order("users.full_name DESC")
+	    									   .paginate(:page => options[:page],:per_page => per_page )
+    else
+    	@results = UserAction.select("users.full_name,count(*) as total,businesses.name as bname,places.name as pname")
+    									     .joins([:user,:business=>:places])
+    									     .group(:user_id)
+    									     .where(@params)
+    									     .order("total DESC")
+    									     .paginate(:page => options[:page],:per_page => per_page)
+    end										  
     return @results
-    
-  end        
+  end
 end
