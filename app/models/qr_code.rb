@@ -45,7 +45,7 @@ class QrCode < ActiveRecord::Base
     if engagement.blank?
       "NA"
     else
-      engagement.business.name 
+      engagement.program.business.name 
     end
   end
 
