@@ -3,14 +3,14 @@
 #############################################################
 
 set :application, 'kazdoor'
-set :deploy_to, "/home/kazdoor/spinninghats.com/"
+set :deploy_to, "/home/kazdoor/cashbery.com/"
 
 #use trunk to deploy to production
   set :branch, "master"
   set :rails_env, "production"
 
 #production
-  set :domain, 'spinninghats.com'
+  set :domain, 'cashbury.com'
   role :app, domain
   role :web, domain
   role :db, domain, :primary => true
@@ -48,4 +48,4 @@ set :ssh_options, {:forward_agent => true}
 after "deploy:update_code", "deploy:write_revision"
 # before "deploy:gems", "deploy:symlink"
 # after "deploy:update_code", "deploy:gems"
-#after "deploy:update_code", "deploy:precache_assets" #not working for rails3 yet
+#after "deploy:update_code", "deplspinninghats.com/current/publicoy:precache_assets" #not working for rails3 yet
