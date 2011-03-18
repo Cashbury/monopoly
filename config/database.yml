@@ -30,3 +30,10 @@ production:
   username: user961
   password: user961lb
   
+staging:
+  adapter: mysql
+  encoding: utf8
+  database: kazdoor
+  username: kazdoor
+  password: kazdoor
+  socket: /var/run/mysqld/mysqld.sock  
