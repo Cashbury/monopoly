@@ -50,6 +50,9 @@ class QrCode < ActiveRecord::Base
   end
 
   def save_image_server_path
+		if !File.exists?(File.join("#{Rails.public_path}","images","qrcodes"))
+			Dir.mkdir(File.join("#{Rails.public_path}","images","qrcodes"))
+		end
     open("#{Rails.public_path}/images/qrcodes/#{hash_code}.png","wb")  do |io|
       io << open(URI.parse(qr_image )).read
     end

@@ -1,14 +1,5 @@
 <% title "Reward" %>
 
-<% 
-  reward_type = if @reward.engagement.blank? 
-    "Points"
-  else
-    "Stamps" 
-  end            
-%>
-
-
 <p>
   <strong>Name: </strong>
   <%= @reward.name %>
@@ -18,14 +9,15 @@
   <%= @reward.description %>
 </p>
 <p>
-  <strong><%= reward_type %>
-  </strong>
+  <strong>Points:</strong>
   <%= @reward.points %>
 </p>
-<% unless @reward.engagement.blank? %>
+<% unless @reward.engagements.empty? %>
 <p>
   <strong>Stamp Description: </strong>
-  <%= @reward.engagement.name %>
+  <% for eng in @reward.engagements %>
+  <%= eng.name %>
+  <%end%>
 </p>
 <% end %>
 <p>

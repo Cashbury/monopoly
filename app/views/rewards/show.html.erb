@@ -10,7 +10,7 @@
 </p>
 <p>
   <strong>Program:</strong>
-  <%= @reward.program.name %>
+  <%= @reward.try(:program).try(:name) %>
 </p>
 <p>
   <strong>Points</strong>
