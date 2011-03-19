@@ -9,18 +9,20 @@ class Users::PlacesController < Users::BaseController
   end
   
   def show
-		@result={}
-  	@result["places"]=[]
     @places=[] 
     unless params[:long].blank? and  params[:lat].blank?
 			@places = Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order('distance ASC')
 	  else
 	  	@places = Place.order("name desc")
     end
+    @result={}
+  	@result["places"]=[]
     @places.each_with_index do |place,index|
+    	business=place.business
     	@result["places"] << place.attributes
+    	@result["places"][index]["business-name"]=business.name
     	@result["places"][index]["accounts"]=[]
-			accounts=place.business.programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
+			accounts=business.programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
 			accounts.each do |account|
 				@result["places"][index]["accounts"] << account.attributes
 			end
@@ -33,7 +35,7 @@ class Users::PlacesController < Users::BaseController
 			@result["places"][index]["auto_unlock_rewards"]=[] 
 			unlock_ones=rewards.where("rewards.auto_unlock=true")
 			unlock_ones.each do |reward|
-				unless current_user.is_engaged_to?(place.business.id)
+				unless current_user.is_engaged_to?(business.id)
 					@result["places"][index]["auto_unlock_rewards"] << reward.attributes
 				end
 			end

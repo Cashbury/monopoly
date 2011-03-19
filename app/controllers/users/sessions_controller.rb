@@ -1,5 +1,4 @@
 class Users::SessionsController < Devise::SessionsController
-	before_filter :require_no_authentication,:only=>[:create]
 	skip_before_filter :authenticate_user!,:only=>[:create]
 	
 	def create
