@@ -116,6 +116,7 @@ class QrCodesController < ApplicationController
 
     end
     @brands = Brand.all
+    @engagements=Engagement.all
   end
 
   def printable

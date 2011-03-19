@@ -56,7 +56,7 @@ $(function(){
     </strong> <br/>
       <%= select_tag :business_id , ""%>
     </p>
-    <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe   %>
+    <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe + options_from_collection_for_select(@engagements , :id, :name) %>
     <p class="row">
     <strong>
       Engagements
