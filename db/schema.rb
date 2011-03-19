@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110313181705) do
+ActiveRecord::Schema.define(:version => 20110319151809) do
 
   create_table "accounts", :force => true do |t|
     t.integer  "points"
@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(:version => 20110313181705) do
     t.boolean  "code_type"
     t.boolean  "status"
     t.integer  "point"
-    t.integer  "print_job_id"
+    t.boolean  "exported",      :default => false
   end
 
   create_table "qrcodes", :force => true do |t|
