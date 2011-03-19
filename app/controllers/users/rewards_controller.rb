@@ -16,7 +16,7 @@ class Users::RewardsController < Users::BaseController
 		    	respond_with_error(ERRORS[:msg_not_enough_credit])
 				else
 					number_of_times=UserAction.where(:user_id=>current_user.id,:reward_id=>reward.id).count
-					if number_of_times >=reward.claim
+					if !reward.claim.nil? && number_of_times >=reward.claim
 						respond_with_error(ERRORS[:msg_exceeds_claim_limit])
 					else
 						reward.is_claimed_by(current_user,account)
