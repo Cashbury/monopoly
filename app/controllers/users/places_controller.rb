@@ -19,15 +19,16 @@ class Users::PlacesController < Users::BaseController
   	@result["places"]=[]
     @places.each_with_index do |place,index|
     	business=place.business
+    	programs=business.programs
     	@result["places"] << place.attributes
     	@result["places"][index]["business-name"]=business.name
     	@result["places"][index]["accounts"]=[]
-			accounts=business.programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
+			accounts=programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
 			accounts.each do |account|
 				@result["places"][index]["accounts"] << account.attributes
 			end
 			@result["places"][index]["rewards"]=[] 
-			rewards=place.engagements.joins(:reward).select('rewards.*')
+			rewards=programs.joins([:accounts,:rewards]).select('rewards.*').where("accounts.user_id=#{current_user.id}")
 			normal_ones=rewards.where("rewards.auto_unlock=false")
 			normal_ones.each do |reward|
 				@result["places"][index]["rewards"] << reward.attributes
