@@ -97,7 +97,7 @@ $(function(){
     <th>Program</th>
     <th>Business</th>
     <th>Brand</th>
-    <th>Printed</th>
+    <th>Exported</th>
     <th>Issue Date</th>
      <th></th>
     <th></th>
@@ -144,7 +144,7 @@ $(function(){
       <% end %>
       </td>
       <td>
-       <% if qr_code.print_job_id.blank? %>
+       <% unless qr_code.exported? %>
          not printed
        <% else %>
          printed

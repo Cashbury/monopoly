@@ -129,6 +129,7 @@ class QrCodesController < ApplicationController
         engagement_ids = @qrcodes.collect(&:id).to_yaml
         @pj= PrintJob.new(:name=>"#{Time.now.strftime("%m-%d-%Y %H:%M")}" , :log=>engagement_ids)
         if @pj.save
+          @qrcodes.update_all(:exported=>true)
           format.pdf do
             if params[:layout].to_i == 1
               render  :pdf => "test",

@@ -146,7 +146,7 @@ ActiveRecord::Schema.define(:version => 20110318122128) do
     t.boolean  "code_type"
     t.boolean  "status"
     t.integer  "point"
-    t.integer  "print_job_id"
+    t.boolean  "exported",      :default => false
   end
 
   create_table "qrcodes", :force => true do |t|
