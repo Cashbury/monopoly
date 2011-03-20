@@ -28,14 +28,15 @@ class Users::PlacesController < Users::BaseController
 				@result["places"][index]["accounts"] << account.attributes
 			end
 			@result["places"][index]["rewards"]=[] 
-			rewards=programs.joins([:accounts,:rewards]).select('rewards.*').where("accounts.user_id=#{current_user.id}")
-			normal_ones=rewards.where("rewards.auto_unlock=false")
-			normal_ones.each do |reward|
+			rewards_assigned_to_engagements=programs.joins([:accounts,:rewards=>:engagements]).select('rewards.*,engagements.id as engagement_id').where("accounts.user_id=#{current_user.id}")
+			rewards_attached_to_programs   =programs.joins([:accounts,:rewards]).select('rewards.*').where("accounts.user_id=#{current_user.id}")
+			normal_rewards                 =rewards_assigned_to_engagements + rewards_attached_to_programs.where("rewards.auto_unlock=false")
+			normal_rewards.each do |reward|
 				@result["places"][index]["rewards"] << reward.attributes
 			end
 			@result["places"][index]["auto_unlock_rewards"]=[] 
-			unlock_ones=rewards.where("rewards.auto_unlock=true")
-			unlock_ones.each do |reward|
+			unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")
+			unlock_rewards.each do |reward|
 				unless current_user.is_engaged_to?(business.id)
 					@result["places"][index]["auto_unlock_rewards"] << reward.attributes
 				end
