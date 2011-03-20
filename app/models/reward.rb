@@ -40,7 +40,7 @@ class Reward < ActiveRecord::Base
   
   def is_claimed_by(user,account)
 		Account.transaction do 
-			account.increment!(:points,self.points) if self.auto_unlock
+			#account.increment!(:points,self.points) if self.auto_unlock
 			account.decrement!(:points,self.points)
 			UserAction.create!(:user_id=>user.id,:reward_id=>self.id,
 												 :business_id=>self.program.business.id,

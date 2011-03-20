@@ -4,7 +4,7 @@ class Users::RewardsController < Users::BaseController
 			reward=Reward.find(params[:id])
 			if reward.program.nil?
 				respond_with_error(ERRORS[:msg_not_related_to_program])
-			elsif (account=user.accounts.where(:program_id=>reward.program.id).first).blank?
+			elsif (account=current_user.accounts.where(:program_id=>reward.program.id).first).blank?
 				respond_with_error(ERRORS[:msg_user_not_enrolled])
 			else
 				if reward.auto_unlock
