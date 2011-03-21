@@ -30,6 +30,7 @@ class Users::UsersSnapsController < Users::BaseController
   def snap_hash(account,program,engagement_points)
     s = {:snap => {}}
 		s[:snap].merge!({:business_id          => program.business.id})
+		s[:snap].merge!({:business_name        => program.business.name})
 		s[:snap].merge!({:program_id           => program.id})
 		s[:snap].merge!({:engagements_points   => engagement_points})
 		s[:snap].merge!({:account_points       => account.points})
