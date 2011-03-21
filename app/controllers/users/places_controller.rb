@@ -4,7 +4,7 @@ class Users::PlacesController < Users::BaseController
   def index
     @places = Place.all
     respond_to do |format|
-      format.xml { render :xml => @places }
+      format.xml { render :xml => prepare_result(@places) }
     end
   end
   
@@ -15,37 +15,9 @@ class Users::PlacesController < Users::BaseController
 	  else
 	  	@places = Place.order("name desc")
     end
-    @result={}
-  	@result["places"]=[]
-    @places.each_with_index do |place,index|
-    	business=place.business
-    	programs=business.programs
-    	@result["places"] << place.attributes
-    	@result["places"][index]["business-name"]=business.name
-    	@result["places"][index]["accounts"]=[]
-			accounts=programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
-			accounts.each do |account|
-				@result["places"][index]["accounts"] << account.attributes
-			end
-			@result["places"][index]["rewards"]=[] 
-			rewards_assigned_to_engagements=programs.joins([:accounts,:rewards=>:engagements]).select('rewards.*,accounts.points as acc_points,engagements.id as engagement_id').where("accounts.user_id=#{current_user.id}")
-			rewards_attached_to_programs   =programs.joins([:accounts,:rewards]).select('rewards.*,accounts.points as acc_points').where("accounts.user_id=#{current_user.id}")
-			normal_rewards                 =rewards_assigned_to_engagements + rewards_attached_to_programs.where("rewards.auto_unlock=false")
-			normal_rewards.each do |reward|
-				attributes=reward.attributes
-				attributes[:unlocked]=(reward.acc_points >= reward.points) ? 1 : 0 
-				@result["places"][index]["rewards"] << attributes
-			end
-			@result["places"][index]["auto_unlock_rewards"]=[] 
-			unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")
-			unlock_rewards.each do |reward|
-				unless current_user.is_engaged_to?(business.id)
-					@result["places"][index]["auto_unlock_rewards"] << reward.attributes
-				end
-			end
-		end
+    
     respond_to do |format|
-      format.xml { render :xml => @result }
+      format.xml { render :xml => prepare_result(@places) }
     end
   end
   
@@ -65,6 +37,41 @@ class Users::PlacesController < Users::BaseController
 		rescue Exception=>e
 			logger.error "Exception #{e.class}: #{e.message}"
 		end
+  end
+  
+  def prepare_result(places)
+  	@result={}
+  	@result["places"]=[]
+    places.each_with_index do |place,index|
+    	business=place.business
+    	unless business.nil?
+	    	programs=business.programs
+	    	@result["places"] << place.attributes
+	    	@result["places"][index]["business-name"]=business.name
+	    	@result["places"][index]["accounts"]=[]
+				accounts=programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
+				accounts.each do |account|
+					@result["places"][index]["accounts"] << account.attributes
+				end
+				@result["places"][index]["rewards"]=[] 
+				rewards_assigned_to_engagements=programs.joins([:accounts,:rewards=>:engagements]).select('rewards.*,accounts.points as acc_points,engagements.id as engagement_id').where("accounts.user_id=#{current_user.id}")
+				rewards_attached_to_programs   =programs.joins([:accounts,:rewards]).select('rewards.*,accounts.points as acc_points').where("accounts.user_id=#{current_user.id}")
+				normal_rewards                 =rewards_assigned_to_engagements + rewards_attached_to_programs.where("rewards.auto_unlock=false")
+				normal_rewards.each do |reward|
+					attributes=reward.attributes
+					attributes[:unlocked]=(reward.acc_points >= reward.points) ? 1 : 0 
+					@result["places"][index]["rewards"] << attributes
+				end
+				@result["places"][index]["auto_unlock_rewards"]=[] 
+				unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")
+				unlock_rewards.each do |reward|
+					unless current_user.is_engaged_to?(business.id)
+						@result["places"][index]["auto_unlock_rewards"] << reward.attributes
+					end
+				end
+			end
+		end
+		@result
   end
   
   def user_not_engaged_with?(business_id)
