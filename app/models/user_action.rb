@@ -6,8 +6,8 @@ class UserAction < ActiveRecord::Base
 	
 	validates_uniqueness_of :qr_code_id,:if=>:check_qrcode_type
 	
-	scope :snaps_actions , where("qr_code_id IS NOT NULL")
-	scope :claim_rewards_actions , where("reward_id IS NOT NULL")
+	scope :snaps_actions , where("user_actions.qr_code_id IS NOT NULL")
+	scope :claim_rewards_actions , where("user_actions.reward_id IS NOT NULL")
 	
 	def check_qrcode_type
 		qrcode=QrCode.find_by_id(self.qr_code_id)
