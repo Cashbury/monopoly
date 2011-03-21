@@ -37,7 +37,7 @@ class UserAction < ActiveRecord::Base
     if options[:type]==LIST_SNAPS
 	    @results = UserAction.snaps_actions
 	    										 .select("user_actions.used_at,engagements.name as ename,businesses.name as bname,engagements.points,places.name as pname,users.full_name,programs.name as program_name")
-	    									   .joins([:user,:qr_code=>[:engagement=>:program,:place=>:business]])
+	    									   .joins([:user,:qr_code=>[:engagement=>[:program=>[:business=>:places]]]])
 	    									   .where(@params)
 	    									   .order("users.full_name DESC")
 	    									   .paginate(:page => options[:page],:per_page => per_page )
