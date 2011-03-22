@@ -1,8 +1,8 @@
 class Users::PlacesController < Users::BaseController
-	after_filter :auto_enroll_user
-	
+
   def index
     @places = Place.all
+    auto_enroll_user(@places)
     respond_to do |format|
       format.xml { render :xml => prepare_result(@places) }
     end
@@ -15,17 +15,16 @@ class Users::PlacesController < Users::BaseController
 	  else
 	  	@places = Place.order("name desc")
     end
-    
+    auto_enroll_user(@places)
     respond_to do |format|
       format.xml { render :xml => prepare_result(@places) }
     end
   end
   
   private
-  #This method should run within background job
-  def auto_enroll_user
+  def auto_enroll_user(places)
   	begin
-			ids=@places.collect{|p| p.business_id}
+			ids=places.collect{|p| p.business_id}
 			businesses=Business.where(:id=>ids)
 			businesses.each do |business|
 				business.programs.auto_enrolled_ones.each do |program|
