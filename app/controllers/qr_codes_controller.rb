@@ -116,7 +116,6 @@ class QrCodesController < ApplicationController
 
     end
     @brands = Brand.all
-    @engagements=Engagement.all
   end
 
   def printable
@@ -155,9 +154,18 @@ class QrCodesController < ApplicationController
     end
     
   end
+  
+  def update_programs
+    @programs = Program.where(:business_id=> params[:id]) 
+    
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
 
   def update_engagements
-    @engagements = Engagement.where(:business_id=> params[:id])   
+    @engagements = Engagement.where(:program_id=> params[:id])   
     respond_to do |format|
       format.js 
     end

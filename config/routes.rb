@@ -61,6 +61,7 @@ Kazdoor::Application.routes.draw do
   resources :qr_codes do
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
+    get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
     post "panel" , :on =>:collection 
     get "panel"  , :on =>:collection 
     post "printable", :on=>:collection
