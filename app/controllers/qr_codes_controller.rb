@@ -122,7 +122,7 @@ class QrCodesController < ApplicationController
     if request.post?
       @qrcodes = search_qrs.associated_with_engagements
 
-      @template = Template.find(params[:template_id])
+      #@template = Template.find(params[:template_id])
        
       respond_to do |format|
         engagement_ids = @qrcodes.collect(&:id).to_yaml
@@ -131,10 +131,10 @@ class QrCodesController < ApplicationController
           @qrcodes.update_all(:exported=>true)
           format.pdf do
             if params[:layout].to_i == 1
-              render  :pdf => "test",
+              render  :pdf => "multi_use_qrcodes_#{Time.now.strftime("%m-%d-%Y %H:%M")}",
                       :template=>"qr_codes/multi_printable.pdf.erb"
             else 
-              render  :pdf => "#{@template.name}_qrcodes"
+              render  :pdf => "single_use_qrcodes_#{Time.now.strftime("%m-%d-%Y %H:%M")}"
             end            
           end
         else
