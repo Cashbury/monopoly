@@ -59,4 +59,4 @@ gem 'geokit-rails3'
 gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch =>'rails3test'
 
 gem 'carrierwave'
-#gem 'rmagick' #server has this
+gem 'rmagick' #server has this
