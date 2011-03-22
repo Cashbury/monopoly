@@ -53,21 +53,22 @@ class Users::PlacesController < Users::BaseController
 					@result["places"][index]["accounts"] << account.attributes
 				end
 				@result["places"][index]["rewards"]=[] 
-				rewards_assigned_to_engagements=programs.joins([:accounts,:rewards=>:engagements]).select('rewards.*,accounts.points as acc_points,engagements.id as engagement_id').where("accounts.user_id=#{current_user.id}")
-				rewards_attached_to_programs   =programs.joins([:accounts,:rewards]).select('rewards.*,accounts.points as acc_points').where("accounts.user_id=#{current_user.id}")
-				normal_rewards                 =rewards_assigned_to_engagements + rewards_attached_to_programs.where("rewards.auto_unlock=false")
+				#rewards_assigned_to_engagements=programs.joins([:accounts,:rewards=>:engagements]).select('rewards.*,accounts.points as acc_points,engagements.id as engagement_id').where("accounts.user_id=#{current_user.id} and rewards.program_id=0")
+				#rewards_attached_to_programs   =programs.joins([:accounts,:rewards]).select('rewards.*,accounts.points as acc_points').where("accounts.user_id=#{current_user.id}")
+				#normal_rewards                 =rewards_assigned_to_engagements + rewards_attached_to_programs.where("rewards.auto_unlock=false")
+				normal_rewards=Reward.find_by_sql("SELECT *, ((SELECT points FROM accounts WHERE program_id=rewards.program_id AND accounts.user_id=#{current_user.id}) >= rewards.points) AS unlocked FROM rewards");
 				normal_rewards.each do |reward|
 					attributes=reward.attributes
-					attributes[:unlocked]=(reward.acc_points >= reward.points) ? 1 : 0 
+					#attributes[:unlocked]=(reward.acc_points >= reward.points) ? 1 : 0 
 					@result["places"][index]["rewards"] << attributes
 				end
-				@result["places"][index]["auto_unlock_rewards"]=[] 
-				unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")
-				unlock_rewards.each do |reward|
-					unless current_user.is_engaged_to?(business.id)
-						@result["places"][index]["auto_unlock_rewards"] << reward.attributes
-					end
-				end
+				#@result["places"][index]["auto_unlock_rewards"]=[] 
+				#unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")
+				#unlock_rewards.each do |reward|
+				#	unless current_user.is_engaged_to?(business.id)
+				#		@result["places"][index]["auto_unlock_rewards"] << reward.attributes
+				#	end
+				#end
 			end
 		end
 		@result
