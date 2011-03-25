@@ -53,10 +53,12 @@ class Users::PlacesController < Users::BaseController
 					@result["places"][index]["accounts"] << account.attributes
 				end
 				@result["places"][index]["rewards"]=[] 
-				normal_rewards=programs.joins(:rewards).select("rewards.*,((SELECT points FROM accounts WHERE program_id=rewards.program_id AND accounts.user_id=#{current_user.id}) >= rewards.points) As unlocked")
+				normal_rewards=programs.joins(:rewards).select("rewards.*,((SELECT points FROM accounts WHERE program_id=rewards.program_id AND accounts.user_id=#{current_user.id}) >= rewards.points) As unlocked,(SELECT count(*) from user_actions where user_actions.reward_id=rewards.id and user_actions.user_id=#{current_user.id}) As redeemCount")
 				normal_rewards.each do |reward|
-					attributes=reward.attributes 
-					@result["places"][index]["rewards"] << attributes
+					attributes=reward.attributes
+					if attributes["redeemCount"].to_i < attributes["claim"].to_i 
+						@result["places"][index]["rewards"] << attributes
+					end
 				end
 				#@result["places"][index]["auto_unlock_rewards"]=[] 
 				#unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")

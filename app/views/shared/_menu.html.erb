@@ -1,14 +1,14 @@
+<% if current_user.try(:admin?)%>
 <%= link_to "Categories", categories_path %> | 
 <%= link_to "Businesses", businesses_path %> |
 <%= link_to "Rewards", rewards_path %> |
-<% if current_user.try(:admin?)%>
 <%= link_to "Reports", users_snaps_path %> | 
 <%= link_to "Loyal Customers", loyal_customers_path %> |
-<%end%>
 <%= link_to "Brands", brands_path %>     |
 <%= link_to "Templates", templates_path %> | 
 <%= link_to "QrCodes", qr_codes_path %> |
 <%= link_to "Print Jobs", print_jobs_path %>
+<%end%>
 
 <hr/>
 <% if user_signed_in? %>

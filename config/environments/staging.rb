@@ -46,4 +46,18 @@ Kazdoor::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+  # Devise related setting
+  config.action_mailer.default_url_options = { :host => 'demo.espace.com.eg:9900' }
+  config.action_mailer.delivery_method = :smtp
+
+	config.action_mailer.smtp_settings = {
+	  :enable_starttls_auto => true,
+	  :address => "smtp.gmail.com",
+	  :port => 587,
+	  :domain => "www.espace.com.eg",
+	  :authentication => :login,
+	  :user_name => "tester@espace.com.eg",
+	  :password => "tester",
+		:tls => true
+	}
 end

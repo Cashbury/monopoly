@@ -1,9 +1,11 @@
 Kazdoor::Application.routes.draw do
-	devise_for :users, :controllers => { :sessions => "users/sessions" }
+	devise_for :users, :controllers => { :sessions => "users/sessions", :registrations=>"users/registrations", :password=>"users/passwords" }
 	
 	devise_scope :user do
 		namespace :users do
-			resources :sessions, :only => [:create, :destroy]  
+			resources :sessions, :only => [:create, :destroy] 
+			resources :registrations, :only=>[:create] 
+			resources :passwords, :only=>[:create]
 		end
 	end
 	
