@@ -3,6 +3,7 @@ class UserAction < ActiveRecord::Base
 	belongs_to :qr_code
 	belongs_to :business
 	belongs_to :reward
+	belongs_to :place
 	
 	validates_uniqueness_of :qr_code_id,:if=>:check_qrcode_type
 	
@@ -37,7 +38,7 @@ class UserAction < ActiveRecord::Base
     if options[:type]==LIST_SNAPS
 	    @results = UserAction.snaps_actions
 	    										 .select("user_actions.*,engagements.name as ename,businesses.name as bname,engagements.points,places.name as pname,users.full_name,programs.name as program_name")
-	    									   .joins([:user,:qr_code=>[:engagement=>[:program=>[:business=>:places]]]])
+	    									   .joins([:user,"LEFT OUTER JOIN places ON user_actions.place_id=places.id",:qr_code=>[:engagement=>[:program=>:business]]])
 	    									   .where(@params)
 	    									   .order("user_actions.created_at DESC")
 	    									   .paginate(:page => options[:page],:per_page => per_page )

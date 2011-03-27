@@ -15,6 +15,7 @@ class Users::UsersSnapsController < Users::BaseController
 				snap=UserAction.create!(:user_id    =>current_user.id,
 		  										  	  :qr_code_id =>qr_code.id,
 		  										  	  :business_id=>account.program.business.id,
+		  										  	  :place_id   =>params[:place_id],
 		  										  	  :used_at    =>date)
 			end							     
 			respond_to do |format|
