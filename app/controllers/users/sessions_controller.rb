@@ -13,6 +13,7 @@ class Users::SessionsController < Devise::SessionsController
                              :full_name=>params[:full_name])
 						@user.ensure_authentication_token!
 						if @user.save!
+							@user.confirm!
 							sign_in @user
 							render :xml => current_user.to_xml(:only=>[:id,:email,:full_name,:authentication_token]),:status=>200
 						else

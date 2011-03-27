@@ -60,4 +60,4 @@ gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_selec
 gem 'wkhtmltopdf'
 gem 'carrierwave'
 gem 'delayed_job'
-gem 'rmagick' #server has this
+#gem 'rmagick' #server has this
