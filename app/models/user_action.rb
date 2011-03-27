@@ -36,10 +36,10 @@ class UserAction < ActiveRecord::Base
     @params.insert(0, @filters.join(" AND ")) 
     if options[:type]==LIST_SNAPS
 	    @results = UserAction.snaps_actions
-	    										 .select("user_actions.used_at,engagements.name as ename,businesses.name as bname,engagements.points,places.name as pname,users.full_name,programs.name as program_name")
+	    										 .select("user_actions.*,engagements.name as ename,businesses.name as bname,engagements.points,places.name as pname,users.full_name,programs.name as program_name")
 	    									   .joins([:user,:qr_code=>[:engagement=>[:program=>[:business=>:places]]]])
 	    									   .where(@params)
-	    									   .order("users.full_name DESC")
+	    									   .order("user_actions.created_at DESC")
 	    									   .paginate(:page => options[:page],:per_page => per_page )
     else
     	@results = UserAction.select("users.full_name,count(*) as total,businesses.name as bname,places.name as pname")
