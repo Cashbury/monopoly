@@ -25,6 +25,12 @@
     <%= f.text_area :description %>
   </p>
   
+  <p>
+    <%= f.label 'Keywords' %><br />
+    <%= f.text_field :tag_list %>
+    <small>Required, comma separated</small>
+  </p>
+  
   <% f.fields_for :places do |builder| %>  
 		<hr/>
 		<h3>Add a Branch</h3>

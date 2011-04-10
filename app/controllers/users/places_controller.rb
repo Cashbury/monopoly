@@ -1,20 +1,18 @@
 class Users::PlacesController < Users::BaseController
 
   def index
-    @places = Place.all
-    auto_enroll_user(@places)
-    respond_to do |format|
-      format.xml { render :xml => prepare_result(@places) }
-    end
-  end
-  
-  def show
     @places=[] 
-    unless params[:long].blank? and  params[:lat].blank?
+    unless params[:long].blank? && params[:lat].blank?
 			@places = Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order('distance ASC')
 	  else
 	  	@places = Place.order("name desc")
     end
+    unless params[:keywords].blank?
+			keys=params[:keywords].split(' ')
+	  	matched_places=[]
+	  	Business.tagged_with(keys,:any=>true).collect{|b| matched_places +=b.places}
+	  	@places= @places & matched_places
+	  end
     auto_enroll_user(@places)
     respond_to do |format|
       format.xml { render :xml => prepare_result(@places) }
@@ -42,10 +40,10 @@ class Users::PlacesController < Users::BaseController
   	@result={}
   	@result["places"]=[]
     places.each_with_index do |place,index|
+    	@result["places"][index] = place.attributes
     	business=place.business
     	unless business.nil?
 	    	programs=business.programs
-	    	@result["places"] << place.attributes
 	    	@result["places"][index]["business-name"]=business.name
 	    	@result["places"][index]["accounts"]=[]
 				accounts=programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")

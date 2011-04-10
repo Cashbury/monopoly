@@ -34,6 +34,9 @@ class BusinessesController < ApplicationController
       flash[:notice] = "Successfully created business."
       redirect_to @business
     else
+    	@brands  = Brand.all
+    	@categories = Category.all
+    	3.times { @business.places.build }
       render :action => 'new'
     end
   end

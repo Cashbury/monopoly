@@ -60,4 +60,5 @@ gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_selec
 gem 'wkhtmltopdf'
 gem 'carrierwave'
 gem 'delayed_job'
+gem 'acts-as-taggable-on', '=2.0.6'
 gem 'rmagick' #server has this

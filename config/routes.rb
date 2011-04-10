@@ -13,9 +13,7 @@ Kazdoor::Application.routes.draw do
 		resources :users_snaps do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection
 		end 
-		resources :places do
-			get '/:long/:lat.:format', :action=>:show, :on=>:collection, :constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
-		end
+		resources :places
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
 		end

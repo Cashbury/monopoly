@@ -27,7 +27,8 @@ class Businesses::PlacesController < ApplicationController
   
   def create
     @place = Place.new(params[:place])
-    if @place.save
+    @business.places << @place
+    if @business.save
       flash[:notice] = "Successfully created place."
       redirect_to business_place_url(@business,@place)
     else
@@ -58,6 +59,6 @@ class Businesses::PlacesController < ApplicationController
   
   private
   def find_business
-    @business = Business.where(params[:business_id]).first
+    @business = Business.find(params[:business_id])
   end
 end
