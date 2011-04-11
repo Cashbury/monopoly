@@ -8,7 +8,7 @@ class Users::PlacesController < Users::BaseController
 	  	@places = Place.order("name desc")
     end
     unless params[:keywords].blank?
-			keys=params[:keywords].split(' ')
+			keys=params[:keywords].split(/[^A-Za-z0-9_\-]+/)
 	  	matched_places=[]
 	  	Business.tagged_with(keys,:any=>true).collect{|b| matched_places +=b.places}
 	  	temp_places = Place.tagged_with(keys,:any=>true)
