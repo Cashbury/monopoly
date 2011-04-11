@@ -15,6 +15,7 @@
 
 class Place < ActiveRecord::Base
 	acts_as_mappable  :lng_column_name => :long
+	acts_as_taggable
   belongs_to :business
   
   has_and_belongs_to_many :engagements

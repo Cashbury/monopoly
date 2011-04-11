@@ -22,12 +22,12 @@ class Businesses::PlacesController < ApplicationController
   end
   
   def new
-    @place = Place.new
+    @place=@business.places.build
   end
   
   def create
-    @place = Place.new(params[:place])
-    @business.places << @place
+    @place =  @business.places.build(params[:place])
+    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
     if @business.save
       flash[:notice] = "Successfully created place."
       redirect_to business_place_url(@business,@place)

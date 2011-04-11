@@ -25,11 +25,13 @@ class BusinessesController < ApplicationController
     @brands  = Brand.all
     @business = Business.new
     @categories = Category.all
-    3.times { @business.places.build }
+    3.times { @business.places.build}
   end
   
   def create
     @business = Business.new(params[:business])
+    puts "*****************************Params #{params.inspect}"
+    set_tag_lists_for_business_places(@business)   
     if @business.save
       flash[:notice] = "Successfully created business."
       redirect_to @business
@@ -64,5 +66,12 @@ class BusinessesController < ApplicationController
     @business.destroy
     flash[:notice] = "Successfully destroyed business."
     redirect_to businesses_url
+  end
+  
+  private
+  def set_tag_lists_for_business_places(business)
+    business.places.each_with_index do |place,index|
+      place.tag_list = params[:business][:places_attributes][index.to_s][:tag_list] 
+    end
   end
 end

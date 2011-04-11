@@ -11,7 +11,9 @@ class Users::PlacesController < Users::BaseController
 			keys=params[:keywords].split(' ')
 	  	matched_places=[]
 	  	Business.tagged_with(keys,:any=>true).collect{|b| matched_places +=b.places}
-	  	@places= @places & matched_places
+	  	temp_places = Place.tagged_with(keys,:any=>true)
+	  	matched_places = matched_places | temp_places # merging places resulted from Business matched tags with Places matched tags
+	  	@places= @places & matched_places # Intersection
 	  end
     auto_enroll_user(@places)
     respond_to do |format|
