@@ -42,6 +42,7 @@ class Businesses::PlacesController < ApplicationController
   
   def update
     @place = Place.find(params[:id])
+    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
     if @place.update_attributes(params[:place])
       flash[:notice] = "Successfully updated place."
       redirect_to business_place_url(@business,@place)
