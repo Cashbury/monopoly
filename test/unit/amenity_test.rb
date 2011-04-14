@@ -10,6 +10,6 @@ class AmenityTest < ActiveSupport::TestCase
   end
   should "assign amenity successfully" do
   	assert_equal Place.find(@place.id).amenities.count,1
-  	assert Place.find(@place.id).amenities.include(@amenity)
+  	assert Place.find(@place.id).amenities.include?(@amenity)
 	end
 end

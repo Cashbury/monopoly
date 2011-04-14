@@ -20,10 +20,12 @@ class Place < ActiveRecord::Base
   
   has_and_belongs_to_many :engagements
   has_and_belongs_to_many :rewards
+  has_and_belongs_to_many :amenities
   
   has_many :user_actions
   has_many :reports, :as => :reportable
   has_many :qr_codes
+  
   attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :distance,:business
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 

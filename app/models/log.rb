@@ -6,5 +6,5 @@ class Log < ActiveRecord::Base
 	belongs_to :reward
 	belongs_to :log_group
 	 
-	validates_numericality :amount, :frequency, :lat, :lng
+	validates_numericality_of :amount, :frequency, :lat, :lng
 end
