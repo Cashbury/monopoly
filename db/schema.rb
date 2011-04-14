@@ -10,14 +10,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110410114822) do
+ActiveRecord::Schema.define(:version => 20110414123418) do
 
-  create_table "accounts", :force => true do |t|
-    t.integer  "points"
-    t.integer  "user_id"
+  create_table "account_holders", :force => true do |t|
+    t.string   "model_type"
+    t.integer  "model_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "program_id"
+  end
+
+  create_table "accounts", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_holder_id"
+    t.integer  "campaign_id"
+    t.integer  "measurement_type_id"
+    t.decimal  "amount",              :precision => 20, :scale => 3
+    t.boolean  "is_money"
+  end
+
+  create_table "amenities", :force => true do |t|
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "amenities_places", :id => false, :force => true do |t|
+    t.integer  "amenity_id"
+    t.integer  "place_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "brands", :force => true do |t|
@@ -26,6 +48,7 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "photo"
   end
 
   create_table "businesses", :force => true do |t|
@@ -44,6 +67,24 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
   create_table "businesses_places", :id => false, :force => true do |t|
     t.integer "place_id"
     t.integer "campaign_id"
+  end
+
+  create_table "campaigns", :force => true do |t|
+    t.string   "name",                               :null => false
+    t.date     "start_date"
+    t.date     "end_date"
+    t.integer  "initial_points",      :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "program_id"
+    t.integer  "measurement_type_id"
+  end
+
+  create_table "campaigns_targets", :id => false, :force => true do |t|
+    t.integer  "target_id"
+    t.integer  "campaign_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "categories", :force => true do |t|
@@ -69,22 +110,113 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "employee_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "employees", :force => true do |t|
+    t.string   "full_name"
+    t.string   "email"
+    t.string   "phone_number"
+    t.string   "position"
+    t.integer  "employee_type_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "engagement_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "engagements", :force => true do |t|
-    t.string   "engagement_type"
-    t.string   "points"
-    t.string   "state"
+    t.boolean  "state",                                             :default => true
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
-    t.integer  "place_id"
-    t.integer  "program_id"
-    t.integer  "reward_id"
+    t.decimal  "amount",             :precision => 20, :scale => 3
+    t.integer  "campaign_id"
+    t.integer  "engagement_type_id"
   end
 
   create_table "engagements_places", :id => false, :force => true do |t|
     t.integer "engagement_id"
     t.integer "place_id"
+  end
+
+  create_table "items", :force => true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.decimal  "price",       :precision => 10, :scale => 3
+    t.integer  "business_id"
+    t.string   "photo"
+    t.boolean  "available"
+    t.date     "expiry_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "items_places", :id => false, :force => true do |t|
+    t.integer  "place_id"
+    t.integer  "item_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "items_rewards", :id => false, :force => true do |t|
+    t.integer  "reward_id"
+    t.integer  "item_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "legal_ids", :force => true do |t|
+    t.integer  "id_number"
+    t.integer  "legal_type_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "legal_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "log_groups", :force => true do |t|
+    t.date     "created_on"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "logs", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "reward_id"
+    t.string   "log_type"
+    t.boolean  "is_processed"
+    t.integer  "place_id"
+    t.integer  "engagement_id"
+    t.integer  "business_id"
+    t.decimal  "lat",           :precision => 15, :scale => 10
+    t.decimal  "lng",           :precision => 15, :scale => 10
+    t.string   "currency"
+    t.decimal  "amount",        :precision => 20, :scale => 3
+    t.integer  "frequency"
+    t.string   "amount_type"
+    t.date     "created_on"
+    t.integer  "log_group_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "measurement_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "newsletters", :force => true do |t|
@@ -98,6 +230,15 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
   end
 
   add_index "newsletters", ["email"], :name => "index_newsletters_on_email", :unique => true
+
+  create_table "open_hours", :force => true do |t|
+    t.integer  "day_no"
+    t.datetime "from"
+    t.datetime "to"
+    t.integer  "place_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "places", :force => true do |t|
     t.string   "name"
@@ -139,14 +280,8 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
   end
 
   create_table "programs", :force => true do |t|
-    t.string   "name",                           :null => false
-    t.integer  "program_type_id",                :null => false
-    t.boolean  "auto_enroll"
-    t.date     "start_date"
-    t.date     "end_date"
-    t.integer  "business_id",                    :null => false
-    t.integer  "initial_points",  :default => 0
-    t.integer  "max_points",      :default => 0
+    t.integer  "program_type_id"
+    t.integer  "business_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -162,6 +297,8 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
     t.boolean  "status"
     t.integer  "point"
     t.boolean  "exported",      :default => false
+    t.integer  "related_id"
+    t.string   "related_type"
   end
 
   create_table "qrcodes", :force => true do |t|
@@ -186,20 +323,14 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
 
   create_table "rewards", :force => true do |t|
     t.string   "name"
-    t.integer  "business_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "place_id"
     t.text     "description"
-    t.integer  "points"
+    t.decimal  "needed_amount", :precision => 10, :scale => 0
     t.integer  "claim"
     t.datetime "available"
-    t.integer  "engagement_id"
     t.text     "legal_term"
-    t.decimal  "price",         :precision => 10, :scale => 0
-    t.string   "product_id"
-    t.integer  "program_id"
-    t.boolean  "auto_unlock",                                  :default => false
+    t.integer  "campaign_id"
   end
 
   create_table "taggings", :force => true do |t|
@@ -219,6 +350,21 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
     t.string "name"
   end
 
+  create_table "targets", :force => true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.integer  "business_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "targets_users", :id => false, :force => true do |t|
+    t.integer  "target_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "templates", :force => true do |t|
     t.string   "name"
     t.string   "back_photo"
@@ -230,6 +376,16 @@ ActiveRecord::Schema.define(:version => 20110410114822) do
     t.text     "description"
     t.string   "title"
     t.string   "tag"
+  end
+
+  create_table "transactions", :force => true do |t|
+    t.integer  "from_account"
+    t.integer  "to_account"
+    t.decimal  "amount",       :precision => 20, :scale => 3
+    t.string   "account_type"
+    t.boolean  "is_money"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "user_actions", :force => true do |t|
