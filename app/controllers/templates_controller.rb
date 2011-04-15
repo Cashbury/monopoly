@@ -1,4 +1,5 @@
 class TemplatesController < ApplicationController
+  before_filter :authenticate_user!, :require_admin
   # GET /templates
   # GET /templates.xml
   def index

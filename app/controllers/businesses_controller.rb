@@ -1,5 +1,6 @@
 class BusinessesController < ApplicationController
-
+  before_filter :authenticate_user!, :require_admin
+  
   def index
     @businesses = Business.all
     respond_to do |format|
