@@ -1,5 +1,4 @@
 class BrandsController < ApplicationController
-	before_filter :authenticate_user!, :require_admin, :except => [:index, :show]
   # GET /brands
   # GET /brands.xml
   def index

@@ -287,16 +287,12 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
   end
 
   create_table "qr_codes", :force => true do |t|
-    t.integer  "place_id"
-    t.integer  "engagement_id"
     t.string   "hash_code"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "unique_code"
     t.boolean  "code_type"
     t.boolean  "status"
-    t.integer  "point"
-    t.boolean  "exported",      :default => false
+    t.boolean  "exported",     :default => false
     t.integer  "related_id"
     t.string   "related_type"
   end

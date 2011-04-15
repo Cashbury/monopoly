@@ -1,6 +1,4 @@
 class ProgramsController < ApplicationController
-	before_filter :authenticate_user!,:require_admin, :except => [:index, :show]
-	
   # GET /programs
   # GET /programs.xml
   def index

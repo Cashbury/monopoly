@@ -5,17 +5,11 @@ class QrCode < ActiveRecord::Base
   MULTI_USE   = 1
   SINGLE_USE  = 0
 
-  attr_accessible :place_id , :engagement_id , :hash_code , :point , :status ,:code_type
-
-  belongs_to :place
-  
-	has_many :user_actions
-	
-  belongs_to :engagement
+  attr_accessible :related_id, :related_type, :hash_code , :status ,:code_type
   
   before_create :encrypt_code
 
-  scope :associated_with_engagements , where("qr_codes.engagement_id IS NOT NULL")
+  scope :associated_with_engagements , where(:related_type=>"Engagement")
 
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 

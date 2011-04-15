@@ -1,7 +1,6 @@
 require 'uri'
 
 class EngagementsController < ApplicationController
-  before_filter :authenticate_user!,:require_admin, :except => [:index, :show, :display]
   
   def index
     @engagements = Engagement.all
