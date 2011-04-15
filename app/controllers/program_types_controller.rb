@@ -1,5 +1,5 @@
 class ProgramTypesController < ApplicationController
-	before_filter :authenticate_user!, :require_admin, :except => [:index, :show]
+	before_filter :authenticate_user!, :require_admin
 	
   # GET /program_types
   # GET /program_types.xml

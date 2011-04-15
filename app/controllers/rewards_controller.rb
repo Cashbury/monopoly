@@ -1,5 +1,5 @@
 class RewardsController < ApplicationController
-  before_filter :authenticate_user!, :except => [:index]
+  before_filter :authenticate_user!, :require_admin
 
   def index
     @rewards = Reward.all

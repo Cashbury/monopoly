@@ -1,4 +1,5 @@
 class PrintJobsController < ApplicationController
+  before_filter :authenticate_user!, :require_admin
   # GET /print_jobs
   # GET /print_jobs.xml
   def index
