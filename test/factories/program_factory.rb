@@ -1,4 +1,4 @@
 Factory.define :program do |p|
-  p.program_type Factory.create(:program_type)
-  p.business Factory.create(:business)
+  p.program_type_id {Factory(:program_type).id}
+  p.business_id {Factory(:business).id}
 end

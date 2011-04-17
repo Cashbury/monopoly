@@ -3,6 +3,6 @@ Factory.define :campaign do |c|
   c.start_date Date.today
   c.end_date Date.today+12
   c.initial_points 10
-  c.program Factory.create(:program)
-  c.measurement_type Factory.create(:measurement_type)
+  c.program_id {Factory(:program).id}
+  c.measurement_type_id {Factory(:measurement_type).id}
 end

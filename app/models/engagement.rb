@@ -42,6 +42,7 @@ class Engagement < ActiveRecord::Base
   
   belongs_to :program
   belongs_to :reward
+  belongs_to :engagement_type
   has_and_belongs_to_many :places
 
   has_many :qr_codes

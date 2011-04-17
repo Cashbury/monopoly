@@ -77,7 +77,7 @@ class User < ActiveRecord::Base
       account.increment!(:amount,engagement.amount)
       log_group=LogGroup.create!(:created_on=>date)
       log_group << Log.create!(:user_id       =>self.id,
-                               :log_type      =>Log::LOG_TYPES[0] #snap
+                               :log_type      =>Log::LOG_TYPES[0], #snap
                                :engagement_id =>engagement.id,
                                :business_id   =>account.campaign.program.business.id,
                                :place_id      =>place_id,
