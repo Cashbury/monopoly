@@ -27,9 +27,10 @@ class Users::PlacesController < Users::BaseController
 			ids=places.collect{|p| p.business_id}
 			businesses=Business.where(:id=>ids)
 			businesses.each do |business|
-				business.programs.auto_enrolled_ones.each do |program|
-					unless current_user.has_account_with_program?(program.id)
-						Account.create!(:user_id=>current_user.id,:program_id=>program.id,:points=>program.initial_points)
+				business.programs.campaigns.each do |campaign|
+					unless current_user.has_account_with_campaign?(campaign.id)
+					  acch=AccountHolder.create(:model_id=>current_user.id,:model_type=>"User")
+						acch.accounts << Account.create!(:user_id=>current_user.id,:campaign_id=>campaign.id,:points=>campaign.initial_points)
 					end
 				end
 			end

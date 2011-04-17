@@ -34,8 +34,9 @@ class User < ActiveRecord::Base
   has_many :user_actions 
   has_many :templates
   
-	def has_account_with_program?(program_id)
-		!self.accounts.where(:program_id=>program_id).empty?
+	def has_account_with_campaign?(campaign_id)
+	  acch=AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
+		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
 	end
 	
 	def is_engaged_to?(business_id)
