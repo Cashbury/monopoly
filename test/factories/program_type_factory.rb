@@ -1,3 +1,3 @@
 Factory.define :program_type do |pt|
-  pt.name "Loyality"
+  pt.sequence(:name) {|n| "Type#{n}" }
 end
