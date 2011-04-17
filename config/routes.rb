@@ -32,6 +32,7 @@ Kazdoor::Application.routes.draw do
 	end 
 	resources :program_types
 	resources :programs
+	resources :measurement_types
 	resources :rewards
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do

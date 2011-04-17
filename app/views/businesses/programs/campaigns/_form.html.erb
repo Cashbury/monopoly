@@ -2,13 +2,13 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 
-<%= form_for([@business,@program]) do |f| %>
-  <% if @program.errors.any? %>
+<%= form_for([@business,@program,@campaign]) do |f| %>
+  <% if @campaign.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@program.errors.count, "error") %> prohibited this program from being saved:</h2>
+      <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:</h2>
 
       <ul>
-      <% @program.errors.full_messages.each do |msg| %>
+      <% @campaign.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
       </ul>
@@ -16,18 +16,11 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :name %><%= mark_required(@program, :name) %>
+    <%= f.label :name %><%= mark_required(@campaign, :name) %>
     <%= f.text_field :name %>
   </div>
   <br />
-  <div class="field">
-    <%= f.label :program_type_id %><%= mark_required(@program, :program_type_id) %>
-    <%= f.select :program_type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]} %>
-  </div><br />
-  <div class="field">
-    <%= f.label :auto_enroll %>
-    <%= f.check_box :auto_enroll %>
-  </div><br />
+
   <div class="field">
     <%= f.label :start_date %>
     <%= f.calendar_date_select :start_date%>
@@ -40,11 +33,13 @@
     <%= f.label :initial_points %>
     <%= f.text_field :initial_points %>
   </div><br />
+  
   <div class="field">
-    <%= f.label :max_points %>
-    <%= f.text_field :max_points %>
-  </div>
-  <br/><br />
+    <%= f.label :measurement_type_id %><%= mark_required(@campaign, :measurement_type) %>
+    <%= f.select :measurement_type_id,MeasurementType.all.collect {|mt| [mt.name,mt.id]} %>
+  </div><br />
+  
+ <br />
   
   <div class="actions">
     <%= f.submit %>

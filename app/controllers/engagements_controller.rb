@@ -82,10 +82,10 @@ class EngagementsController < ApplicationController
   
 	def change_status
 		@engagement = Engagement.find(params[:id])
-		if @engagement.state == Engagement::STOPPED
-			@engagement.start!
-		elsif @engagement.state == Engagement::STARTED
-			@engagement.stop!
+		if @engagement.state == false
+			@engagement.start
+		else 
+			@engagement.stop
 		end
 		render :nothing=>true ,:status=>:ok
 	end

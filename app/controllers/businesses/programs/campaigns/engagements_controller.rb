@@ -1,14 +1,14 @@
 require 'uri'
 require 'open-uri'
 
-class Businesses::Programs::EngagementsController < ApplicationController
+class Businesses::Programs::Campaigns::EngagementsController < ApplicationController
   before_filter :authenticate_user!,:require_admin, :except => [:index, :show, :stamps]
-  before_filter :find_business_and_program_and_places
+  before_filter :find_business_and_program_and_places_and_campaign
   
   before_filter :except => :display
   
   def index
-    @engagements = @program.engagements
+    @engagements = @campaign.engagements
     respond_to do |format|
       format.html
       format.xml { render :xml => @engagements }
@@ -17,7 +17,7 @@ class Businesses::Programs::EngagementsController < ApplicationController
   end
   
   def show
-    @engagement = @program.engagements.find(params[:id])
+    @engagement = @campaign.engagements.find(params[:id])
     
     respond_to do |format|
       format.pdf do
@@ -35,10 +35,10 @@ class Businesses::Programs::EngagementsController < ApplicationController
   end
   
   def create
-    @engagement = @program.engagements.new(params[:engagement])
+    @engagement = @campaign.engagements.new(params[:engagement])
     if @engagement.save
       flash[:notice] = "Successfully created engagement."
-      redirect_to business_program_engagement_url(@program, @program, @engagement)
+      redirect_to business_program_campaign_engagement_url(@business, @program,@campaign ,@engagement)
     else
       render :action => 'new'
     end
@@ -53,7 +53,7 @@ class Businesses::Programs::EngagementsController < ApplicationController
     
     if @engagement.update_attributes(params[:engagement])
       flash[:notice] = "Successfully updated engagement."
-      redirect_to business_program_engagement_url(@business, @program, @engagement)
+      redirect_to business_program_campaign_engagement_url(@business, @program, @campaign,@engagement)
     else
       render :action => 'edit'
     end
@@ -63,7 +63,7 @@ class Businesses::Programs::EngagementsController < ApplicationController
     @engagement = Engagement.find(params[:id])
     @engagement.destroy
     flash[:notice] = "Successfully destroyed engagement."
-    redirect_to business_program_engagements_url(@program)
+    redirect_to business_program_campaign_engagements_url(@business,@program,@campaign)
   end
 
   def display
@@ -78,7 +78,7 @@ class Businesses::Programs::EngagementsController < ApplicationController
   
   # => Author: Rajib Ahmed
   def stamps
-    @engagements = Engagement.where(:program_id=>params[:program_id] , :engagement_type => QrCode::STAMP)    
+    @engagements = Engagement.where(:campaign_id=>params[:campaign_id] , :engagement_type => QrCode::STAMP)    
     respond_to do |format|
       format.html
       format.xml { render :xml => @engagements }
@@ -103,9 +103,12 @@ class Businesses::Programs::EngagementsController < ApplicationController
     
 
   private
-  def find_business_and_program_and_places
+  def find_business_and_program_and_places_and_campaign
+    puts " find_business_and_program_and_places_and_campaign ********** engagement controller"
+    puts "Params = #{params.inspect}"
     @program = Program.find(params[:program_id])
     @business = @program.business
+    @campaign = Campaign.find(params[:campaign_id])
     @places = @business.places
     
   end
