@@ -86,15 +86,17 @@ Kazdoor::Application.routes.draw do
     resources :reports, :only => [:create, :show, :index]
     
     resources :programs , :controller => "businesses/programs" do
-	    resources :engagements,:controller => "businesses/programs/engagements" do
-	      get "stamps", :on => :collection
+      resources :campaigns , :controller => "businesses/programs/campaigns" do
+	      resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
+	        get "stamps", :on => :collection
 	      resources :places , :only=>[:issue_code] do 
-	        get "issue_code" ,:on =>:member
+	         get "issue_code" ,:on =>:member
+	       end
+	       resources :rewards, :controller=>"businesses/programs/campaigns/engagements/rewards"
 	      end
-	      resources :rewards, :controller=>"businesses/programs/engagements/rewards"
-	    end
-	    resources :rewards, :controller=>"businesses/programs/rewards"
-    end
+	      resources :rewards, :controller=>"businesses/programs/campaigns/rewards"
+     end
+   end
     resources :rewards
   end
   

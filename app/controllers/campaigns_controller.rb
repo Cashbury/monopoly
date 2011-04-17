@@ -1,9 +1,10 @@
-class Businesses::ProgramsController < ApplicationController
-  before_filter :authenticate_user!,:require_admin, :except => [:index, :show]
-  before_filter :find_business
-
+class CampaignsController < ApplicationController
+	before_filter :authenticate_user!,:require_admin
+	
+  # GET /programs
+  # GET /programs.xml
   def index
-    @programs = @business.programs
+    @programs = Program.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -11,8 +12,10 @@ class Businesses::ProgramsController < ApplicationController
     end
   end
 
+  # GET /programs/1
+  # GET /programs/1.xml
   def show
-    @program = @business.programs.find(params[:id])
+    @program = Program.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -20,6 +23,8 @@ class Businesses::ProgramsController < ApplicationController
     end
   end
 
+  # GET /programs/new
+  # GET /programs/new.xml
   def new
     @program = Program.new
 
@@ -29,16 +34,19 @@ class Businesses::ProgramsController < ApplicationController
     end
   end
 
+  # GET /programs/1/edit
   def edit
     @program = Program.find(params[:id])
   end
 
+  # POST /programs
+  # POST /programs.xml
   def create
-    @program = @business.programs.new(params[:program])
+    @program = Program.new(params[:program])
 
     respond_to do |format|
       if @program.save
-        format.html { redirect_to(business_program_url(@business,@program), :notice => 'Program was successfully created.') }
+        format.html { redirect_to(@program, :notice => 'Program was successfully created.') }
         format.xml  { render :xml => @program, :status => :created, :location => @program }
       else
         format.html { render :action => "new" }
@@ -47,12 +55,14 @@ class Businesses::ProgramsController < ApplicationController
     end
   end
 
+  # PUT /programs/1
+  # PUT /programs/1.xml
   def update
     @program = Program.find(params[:id])
 
     respond_to do |format|
       if @program.update_attributes(params[:program])
-        format.html { redirect_to(business_program_url(@business, @program), :notice => 'Program was successfully updated.') }
+        format.html { redirect_to(@program, :notice => 'Program was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -61,18 +71,15 @@ class Businesses::ProgramsController < ApplicationController
     end
   end
 
+  # DELETE /programs/1
+  # DELETE /programs/1.xml
   def destroy
     @program = Program.find(params[:id])
     @program.destroy
 
     respond_to do |format|
-      format.html { redirect_to(business_programs_url(@business)) }
+      format.html { redirect_to(programs_url) }
       format.xml  { head :ok }
     end
-  end
-  
-  private
-  def find_business
-    @business = Business.find(params[:business_id])
   end
 end

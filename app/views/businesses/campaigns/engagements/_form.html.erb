@@ -1,4 +1,4 @@
-<%= form_for [@business, @program, @campaign, @engagement] do |f| %>
+<%= form_for [@business, @campaign, @engagement] do |f| %>
   <%= f.error_messages %>
   
   <p>
@@ -24,7 +24,7 @@
   </p>
   <p>
     <%= f.label :reward %><br />
-    <%= f.select :reward_id, options_for_select(@program.rewards.collect {|r| [ r.name, r.id ] }),{:include_blank=>true}%>
+    <%= f.select :reward_id, options_for_select(@campaign.rewards.collect {|r| [ r.name, r.id ] }),{:include_blank=>true}%>
   </p>
   <p>
     <%= f.label :places, "Places" %><br />

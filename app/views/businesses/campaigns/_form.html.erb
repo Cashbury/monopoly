@@ -15,13 +15,36 @@
     </div>
   <% end %>
 
-
+  <div class="field">
+    <%= f.label :name %><%= mark_required(@program, :name) %>
+    <%= f.text_field :name %>
+  </div>
+  <br />
   <div class="field">
     <%= f.label :program_type_id %><%= mark_required(@program, :program_type_id) %>
     <%= f.select :program_type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]} %>
   </div><br />
-  
-  <br />
+  <div class="field">
+    <%= f.label :auto_enroll %>
+    <%= f.check_box :auto_enroll %>
+  </div><br />
+  <div class="field">
+    <%= f.label :start_date %>
+    <%= f.calendar_date_select :start_date%>
+  </div><br />
+  <div class="field">
+    <%= f.label :end_date %>
+    <%= f.calendar_date_select :end_date%>
+  </div><br />
+  <div class="field">
+    <%= f.label :initial_points %>
+    <%= f.text_field :initial_points %>
+  </div><br />
+  <div class="field">
+    <%= f.label :max_points %>
+    <%= f.text_field :max_points %>
+  </div>
+  <br/><br />
   
   <div class="actions">
     <%= f.submit %>
