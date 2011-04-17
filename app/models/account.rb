@@ -11,9 +11,12 @@
 #
 
 class Account < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :program
+  belongs_to :account_holder
+  belongs_to :campaign
+  belongs_to :measurement_type
+  
   has_many :reports, :as => :reportable
   
-  validates_uniqueness_of :user_id, :scope => :program_id
+  validates_uniqueness_of :account_holder_id, :scope => :campaign_id
+  validates_numericality_of :amount
 end

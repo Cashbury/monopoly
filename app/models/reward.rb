@@ -26,11 +26,7 @@ class Reward < ActiveRecord::Base
   after_save :update_categories
   validates_presence_of :program_id,:name,:points,:description,:price
   validates_numericality_of :price,:points
-  validate do |reward|
-    reward.errors.add_to_base("#{reward.program.name} already has an auto unlock reward") if reward.auto_unlock && reward.program.has_auto_unlock_reward?
-  end
-  scope :auto_unlocked_ones, where(:auto_unlock=>true)
-  scope :normal_ones, where(:auto_unlock=>false)
+  
   #  private
   def update_categories
     places.delete_all
@@ -38,13 +34,22 @@ class Reward < ActiveRecord::Base
     selected_categories.each {|place| self.places << place}
   end
   
-  def is_claimed_by(user,account)
-		Account.transaction do 
-			#account.increment!(:points,self.points) if self.auto_unlock
-			account.decrement!(:points,self.points)
-			UserAction.create!(:user_id=>user.id,:reward_id=>self.id,
-												 :business_id=>self.program.business.id,
-												 :used_at=>Date.today)
+  def is_claimed_by(user,account,place_id,lat,lng)
+    date=Date.today.to_s
+		Account.transaction do
+			account.decrement!(:amount,self.needed_amount)
+			log_group=LogGroup.create!(:created_on=>date)
+      log_group << Log.create!(:user_id       =>user.id,
+                               :log_type      =>Log::LOG_TYPES[1], #redeem
+                               :reward_id     =>self.id,
+                               :business_id   =>self.campaign.program.business.id,
+                               :place_id      =>place_id,
+                               :amount        =>engagement.amount,
+                               :amount_type   =>account.measurement_type,
+                               :lat           =>lat,
+                               :lng           =>lng,
+                               :created_on    =>date)
+      log_group.save!
 		end
   end
 end

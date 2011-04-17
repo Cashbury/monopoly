@@ -15,28 +15,10 @@ class Users::PlacesController < Users::BaseController
 	  	matched_places = matched_places | temp_places # merging places resulted from Business matched tags with Places matched tags
 	  	@places= @places & matched_places # Intersection
 	  end
-    auto_enroll_user(@places)
+    current_user.auto_enroll_at(@places)
     respond_to do |format|
       format.xml { render :xml => prepare_result(@places) }
     end
-  end
-  
-  private
-  def auto_enroll_user(places)
-  	begin
-			ids=places.collect{|p| p.business_id}
-			businesses=Business.where(:id=>ids)
-			businesses.each do |business|
-				business.programs.campaigns.each do |campaign|
-					unless current_user.has_account_with_campaign?(campaign.id)
-					  acch=AccountHolder.create(:model_id=>current_user.id,:model_type=>"User")
-						acch.accounts << Account.create!(:user_id=>current_user.id,:campaign_id=>campaign.id,:points=>campaign.initial_points)
-					end
-				end
-			end
-		rescue Exception=>e
-			logger.error "Exception #{e.class}: #{e.message}"
-		end
   end
   
   def prepare_result(places)
@@ -49,32 +31,21 @@ class Users::PlacesController < Users::BaseController
 	    	programs=business.programs
 	    	@result["places"][index]["business-name"]=business.name
 	    	@result["places"][index]["accounts"]=[]
-				accounts=programs.joins(:accounts).select("accounts.program_id,accounts.points").where("accounts.user_id=#{current_user.id}")
+				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder]).select("accounts.campaign_id,accounts.amount,accounts.measurement_type_id").where("account_holders.model_id=#{current_user.id}")
 				accounts.each do |account|
 					@result["places"][index]["accounts"] << account.attributes
 				end
 				@result["places"][index]["rewards"]=[] 
-				normal_rewards=programs.joins(:rewards).select("rewards.*,((SELECT points FROM accounts WHERE program_id=rewards.program_id AND accounts.user_id=#{current_user.id}) >= rewards.points) As unlocked,(SELECT count(*) from user_actions where user_actions.reward_id=rewards.id and user_actions.user_id=#{current_user.id}) As redeemCount")
+				normal_rewards=programs.joins(:campaigns=>:rewards).select("rewards.*,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from logs where logs.reward_id=rewards.id and logs.user_id=#{current_user.id}) As redeemCount")
 				normal_rewards.each do |reward|
 					attributes=reward.attributes
 					if attributes["redeemCount"].to_i < attributes["claim"].to_i 
 						@result["places"][index]["rewards"] << attributes
 					end
 				end
-				#@result["places"][index]["auto_unlock_rewards"]=[] 
-				#unlock_rewards=rewards_attached_to_programs.where("rewards.auto_unlock=true")
-				#unlock_rewards.each do |reward|
-				#	unless current_user.is_engaged_to?(business.id)
-				#		@result["places"][index]["auto_unlock_rewards"] << reward.attributes
-				#	end
-				#end
 			end
 		end
 		@result
-  end
-  
-  def user_not_engaged_with?(business_id)
-  	current_user.user_actions.where(:business_id=>business_id).empty?
   end
   
 end

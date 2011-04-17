@@ -2,26 +2,21 @@ class Users::RewardsController < Users::BaseController
 	def claim
 		begin
 			reward=Reward.find(params[:id])
-			if reward.program.nil?
-				respond_with_error(ERRORS[:msg_not_related_to_program])
-			elsif (account=current_user.accounts.where(:program_id=>reward.program.id).first).blank?
+			if reward.campaign.nil?
+				respond_with_error(ERRORS[:msg_not_related_to_campaign])
+			elsif (account=current_user.account_holder.accounts.where(:campaign_id=>reward.campaign.id).first).blank?
 				respond_with_error(ERRORS[:msg_user_not_enrolled])
 			else
-				if reward.auto_unlock
-					reward.is_claimed_by(current_user,account)
-					respond_to do |format|
-		      	format.xml { render :xml => reward_hash(reward,account,reward.program),:status=>200 }
-		    	end
-		    elsif account.points < reward.points 
+		    if account.amount < reward.needed_amount 
 		    	respond_with_error(ERRORS[:msg_not_enough_credit])
 				else
-					number_of_times=UserAction.where(:user_id=>current_user.id,:reward_id=>reward.id).count
+					number_of_times=Log.redeems_logs.where(:user_id=>current_user.id,:reward_id=>reward.id).count
 					if !reward.claim.nil? && number_of_times >=reward.claim
 						respond_with_error(ERRORS[:msg_exceeds_claim_limit])
 					else
-						reward.is_claimed_by(current_user,account)
+						reward.is_claimed_by(current_user,account,params[:place_id],params[:lat],params[:lng])
 						respond_to do |format|
-		      		format.xml { render :xml => reward_hash(reward,account,reward.program),:status=>200 }
+		      		format.xml { render :xml => reward_hash(reward,account,reward.campaign),:status=>200 }
 		    		end
 					end
 				end
@@ -33,17 +28,17 @@ class Users::RewardsController < Users::BaseController
 	end
 	
 	ERRORS={
-  	:msg_not_related_to_program=>"Reward not associated to program",
-  	:msg_user_not_enrolled     =>"User not enrolled with the reward's program",
-  	:msg_not_enough_credit     =>"Not enough credit",
-  	:msg_exceeds_claim_limit   =>"Reward reached max mumber of claims"
+  	:msg_not_related_to_campaign=>"Reward not associated to campaign",
+  	:msg_user_not_enrolled      =>"User not enrolled with the reward's campaign",
+  	:msg_not_enough_credit      =>"Not enough credit",
+  	:msg_exceeds_claim_limit    =>"Reward reached max mumber of claims"
   }
   
   private
-	def reward_hash(reward,account,program)
+	def reward_hash(reward,account,campaign)
     r = {:redeem => {}}
 		r[:redeem].merge!({:business_id      => program.business.id})
-		r[:redeem].merge!({:program_id       => program.id})
+		r[:redeem].merge!({:campaign_id      => campaign.id})
 		r[:redeem].merge!({:reward_id        => reward.id})
 		r[:redeem].merge!({:account_points   => account.points})
     r
