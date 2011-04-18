@@ -4,4 +4,5 @@ Factory.define :reward do |reward|
   reward.needed_amount 10
   reward.claim 10
   reward.campaign_id {Factory(:campaign).id}
+  reward.legal_term "A Legal Term"
 end

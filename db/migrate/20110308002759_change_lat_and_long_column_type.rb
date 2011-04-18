@@ -6,7 +6,7 @@ class ChangeLatAndLongColumnType < ActiveRecord::Migration
   end
 
   def self.down
-  	remove_index  :pages, [:lat, :long]
+  	remove_index  :places, [:lat, :long]
   	change_column :places,:lat,:string
 		change_column :places,:long,:string
   end

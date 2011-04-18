@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110414123418) do
+ActiveRecord::Schema.define(:version => 20110417212818) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -18,6 +18,8 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "account_holders", ["model_type", "model_id"], :name => "index_account_holders_on_model_type_and_model_id"
 
   create_table "accounts", :force => true do |t|
     t.datetime "created_at"
@@ -28,6 +30,9 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.decimal  "amount",              :precision => 20, :scale => 3
     t.boolean  "is_money"
   end
+
+  add_index "accounts", ["account_holder_id"], :name => "index_accounts_on_account_holder_id"
+  add_index "accounts", ["campaign_id"], :name => "index_accounts_on_campaign_id"
 
   create_table "amenities", :force => true do |t|
     t.string   "description"
@@ -59,6 +64,8 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.integer  "brand_id"
   end
 
+  add_index "businesses", ["brand_id"], :name => "index_businesses_on_brand_id"
+
   create_table "businesses_categories", :id => false, :force => true do |t|
     t.integer "business_id"
     t.integer "category_id"
@@ -79,6 +86,9 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.integer  "program_id"
     t.integer  "measurement_type_id"
   end
+
+  add_index "campaigns", ["measurement_type_id"], :name => "index_campaigns_on_measurement_type_id"
+  add_index "campaigns", ["program_id"], :name => "index_campaigns_on_program_id"
 
   create_table "campaigns_targets", :id => false, :force => true do |t|
     t.integer  "target_id"
@@ -142,6 +152,9 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.integer  "campaign_id"
     t.integer  "engagement_type_id"
   end
+
+  add_index "engagements", ["campaign_id"], :name => "index_engagements_on_campaign_id"
+  add_index "engagements", ["engagement_type_id"], :name => "index_engagements_on_engagement_type_id"
 
   create_table "engagements_places", :id => false, :force => true do |t|
     t.integer "engagement_id"
@@ -213,6 +226,10 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.datetime "updated_at"
   end
 
+  add_index "logs", ["log_type"], :name => "index_logs_on_log_type"
+  add_index "logs", ["user_id", "reward_id", "log_type"], :name => "index_logs_on_user_id_and_reward_id_and_log_type"
+  add_index "logs", ["user_id"], :name => "index_logs_on_user_id"
+
   create_table "measurement_types", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -257,7 +274,9 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.string   "distance",                                     :default => "0"
   end
 
+  add_index "places", ["business_id"], :name => "index_places_on_business_id"
   add_index "places", ["lat", "long"], :name => "index_places_on_lat_and_long"
+  add_index "places", ["name"], :name => "index_places_on_name"
 
   create_table "places_rewards", :id => false, :force => true do |t|
     t.integer "place_id"
@@ -286,6 +305,9 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.datetime "updated_at"
   end
 
+  add_index "programs", ["business_id"], :name => "index_programs_on_business_id"
+  add_index "programs", ["program_type_id"], :name => "index_programs_on_program_type_id"
+
   create_table "qr_codes", :force => true do |t|
     t.string   "hash_code"
     t.datetime "created_at"
@@ -296,6 +318,8 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.integer  "related_id"
     t.string   "related_type"
   end
+
+  add_index "qr_codes", ["related_type", "hash_code"], :name => "index_qr_codes_on_related_type_and_hash_code"
 
   create_table "qrcodes", :force => true do |t|
     t.integer  "engagement_id"
@@ -328,6 +352,8 @@ ActiveRecord::Schema.define(:version => 20110414123418) do
     t.text     "legal_term"
     t.integer  "campaign_id"
   end
+
+  add_index "rewards", ["campaign_id"], :name => "index_rewards_on_campaign_id"
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
