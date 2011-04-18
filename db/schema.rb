@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110417212818) do
+ActiveRecord::Schema.define(:version => 20110418131413) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -89,6 +89,13 @@ ActiveRecord::Schema.define(:version => 20110417212818) do
 
   add_index "campaigns", ["measurement_type_id"], :name => "index_campaigns_on_measurement_type_id"
   add_index "campaigns", ["program_id"], :name => "index_campaigns_on_program_id"
+
+  create_table "campaigns_places", :id => false, :force => true do |t|
+    t.integer  "campaign_id"
+    t.integer  "place_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "campaigns_targets", :id => false, :force => true do |t|
     t.integer  "target_id"

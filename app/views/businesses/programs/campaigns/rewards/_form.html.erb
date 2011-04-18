@@ -18,13 +18,7 @@
 			Add the venues that will offer this reward
 		</div>
 		<div style="clear:both"></div>
-		<div class="place-checkbox">
-			<%= f.label :places, "Places" %><br>
-			<% @places.each do |place| %> <%= check_box_tag("reward[places_list][#{place.id}]", 
-															"1", 
-															@reward.places.detect{|c| c.id == place.id}) %> <%= "#{place.name}"%><br>
-			<% end %>
-		</div>
+	
 	</div>
 	<div class="row">
 		<div class="basic_info_caption1">

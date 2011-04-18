@@ -4,6 +4,7 @@ class Campaign < ActiveRecord::Base
 	has_many   :engagements,:foreign_key=>'campaign_id'
 	has_many   :rewards,:foreign_key=>'campaign_id'
 	
+	
 	belongs_to :program
 	belongs_to :measurement_type
 	
