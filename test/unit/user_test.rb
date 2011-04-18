@@ -14,4 +14,46 @@ class UserTest < ActiveSupport::TestCase
     end
   end
   
+  context "auto enroll user at particular places" do
+    setup do
+      @user=Factory.create(:user)
+      @places=[]
+      3.times do |n|
+        business=Factory.create(:business)
+        place=Factory.create(:place,:business_id=>business.id)
+        @places << place
+        program=Factory.create(:program,:business_id=>business.id)
+        campaign=Factory.create(:campaign,:program_id=>program.id)
+      end
+      @user.auto_enroll_at(@places)
+    end
+    
+    should "create accounts for that user at places' campaigns" do
+      assert_equal @places.count, 3
+      assert_equal Campaign.count, 3
+      assert_equal @user.account_holder.accounts.size,3
+      Campaign.all.each do |campaign|
+        assert @user.has_account_with_campaign?(campaign.id)
+      end
+    end
+  end 
+  
+  context "test snapping a qr code" do
+    setup do
+      @user=Factory.create(:user)
+      @place=Factory.create(:place)
+      program=Factory.create(:program,:business_id=>@place.business.id)
+      @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_points=>10)
+      @engagement=Factory.create(:engagement,:campaign_id=>@campaign.id,:amount=>5)
+      @qr_code=Factory.create(:qr_code,:related_id=>@engagement.id)
+    end
+    
+    should "increment user's account created within the campaign by engagement's amount" do
+      total_logs=Log.count
+      @user.snapped_qrcode(@qr_code.hash_code,@place.id,@place.lat,@place.long)
+      assert_equal @user.account_holder.accounts.where(:campaign_id=>@campaign.id).first.amount,15
+      assert_equal Log.count,total_logs+1
+      assert !QrCode.find(@qr_code.id).status #has been scanned if single use
+    end
+  end
 end
