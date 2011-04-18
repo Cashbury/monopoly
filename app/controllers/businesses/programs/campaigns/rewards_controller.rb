@@ -22,8 +22,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
   
   def create
     @reward = @campaign.rewards.new(params[:reward])
-    if @reward.save and @campaign.save # saving Campaing here for we removed the places from ( reward.places) to ( campaign.places)
-      #TODO Removing the view part that shows places and selecting from it certian places from the Reward view to Campaign View.
+    if @reward.save
       flash[:notice] = "Successfully created reward."
       redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
     else
