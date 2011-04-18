@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110418131413) do
+ActiveRecord::Schema.define(:version => 20110418133534) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -279,6 +279,7 @@ ActiveRecord::Schema.define(:version => 20110418131413) do
     t.string   "zipcode"
     t.string   "country"
     t.string   "distance",                                     :default => "0"
+    t.string   "phone"
   end
 
   add_index "places", ["business_id"], :name => "index_places_on_business_id"
