@@ -13,8 +13,14 @@ class Campaign < ActiveRecord::Base
 	validates_numericality_of :initial_points
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
+	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
 	
 	def has_auto_unlock_reward?
 		!self.rewards.where(:auto_unlock=>true).empty?
+	end
+	
+	def is_running?
+	  date=Date.today
+	  date > start_date && date < end_date 
 	end
 end

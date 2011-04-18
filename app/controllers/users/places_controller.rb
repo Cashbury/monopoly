@@ -31,12 +31,12 @@ class Users::PlacesController < Users::BaseController
 	    	programs=business.programs
 	    	@result["places"][index]["business-name"]=business.name
 	    	@result["places"][index]["accounts"]=[]
-				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder]).select("accounts.campaign_id,accounts.amount,accounts.measurement_type_id").where("account_holders.model_id=#{current_user.id}")
+				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder]).select("accounts.campaign_id,accounts.amount,accounts.measurement_type_id").where("account_holders.model_id=#{current_user.id} && (#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date)")
 				accounts.each do |account|
 					@result["places"][index]["accounts"] << account.attributes
 				end
 				@result["places"][index]["rewards"]=[] 
-				normal_rewards=programs.joins(:campaigns=>:rewards).select("rewards.*,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from logs where logs.reward_id=rewards.id and logs.user_id=#{current_user.id}) As redeemCount")
+				normal_rewards=programs.joins(:campaigns=>:rewards).select("rewards.*,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from logs where logs.reward_id=rewards.id and logs.user_id=#{current_user.id}) As redeemCount").where("#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date")
 				normal_rewards.each do |reward|
 					attributes=reward.attributes
 					if attributes["redeemCount"].to_i < attributes["claim"].to_i 

@@ -11,7 +11,7 @@
 		</p>
     <p>
     	<label style="margin:10px;">To Date</label><%= calendar_date_select_tag "filters_to_date", @to_date %>
-    	<label style="margin:10px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
+    	<label style="margin:25px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
     </p>
 		<p><a href="javascript:void(0)" onclick="submitUsersSnapsSearch($('#snaps_filter_form'), 1)">Filter</a></p>
 	</form>
@@ -25,8 +25,10 @@
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 	  <tr>
 	    <th>Name</th>
-	    <th>Points</th>
+	    <th>Amount</th>
+	    <th>Amount Type</th>
 	    <th>Engagement</th>
+	    <th>Campaign</th>
 	    <th>Program</th>
 	    <th>Business</th>
 	    <th>Place</th>
@@ -35,12 +37,14 @@
   <% for result in @results %>
     <tr>
       <td><%= result.full_name   %></td>
-      <td><%= result.points      %></td>
+      <td><%= result.amount      %></td>
+      <td><%= result.amount_type %></td>
       <td><%= result.ename       %></td>
+      <td><%= result.cname       %></td>
       <td><%= result.program_name%></td>
       <td><%= result.bname       %></td>
       <td><%= result.pname       %></td>
-      <td><%= result.used_at     %></td>
+      <td><%= result.created_on  %></td>
     </tr>
   <% end %>
 </table>
