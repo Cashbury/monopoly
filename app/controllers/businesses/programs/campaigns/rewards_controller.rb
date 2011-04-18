@@ -1,7 +1,7 @@
 class Businesses::Programs::Campaigns::RewardsController < ApplicationController
   before_filter :authenticate_user!,:require_admin, :except => [:index]
   before_filter :find_business_and_program_and_campaign
-  before_filter :places_under_business
+  before_filter :places_under_business , :items_uder_business
 
   def index
     @rewards = @campaign.rewards
@@ -39,7 +39,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     @reward = Reward.find(params[:id])
     if @reward.update_attributes(params[:reward])
       flash[:notice] = "Successfully updated reward."
-      redirect_to business_program_campaign_reward_url(@business, @program, campaign,@reward)
+      redirect_to business_program_campaign_reward_url(@business, @program, @campaign,@reward)
     else
       render :action => 'edit'
     end
@@ -62,5 +62,8 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
 
   def places_under_business
     @places ||= Place.where(:business_id => params[:business_id]) 
+  end
+  def items_uder_business
+    @items = Item.where(:business_id => params[:business_id])
   end
 end

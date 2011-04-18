@@ -16,6 +16,8 @@
 
 class Reward < ActiveRecord::Base
   belongs_to :campaign
+  has_and_belongs_to_many :items
+
   
   #attr_accessor :places_list
   
