@@ -22,16 +22,6 @@
   <%= @engagement.amount %>
 </p>
 
-
-  
-<p>
-  <strong>Places:</strong>
-  <% qrcodes =  @engagement.qr_codes  %>
-  <% for place in @engagement.places %>
-    <%= place.name %><br />
-  <% end %>
-</p>
-
 <p>
   <%= link_to "Edit", edit_business_program_campaign_engagement_path(@business, @program, @campaign,@engagement) %> |
   <%= link_to "View All", business_program_campaign_engagements_path(@business,@program,@campaign) %> |

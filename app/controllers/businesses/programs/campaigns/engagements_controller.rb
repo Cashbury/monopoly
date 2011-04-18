@@ -3,7 +3,7 @@ require 'open-uri'
 
 class Businesses::Programs::Campaigns::EngagementsController < ApplicationController
   before_filter :authenticate_user!,:require_admin, :except => [:index, :show, :stamps]
-  before_filter :find_business_and_program_and_places_and_campaign
+  before_filter :find_business_and_program_and_and_campaign
   
   before_filter :except => :display
   
@@ -103,12 +103,10 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
     
 
   private
-  def find_business_and_program_and_places_and_campaign
+  def find_business_and_program_and_and_campaign
     @program = Program.find(params[:program_id])
     @business = @program.business
     @campaign = Campaign.find(params[:campaign_id])
-    @places = @business.places
-    
   end
   
   def save_image(url)
