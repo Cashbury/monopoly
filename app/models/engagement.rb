@@ -5,7 +5,6 @@
 #
 #  id              :integer         primary key
 #  engagement_type :string(255)
-#  points          :string(255)
 #  state           :string(255)
 #  description     :string(255)
 #  campaign_id     :integer
@@ -20,12 +19,14 @@ class Engagement < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :engagement_type
   
+  
   scope :stamps, where(:engagement_type => QrCode::STAMP) 
   
   attr_accessor :places_list
  
   validates :name, :presence =>true,
                    :length =>{:within=>3..50}
+
   validates_presence_of :engagement_type_id,:description,:amount                   
   validates_numericality_of :amount
   
@@ -37,5 +38,18 @@ class Engagement < ActiveRecord::Base
     ["deployed", "paused", "offline"]
   end
   
-
+  STATES={
+    true => "started",
+    false => "stopped"
+    }
+  
+  def start
+    self.state=true
+    save!
+  end
+  
+  def stop
+    self.state=false
+    save!
+  end
 end

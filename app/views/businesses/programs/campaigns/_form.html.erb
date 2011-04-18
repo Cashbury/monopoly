@@ -1,0 +1,47 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+
+<%= form_for([@business,@program,@campaign]) do |f| %>
+  <% if @campaign.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:</h2>
+
+      <ul>
+      <% @campaign.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><%= mark_required(@campaign, :name) %>
+    <%= f.text_field :name %>
+  </div>
+  <br />
+
+  <div class="field">
+    <%= f.label :start_date %>
+    <%= f.calendar_date_select :start_date%>
+  </div><br />
+  <div class="field">
+    <%= f.label :end_date %>
+    <%= f.calendar_date_select :end_date%>
+  </div><br />
+  <div class="field">
+    <%= f.label :initial_points %>
+    <%= f.text_field :initial_points %>
+  </div><br />
+  
+  <div class="field">
+    <%= f.label :measurement_type_id %><%= mark_required(@campaign, :measurement_type) %>
+    <%= f.select :measurement_type_id,MeasurementType.all.collect {|mt| [mt.name,mt.id]} %>
+  </div><br />
+  
+ <br />
+  
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

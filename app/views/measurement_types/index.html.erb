@@ -1,0 +1,19 @@
+<% title "Measurement Type" %>
+
+<table>
+  <tr>
+    <th>Name</th>
+   
+  </tr>
+  <% for measurement_type in @measurement_types %>
+    <tr>
+      <td><%= measurement_type.name %></td>
+      
+      <td><%= link_to "Show", measurement_type %></td>
+      <td><%= link_to "Edit", edit_measurement_type_path(measurement_type) %></td>
+      <td><%= link_to "Destroy", measurement_type, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Measurement Type", new_measurement_type_path %></p>

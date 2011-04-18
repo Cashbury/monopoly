@@ -1,10 +1,5 @@
-<% title "Program: #{@program.name}" %>
+<% title "Program: #{@program.program_type.name}" %>
 <p id="notice"><%= notice %></p>
-
-<p>
-  <b>Name:</b>
-  <%= @program.name %>
-</p>
 
 <p>
   <b>Type:</b>
@@ -12,39 +7,14 @@
 </p>
 
 <p>
-  <b>Auto enroll:</b>
-  <%= @program.auto_enroll %>
-</p>
-
-<p>
-  <b>Start date:</b>
-  <%= @program.start_date %>
-</p>
-
-<p>
-  <b>End date:</b>
-  <%= @program.end_date %>
-</p>
-
-<p>
   <b>Business:</b>
   <%= @program.business_id %>
 </p>
 
-<p>
-  <b>Initial points:</b>
-  <%= @program.initial_points %>
-</p>
-
-<p>
-  <b>Max points:</b>
-  <%= @program.max_points %>
-</p>
-
-<p>
-<%= link_to "Show Rewards", business_program_rewards_path(@business, @program) %><br />
-<%= link_to "Show Engagements", business_program_engagements_path(@business, @program) %>
-</p>
 
 <%= link_to 'Edit', edit_business_program_path(@business,@program) %> </br>
 <%= link_to 'Back', business_programs_path(@business) %>
+
+<p>
+   <%= link_to "Show Campaigns", business_program_campaigns_path(@business,@program) %><br />
+</p>
