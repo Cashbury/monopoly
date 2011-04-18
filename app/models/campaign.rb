@@ -4,9 +4,12 @@ class Campaign < ActiveRecord::Base
 	has_many   :engagements,:foreign_key=>'campaign_id'
 	has_many   :rewards,:foreign_key=>'campaign_id'
 	
+	
 	belongs_to :program
 	belongs_to :measurement_type
 	
+	has_and_belongs_to_many :places
+
 	validates_presence_of :name,:measurement_type_id,:program_id
 	validates_format_of :start_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
 	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
