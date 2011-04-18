@@ -26,7 +26,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
       flash[:notice] = "Successfully created reward."
       redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
     else
-      render :action => 'new' cc 
+      render :action => 'new'
     end
   end
   
