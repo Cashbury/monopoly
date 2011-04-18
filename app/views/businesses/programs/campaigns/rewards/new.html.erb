@@ -4,6 +4,6 @@
 
 <% title "New Reward" %>
 
-<%= form_for @reward, :url => business_program_rewards_path(@business, @program) do |f| %>
+<%= form_for @reward, :url => business_program_campaign_rewards_path(@business, @program,@campaign) do |f| %>
 	<%= render :partial => 'form', :locals => {:f => f} %>
 <% end %>
