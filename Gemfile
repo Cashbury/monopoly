@@ -62,3 +62,5 @@ gem 'carrierwave'
 gem 'delayed_job'
 gem 'acts-as-taggable-on', '=2.0.6'
 gem 'rmagick' #server has this
+gem 'aws-s3','=0.6.2'
+gem 'paperclip','=2.3.11'

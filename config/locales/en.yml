@@ -4,3 +4,7 @@
 en:
   hello: "Hello world"
   not_authorized: "You are not authorized for this action"
+  messages:
+    uploads:
+      must_be_set: Must be set
+      not_supported: format is not supported, please use one of the following
