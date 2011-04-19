@@ -37,10 +37,10 @@ class Users::RewardsController < Users::BaseController
   private
 	def reward_hash(reward,account,campaign)
     r = {:redeem => {}}
-		r[:redeem].merge!({:business_id      => program.business.id})
+		r[:redeem].merge!({:business_id      => campaign.program.business.id})
 		r[:redeem].merge!({:campaign_id      => campaign.id})
 		r[:redeem].merge!({:reward_id        => reward.id})
-		r[:redeem].merge!({:account_points   => account.points})
+		r[:redeem].merge!({:account_points   => account.amount})
     r
   end
   

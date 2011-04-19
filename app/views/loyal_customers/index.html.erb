@@ -11,7 +11,7 @@
 		</p>
     <p>
     	<label style="margin:10px;">To Date</label><%= calendar_date_select_tag "filters_to_date", @to_date %>
-    	<label style="margin:10px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
+    	<label style="margin:25px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
     </p>
 		<p><a href="javascript:void(0)" onclick="submitLoyalCustomersSearch($('#filter_form'),1)">Filter</a></p>
 	</form>
@@ -26,7 +26,7 @@
 	    <th>Full Name   </th>
 	    <th>Business    </th>
 	    <th>Place       </th>
-	    <th># of Actions</th>
+	    <th># of Snap Actions</th>
 	  </tr>
   <% for result in @results %>
     <tr>

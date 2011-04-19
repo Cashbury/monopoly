@@ -10,6 +10,11 @@
   <%= @brand.description %>
 </p>
 
-
+<p>
+  <b>Photo:</b>
+  <% if @brand.photo.exists? then %>
+    <%= image_tag @brand.photo.url(:small) %>
+  <% end %>
+</p>  
 <%= link_to 'Edit', edit_brand_path(@brand) %> |
 <%= link_to 'Back', brands_path %>

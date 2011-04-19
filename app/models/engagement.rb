@@ -38,10 +38,7 @@ class Engagement < ActiveRecord::Base
     ["deployed", "paused", "offline"]
   end
   
-  STATES={
-    true => "started",
-    false => "stopped"
-    }
+  STATES={true => "started",false => "stopped"}
   
   def start
     self.state=true

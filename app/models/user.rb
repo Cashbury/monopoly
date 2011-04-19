@@ -62,8 +62,7 @@ class User < ActiveRecord::Base
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
 	end
 	
-	def snapped_qrcode(qr_code_hash,place_id,lat,lng)
-    qr_code=QrCode.where(:hash_code=>qr_code_hash,:related_type=>"Engagement").first
+	def snapped_qrcode(qr_code,place_id,lat,lng)
     engagement=Engagement.find(qr_code.related_id)
     campaign=engagement.campaign
     account_holder=self.account_holder
@@ -79,18 +78,18 @@ class User < ActiveRecord::Base
       end
       account.increment!(:amount,engagement.amount)
       log_group=LogGroup.create!(:created_on=>date)
-      log_group.logs << Log.create!(:user_id       =>self.id,
-                                    :log_type      =>Log::LOG_TYPES[0], #snap
-                                    :engagement_id =>engagement.id,
-                                    :business_id   =>account.campaign.program.business.id,
-                                    :place_id      =>place_id,
-                                    :amount        =>engagement.amount,
-                                    :amount_type   =>account.measurement_type,
-                                    :frequency     =>1,
-                                    :lat           =>lat,
-                                    :lng           =>lng,
-                                    :created_on    =>date)
-      log_group.save!                                
+      Log.create!(:user_id =>self.id,
+                  :log_type      =>Log::LOG_TYPES[:snap],
+                  :log_group_id  =>log_group.id,
+                  :engagement_id =>engagement.id,
+                  :business_id   =>account.campaign.program.business.id,
+                  :place_id      =>place_id,
+                  :amount        =>engagement.amount,
+                  :amount_type   =>account.measurement_type,
+                  :frequency     =>1,
+                  :lat           =>lat,
+                  :lng           =>lng,
+                  :created_on    =>date)                                
     end 
     [account,campaign,campaign.program,engagement.amount]
 	end
