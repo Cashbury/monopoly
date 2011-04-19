@@ -10,7 +10,7 @@ class Brand < ActiveRecord::Base
                     :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
                     :path => "/:style/:id/:filename"
                     
-  validates :photo_content_type, :inclusion => { :in => IMAGES_CONTENT_TYPE}                
+  validates :photo_content_type, :inclusion => { :in => IMAGES_CONTENT_TYPE }                
   #def validate
    # self.errors.add(:photo_content_type, I18n.t("messages.uploads.not_supported") + " (#{IMAGES_CONTENT_TYPE_NAME.join(", ")}).") if self.photo_file_name && !IMAGES_CONTENT_TYPE.include?(MIME::Types.type_for(self.photo_file_name).to_s)
   #end
