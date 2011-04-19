@@ -80,7 +80,7 @@ class QrCodesController < ApplicationController
   # DELETE /qr_codes/1.xml
   def destroy
     @qr_code = QrCode.find(params[:id])
-    engagement_id = @qr_code.engagement_id
+    engagement_id = @qr_code.engagement.id  if @qr_code.engagement
     @qr_code.destroy
     respond_to do |format|
       format.html { redirect_to :action=>:index , :engagement_id =>engagement_id }
@@ -104,7 +104,7 @@ class QrCodesController < ApplicationController
       else
         #when everything is ok
         quantity.times{
-          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:related_id=>params[:related_id]}
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:related_id=>params[:engagement_id].to_i}
         }
         if QrCode.create(codes)
           redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
@@ -156,7 +156,16 @@ class QrCodesController < ApplicationController
   
   def update_programs
     @programs = Program.where(:business_id=> params[:id]) 
+
+    respond_to do |format|
+      format.js 
+    end
     
+  end
+  
+   def update_campaigns
+    @campaigns= Campaign.where(:program_id=> params[:id]) 
+
     respond_to do |format|
       format.js 
     end
@@ -164,7 +173,7 @@ class QrCodesController < ApplicationController
   end
 
   def update_engagements
-    @engagements = Engagement.where(:program_id=> params[:id])   
+    @engagements = Engagement.where(:campaign_id=> params[:id])   
     respond_to do |format|
       format.js 
     end
@@ -182,10 +191,11 @@ class QrCodesController < ApplicationController
   def search_qrs
     @print_jobs   ||= PrintJob.all
     @brands       ||= Brand.all  
-    @engagements  ||= Engagement.all 
+    @engagements  ||= Engagement.all
+    @campaigns    
     search = {}
-
-    search = {:engagement_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
+    
+    search = {:related_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
     unless params[:print_job_id].blank?
       pj = PrintJob.where(:id=>params[:print_job_id]).first  
       qr_code_ids = YAML.load(pj.log)               if pj.respond_to? :log  

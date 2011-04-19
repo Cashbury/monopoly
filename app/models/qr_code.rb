@@ -26,7 +26,7 @@ class QrCode < ActiveRecord::Base
     end
     return  returned_type
   end
- 
+  
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 
     #unique_code = { :engagement_id => engagement.id}.to_yaml
@@ -64,12 +64,9 @@ class QrCode < ActiveRecord::Base
 			Dir.mkdir(File.join("#{Rails.public_path}","images","qrcodes"))
 		end
     open("#{Rails.public_path}/images/qrcodes/#{hash_code}.png","wb")  do |io|
-      io << open(URI.parse(qr_image )).read
+      io << open(URI.parse(qr_image)).read
     end
   end
-
-
-
 
   private #=============================================================
 
