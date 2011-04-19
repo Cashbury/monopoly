@@ -129,14 +129,14 @@ DEPENDENCIES
   aws-s3 (= 0.6.2)
   calendar_date_select!
   carmen
-  carrierwave
-  delayed_job
+  carrierwave (= 0.5.2)
+  delayed_job (= 2.1.4)
   devise (~> 1.1.5)
   factory_girl_rails
-  geokit-rails3
+  geokit-rails3 (= 0.1.2)
   jquery-rails
   mocha
-  mysql
+  mysql (= 2.8.1)
   nifty-generators
   paperclip (= 2.3.11)
   rack (= 1.2.1)
