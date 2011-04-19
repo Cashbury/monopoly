@@ -11,6 +11,22 @@ class QrCode < ActiveRecord::Base
 
   scope :associated_with_engagements , where(:related_type=>"Engagement")
 
+  #def related_id 
+   # return read_attribute(:related_id)
+  #end
+  
+  def engagement
+    returned_type = nil
+    if self.related_type = Engagement.name
+      begin 
+         returned_type = Engagement.find(related_id)
+      rescue
+        returned_type = nil
+       end
+    end
+    return  returned_type
+  end
+ 
   def encrypt_code
     self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 
     #unique_code = { :engagement_id => engagement.id}.to_yaml

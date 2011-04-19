@@ -18,6 +18,7 @@
 		<div class="basic_info_caption1"> Enter Amount Needed </div>
 		<div id="Enter_Num_Stamp">
 			<%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+			<%= @campaign.measurement_type.name %>
 		</div>
 	</div>
 	<div class="row">
@@ -52,20 +53,7 @@
 		</div>
     <%= f.text_area :legal_term %>
   </div>
-  <div class="row">
-  
-    <%= f.label :items, "Items" %><br />
-    <% @items.each do |item| %>
-      <%= check_box_tag(
-                        "reward[items][#{item.id}]", 
-                        "1", 
-                        @items.detect{|i| i.id == i.id}) %>
-      <%= "#{item.name}"%><br />
-    <% end %>
-  
-    
-  </div>
-  
+
    	
     <div class="row">
 		<input type="submit" value="" name="commit" id="save_cont_btn" class="save">

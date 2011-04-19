@@ -93,9 +93,8 @@ class QrCodesController < ApplicationController
     if request.post?
       quantity =  params[:quantity].to_i
       engagement = Engagement.where(:id=> params[:engagement_id]).first
-     
-      if engagement.blank?
-       codes = []
+      codes = []
+      if engagement.blank? 
         quantity.times{
           codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i}
         }
@@ -105,9 +104,9 @@ class QrCodesController < ApplicationController
       else
         #when everything is ok
         quantity.times{
-          engagement.qr_codes << QrCode.new(:code_type=>params[:code_type].to_i,:status=>params[:status].to_i)
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:related_id=>params[:related_id]}
         }
-        if engagement.save
+        if QrCode.create(codes)
           redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
         else
           render :action => :panel
