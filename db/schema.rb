@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110418231319) do
+ActiveRecord::Schema.define(:version => 20110421173921) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -21,6 +21,12 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
 
   add_index "account_holders", ["model_type", "model_id"], :name => "index_account_holders_on_model_type_and_model_id"
 
+  create_table "account_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "accounts", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -29,22 +35,31 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.integer  "measurement_type_id"
     t.decimal  "amount",              :precision => 20, :scale => 3
     t.boolean  "is_money"
+    t.boolean  "is_external"
   end
 
   add_index "accounts", ["account_holder_id"], :name => "index_accounts_on_account_holder_id"
   add_index "accounts", ["campaign_id"], :name => "index_accounts_on_campaign_id"
 
+  create_table "addresses", :force => true do |t|
+    t.string   "country"
+    t.string   "city"
+    t.string   "zipcode"
+    t.string   "neighborhood"
+    t.string   "street_address"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "amenities", :force => true do |t|
-    t.string   "description"
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "amenities_places", :id => false, :force => true do |t|
-    t.integer  "amenity_id"
-    t.integer  "place_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "amenity_id"
+    t.integer "place_id"
   end
 
   create_table "brands", :force => true do |t|
@@ -73,37 +88,29 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.integer "category_id"
   end
 
-  create_table "businesses_places", :id => false, :force => true do |t|
-    t.integer "place_id"
-    t.integer "campaign_id"
-  end
-
   create_table "campaigns", :force => true do |t|
     t.string   "name",                               :null => false
     t.date     "start_date"
     t.date     "end_date"
-    t.integer  "initial_points",      :default => 0
+    t.integer  "initial_amount",      :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "program_id"
     t.integer  "measurement_type_id"
+    t.string   "state"
   end
 
   add_index "campaigns", ["measurement_type_id"], :name => "index_campaigns_on_measurement_type_id"
   add_index "campaigns", ["program_id"], :name => "index_campaigns_on_program_id"
 
   create_table "campaigns_places", :id => false, :force => true do |t|
-    t.integer  "campaign_id"
-    t.integer  "place_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "campaign_id"
+    t.integer "place_id"
   end
 
   create_table "campaigns_targets", :id => false, :force => true do |t|
-    t.integer  "target_id"
-    t.integer  "campaign_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "target_id"
+    t.integer "campaign_id"
   end
 
   create_table "categories", :force => true do |t|
@@ -125,6 +132,7 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.string   "locked_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "server"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
@@ -136,13 +144,11 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
   end
 
   create_table "employees", :force => true do |t|
-    t.string   "full_name"
-    t.string   "email"
-    t.string   "phone_number"
     t.string   "position"
     t.integer  "employee_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id"
   end
 
   create_table "engagement_types", :force => true do |t|
@@ -152,7 +158,7 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
   end
 
   create_table "engagements", :force => true do |t|
-    t.boolean  "state",                                             :default => true
+    t.boolean  "is_started",                                        :default => true
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -164,36 +170,62 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
 
   add_index "engagements", ["campaign_id"], :name => "index_engagements_on_campaign_id"
   add_index "engagements", ["engagement_type_id"], :name => "index_engagements_on_engagement_type_id"
+  add_index "engagements", ["is_started"], :name => "index_engagements_on_is_started"
 
-  create_table "engagements_places", :id => false, :force => true do |t|
-    t.integer "engagement_id"
-    t.integer "place_id"
+  create_table "followers", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "business_id"
+    t.string   "user_email"
+    t.string   "user_phone_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+
+  create_table "images", :force => true do |t|
+    t.integer  "uploadable_id"
+    t.string   "uploadable_type"
+    t.string   "photo_file_name"
+    t.string   "photo_content_type"
+    t.integer  "photo_file_size"
+    t.string   "upload_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "invitations", :force => true do |t|
+    t.integer  "from_user_id"
+    t.string   "to_email"
+    t.string   "to_phone_number"
+    t.boolean  "state"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invitations", ["to_email"], :name => "index_invitations_on_to_email"
+  add_index "invitations", ["to_phone_number"], :name => "index_invitations_on_to_phone_number"
 
   create_table "items", :force => true do |t|
     t.string   "name"
     t.string   "description"
-    t.decimal  "price",       :precision => 10, :scale => 3
+    t.decimal  "price",        :precision => 10, :scale => 3
     t.integer  "business_id"
     t.string   "photo"
     t.boolean  "available"
     t.date     "expiry_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "product_code"
+    t.decimal  "cost",         :precision => 20, :scale => 3
   end
 
   create_table "items_places", :id => false, :force => true do |t|
-    t.integer  "place_id"
-    t.integer  "item_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "place_id"
+    t.integer "item_id"
   end
 
   create_table "items_rewards", :id => false, :force => true do |t|
-    t.integer  "reward_id"
-    t.integer  "item_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "reward_id"
+    t.integer "item_id"
   end
 
   create_table "legal_ids", :force => true do |t|
@@ -201,6 +233,7 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.integer  "legal_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id"
   end
 
   create_table "legal_types", :force => true do |t|
@@ -223,18 +256,22 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.integer  "place_id"
     t.integer  "engagement_id"
     t.integer  "business_id"
-    t.decimal  "lat",           :precision => 15, :scale => 10
-    t.decimal  "lng",           :precision => 15, :scale => 10
+    t.decimal  "lat",            :precision => 15, :scale => 10
+    t.decimal  "lng",            :precision => 15, :scale => 10
     t.string   "currency"
-    t.decimal  "amount",        :precision => 20, :scale => 3
-    t.integer  "frequency"
+    t.decimal  "gained_amount",  :precision => 20, :scale => 3
+    t.decimal  "frequency",      :precision => 20, :scale => 3
     t.string   "amount_type"
     t.date     "created_on"
     t.integer  "log_group_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "transaction_id"
   end
 
+  add_index "logs", ["created_at"], :name => "index_logs_on_created_at"
+  add_index "logs", ["created_on"], :name => "index_logs_on_created_on"
+  add_index "logs", ["engagement_id"], :name => "index_logs_on_engagement_id"
   add_index "logs", ["log_type"], :name => "index_logs_on_log_type"
   add_index "logs", ["user_id", "reward_id", "log_type"], :name => "index_logs_on_user_id_and_reward_id_and_log_type"
   add_index "logs", ["user_id"], :name => "index_logs_on_user_id"
@@ -243,7 +280,10 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "business_id"
   end
+
+  add_index "measurement_types", ["business_id"], :name => "index_measurement_types_on_business_id"
 
   create_table "newsletters", :force => true do |t|
     t.boolean  "letter_type"
@@ -266,31 +306,29 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.datetime "updated_at"
   end
 
+  create_table "place_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "places", :force => true do |t|
     t.string   "name"
-    t.decimal  "long",         :precision => 15, :scale => 10
-    t.decimal  "lat",          :precision => 15, :scale => 10
+    t.decimal  "long",            :precision => 15, :scale => 10
+    t.decimal  "lat",             :precision => 15, :scale => 10
     t.integer  "business_id"
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "address1"
-    t.string   "neighborhood"
-    t.string   "city"
-    t.string   "address2"
-    t.string   "zipcode"
-    t.string   "country"
-    t.string   "distance",                                     :default => "0"
+    t.integer  "place_type_id"
+    t.boolean  "is_user_defined"
+    t.string   "street_address"
   end
 
   add_index "places", ["business_id"], :name => "index_places_on_business_id"
   add_index "places", ["lat", "long"], :name => "index_places_on_lat_and_long"
   add_index "places", ["name"], :name => "index_places_on_name"
-
-  create_table "places_rewards", :id => false, :force => true do |t|
-    t.integer "place_id"
-    t.integer "reward_id"
-  end
+  add_index "places", ["place_type_id"], :name => "index_places_on_place_type_id"
 
   create_table "print_jobs", :force => true do |t|
     t.string   "name"
@@ -312,6 +350,8 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.integer  "business_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "name"
+    t.boolean  "is_started"
   end
 
   add_index "programs", ["business_id"], :name => "index_programs_on_business_id"
@@ -323,46 +363,36 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.datetime "updated_at"
     t.boolean  "code_type"
     t.boolean  "status"
-    t.boolean  "exported",     :default => false
-    t.integer  "related_id"
-    t.string   "related_type"
+    t.boolean  "exported",        :default => false
+    t.integer  "associated_id"
+    t.string   "associated_type"
   end
 
-  add_index "qr_codes", ["related_type", "hash_code"], :name => "index_qr_codes_on_related_type_and_hash_code"
-
-  create_table "qrcodes", :force => true do |t|
-    t.integer  "engagement_id"
-    t.string   "photo_url"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "reports", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "reportable_id"
-    t.string   "reportable_type"
-    t.integer  "engagement_id"
-    t.integer  "place_id"
-    t.string   "points"
-    t.string   "activity_type"
-    t.integer  "account_id"
-  end
+  add_index "qr_codes", ["hash_code"], :name => "index_qr_codes_on_hash_code"
 
   create_table "rewards", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
-    t.decimal  "needed_amount", :precision => 10, :scale => 0
-    t.integer  "claim"
-    t.datetime "available"
+    t.decimal  "needed_amount",      :precision => 10, :scale => 0
+    t.integer  "max_claim"
+    t.datetime "expiry_date"
     t.text     "legal_term"
     t.integer  "campaign_id"
+    t.integer  "max_claim_per_user"
+    t.boolean  "is_active"
   end
 
   add_index "rewards", ["campaign_id"], :name => "index_rewards_on_campaign_id"
+
+  create_table "rewards_users", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "reward_id"
+  end
+
+  add_index "rewards_users", ["reward_id"], :name => "index_rewards_users_on_reward_id"
+  add_index "rewards_users", ["user_id"], :name => "index_rewards_users_on_user_id"
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
@@ -390,10 +420,8 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
   end
 
   create_table "targets_users", :id => false, :force => true do |t|
-    t.integer  "target_id"
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer "target_id"
+    t.integer "user_id"
   end
 
   create_table "templates", :force => true do |t|
@@ -409,57 +437,86 @@ ActiveRecord::Schema.define(:version => 20110418231319) do
     t.string   "tag"
   end
 
+  create_table "tmp_uploads", :force => true do |t|
+    t.integer  "uploadable_id"
+    t.string   "uploadable_type"
+    t.string   "photo_file_name"
+    t.string   "photo_content_type"
+    t.integer  "photo_file_size"
+    t.string   "upload_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "transaction_types", :force => true do |t|
+    t.string   "name"
+    t.decimal  "fee_amount",     :precision => 20, :scale => 3
+    t.decimal  "fee_percentage", :precision => 20, :scale => 3
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "transactions", :force => true do |t|
     t.integer  "from_account"
     t.integer  "to_account"
-    t.decimal  "amount",       :precision => 20, :scale => 3
+    t.decimal  "amount",                      :precision => 20, :scale => 3
     t.string   "account_type"
     t.boolean  "is_money"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.decimal  "from_account_balance_before", :precision => 20, :scale => 3
+    t.decimal  "from_account_balance_after",  :precision => 20, :scale => 3
+    t.decimal  "to_account_balance_before",   :precision => 20, :scale => 3
+    t.decimal  "to_account_balance_after",    :precision => 20, :scale => 3
+    t.string   "currency"
+    t.text     "note"
+    t.integer  "transaction_type_id"
   end
-
-  create_table "user_actions", :force => true do |t|
-    t.integer  "user_id",     :null => false
-    t.integer  "qr_code_id"
-    t.integer  "business_id"
-    t.integer  "reward_id"
-    t.date     "used_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "place_id"
-  end
-
-  add_index "user_actions", ["business_id"], :name => "index_user_actions_on_business_id"
-  add_index "user_actions", ["qr_code_id"], :name => "index_user_actions_on_qr_code_id"
-  add_index "user_actions", ["reward_id"], :name => "index_user_actions_on_reward_id"
-  add_index "user_actions", ["user_id"], :name => "index_user_actions_on_user_id"
 
   create_table "users", :force => true do |t|
-    t.string   "email",                               :default => "", :null => false
-    t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
-    t.string   "password_salt",                       :default => "", :null => false
+    t.string   "email",                                 :default => "", :null => false
+    t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
+    t.string   "password_salt",                         :default => "", :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                       :default => 0
+    t.integer  "sign_in_count",                         :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "full_name"
+    t.string   "first_name"
     t.boolean  "admin"
     t.string   "authentication_token"
     t.string   "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
+    t.string   "last_name"
+    t.string   "telephone_number"
+    t.string   "username"
+    t.integer  "mailing_address_id"
+    t.integer  "billing_address_id"
+    t.boolean  "is_fb_account"
+    t.text     "note"
+    t.string   "home_town"
+    t.string   "language_of_preference"
+    t.string   "default_currency"
+    t.string   "timezone"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "users_referrals", :force => true do |t|
+    t.integer "referrer_id"
+    t.integer "referred_id"
+  end
+
+  add_index "users_referrals", ["referred_id"], :name => "index_users_referrals_on_referred_id"
+  add_index "users_referrals", ["referrer_id"], :name => "index_users_referrals_on_referrer_id"
 
 end

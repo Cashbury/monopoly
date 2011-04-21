@@ -12,8 +12,8 @@
 
 <p>
   <b>Photo:</b>
-  <% if @brand.photo.exists? then %>
-    <%= image_tag @brand.photo.url(:small) %>
+  <% if @brand.brand_image%>
+    <%= image_tag @brand.brand_image.photo.url(:thumb) %>
   <% end %>
 </p>  
 <%= link_to 'Edit', edit_brand_path(@brand) %> |

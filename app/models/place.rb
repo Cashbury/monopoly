@@ -23,11 +23,11 @@ class Place < ActiveRecord::Base
   has_and_belongs_to_many :amenities
   
   has_many :user_actions
-  has_many :reports, :as => :reportable
   has_many :qr_codes
+  has_many :place_types
   
   
-  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :distance,:business
+  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :business
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
 end

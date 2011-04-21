@@ -30,6 +30,11 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me,:full_name,:authentication_token
    
   has_many :templates
+  has_many :legal_ids
+  has_many :followers
+  has_many :businesses, :through=>:followers
+  has_many :invitations, :foreign_key=>"from_user_id"
+  has_and_belongs_to_many :rewards
   
 	def has_account_with_campaign?(campaign_id)
 	  acch=self.account_holder
