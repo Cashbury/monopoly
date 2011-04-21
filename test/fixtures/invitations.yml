@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  from_user_id: 1
+  to_email: MyString
+  to_phone_number: MyString
+  state: false
+
+two:
+  from_user_id: 1
+  to_email: MyString
+  to_phone_number: MyString
+  state: false

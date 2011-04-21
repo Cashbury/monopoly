@@ -13,30 +13,12 @@
 			Add a Short Message
 		</div><%= f.text_area :description, :class=>"basic_info_input", :rows=>5 %>
 	</div>
-	<div class="row">
-		<div class="basic_info_caption1">
-			Add the venues that will offer this reward
-		</div>
-		<div style="clear:both"></div>
 	
-	</div>
 	<div class="row">
-		<div class="basic_info_caption1">
-			Set the goal required to unlock this reward
-		</div>
+		<div class="basic_info_caption1"> Enter Amount Needed </div>
 		<div id="Enter_Num_Stamp">
-			<%= f.text_field :points ,:class=>'enter_value_g',:id=> "reward_stamps" %>
-		</div><select class="selectgoaltype" id="goal_type">
-			<option value="points">
-				Points
-			</option>
-			<option value="stamps">
-				Stamps
-			</option>
-		</select>
-		<div id="points" class="setgoaltype"></div>
-		<div id="stamps" class="setgoaltype" style="display:none">
-			<%= select :reward, :engagement_id, @engagements.map{|engagement| [engagement.name, engagement.id]}, :prompt=>"select one",:id =>'reward_stamp_type',:class=>"selectStampType"%>
+			<%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+			<%= @campaign.measurement_type.name %>
 		</div>
 	</div>
 	<div class="row">
@@ -44,11 +26,7 @@
 			How many times can this reward be claimed?
 		</div><%= f.text_field :claim , :class=>"basic_info_input"%>
 	</div>
-	<div class="row">
-		<div class="basic_info_caption1">
-			Do you offer this reward in an Auto-unlocked/Free state to users who never engaged with your business? <%= f.check_box :auto_unlock %>
-		</div>
-	</div>
+	
 	<div class="row">
 		<div class="basic_info_caption1">
 			This reward will be available untill
@@ -67,35 +45,19 @@
 				It sells out
 			</option>
 		</select>
-		<div id="stop" class="runtill"></div>
-		<div id="setnum" class="runtill" style="display:none">
-			Enter the maximum number you want to grant
-		</div>
-		<div id="sellout" class="runtill" style="display:none">
-			Enter the maximum number available
-		</div>
   </div>
+  
   <div class="row">
 		<div class="basic_info_caption1">
 			Legal Terms
 		</div>
     <%= f.text_area :legal_term %>
   </div>
-  <div class="row">
-    <div class="basic_info_caption1">
-      Product Price
-    </div>
-    <%= f.text_field :price ,:class=>'basic_info_input'%>
-  </div>
-    <div class="row">
-    <div class="basic_info_caption1">
-      Product ID
-    </div>
-    <%= f.text_field :product_id , :class=>'basic_info_input'%>
-    </div>	
+
+   	
     <div class="row">
 		<input type="submit" value="" name="commit" id="save_cont_btn" class="save">
-		<%= link_to "Cancel", business_program_rewards_path(@business), :class => "cancel right" %>
+		<%= link_to "Cancel", business_program_campaign_rewards_path(@business,@program,@campaign), :class => "cancel right" %>
 	</div>
 </div>
 <br/>
@@ -106,7 +68,7 @@
 jQuery(function() {
 		jQuery('#goal_type').change(function(){
 				jQuery('.setgoaltype').hide();
-				jQuery.getScript("<%= stamps_business_program_engagements_path %>.js",function(data){});
+				jQuery.getScript("<%= stamps_business_program_campaign_engagements_path %>.js",function(data){});
 				jQuery('#' + jQuery(this).val()).show();
 		});
 });

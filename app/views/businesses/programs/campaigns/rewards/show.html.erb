@@ -8,39 +8,18 @@
   <strong>Description: </strong>
   <%= @reward.description %>
 </p>
-<p>
-  <strong>Points:</strong>
-  <%= @reward.points %>
-</p>
-<% unless @reward.engagements.empty? %>
+
+<% unless @campaign.engagements.empty? %>
 <p>
   <strong>Stamp Description: </strong>
-  <% for eng in @reward.engagements %>
+  <% for eng in @campaign.engagements %>
   <%= eng.name %>
   <%end%>
 </p>
 <% end %>
-<p>
-  <strong>Active Places: </strong>
-  <% for place in @reward.places %>
-  <br/><%= place.name %>    
-  <% end %>
-</p>
 
 <p>
-  <strong>Price: </strong>
-  <%= @reward.price %>
-</p>
-<p>
-  <strong>Auto Unlock: </strong>
-  <%= @reward.auto_unlock %>
-</p>
-<p>
-  <strong>Product Id: </strong>
-  <%= @reward.product_id %>
-</p>
-<p>
-  <%= link_to "Edit", edit_business_program_reward_path(@business, @program, @reward) %> |
-  <%= link_to "Destroy", business_program_engagement_path(@business, @program, @reward), :confirm => 'Are you sure?', :method => :delete %> | 
-  <%= link_to "Back to List", business_program_rewards_path(@business) %>
+  <%= link_to "Edit", edit_business_program_campaign_reward_path(@business, @program, @campaign ,@reward) %> |
+  <%= link_to "Destroy", business_program_campaign_reward_path(@business, @program, @campaign, @reward), :confirm => 'Are you sure?', :method => :delete %> | 
+  <%= link_to "Back to List", business_program_campaign_rewards_path(@business,@program,@campaign) %>
 </p>

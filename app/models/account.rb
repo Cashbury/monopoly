@@ -14,6 +14,7 @@ class Account < ActiveRecord::Base
   belongs_to :account_holder
   belongs_to :campaign
   belongs_to :measurement_type
+  belongs_to :account_type
   
   has_many :reports, :as => :reportable
   

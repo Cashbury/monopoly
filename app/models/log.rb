@@ -5,6 +5,7 @@ class Log < ActiveRecord::Base
 	belongs_to :engagement
 	belongs_to :reward
 	belongs_to :log_group
+	belongs_to :transaction
 	 
 	validates_numericality_of :amount, :frequency, :lat, :lng ,:allow_nil => true
 	
