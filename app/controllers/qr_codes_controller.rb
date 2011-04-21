@@ -147,7 +147,7 @@ class QrCodesController < ApplicationController
 
   def update_businesses
     @businesses = Business.where(:brand_id=> params[:id]) 
-    
+    puts "@business.size = #{@businesses.count}"
     respond_to do |format|
       format.js 
     end

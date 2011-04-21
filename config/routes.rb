@@ -16,7 +16,7 @@ Kazdoor::Application.routes.draw do
 		resources :places
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
-		end
+    end
 		resources :programs do  
 			get "/enroll.:format" , :action=>:enroll, :on =>:member
 		end
@@ -33,7 +33,12 @@ Kazdoor::Application.routes.draw do
 	resources :program_types
 	resources :programs
 	resources :measurement_types
-	resources :rewards
+	resources :rewards do
+	  get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
+    get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
+    get "update_campaigns/:id"     ,:action=>:update_campaigns, :on =>:collection, :as =>"update_campaigns"
+    
+	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
 	#       get "stamps", :on => :collection
@@ -68,6 +73,8 @@ Kazdoor::Application.routes.draw do
     get "panel"  , :on =>:collection 
     post "printable", :on=>:collection
   end
+  
+  
 
   resources :activities do
     post "earn", :on => :collection
