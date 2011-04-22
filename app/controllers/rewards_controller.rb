@@ -1,5 +1,6 @@
 class RewardsController < ApplicationController
   before_filter :authenticate_user!, :require_admin
+  before_filter :prepare_brands
 
   def index
     @rewards = Reward.all
@@ -20,6 +21,7 @@ class RewardsController < ApplicationController
   
   def create
     @reward = Reward.new(params[:reward])
+    @reward.campaign_id = params[:campaign_id]
     if @reward.save
       flash[:notice] = "Successfully created reward."
       redirect_to reward_url(@reward)
@@ -47,5 +49,36 @@ class RewardsController < ApplicationController
     @reward.destroy
     flash[:notice] = "Successfully destroyed reward."
     redirect_to rewards_url
+  end
+  
+  def update_businesses
+    @businesses = Business.where(:brand_id=> params[:id]) 
+    puts "@business.size = #{@businesses.count}"
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
+  
+  def update_programs
+    @programs = Program.where(:business_id=> params[:id]) 
+
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
+  
+   def update_campaigns
+    @campaigns= Campaign.where(:program_id=> params[:id]) 
+
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
+  private 
+  def prepare_brands
+    @brands = Brand.all
   end
 end
