@@ -48,25 +48,20 @@ class BrandsController < ApplicationController
       @image = BrandImage.new()
       @image.uploadable = @brand
       @image.photo= params[:upload][:photo]
-      #@image.save!  
-      tmp_image = TmpUpload.new()
-      tmp_image.upload_type = "BrandImage"
-      tmp_image.uploadable = @brand
-      tmp_image.photo = params[:upload][:photo]
     end
     Brand.transaction do
       @brand.save!
-      tmp_image.save!
+      @image.save! if @image
     end
     respond_to do |format|
       format.html { redirect_to(@brand, :notice => 'Brand was successfully created.') }
       format.xml  { render :xml => @brand, :status => :created, :location => @brand }
     end
-  rescue
-    respond_to do |format|
-      format.html { render :action => "new" }
-      format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
-    end 
+    rescue
+      respond_to do |format|
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
+      end 
   end
 
   # PUT /brands/1

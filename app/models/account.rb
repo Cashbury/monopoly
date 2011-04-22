@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
   belongs_to :measurement_type
   belongs_to :account_type
   
-  has_many :reports, :as => :reportable
+  has_many :transactions, :foreign_key=>"from_account"
   
   validates_uniqueness_of :account_holder_id, :scope => :campaign_id
   validates_numericality_of :amount

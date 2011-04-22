@@ -1,3 +1,4 @@
 class AnnouncementType < ActiveRecord::Base
-  validates_precense_of :name
+  has_many :announcements
+  validates_presence_of :name, :announcement_type_id
 end

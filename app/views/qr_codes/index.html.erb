@@ -170,7 +170,7 @@ $(function(){
       <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
-    <td><%= link_to 'Show', "images/qrcodes/#{qr_code.hash_code}.png" %></td>
+    <td><%= link_to 'Show', qr_code.qr_code_image.photo.url %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>

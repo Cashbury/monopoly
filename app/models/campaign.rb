@@ -1,10 +1,9 @@
 class Campaign < ActiveRecord::Base
 	include ActiveModel::Validations
-	has_many   :accounts,:foreign_key=>'campaign_id'
-	has_many   :engagements,:foreign_key=>'campaign_id'
-	has_many   :rewards,:foreign_key=>'campaign_id'
-	
-	
+	has_many   :accounts
+	has_many   :engagements
+	has_many   :rewards
+
 	belongs_to :program
 	belongs_to :measurement_type
 	

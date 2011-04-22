@@ -17,17 +17,17 @@ class Place < ActiveRecord::Base
 	acts_as_mappable  :lng_column_name => :long
 	acts_as_taggable
   belongs_to :business
+  belongs_to :place_type
+  has_one :address
   
   has_and_belongs_to_many :engagements
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :amenities
   
-  has_many :user_actions
-  has_many :qr_codes
-  has_many :place_types
+  has_many :qr_codes,:as=>:associatable
+  has_many :open_hours
   
-  
-  attr_accessible :name, :long, :lat, :description,:address1, :address2 , :neighborhood, :city , :zipcode, :business
+  attr_accessible :name, :long, :lat, :description, :business
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
 end

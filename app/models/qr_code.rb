@@ -1,20 +1,26 @@
 require 'uri'
 class QrCode < ActiveRecord::Base  
   #QrCode dependent on engagement type "stamp"
+  belongs_to :place,:polymorphic => true
+  belongs_to :user,:polymorphic => true
+  belongs_to :engagement,:polymorphic => true
+  
+  has_one :qr_code_image, :as => :uploadable, :dependent => :destroy
+  
   STAMP       = "Buy a product/service"
   MULTI_USE   = 1
   SINGLE_USE  = 0
-  has_attached_file :image, 
-                    :storage => :s3,
-                    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
-                    :path => "qrcodes/:id/:filename"
+  # has_attached_file :image, 
+  #                   :storage => :s3,
+  #                   :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+  #                   :path => "qrcodes/:id/:filename"
   
-  attr_accessible :related_id, :related_type, :hash_code , :status ,:code_type,:image_file_name
+  attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type
 
   before_create :encrypt_code
   before_destroy :destroy_image
-  
-  scope :associated_with_engagements , where(:related_type=>"Engagement")
+  after_save :upload_image
+  scope :associated_with_engagements , where(:associatable_type=>"Engagement")
   
   def destroy_image
     self.image.destroy
@@ -24,21 +30,25 @@ class QrCode < ActiveRecord::Base
     begin
       io = open(URI.parse(qr_image))
       io.original_filename="#{hash_code}.png"
-      self.image = io.original_filename.blank? ? nil : io 
+      @image = QrCodeImage.new()
+      @image.uploadable = self
+      @image.photo= io.original_filename.blank? ? nil : io
     rescue Timeout::Error
-      self.image = nil
+      @image = nil
     end
   end
-
+  def upload_image
+    @image.save!
+  end
   #def related_id 
    # return read_attribute(:related_id)
   #end
   
   def engagement
     returned_type = nil
-    if self.related_type = Engagement.name
+    if self.associatable_type = Engagement.name
       begin 
-         returned_type = Engagement.find(related_id)
+         returned_type = Engagement.find(associatable_id)
       rescue
         returned_type = nil
        end
@@ -61,6 +71,9 @@ class QrCode < ActiveRecord::Base
    "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code
   end
 
+  def qr_image_url
+    QrCodeImage.where(:uploadable_id=>self.id).url(:original)
+  end
 
   def scan
    unless code_type #singleUse

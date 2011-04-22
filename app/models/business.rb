@@ -18,12 +18,15 @@ class Business < ActiveRecord::Base
   has_many :measurement_types
   has_many :followers
   has_many :users, :through=>:followers
+  has_many :announcements
+  has_many :logs
+  
+  has_one :account_holder, :as=>:model
+  
   belongs_to :brand
   
   has_and_belongs_to_many :categories
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
-  
-  has_many :reports, :as => :reportable
 
   attr_accessor :categories_list
   

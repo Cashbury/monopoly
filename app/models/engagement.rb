@@ -19,6 +19,8 @@ class Engagement < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :engagement_type
   
+  has_many :qr_codes, :as=>:associatable
+  has_many :logs
   
   scope :stamps, where(:engagement_type => QrCode::STAMP) 
   

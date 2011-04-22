@@ -1,3 +1,3 @@
 class PlaceTypes < ActiveRecord::Base
-  belongs_to :place
+  has_many :places
 end

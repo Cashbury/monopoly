@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110421173921) do
+ActiveRecord::Schema.define(:version => 20110422140619) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -62,15 +62,27 @@ ActiveRecord::Schema.define(:version => 20110421173921) do
     t.integer "place_id"
   end
 
+  create_table "announcement_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "announcements", :force => true do |t|
+    t.integer  "announcement_type_id"
+    t.string   "channel_type"
+    t.integer  "business_id"
+    t.text     "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "brands", :force => true do |t|
     t.string   "name"
     t.text     "description"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "photo_file_name"
-    t.string   "photo_content_type"
-    t.integer  "photo_file_size"
   end
 
   create_table "businesses", :force => true do |t|
@@ -285,18 +297,6 @@ ActiveRecord::Schema.define(:version => 20110421173921) do
 
   add_index "measurement_types", ["business_id"], :name => "index_measurement_types_on_business_id"
 
-  create_table "newsletters", :force => true do |t|
-    t.boolean  "letter_type"
-    t.string   "name"
-    t.string   "city"
-    t.string   "country"
-    t.string   "email"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "newsletters", ["email"], :name => "index_newsletters_on_email", :unique => true
-
   create_table "open_hours", :force => true do |t|
     t.integer  "day_no"
     t.datetime "from"
@@ -323,6 +323,7 @@ ActiveRecord::Schema.define(:version => 20110421173921) do
     t.integer  "place_type_id"
     t.boolean  "is_user_defined"
     t.string   "street_address"
+    t.integer  "address_id"
   end
 
   add_index "places", ["business_id"], :name => "index_places_on_business_id"
@@ -363,9 +364,9 @@ ActiveRecord::Schema.define(:version => 20110421173921) do
     t.datetime "updated_at"
     t.boolean  "code_type"
     t.boolean  "status"
-    t.boolean  "exported",        :default => false
-    t.integer  "associated_id"
-    t.string   "associated_type"
+    t.boolean  "exported",          :default => false
+    t.integer  "associatable_id"
+    t.string   "associatable_type"
   end
 
   add_index "qr_codes", ["hash_code"], :name => "index_qr_codes_on_hash_code"
@@ -435,17 +436,6 @@ ActiveRecord::Schema.define(:version => 20110421173921) do
     t.text     "description"
     t.string   "title"
     t.string   "tag"
-  end
-
-  create_table "tmp_uploads", :force => true do |t|
-    t.integer  "uploadable_id"
-    t.string   "uploadable_type"
-    t.string   "photo_file_name"
-    t.string   "photo_content_type"
-    t.integer  "photo_file_size"
-    t.string   "upload_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "transaction_types", :force => true do |t|
