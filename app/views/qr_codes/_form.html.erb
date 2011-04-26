@@ -15,8 +15,8 @@
 
 
   <div class="field">
-    <%= f.label :related_id %><br />
-    <%= f.collection_select :related_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
+    <%= f.label :associatable_id %><br />
+    <%= f.collection_select :associatable_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
   </div>
 
    <div class="field">
