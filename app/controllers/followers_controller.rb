@@ -5,7 +5,7 @@ class FollowersController < ApplicationController
   end
 
   def show
-    @newsletter = Newsletter.find(params[:id])
+    @follower = Follower.find(params[:id])
   end
 
   def new
@@ -13,8 +13,8 @@ class FollowersController < ApplicationController
   end
 
   def create
-    @newsletter = Newsletter.new(params[:newsletter])
-    if @newsletter.save
+    @follower = Follower.new(params[:follower])
+    if @follower.save
       flash[:notice] = "Thank you registering in beta program !."
       redirect_to :action=>'index'
     else
@@ -23,23 +23,23 @@ class FollowersController < ApplicationController
   end
 
   def edit
-    @newsletter = Newsletter.find(params[:id])
+    @follower = Follower.find(params[:id])
   end
 
   def update
-    @newsletter = Newsletter.find(params[:id])
-    if @newsletter.update_attributes(params[:newsletter])
-      flash[:notice] = "Successfully updated newsletter."
-      redirect_to newsletter_url
+    @follower = Follower.find(params[:id])
+    if @follower.update_attributes(params[:follower])
+      flash[:notice] = "Successfully updated follower."
+      redirect_to follower_url
     else
       render :action => 'edit'
     end
   end
 
   def destroy
-    @newsletter = Newsletter.find(params[:id])
-    @newsletter.destroy
-    flash[:notice] = "Successfully destroyed newsletter."
-    redirect_to newsletters_url
+    @follower = Follower.find(params[:id])
+    @follower.destroy
+    flash[:notice] = "Successfully destroyed follower."
+    redirect_to follower_url
   end
 end

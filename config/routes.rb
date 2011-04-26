@@ -62,8 +62,7 @@ Kazdoor::Application.routes.draw do
   resources :print_jobs
 
   resources :brands
-
-  resources :newsletters
+  
   resources :qr_codes do
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"

@@ -1,20 +1,21 @@
-<% title "Newsletter" %>
+<% title "Follower" %>
+
 
 <p>
-  <strong>Letter Type:</strong>
-  <%= @newsletter.letter_type %>
-</p>
-<p>
-  <strong>Name:</strong>
-  <%= @newsletter.name %>
+  <strong>Business Name:</strong>
+  <%= @follower.biz_name %>
 </p>
 <p>
   <strong>Email:</strong>
-  <%= @newsletter.email %>
+  <%= @follower.user_email %>
 </p>
-
+city
 <p>
-  <%= link_to "Edit", edit_newsletter_path(@newsletter) %> |
-  <%= link_to "Destroy", @newsletter, :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", newsletters_path %>
+  <strong>City:</strong>
+  <%= @follower.city %>
+</p>
+<p>
+  <%= link_to "Edit", edit_follower_path(@follower) %> |
+  <%= link_to "Destroy", @follower, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", followers_path %>
 </p>
