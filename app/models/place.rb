@@ -28,9 +28,15 @@ class Place < ActiveRecord::Base
   has_many :open_hours
   has_many :followers, :as=>:followed
   
-  attr_accessible :name, :long, :lat, :description, :business
+  attr_accessible :name, :long, :lat, :description, :business, :time_zone
   accepts_nested_attributes_for :address
 
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
+  
+  
+  def is_open?
+    current_datetime=DateTime.now.in_time_zone(self.time_zone)
+    !self.open_hours.where(["open_hours.from <= ? and open_hours.to >=?", current_datetime, current_datetime]).empty?
+  end
 end
