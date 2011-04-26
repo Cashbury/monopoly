@@ -26,6 +26,7 @@ class Place < ActiveRecord::Base
   
   has_many :qr_codes,:as=>:associatable
   has_many :open_hours
+  has_many :followers, :as=>:followed
   
   attr_accessible :name, :long, :lat, :description, :business
   validates_presence_of :name, :long, :lat 

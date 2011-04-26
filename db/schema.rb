@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110422140619) do
+ActiveRecord::Schema.define(:version => 20110426120228) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -91,6 +91,8 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "brand_id"
+    t.integer  "mailing_address_id"
+    t.integer  "billing_address_id"
   end
 
   add_index "businesses", ["brand_id"], :name => "index_businesses_on_brand_id"
@@ -186,11 +188,12 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
 
   create_table "followers", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "business_id"
     t.string   "user_email"
     t.string   "user_phone_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "followed_id"
+    t.string   "followed_type"
   end
 
   create_table "images", :force => true do |t|
@@ -211,6 +214,8 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
     t.boolean  "state"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "hash_code"
+    t.integer  "to_user_id"
   end
 
   add_index "invitations", ["to_email"], :name => "index_invitations_on_to_email"
@@ -221,7 +226,6 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
     t.string   "description"
     t.decimal  "price",        :precision => 10, :scale => 3
     t.integer  "business_id"
-    t.string   "photo"
     t.boolean  "available"
     t.date     "expiry_date"
     t.datetime "created_at"
@@ -322,7 +326,6 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
     t.datetime "updated_at"
     t.integer  "place_type_id"
     t.boolean  "is_user_defined"
-    t.string   "street_address"
     t.integer  "address_id"
   end
 
@@ -418,6 +421,8 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
     t.integer  "business_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "expiry_date"
+    t.decimal  "expiry_interval", :precision => 10, :scale => 0
   end
 
   create_table "targets_users", :id => false, :force => true do |t|
@@ -449,7 +454,7 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
   create_table "transactions", :force => true do |t|
     t.integer  "from_account"
     t.integer  "to_account"
-    t.decimal  "amount",                      :precision => 20, :scale => 3
+    t.decimal  "before_fees_amount",          :precision => 20, :scale => 3
     t.string   "account_type"
     t.boolean  "is_money"
     t.datetime "created_at"
@@ -461,6 +466,8 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
     t.string   "currency"
     t.text     "note"
     t.integer  "transaction_type_id"
+    t.decimal  "after_fees_amount",           :precision => 20, :scale => 3
+    t.decimal  "transaction_fees",            :precision => 20, :scale => 3
   end
 
   create_table "users", :force => true do |t|
@@ -500,13 +507,5 @@ ActiveRecord::Schema.define(:version => 20110422140619) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  create_table "users_referrals", :force => true do |t|
-    t.integer "referrer_id"
-    t.integer "referred_id"
-  end
-
-  add_index "users_referrals", ["referred_id"], :name => "index_users_referrals_on_referred_id"
-  add_index "users_referrals", ["referrer_id"], :name => "index_users_referrals_on_referrer_id"
 
 end

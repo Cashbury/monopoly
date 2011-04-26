@@ -34,13 +34,17 @@ class User < ActiveRecord::Base
   has_many :followers
   has_many :businesses, :through=>:followers
   has_many :invitations, :foreign_key=>"from_user_id"
+  
   has_many :employees #same user with different positions
   has_many :logs
+  has_many :followers, :as=>:followed
   
   has_one :qr_code, :as=>:associatable
   has_one :account_holder, :as=>:model
+  has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
+  has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   has_and_belongs_to_many :rewards
-  
+
 	def has_account_with_campaign?(campaign_id)
 	  acch=self.account_holder
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
