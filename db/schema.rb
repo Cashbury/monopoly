@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110426132926) do
+ActiveRecord::Schema.define(:version => 20110426155923) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -329,6 +329,7 @@ ActiveRecord::Schema.define(:version => 20110426132926) do
     t.integer  "place_type_id"
     t.boolean  "is_user_defined"
     t.integer  "address_id"
+    t.string   "time_zone"
   end
 
   add_index "places", ["business_id"], :name => "index_places_on_business_id"

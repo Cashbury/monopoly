@@ -51,32 +51,9 @@
       <small>Optional, comma separated</small>
     </p>
     <p>
-	    <%= builder.label :address1 %>
-	    <%= builder.text_field :address1 %>
-	  </p>
-
-    <p>
-	    <%= builder.label :address2 %>
-	    <%= builder.text_field :address2 %>
-	  </p>
-
-    <p>
-	    <%= builder.label :neighborhood %>
-	    <%= builder.text_field :neighborhood %>
-	  </p>
-    <p>
-	    <%= builder.label :city %>
-	    <%= builder.text_field :city %>
-	  </p>
-    <p>
-	    <%= builder.label :zipcode %>
-	    <%= builder.text_field :zipcode %>
-    </p>  
-    <p>
-	    <%= builder.label :country %>
-			<%= builder.select :country, Carmen.countries %>
-    </p>  
-    
+      <%= builder.label :time_zone %>
+      <%= builder.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+    </p>
     <p>
 	    <%= builder.label :longitude %>
 	    <%= builder.text_field :long %>
