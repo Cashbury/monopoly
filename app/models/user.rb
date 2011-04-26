@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me,:full_name,:authentication_token
+  attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,:authentication_token
    
   has_many :templates
   has_many :legal_ids
@@ -116,4 +116,7 @@ class User < ActiveRecord::Base
     reset_authentication_token! if authentication_token.blank?
   end
   
+  def full_name
+    "#{self.first_name} #{self.last_name}"
+  end
 end

@@ -25,7 +25,7 @@
 	<table width="100%" border="1" cellspacing="0" cellpadding="0">
 	  <tr>
 	    <th>Name</th>
-	    <th>Amount</th>
+	    <th>Gained Amount</th>
 	    <th>Amount Type</th>
 	    <th>Engagement</th>
 	    <th>Campaign</th>
@@ -36,15 +36,15 @@
 	  </tr>
   <% for result in @results %>
     <tr>
-      <td><%= result.full_name   %></td>
-      <td><%= result.amount      %></td>
-      <td><%= result.amount_type %></td>
-      <td><%= result.ename       %></td>
-      <td><%= result.cname       %></td>
-      <td><%= result.program_name%></td>
-      <td><%= result.bname       %></td>
-      <td><%= result.pname       %></td>
-      <td><%= result.created_on  %></td>
+      <td><%= result.first_name+" "+result.last_name  %></td>
+      <td><%= result.gained_amount      %></td>
+      <td><%= result.amount_type        %></td>
+      <td><%= result.ename              %></td>
+      <td><%= result.cname              %></td>
+      <td><%= result.program_name       %></td>
+      <td><%= result.bname              %></td>
+      <td><%= result.pname              %></td>
+      <td><%= result.created_on         %></td>
     </tr>
   <% end %>
 </table>

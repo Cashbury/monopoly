@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110426120228) do
+ActiveRecord::Schema.define(:version => 20110426155923) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -194,6 +194,8 @@ ActiveRecord::Schema.define(:version => 20110426120228) do
     t.datetime "updated_at"
     t.integer  "followed_id"
     t.string   "followed_type"
+    t.string   "biz_name"
+    t.string   "city"
   end
 
   create_table "images", :force => true do |t|
@@ -327,6 +329,7 @@ ActiveRecord::Schema.define(:version => 20110426120228) do
     t.integer  "place_type_id"
     t.boolean  "is_user_defined"
     t.integer  "address_id"
+    t.string   "time_zone"
   end
 
   add_index "places", ["business_id"], :name => "index_places_on_business_id"
@@ -386,6 +389,7 @@ ActiveRecord::Schema.define(:version => 20110426120228) do
     t.integer  "campaign_id"
     t.integer  "max_claim_per_user"
     t.boolean  "is_active"
+    t.integer  "product_id"
   end
 
   add_index "rewards", ["campaign_id"], :name => "index_rewards_on_campaign_id"

@@ -36,14 +36,14 @@ class Log < ActiveRecord::Base
     @params.insert(0, @filters.join(" AND ")) 
     if options[:type]==LOG_TYPES[:snap]
       @results = Log.snaps_logs
-                    .select("logs.*,engagements.name as ename,businesses.name as bname,engagements.amount,places.name as pname,users.full_name,program_types.name as program_name,campaigns.name as cname,measurement_types.name as amount_type")
+                    .select("logs.*,engagements.name as ename,businesses.name as bname,engagements.amount,places.name as pname,users.first_name,users.last_name,program_types.name as program_name,campaigns.name as cname,measurement_types.name as amount_type")
                     .joins([:user,"LEFT OUTER JOIN places ON logs.place_id=places.id",:engagement=>[:campaign=>[:measurement_type,:program=>[:program_type,:business]]]])
                     .where(@params)
                     .order("logs.created_on DESC")
                     .paginate(:page => options[:page],:per_page => per_page )
     else
       @results = Log.snaps_logs
-                    .select("users.full_name,count(*) as total,businesses.name as bname,places.name as pname")
+                    .select("users.first_name,users.last_name,count(*) as total,businesses.name as bname,places.name as pname")
                     .joins([:user,"LEFT OUTER JOIN places ON logs.place_id=places.id INNER JOIN businesses on logs.business_id = businesses.id"])
                     .group(:user_id,:place_id)
                     .where(@params)
