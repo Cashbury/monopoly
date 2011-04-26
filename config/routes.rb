@@ -81,7 +81,7 @@ Kazdoor::Application.routes.draw do
     post "spend", :on => :collection
   end
   
-  resources :categories ,:newsletters
+  resources :categories ,:followers
 
   
   resources :accounts do
@@ -114,8 +114,8 @@ Kazdoor::Application.routes.draw do
 	#   match "/places"             						=> "places#index"
   match "/engagements/:id"    						=> "engagements#display"
   match "/engagements/:id/change_status"   => "engagements#change_status"
-  match '/foryou'             						=> "newsletters#index" ,:as =>:foryou
-  match '/foryourbiz'         						=> "newsletters#new"   , :as =>:foryourbiz
+  match '/foryou'             						=> "followers#index" ,:as =>:foryou
+  match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
   
   #devise_for :users
   
@@ -169,7 +169,7 @@ Kazdoor::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   #root :to => "businesses#index"
-  root :to =>"newsletters#index"
+  root :to =>"followers#index"
 
   # See how all your routes lay out with "rake routes"
 

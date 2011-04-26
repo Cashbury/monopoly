@@ -1,8 +1,7 @@
-class NewslettersController < ApplicationController
+class FollowersController < ApplicationController
   layout "frontend"
   
   def index
-    @newsletters = Newsletter.all
   end
 
   def show
@@ -10,7 +9,7 @@ class NewslettersController < ApplicationController
   end
 
   def new
-    @newsletter = Newsletter.new
+    @follower = Follower.new
   end
 
   def create
