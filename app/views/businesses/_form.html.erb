@@ -62,6 +62,14 @@
 	    <%= builder.label :latitude %>
 	    <%= builder.text_field :lat %>
 	  </p>
+	  <%  builder.fields_for :address do |address_form| %>
+    <h3>Add an Address</h3>
+	  <p>
+      <%= address_form.label :city %>
+      <%= address_form.text_field :city %>
+    </p>
+	 
+	  <% end %>
 
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>

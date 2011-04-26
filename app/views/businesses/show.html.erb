@@ -33,11 +33,7 @@
     </tr>  
 	  <% for place in @business.places %>
     <tr>
-      <td><%= place.name %></td>    
-      <td><%= place.address1.to_s + " "+ place.address2.to_s %></td>    
-      <td><%= place.neighborhood %></td>    
-      <td><%= place.city %></td>    
-      <td><%= place.zipcode %></td>    
+      <td><%= place.name %></td> 
     </tr>
 	  <% end %>  
   </table>

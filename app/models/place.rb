@@ -18,7 +18,7 @@ class Place < ActiveRecord::Base
 	acts_as_taggable
   belongs_to :business
   belongs_to :place_type
-  has_one :address
+  belongs_to :address
   
   has_and_belongs_to_many :engagements
   has_and_belongs_to_many :rewards
@@ -29,6 +29,8 @@ class Place < ActiveRecord::Base
   has_many :followers, :as=>:followed
   
   attr_accessible :name, :long, :lat, :description, :business
+  accepts_nested_attributes_for :address
+
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
 end
