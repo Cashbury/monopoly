@@ -17,7 +17,8 @@
     <%= f.text_area :description %>
   </p>
   <p>
-    <%= f.time_zone_select :time_zone, TimeZone.all_zones %>
+    <%= f.label :time_zone %><br />
+    <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
   </p>
   <p>
     <%= f.label 'Keywords' %><br />
