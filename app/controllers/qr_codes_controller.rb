@@ -46,7 +46,7 @@ class QrCodesController < ApplicationController
 
   # POST /qr_codes
   # POST /qr_codes.xml
-  def create
+  def create   
     @qr_code = QrCode.new(params[:qr_code])
 
     respond_to do |format|
@@ -104,7 +104,7 @@ class QrCodesController < ApplicationController
       else
         #when everything is ok
         quantity.times{
-          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:related_id=>params[:engagement_id].to_i}
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:engagement_id].to_i}
         }
         if QrCode.create(codes)
           redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
@@ -147,7 +147,6 @@ class QrCodesController < ApplicationController
 
   def update_businesses
     @businesses = Business.where(:brand_id=> params[:id]) 
-    puts "@business.size = #{@businesses.count}"
     respond_to do |format|
       format.js 
     end

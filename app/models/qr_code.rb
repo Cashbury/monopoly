@@ -19,11 +19,11 @@ class QrCode < ActiveRecord::Base
 
   before_create :encrypt_code
   before_destroy :destroy_image
-  after_save :upload_image
+  after_create :upload_image
   scope :associated_with_engagements , where(:associatable_type=>"Engagement")
   
   def destroy_image
-    self.image.destroy
+    self.qr_code_image.destroy
   end
 
   def set_qr_code_image
