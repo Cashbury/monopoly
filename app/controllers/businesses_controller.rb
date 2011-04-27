@@ -26,11 +26,13 @@ class BusinessesController < ApplicationController
     @business = Business.new
     @categories = Category.all
     3.times { @business.places.build}
+     @business.places.each do | place|
+       place.address = Address.new
+     end
   end
   
   def create
     @business = Business.new(params[:business])
-    puts "*****************************Params #{params.inspect}"
     set_tag_lists_for_business_places(@business)   
     if @business.save
       flash[:notice] = "Successfully created business."

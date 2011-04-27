@@ -25,7 +25,7 @@ class Reward < ActiveRecord::Base
   
   #after_save :update_categories
   validates_presence_of :campaign_id,:name,:needed_amount,:description,:legal_term
-  validates_numericality_of :needed_amount,:claim
+  validates_numericality_of :needed_amount,:max_claim
   
   #  private
   # def update_categories

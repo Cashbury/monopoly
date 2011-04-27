@@ -52,8 +52,7 @@ class RewardsController < ApplicationController
   end
   
   def update_businesses
-    @businesses = Business.where(:brand_id=> params[:id]) 
-    puts "@business.size = #{@businesses.count}"
+    @businesses = Business.where(:brand_id=> params[:id])
     respond_to do |format|
       format.js 
     end
