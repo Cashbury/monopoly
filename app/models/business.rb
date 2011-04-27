@@ -33,6 +33,7 @@ class Business < ActiveRecord::Base
   
   after_save :update_categories
 	validates :tag_list, :presence=>true
+	validates :brand_id, :presence=>true , :numericality => true 
   private
   def update_categories
     categories.delete_all

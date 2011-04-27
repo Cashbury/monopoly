@@ -10,7 +10,7 @@ class Campaign < ActiveRecord::Base
 	validates_presence_of :name,:measurement_type_id,:program_id
 	validates_format_of :start_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
 	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
-	validates_numericality_of :initial_points
+	validates_numericality_of :initial_amount
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
 	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
