@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  
+  resources :transaction_types
 	devise_for :users, :controllers => { :sessions => "users/sessions", :registrations=>"users/registrations", :password=>"users/passwords" }
 	
 	devise_scope :user do
@@ -17,9 +19,6 @@ Kazdoor::Application.routes.draw do
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
-		resources :programs do  
-			get "/enroll.:format" , :action=>:enroll, :on =>:member
-		end
 	end
 	
   resources :users_snaps

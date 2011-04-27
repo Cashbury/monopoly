@@ -1,0 +1,27 @@
+<% title "Editing TransactionType" %>
+
+<%= form_for(@transaction_type,:html => { :multipart => true }) do |f| %>
+  <% if @transaction_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@transaction_type.errors.count, "error") %> prohibited this transaction type from being saved:</h2>
+
+      <ul>
+      <% @transaction_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label :fee_amount %><br />
+    <%= f.text_field :fee_amount %>
+  </div>
+  <div class="field">
+    <%= f.label :fee_percentage %><br />
+    <%= f.text_field :fee_percentage %> %
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+<%= link_to 'Back', transaction_types_path %>

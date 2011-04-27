@@ -1,0 +1,19 @@
+<% title "Transaction Types" %>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Fee Amount</th>
+    <th>Fee Percentage</th>
+    <th></th>
+  </tr>
+
+<% @transaction_types.each do |transaction_type| %>
+  <tr>
+    <td><%= transaction_type.name %></td>
+    <td><%= transaction_type.fee_amount %></td>
+    <td><%= transaction_type.fee_percentage %></td>
+    <td><%= link_to 'Edit', edit_transaction_type_path(transaction_type) %></td>
+  </tr>
+<% end %>
+</table>

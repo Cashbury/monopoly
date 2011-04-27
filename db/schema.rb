@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110426155923) do
+ActiveRecord::Schema.define(:version => 20110427113946) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -40,6 +40,15 @@ ActiveRecord::Schema.define(:version => 20110426155923) do
 
   add_index "accounts", ["account_holder_id"], :name => "index_accounts_on_account_holder_id"
   add_index "accounts", ["campaign_id"], :name => "index_accounts_on_campaign_id"
+
+  create_table "actions", :force => true do |t|
+    t.string   "name"
+    t.integer  "transaction_type_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "actions", ["name"], :name => "index_actions_on_name"
 
   create_table "addresses", :force => true do |t|
     t.string   "country"
@@ -269,7 +278,7 @@ ActiveRecord::Schema.define(:version => 20110426155923) do
   create_table "logs", :force => true do |t|
     t.integer  "user_id"
     t.integer  "reward_id"
-    t.string   "log_type"
+    t.string   "action_id"
     t.boolean  "is_processed"
     t.integer  "place_id"
     t.integer  "engagement_id"
@@ -287,11 +296,12 @@ ActiveRecord::Schema.define(:version => 20110426155923) do
     t.integer  "transaction_id"
   end
 
+  add_index "logs", ["action_id"], :name => "index_logs_on_action_id"
+  add_index "logs", ["action_id"], :name => "index_logs_on_log_type"
   add_index "logs", ["created_at"], :name => "index_logs_on_created_at"
   add_index "logs", ["created_on"], :name => "index_logs_on_created_on"
   add_index "logs", ["engagement_id"], :name => "index_logs_on_engagement_id"
-  add_index "logs", ["log_type"], :name => "index_logs_on_log_type"
-  add_index "logs", ["user_id", "reward_id", "log_type"], :name => "index_logs_on_user_id_and_reward_id_and_log_type"
+  add_index "logs", ["user_id", "reward_id", "action_id"], :name => "index_logs_on_user_id_and_reward_id_and_log_type"
   add_index "logs", ["user_id"], :name => "index_logs_on_user_id"
 
   create_table "measurement_types", :force => true do |t|
@@ -311,6 +321,8 @@ ActiveRecord::Schema.define(:version => 20110426155923) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "open_hours", ["day_no", "from", "to"], :name => "index_open_hours_on_day_no_and_from_and_to"
 
   create_table "place_types", :force => true do |t|
     t.string   "name"
