@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  
+  resources :transaction_types
 	devise_for :users, :controllers => { :sessions => "users/sessions", :registrations=>"users/registrations", :password=>"users/passwords" }
 	
 	devise_scope :user do

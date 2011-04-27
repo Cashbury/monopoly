@@ -11,7 +11,7 @@ class UsersSnapsController < ApplicationController
                         :from_date   => @from_date,
                         :to_date     => @to_date,
 											  :page        => @page,
-												:type        =>Log::LOG_TYPES[:snap]
+												:type        =>Log::SEARCH_TYPES[:engagements]
   end
   
 end
