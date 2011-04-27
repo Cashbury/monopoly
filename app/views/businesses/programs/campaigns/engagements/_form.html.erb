@@ -17,8 +17,8 @@
   </p>
   
   <p>
-    <%= f.label :state %><br />
-    <%= f.select :state, options_for_select([ ['started', 'true'],['stopped','false']],@engagement.state)%>
+    <%= f.label :is_started %><br />
+    <%= f.select :is_started, options_for_select([ ['started', 'true'],['stopped','false']],@engagement.is_started)%>
   </p>
   <p>
     <%= f.label :amount %><br />

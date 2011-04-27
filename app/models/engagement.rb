@@ -40,15 +40,14 @@ class Engagement < ActiveRecord::Base
     ["deployed", "paused", "offline"]
   end
   
-  STATES={true => "started",false => "stopped"}
   
   def start
-    self.state=true
+    self.is_started =true
     save!
   end
   
   def stop
-    self.state=false
+    self.is_started=false
     save!
   end
 end
