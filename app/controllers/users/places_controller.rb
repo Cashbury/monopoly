@@ -41,7 +41,7 @@ class Users::PlacesController < Users::BaseController
 				normal_rewards=programs.joins(:campaigns=>:rewards).select("rewards.*,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from logs where logs.reward_id=rewards.id and logs.user_id=#{current_user.id}) As redeemCount").where("#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date")
 				normal_rewards.each do |reward|
 					attributes=reward.attributes
-					if attributes["redeemCount"].to_i < attributes["claim"].to_i 
+					if attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i && attributes["max_claim"].to_i  
 						@result["places"][index]["rewards"] << attributes
 					end
 				end
