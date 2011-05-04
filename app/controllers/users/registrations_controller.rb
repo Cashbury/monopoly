@@ -6,7 +6,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
 				@user = User.new(:email=>params[:email],
                          :password=>params[:password],
                          :password_confirmation =>params[:password],
-                         :full_name=>params[:full_name])
+                         :first_name=>params[:first_name],
+                         :last_name=>params[:last_name])
 				if @user.save!
 					render :xml => @user.to_xml(:only=>[:email]), :status=>200
 				else

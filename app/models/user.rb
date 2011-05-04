@@ -54,14 +54,14 @@ class User < ActiveRecord::Base
 	  begin
       ids=places.collect{|p| p.business_id}
       businesses=Business.where(:id=>ids)
-      account_holder=self.account_holder
+      accholder=self.account_holder
       businesses.each do |business|
         business.programs.each do |program|
           program.campaigns.each do |campaign|
             unless self.has_account_with_campaign?(campaign.id)
-              account_holder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless account_holder
-              account_holder.accounts << Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_points,:measurement_type=>campaign.measurement_type)
-              account_holder.save!
+              accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless accholder
+              accholder.accounts << Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
+              accholder.save!
             end
           end
         end
@@ -79,17 +79,17 @@ class User < ActiveRecord::Base
 	def snapped_qrcode(qr_code,place_id,lat,lng)
     engagement=Engagement.find(qr_code.related_id)
     campaign=engagement.campaign
-    account_holder=self.account_holder
-    account=account_holder.accounts.where(:campaign_id=>campaign.id).first unless account_holder.nil?
+    accholder=self.account_holder
+    account=accholder.accounts.where(:campaign_id=>campaign.id).first unless accholder.nil?
     
     date=Date.today.to_s
     Account.transaction do
       qr_code.scan
       if account.nil?
-        account_holder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless account_holder
-        account=Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_points,:measurement_type=>campaign.measurement_type)
-        account_holder.accounts << account
-        account_holder.save!
+        accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless accholder
+        account=Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
+        accholder.accounts << account
+        accholder.save!
       end
       account.increment!(:amount,engagement.amount)
       log_group=LogGroup.create!(:created_on=>date)

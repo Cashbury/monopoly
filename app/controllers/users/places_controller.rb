@@ -33,7 +33,7 @@ class Users::PlacesController < Users::BaseController
 	    	@result["places"][index]["is_open"]   =place.is_open?
 	    	@result["places"][index]["open-hours"]=place.open_hours
 	    	@result["places"][index]["accounts"]  =[]
-				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder]).select("accounts.campaign_id,accounts.amount,accounts.measurement_type_id").where("account_holders.model_id=#{current_user.id} && (#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date)")
+				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder]).select("accounts.campaign_id,accounts.amount,accounts.measurement_type_id").where("account_holders.model_id=#{current_user.id}")
 				accounts.each do |account|
 					@result["places"][index]["accounts"] << account.attributes
 				end
