@@ -10,17 +10,18 @@ class Users::SessionsController < Devise::SessionsController
     				@user = User.new(:email=>params[:email],
                            	 :password=>params[:password],
                              :password_confirmation =>params[:password],
-                             :full_name=>params[:full_name])
+                             :first_name=>params[:first_name],
+                             :last_name=>params[:last_name])
 						if @user.confirm!
 							@user.ensure_authentication_token!
 							sign_in @user
-							render :xml => current_user.to_xml(:only=>[:id,:email,:full_name,:authentication_token]),:status=>200
+							render_success_with_user
 						else
 							render :xml => {:error=>@user.errors.full_messages.join(',')},:status=>200
 						end
 					elsif is_valid_user
 						sign_in @user
-						render :xml => current_user.to_xml(:only=>[:id,:email,:full_name,:authentication_token]),:status=>200
+						render_success_with_user
 					else
 						render :xml => {:error=>'Invalid email/password'},:status=>200
 					end
@@ -29,7 +30,7 @@ class Users::SessionsController < Devise::SessionsController
       	else
         	@user.reset_authentication_token!
 					sign_in @user
-					render :xml => current_user.to_xml(:only=>[:id,:email,:full_name,:authentication_token] ),:status=>200   										   
+					render_success_with_user   										   
 				end  
 			}  
 		end  
@@ -53,5 +54,9 @@ class Users::SessionsController < Devise::SessionsController
 			 	end
 			}  
 		end   
+  end
+  
+  def render_success_with_user
+    render :xml => current_user.to_xml(:only=>[:id,:email,:first_name,:last_name,:authentication_token] ),:status=>200
   end
 end

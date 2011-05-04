@@ -8,7 +8,7 @@ class Log < ActiveRecord::Base
 	belongs_to :transaction
 	belongs_to :action
 	 
-	validates_numericality_of :amount, :frequency, :lat, :lng ,:allow_nil => true
+	validates_numericality_of :gained_amount, :frequency, :lat, :lng ,:allow_nil => true
 	
 	LOG_ACTIONS={:engagement=>"Engagement", :redeem=>"Redeem"}
   SEARCH_TYPES={:engagements=>0,:top_loyal=>1}

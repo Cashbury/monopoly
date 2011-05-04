@@ -21,12 +21,6 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
 
   add_index "account_holders", ["model_type", "model_id"], :name => "index_account_holders_on_model_type_and_model_id"
 
-  create_table "account_types", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "accounts", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -36,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
     t.decimal  "amount",              :precision => 20, :scale => 3
     t.boolean  "is_money"
     t.boolean  "is_external"
+    t.integer  "payment_gateway_id"
     t.integer  "program_id"
     t.integer  "business_id"
   end
@@ -115,15 +110,16 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
   end
 
   create_table "campaigns", :force => true do |t|
-    t.string   "name",                               :null => false
+    t.string   "name",                                                                :null => false
     t.date     "start_date"
     t.date     "end_date"
-    t.integer  "initial_amount",      :default => 0
+    t.decimal  "initial_amount",      :precision => 20, :scale => 3, :default => 0.0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "program_id"
     t.integer  "measurement_type_id"
     t.string   "state"
+    t.decimal  "initial_biz_amount",  :precision => 20, :scale => 3
   end
 
   add_index "campaigns", ["measurement_type_id"], :name => "index_campaigns_on_measurement_type_id"
@@ -216,7 +212,6 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
-    t.string   "upload_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -328,6 +323,12 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
   end
 
   add_index "open_hours", ["day_no", "from", "to"], :name => "index_open_hours_on_day_no_and_from_and_to"
+
+  create_table "payment_gateways", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "place_types", :force => true do |t|
     t.string   "name"
