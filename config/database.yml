@@ -26,7 +26,7 @@ test:
 
 production:
   adapter: mysql
-  host: datastore.spinninghats.com
+  host: localhost
   database: datastore1
   username: user961
   password: user961lb

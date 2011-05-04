@@ -10,7 +10,8 @@ class Users::SessionsController < Devise::SessionsController
     				@user = User.new(:email=>params[:email],
                            	 :password=>params[:password],
                              :password_confirmation =>params[:password],
-                             :full_name=>params[:full_name])
+                             :first_name=>params[:first_name],
+                             :last_name=>params[:last_name])
 						if @user.confirm!
 							@user.ensure_authentication_token!
 							sign_in @user
