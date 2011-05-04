@@ -30,9 +30,9 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
     t.decimal  "amount",              :precision => 20, :scale => 3
     t.boolean  "is_money"
     t.boolean  "is_external"
-    t.integer  "payment_gateway_id"
     t.integer  "program_id"
     t.integer  "business_id"
+    t.integer  "payment_gateway_id"
   end
 
   add_index "accounts", ["account_holder_id"], :name => "index_accounts_on_account_holder_id"
