@@ -20,6 +20,7 @@ class Business < ActiveRecord::Base
   has_many :users, :through=>:followers
   has_many :announcements
   has_many :logs
+  has_many :legal_ids , :as=>:associatable
   
   has_one :account_holder, :as=>:model
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
