@@ -30,9 +30,14 @@ class Campaign < ActiveRecord::Base
 	
 	private
 	def create_campaign_business_account
+	  puts "create_campaign_business_account****************************************8"
+	  puts self.inspect
 	  account_holder  = AccountHolder.where(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first 
-	  account_holder  = AccountHolder.create!(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first if !account_holder
-	  account=Account.create!(:campaign_id=>self.id,:amount=>self.initial_business_amount,:measurement_type=>self.measurement_type)
-        
+	  if !account_holder
+	    puts "inside if *************************************************"
+	    account_holder  = AccountHolder.create!(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s) 
+	    puts "#{account_holder.inspect}"
+	  end
+	  account = Account.create!(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder => account_holder)
   end
 end
