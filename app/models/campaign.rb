@@ -13,6 +13,8 @@ class Campaign < ActiveRecord::Base
 	validates_numericality_of :initial_amount
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
+	after_create :create_campaign_business_account
+	
 	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
 	
 	def has_auto_unlock_reward?
@@ -23,4 +25,12 @@ class Campaign < ActiveRecord::Base
 	  date=Date.today
 	  date > start_date && date < end_date 
 	end
+	
+	private
+	def create_campaign_business_account
+	  account_holder  = AccountHolder.where(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first 
+	  account_holder  = AccountHolder.create!(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first if !account_holder
+	  account=Account.create!(:campaign_id=>self.id,:amount=>self.initial_business_amount,:measurement_type=>self.measurement_type)
+        
+  end
 end

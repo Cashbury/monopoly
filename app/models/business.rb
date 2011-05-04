@@ -32,7 +32,9 @@ class Business < ActiveRecord::Base
   
   attr_accessor :categories_list
   
+  before_save :add_business_name_to_business_tag_lists
   after_save :update_categories
+  
 	validates :tag_list, :presence=>true
 	validates :brand_id, :presence=>true , :numericality => true 
   private
@@ -40,5 +42,8 @@ class Business < ActiveRecord::Base
     categories.delete_all
     selected_categories = categories_list.nil? ? [] : categories_list.keys.collect{|id| Category.find(id)}
     selected_categories.each {|category| self.categories << category}
+  end
+  def add_business_name_to_business_tag_lists
+    self.tag_list << self.name
   end
 end
