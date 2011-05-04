@@ -4,6 +4,6 @@ class RemoveUploadTypeColumnFromImages < ActiveRecord::Migration
   end
 
   def self.down
-    add_column :upload_type, :images, :string
+    add_column :images, :upload_type, :string
   end
 end

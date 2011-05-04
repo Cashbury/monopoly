@@ -32,6 +32,14 @@ class Place < ActiveRecord::Base
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
   
+  before_save :add_amenities_name_to_place_tag_lists
+  
+  private
+  def add_amenities_name_to_place_tag_lists
+    self.amenities.each do |amenity|
+      self.tag_list << amenity.name
+    end
+  end
   
   def is_open?
     current_datetime=DateTime.now.in_time_zone(self.time_zone)

@@ -20,6 +20,8 @@ class Reward < ActiveRecord::Base
   has_many :logs
   has_and_belongs_to_many :items
   has_and_belongs_to_many :users
+  has_and_belongs_to_many :enjoyed_users, :class_name=>"User" , :join_table => "users_enjoyed_rewards"
+
   
   #attr_accessor :places_list
   

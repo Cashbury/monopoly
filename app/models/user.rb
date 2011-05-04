@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,:authentication_token
    
   has_many :templates
-  has_many :legal_ids
+  has_many :legal_ids, :as=>:associatable
   has_many :followers
   has_many :businesses, :through=>:followers
   has_many :invitations, :foreign_key=>"from_user_id"
@@ -44,6 +44,7 @@ class User < ActiveRecord::Base
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   has_and_belongs_to_many :rewards
+  has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
 
 	def has_account_with_campaign?(campaign_id)
 	  acch=self.account_holder

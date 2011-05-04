@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110504114617) do
+ActiveRecord::Schema.define(:version => 20110504132847) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(:version => 20110504114617) do
     t.boolean  "is_money"
     t.boolean  "is_external"
     t.integer  "payment_gateway_id"
+    t.integer  "program_id"
+    t.integer  "business_id"
   end
 
   add_index "accounts", ["account_holder_id"], :name => "index_accounts_on_account_holder_id"
@@ -97,6 +99,7 @@ ActiveRecord::Schema.define(:version => 20110504114617) do
     t.integer  "brand_id"
     t.integer  "mailing_address_id"
     t.integer  "billing_address_id"
+    t.string   "country"
   end
 
   add_index "businesses", ["brand_id"], :name => "index_businesses_on_brand_id"
@@ -256,6 +259,8 @@ ActiveRecord::Schema.define(:version => 20110504114617) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
+    t.integer  "associatable_id"
+    t.string   "associatable_type"
   end
 
   create_table "legal_types", :force => true do |t|
@@ -343,6 +348,7 @@ ActiveRecord::Schema.define(:version => 20110504114617) do
     t.boolean  "is_user_defined"
     t.integer  "address_id"
     t.string   "time_zone"
+    t.integer  "user_id"
   end
 
   add_index "places", ["business_id"], :name => "index_places_on_business_id"
@@ -402,6 +408,8 @@ ActiveRecord::Schema.define(:version => 20110504114617) do
     t.integer  "campaign_id"
     t.integer  "max_claim_per_user"
     t.boolean  "is_active"
+    t.text     "heading1"
+    t.text     "heading2"
   end
 
   add_index "rewards", ["campaign_id"], :name => "index_rewards_on_campaign_id"
@@ -523,5 +531,12 @@ ActiveRecord::Schema.define(:version => 20110504114617) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "users_enjoyed_rewards", :id => false, :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "reward_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end
