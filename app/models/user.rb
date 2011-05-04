@@ -110,10 +110,6 @@ class User < ActiveRecord::Base
     [account,campaign,campaign.program,engagement.amount]
 	end
 	
-	def is_engaged_to?(business_id)
-		!self.user_actions.where(:business_id=>business_id).empty?
-	end
-	
 	def ensure_authentication_token!
     reset_authentication_token! if authentication_token.blank?
   end

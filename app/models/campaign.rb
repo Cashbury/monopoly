@@ -13,8 +13,6 @@ class Campaign < ActiveRecord::Base
 	validates_numericality_of :initial_amount
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
-	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
-	
 	after_initialize :init
 	
   def init

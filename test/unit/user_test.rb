@@ -43,7 +43,7 @@ class UserTest < ActiveSupport::TestCase
       @user=Factory.create(:user)
       @place=Factory.create(:place)
       program=Factory.create(:program,:business_id=>@place.business.id)
-      @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_points=>10)
+      @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_amount=>10)
       @engagement=Factory.create(:engagement,:campaign_id=>@campaign.id,:amount=>5)
       @qr_code=Factory.create(:qr_code,:related_id=>@engagement.id)
     end
