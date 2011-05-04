@@ -15,9 +15,11 @@ class Campaign < ActiveRecord::Base
 	
 	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
 	
-	def has_auto_unlock_reward?
-		!self.rewards.where(:auto_unlock=>true).empty?
-	end
+	after_initialize :init
+	
+  def init
+    self.initial_biz_amount ||= 10000 
+  end
 	
 	def is_running?
 	  date=Date.today

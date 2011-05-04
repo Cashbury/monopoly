@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
   belongs_to :account_holder
   belongs_to :campaign
   belongs_to :measurement_type
-  belongs_to :account_type
+  belongs_to :payment_gateway
   
   has_many :transactions, :foreign_key=>"from_account"
   

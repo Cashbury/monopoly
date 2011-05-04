@@ -81,6 +81,7 @@ class User < ActiveRecord::Base
     campaign=engagement.campaign
     account_holder=self.account_holder
     account=account_holder.accounts.where(:campaign_id=>campaign.id).first unless account_holder.nil?
+    
     date=Date.today.to_s
     Account.transaction do
       qr_code.scan
@@ -93,7 +94,7 @@ class User < ActiveRecord::Base
       account.increment!(:amount,engagement.amount)
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id =>self.id,
-                  :log_type      =>Log::LOG_TYPES[:snap],
+                  :log_type      =>Log::LOG_ACTIONS[:engagement],
                   :log_group_id  =>log_group.id,
                   :engagement_id =>engagement.id,
                   :business_id   =>account.campaign.program.business.id,
