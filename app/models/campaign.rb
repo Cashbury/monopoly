@@ -28,16 +28,21 @@ class Campaign < ActiveRecord::Base
 	  date > start_date && date < end_date 
 	end
 	
+	def business_account
+    self.accounts.joins(:account_holder).where("account_holders.model_id=#{self.program.business.id} and account_holders.model_type='Business'").first
+  end
+  
+  def user_account(user)
+    self.accounts.joins(:account_holder).where("account_holders.model_id=#{user.id} and account_holders.model_type='User'").first
+  end
+  
 	private
 	def create_campaign_business_account
-	  puts "create_campaign_business_account****************************************8"
-	  puts self.inspect
 	  account_holder  = AccountHolder.where(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first 
 	  if !account_holder
-	    puts "inside if *************************************************"
 	    account_holder  = AccountHolder.create!(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s) 
-	    puts "#{account_holder.inspect}"
 	  end
 	  account = Account.create!(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder => account_holder)
   end
+  
 end

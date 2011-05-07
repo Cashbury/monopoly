@@ -1,9 +1,7 @@
 require 'uri'
 class QrCode < ActiveRecord::Base  
   #QrCode dependent on engagement type "stamp"
-  belongs_to :place,:polymorphic => true
-  belongs_to :user,:polymorphic => true
-  belongs_to :engagement,:polymorphic => true
+  belongs_to :associatable,:polymorphic => true #engagement, place, business
   
   has_one :qr_code_image, :as => :uploadable, :dependent => :destroy
   
@@ -37,23 +35,9 @@ class QrCode < ActiveRecord::Base
       @image = nil
     end
   end
+  
   def upload_image
     @image.save!
-  end
-  #def related_id 
-   # return read_attribute(:related_id)
-  #end
-  
-  def engagement
-    returned_type = nil
-    if self.associatable_type = Engagement.name
-      begin 
-         returned_type = Engagement.find(associatable_id)
-      rescue
-        returned_type = nil
-       end
-    end
-    return  returned_type
   end
   
   def encrypt_code
@@ -83,7 +67,10 @@ class QrCode < ActiveRecord::Base
    #have add logger methods to logg here
   end
 
-
+  def engagement
+    self.associatable if self.associatable.class.to_s == "Engagement"
+  end
+  
   def business_name
     if engagement.blank?
       "NA"

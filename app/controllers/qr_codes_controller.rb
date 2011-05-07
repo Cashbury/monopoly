@@ -64,9 +64,9 @@ class QrCodesController < ApplicationController
   # PUT /qr_codes/1.xml
   def update
     @qr_code = QrCode.find(params[:id])
-
     respond_to do |format|
       if @qr_code.update_attributes(params[:qr_code])
+        puts "############ hena #{@qr_code.associatable_type}"
         format.html { redirect_to(qr_codes_path, :notice => 'Qr code was successfully updated.') }
         format.xml  { head :ok }
       else

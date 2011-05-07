@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110504132847) do
+ActiveRecord::Schema.define(:version => 20110507103141) do
 
   create_table "account_holders", :force => true do |t|
     t.string   "model_type"
@@ -30,9 +30,9 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
     t.decimal  "amount",              :precision => 20, :scale => 3
     t.boolean  "is_money"
     t.boolean  "is_external"
+    t.integer  "payment_gateway_id"
     t.integer  "program_id"
     t.integer  "business_id"
-    t.integer  "payment_gateway_id"
   end
 
   add_index "accounts", ["account_holder_id"], :name => "index_accounts_on_account_holder_id"
@@ -479,7 +479,7 @@ ActiveRecord::Schema.define(:version => 20110504132847) do
     t.integer  "from_account"
     t.integer  "to_account"
     t.decimal  "before_fees_amount",          :precision => 20, :scale => 3
-    t.string   "account_type"
+    t.string   "payment_gateway"
     t.boolean  "is_money"
     t.datetime "created_at"
     t.datetime "updated_at"

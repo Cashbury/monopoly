@@ -78,36 +78,67 @@ class User < ActiveRecord::Base
 	end
 	
 	def snapped_qrcode(qr_code,place_id,lat,lng)
-    engagement=Engagement.find(qr_code.related_id)
+    engagement=qr_code.engagement
     campaign=engagement.campaign
-    accholder=self.account_holder
-    account=accholder.accounts.where(:campaign_id=>campaign.id).first unless accholder.nil?
+ 
+    user_account=campaign.user_account(self)
+    business_account=campaign.business_account
     
     date=Date.today.to_s
     Account.transaction do
       qr_code.scan
-      if account.nil?
-        accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless accholder
+      if user_account.nil?
+        accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless self.account_holder
         account=Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
         accholder.accounts << account
         accholder.save!
       end
-      account.increment!(:amount,engagement.amount)
+      
+      #debit business account and credit user account
+      action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
+      transaction_type=action.transaction_type
+      after_fees_amount=transaction_type.fee_amount.nil? ? engagement.amount : engagement.amount-transaction_type.fee_amount
+      after_fees_amount=transaction_type.fee_percentage.nil? ? after_fees_amount : (after_fees_amount-(after_fees_amount * transaction_type.fee_percentage/100))
+      
+      business_account_before_balance=business_account.amount
+      business_account.decrement!(:amount,engagement.amount)
+      
+      user_account_before_balance=user_account.amount
+      user_account.increment!(:amount,after_fees_amount)
+      
+      #save the transaction record
+      transaction=Transaction.create!(:from_account=>business_account.id,
+                                      :to_account=>user_account.id,
+                                      :before_fees_amount=>engagement.amount,
+                                      :payment_gateway=>user_account.payment_gateway,
+                                      :is_money=>false,
+                                      :from_account_balance_before=>business_account_before_balance,
+                                      :from_account_balance_after=>business_account.amount,
+                                      :to_account_balance_before=>user_account_before_balance,
+                                      :to_account_balance_after=>user_account.amount,
+                                      :currency=>nil,
+                                      :note=>"User made an engagement using QR Code",
+                                      :transaction_type_id=>action.transaction_type_id,
+                                      :after_fees_amount=>after_fees_amount,
+                                      :transaction_fees=>transaction_type.fee_amount)
+                          
+      #save this engagement action to logs
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id =>self.id,
-                  :log_type      =>Log::LOG_ACTIONS[:engagement],
-                  :log_group_id  =>log_group.id,
-                  :engagement_id =>engagement.id,
-                  :business_id   =>account.campaign.program.business.id,
-                  :place_id      =>place_id,
-                  :amount        =>engagement.amount,
-                  :amount_type   =>account.measurement_type,
-                  :frequency     =>1,
-                  :lat           =>lat,
-                  :lng           =>lng,
-                  :created_on    =>date)                                
-    end 
-    [account,campaign,campaign.program,engagement.amount]
+                  :action_id      =>action.id,
+                  :log_group_id   =>log_group.id,
+                  :engagement_id  =>engagement.id,
+                  :business_id    =>campaign.program.business.id,
+                  :transaction_id =>transaction.id,
+                  :place_id       =>place_id,
+                  :gained_amount  =>after_fees_amount,
+                  :amount_type    =>user_account.measurement_type,
+                  :frequency      =>1,
+                  :lat            =>lat,
+                  :lng            =>lng,
+                  :created_on     =>date)
+      [user_account,campaign,campaign.program,after_fees_amount]                                
+    end
 	end
 	
 	def ensure_authentication_token!
