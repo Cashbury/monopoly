@@ -36,7 +36,7 @@
 	  </tr>
   <% for result in @results %>
     <tr>
-      <td><%= result.first_name+" "+result.last_name  %></td>
+      <td><%= "#{result.try(:first_name)} #{result.try(:last_name)}"  %></td>
       <td><%= result.gained_amount      %></td>
       <td><%= result.amount_type        %></td>
       <td><%= result.ename              %></td>
