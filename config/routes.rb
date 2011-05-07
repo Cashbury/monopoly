@@ -87,6 +87,7 @@ Kazdoor::Application.routes.draw do
   end
   
   resources :businesses do
+    resources :engagement_types, :controller => "businesses/engagement_types"
     resources :places, :controller => "businesses/places" do
       resources :reports, :only => [:create, :show, :index]
     end

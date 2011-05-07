@@ -1,0 +1,19 @@
+<% title "Engagement Type" %>
+
+<table>
+  <tr>
+    <th>Name</th>
+   
+  </tr>
+  <% for engagement_type in @engagement_types %>
+    <tr>
+      <td><%= engagement_type.name %></td>
+      
+      <td><%= link_to "Show", business_engagement_type_path(@business,engagement_type) %></td>
+      <td><%= link_to "Edit", edit_business_engagement_type_path(@business,engagement_type) %></td>
+      <td><%= link_to "Destroy", business_engagement_type_path(@business, engagement_type), :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Engagement Type", new_business_engagement_type_path(@business) %></p>

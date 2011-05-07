@@ -16,6 +16,7 @@ class Business < ActiveRecord::Base
   has_many :places, :dependent => :destroy
   has_many :programs,:dependent => :destroy
   has_many :measurement_types
+  has_many :engagement_types
   has_many :followers, :as=>:followed
   has_many :users, :through=>:followers
   has_many :announcements

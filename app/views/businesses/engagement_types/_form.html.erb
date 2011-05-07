@@ -1,0 +1,11 @@
+<%= form_for [@business ,@engagement_type] do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  
+  <input type="hidden" name="engagement_type[business_id]" value="<%=@business.id%>" />
+
+  <p><%= f.submit %></p>
+<% end %>

@@ -5,7 +5,7 @@
 }
 </style>
 
-<h3>Category</h3>  
+<h3>Category/h3>  
 <p>
 	<ol>  
 	  <% for category in @business.categories %>
@@ -45,4 +45,5 @@
 </p>
 <p>
   <%= link_to "Show Programs", business_programs_path(@business) %><br />
+  <%= link_to "New Engagement Type", new_business_engagement_type_path(@business) %><br />
 </p>
