@@ -31,7 +31,6 @@ Kazdoor::Application.routes.draw do
 	end 
 	resources :program_types
 	resources :programs
-	resources :measurement_types
 	resources :rewards do
 	  get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
@@ -87,7 +86,7 @@ Kazdoor::Application.routes.draw do
   end
   
   resources :businesses do
-    resources :engagement_types, :controller => "businesses/engagement_types"
+    resources :measurement_types, :controller => "businesses/measurement_types"
     resources :places, :controller => "businesses/places" do
       resources :reports, :only => [:create, :show, :index]
     end
@@ -95,7 +94,7 @@ Kazdoor::Application.routes.draw do
     
     resources :programs , :controller => "businesses/programs" do
       resources :campaigns , :controller => "businesses/programs/campaigns" do
-	      resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
+         resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
 	        get "stamps", :on => :collection
 	      resources :places , :only=>[:issue_code] do 
 	         get "issue_code" ,:on =>:member

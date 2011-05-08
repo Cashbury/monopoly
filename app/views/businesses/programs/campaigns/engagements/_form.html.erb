@@ -9,7 +9,7 @@
   <p>
     <%= f.label :engagement_type_id, "Engagement Type" %><br />
    
-    <%= f.select :engagement_type_id, EngagementType.all.collect {|et| [et.name, et.id]} %>
+    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} %>
   </p>
   <p>
     <%= f.label :description %><br />
