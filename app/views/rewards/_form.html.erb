@@ -77,7 +77,11 @@ jQuery(function(){
 				How many times can this reward be claimed?
 			</div><%= f.text_field :max_claim , :class=>"basic_info_input"%>
 		</div>
-	
+	 <div class="row">
+    <div class="basic_info_caption1">
+      How many times can this reward be claimed by each user?
+    </div><%= f.text_field :max_claim_per_user , :class=>"basic_info_input"%>
+    </div>
 		<div class="row">
 			<div class="basic_info_caption1">
 				This reward will be available untill

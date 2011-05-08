@@ -1,4 +1,4 @@
-<h1>Listing qr_codes</h1>
+<% title "Listing qr_codes" %>
 <style type="text/css" media="screen">
   table {
     margin-top:10px;
@@ -83,15 +83,15 @@ $(function(){
     <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
     <br/>
 
-    <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) , :class=>"efilter"%>
+    <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, params[:brand_id]) , :class=>"efilter"%>
 
-    <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe , :class=>"efilter" %>
+    <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe +  options_from_collection_for_select(@businesses,:id,:name,params[:business_id]), :class=>"efilter" %>
    
-    <%= select_tag :program_id , "<option value=''>..Program.</option>".html_safe , :class=>"efilter" %>
+    <%= select_tag :program_id , "<option value=''>..Program..</option>".html_safe +  options_from_collection_for_select(@programs,:id,:name,params[:program_id]), :class=>"efilter" %>
   
-    <%= select_tag :campaign_id , "<option value=''>..Campaign.</option>".html_safe , :class=>"efilter" %>
+    <%= select_tag :campaign_id , "<option value=''>..Campaign..</option>".html_safe +  options_from_collection_for_select(@campaigns,:id,:name,params[:campaign_id]), :class=>"efilter" %>
    
-    <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id].to_s) , :class=>"filter"  %>
+    <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id]) , :class=>"filter"  %>
 
     <%= select_tag :layout , options_for_select({ "Single Use Layout"=>0,"Multi Use Layout "=>1 }),:class=>"efilter" %>
     <%= submit_tag "Export to template" %>
