@@ -1,3 +1,3 @@
 Factory.define :engagement_type do |eng_type|
-  eng_type.name  "spend" 
+  eng_type.name  "spend"
 end

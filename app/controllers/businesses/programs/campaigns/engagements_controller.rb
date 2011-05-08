@@ -107,6 +107,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
     @program = Program.find(params[:program_id])
     @business = @program.business
     @campaign = Campaign.find(params[:campaign_id])
+    @engagement_types = EngagementType.where("business_id = :business_id OR business_id is null", {:business_id => @business.id})
   end
   
   def save_image(url)

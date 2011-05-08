@@ -36,7 +36,10 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def create
     @campaign = @program.campaigns.new(params[:campaign])
-
+    if params[:measurement_name].present?
+      @measurement_type = add_new_measurement_type 
+      @campaign.measurement_type = @measurement_type
+    end
     respond_to do |format|
       if @campaign.save
         format.html { redirect_to(business_program_campaign_url(@business,@program,@campaign), :notice => 'Campaign was successfully created.') }
@@ -50,7 +53,6 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def update
     @campaign = Campaign.find(params[:id])
-
     respond_to do |format|
       if @campaign.update_attributes(params[:campaign])
         format.html { redirect_to(business_program_campaign_url(@business, @program,@campaign), :notice => 'Campaign was successfully updated.') }
@@ -72,9 +74,22 @@ class Businesses::Programs::CampaignsController < ApplicationController
     end
   end
   
+  def add_new_measurement_type
+    @measurement_type = MeasurementType.new
+    @measurement_type.name = params[:measurement_name]
+    @measurement_type.business_id = params[:business_id]
+    if @measurement_type.save
+      return @measurement_type
+    else
+      return nil
+    end
+ end
   private
   def find_business_and_program
     @business = Business.find(params[:business_id])
     @program  = Program.find(params[:program_id])
+    @measurement_types  = MeasurementType.where("business_id = :business_id OR business_id is null", {:business_id => @business.id})
+    @temp_measurement_type = MeasurementType.new(:id=> '-1', :name => "Other")
+    @measurement_types << @temp_measurement_type
   end
 end
