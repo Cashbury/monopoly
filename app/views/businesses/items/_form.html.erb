@@ -1,0 +1,35 @@
+<%= form_for [@business ,@item] do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+  <p>
+    <%= f.label :price %><br />
+    <%= f.text_field :price %>
+  </p>
+   <p>
+    <%= f.label :available %><br />
+    <%= f.select :available, options_for_select([ ['yes', 'true'],['no','false']],@item.available)%>
+  </p>
+  <p>
+    <%= f.label :expiry_date %>
+    <!-- data_select :order should not be removed becuase it fixed an error for lacales -->
+    <%= date_select("item","expiry_date", {:order => [:day,:month,:year],:use_month_names => MONTHS,:prompt => { :day => "Day", :month => "Month", :year => "Year"},:start_year => Time.now.year , :end_year => 1920} ) %>
+  </p>
+  <p>
+    <%= f.label :cost %><br />
+    <%= f.text_field :cost %>
+  </p>
+  <p>
+    <%= f.label :product_code %><br />
+    <%= f.text_field :product_code %>
+  </p>
+  <input type="hidden" name="item[business_id]" value="<%=@business.id%>" />
+
+  <p><%= f.submit %></p>
+<% end %>

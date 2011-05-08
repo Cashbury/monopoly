@@ -87,6 +87,7 @@ Kazdoor::Application.routes.draw do
   
   resources :businesses do
     resources :measurement_types, :controller => "businesses/measurement_types"
+    resources :items, :controller => "businesses/items"
     resources :places, :controller => "businesses/places" do
       resources :reports, :only => [:create, :show, :index]
     end
