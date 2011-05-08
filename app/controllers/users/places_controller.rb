@@ -30,6 +30,7 @@ class Users::PlacesController < Users::BaseController
     	unless business.nil?
 	    	programs=business.programs
 	    	@result["places"][index]["brand-name"]=business.brand.name
+	    	@result["places"][index]["brand-image"]=business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:thumb) 
 	    	@result["places"][index]["is_open"]   =place.is_open?
 	    	@result["places"][index]["open-hours"]=place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:place_id=>oh.place_id,:day=>OpenHour::DAYS.index(oh.day_no)}}
 	    	@result["places"][index]["accounts"]  =[]
