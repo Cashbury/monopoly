@@ -68,9 +68,16 @@ class BrandsController < ApplicationController
   # PUT /brands/1.xml
   def update
     @brand = Brand.find(params[:id])
-
+    @brand.user_id = current_user.id
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      @image = BrandImage.new()
+      @image.uploadable = @brand
+      @image.photo= params[:upload][:photo]
+    end
     respond_to do |format|
       if @brand.update_attributes(params[:brand])
+        @image.save! if @image
         format.html { redirect_to(@brand, :notice => 'Brand was successfully updated.') }
         format.xml  { head :ok }
       else
