@@ -43,16 +43,24 @@ class UserTest < ActiveSupport::TestCase
       @user=Factory.create(:user)
       @place=Factory.create(:place)
       program=Factory.create(:program,:business_id=>@place.business.id)
-      @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_points=>10)
+      @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_amount=>10)
       @engagement=Factory.create(:engagement,:campaign_id=>@campaign.id,:amount=>5)
-      @qr_code=Factory.create(:qr_code,:related_id=>@engagement.id)
+      @qr_code=Factory.create(:qr_code,:associatable_id=>@engagement.id)
+      @action=Factory.create(:action)
+      @places=[];@places << @place
+      @user.auto_enroll_at(@places)
     end
     
     should "increment user's account created within the campaign by engagement's amount" do
       total_logs=Log.count
-      @user.snapped_qrcode(@qr_code.hash_code,@place.id,@place.lat,@place.long)
+      @user.snapped_qrcode(@qr_code,@place.id,@place.lat,@place.long)
+      transaction=Transaction.last
       assert_equal @user.account_holder.accounts.where(:campaign_id=>@campaign.id).first.amount,15
       assert_equal Log.count,total_logs+1
+      assert_equal transaction.after_fees_amount, @engagement.amount
+      assert_equal transaction.transaction_type, @action.transaction_type
+      assert_equal transaction.from_account_balance_after, @campaign.business_account.amount
+      assert_equal transaction.to_account_balance_after, @campaign.user_account(@user).amount
       assert !QrCode.find(@qr_code.id).status #has been scanned if single use
     end
   end

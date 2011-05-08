@@ -34,16 +34,16 @@ class Place < ActiveRecord::Base
   
   before_save :add_amenities_name_and_place_name_to_place_tag_lists
   
+  def is_open?
+    current_datetime=DateTime.now.in_time_zone(self.time_zone)
+    !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?
+  end
+  
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
     end
     self.tag_list << self.name
-  end
-  
-  def is_open?
-    current_datetime=DateTime.now.in_time_zone(self.time_zone)
-    !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?
   end
 end

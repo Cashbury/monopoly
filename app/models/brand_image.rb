@@ -5,7 +5,7 @@ class BrandImage < Image
                       :thumb  => "100x100>",
                       :small  => "400x400>" },
                     :storage => :s3,
-                    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+                    :s3_credentials => "#{Rails.root}/config/s3.yml",
                     :path => "brands/:style/:id/:filename"
                     
   validates :photo_content_type, :inclusion => { :in => IMAGES_CONTENT_TYPE }

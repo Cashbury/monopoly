@@ -3,6 +3,6 @@ class QrCodeImage < Image
   
   has_attached_file :photo, 
                     :storage => :s3,
-                    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+                    :s3_credentials => "#{Rails.root}/config/s3.yml",
                     :path => "qrcodes/:id/:filename"
 end
