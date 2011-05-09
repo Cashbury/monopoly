@@ -25,10 +25,10 @@ class BusinessesController < ApplicationController
     @business = Business.new
     @categories = Category.all
     3.times { @business.places.build}
-     @business.places.each do | place|
-       place.address = Address.new
-     end
-     
+    3.times { @business.business_images.build}
+    @business.places.each do | place|
+      place.address = Address.new
+    end
   end
   
   def create
@@ -41,6 +41,7 @@ class BusinessesController < ApplicationController
     	@brands  = Brand.all
     	@categories = Category.all
     	3.times { @business.places.build }
+    	3.times { @business.business_images.build}
       render :action => 'new'
     end
   end
@@ -53,7 +54,8 @@ class BusinessesController < ApplicationController
     @business.places.each do | place|
       1.times { place.items.build }
      end
-  end
+    (3-@business.business_images.size).times { @business.business_images.build}
+   end
   
   def update
     @brands  = Brand.all
@@ -64,6 +66,7 @@ class BusinessesController < ApplicationController
        flash[:notice] = "Successfully updated business."
        redirect_to @business
     else
+      (3-@business.business_images.size).times { @business.business_images.build}
       render :action => 'edit'
     end
    end

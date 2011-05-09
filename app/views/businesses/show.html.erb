@@ -1,4 +1,4 @@
-<% title "Business" %>
+<% title "Business | #{@business.name}" %>
 <style type="text/css" media="screen">
   table th,td{
     width:150px;
@@ -20,6 +20,12 @@
 <p>
   <strong>Description:</strong>
   <%= @business.description %>
+</p>
+<p>
+  <strong>Images</strong>
+  <%for image in @business.business_images%> 
+    <%= image_tag image.photo.url(:thumb) %>
+  <%end%>
 </p>
 <h3>Branches</h3>
 <p>

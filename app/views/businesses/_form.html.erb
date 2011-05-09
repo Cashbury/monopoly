@@ -4,11 +4,11 @@
   $("#add_item_button").click(function () {
    $('#add_item_div').show();
   });
-  
 });
-
 </script>
-<%= form_for @business do |f| %>
+
+<%= form_for(@business,:html => { :multipart => true }) do |f| %>
+
 
   <%= f.error_messages %>
 
@@ -40,17 +40,18 @@
     <%= f.text_field :tag_list %>
     <small>Required, comma separated</small>
   </p>
-  
-  <% f.fields_for :places do |builder| %>  
-		<hr/>
-		<h3>Add a Branch</h3>
-    
-
-  
   <p>
-    <%= builder.label :name %>
-    <%= builder.text_field :name %>
+    <%= f.label 'Images' %><br />
+    <% f.fields_for :business_images do |bimage| %>
+      <p><%= bimage.file_field :photo %></p>
+    <%end%>
   </p>
+  <% f.fields_for :places do |builder| %>  
+		<h3>Add a Branch</h3>
+    <p>
+      <%= builder.label :name %>
+      <%= builder.text_field :name %>
+    </p>
     <p>
 	    <%= builder.label :description %>
 	    <%= builder.text_field :description %>
@@ -110,7 +111,7 @@
       <%= address_form.text_field :city %>
     </p>
 	 
-	  <% end %>
+	 <% end %>
 
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>

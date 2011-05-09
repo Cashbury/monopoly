@@ -66,7 +66,6 @@ class QrCodesController < ApplicationController
     @qr_code = QrCode.find(params[:id])
     respond_to do |format|
       if @qr_code.update_attributes(params[:qr_code])
-        puts "############ hena #{@qr_code.associatable_type}"
         format.html { redirect_to(qr_codes_path, :notice => 'Qr code was successfully updated.') }
         format.xml  { head :ok }
       else
@@ -92,7 +91,7 @@ class QrCodesController < ApplicationController
   def panel
     if request.post?
       quantity =  params[:quantity].to_i
-      engagement = Engagement.where(:id=> params[:engagement_id]).first
+      engagement = Engagement.find(params[:associatable_id])
       codes = []
       if engagement.blank? 
         quantity.times{
@@ -104,10 +103,10 @@ class QrCodesController < ApplicationController
       else
         #when everything is ok
         quantity.times{
-          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:engagement_id].to_i}
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:associatable_id].to_i,:associatable_type=>params[:associatable_type]}
         }
         if QrCode.create(codes)
-          redirect_to :action=>:index , :engagement_id=>params[:engagement_id]
+          redirect_to :action=>:index , :engagement_id=>params[:associatable_id]
         else
           render :action => :panel
         end
@@ -190,8 +189,10 @@ class QrCodesController < ApplicationController
   def search_qrs
     @print_jobs   ||= PrintJob.all
     @brands       ||= Brand.all  
+    @businesses   ||= Business.all
     @engagements  ||= Engagement.all
-    @campaigns    
+    @programs     ||= Program.all
+    @campaigns    ||= Campaign.all
     search = {}
     
     search = {:associatable_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
