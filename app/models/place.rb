@@ -19,7 +19,7 @@ class Place < ActiveRecord::Base
   belongs_to :business
   belongs_to :place_type
   belongs_to :address
-  
+  has_and_belongs_to_many :items
   has_and_belongs_to_many :amenities
   
   has_many :qr_codes,:as=>:associatable
@@ -28,6 +28,8 @@ class Place < ActiveRecord::Base
   
   attr_accessible :name, :long, :lat, :description, :business, :time_zone
   accepts_nested_attributes_for :address
+  accepts_nested_attributes_for :items, :allow_destroy => true
+  
 
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 

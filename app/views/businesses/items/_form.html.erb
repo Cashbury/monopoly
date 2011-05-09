@@ -18,7 +18,6 @@
   </p>
   <p>
     <%= f.label :expiry_date %>
-    <!-- data_select :order should not be removed becuase it fixed an error for lacales -->
     <%= date_select("item","expiry_date", {:order => [:day,:month,:year],:use_month_names => MONTHS,:prompt => { :day => "Day", :month => "Month", :year => "Year"},:start_year => Time.now.year , :end_year => 1920} ) %>
   </p>
   <p>

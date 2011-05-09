@@ -21,7 +21,6 @@ class BusinessesController < ApplicationController
   end
   
   def new
-    #@brands  = current_user.brands
     @brands  = Brand.all
     @business = Business.new
     @categories = Category.all
@@ -29,6 +28,7 @@ class BusinessesController < ApplicationController
      @business.places.each do | place|
        place.address = Address.new
      end
+     
   end
   
   def create
@@ -46,22 +46,27 @@ class BusinessesController < ApplicationController
   end
   
   def edit
-    #@brands  = current_user.brands
     @brands  = Brand.all
     @business = Business.find(params[:id])
     @categories = Category.all
     3.times { @business.places.build }
+    @business.places.each do | place|
+      1.times { place.items.build }
+     end
   end
   
   def update
+    @brands  = Brand.all
+    @categories = Category.all
     @business = Business.find(params[:id])
+    
     if @business.update_attributes(params[:business])
-      flash[:notice] = "Successfully updated business."
-      redirect_to @business
+       flash[:notice] = "Successfully updated business."
+       redirect_to @business
     else
       render :action => 'edit'
     end
-  end
+   end
   
   def destroy
     @business = Business.find(params[:id])
