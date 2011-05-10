@@ -1,5 +1,4 @@
 Kazdoor::Application.routes.draw do
-  
   resources :transaction_types
 	devise_for :users, :controllers => { :sessions => "users/sessions", :registrations=>"users/registrations", :password=>"users/passwords" }
 	
@@ -36,6 +35,9 @@ Kazdoor::Application.routes.draw do
     get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
     get "update_campaigns/:id"     ,:action=>:update_campaigns, :on =>:collection, :as =>"update_campaigns"
     
+	end
+	resources :businesses do
+	  get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
 	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
@@ -88,10 +90,7 @@ Kazdoor::Application.routes.draw do
   resources :businesses do
     resources :measurement_types, :controller => "businesses/measurement_types"
     resources :items, :controller => "businesses/items"
-    resources :places, :controller => "businesses/places" do
-      resources :reports, :only => [:create, :show, :index]
-    end
-    resources :reports, :only => [:create, :show, :index]
+    resources :places, :controller => "businesses/places"
     
     resources :programs , :controller => "businesses/programs" do
       resources :campaigns , :controller => "businesses/programs/campaigns" do

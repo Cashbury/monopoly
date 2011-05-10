@@ -1,6 +1,9 @@
 class Users::PlacesController < Users::BaseController
-
+  include Geokit::Geocoders
   def index
+    ######################
+    ##res=GoogleGeocoder.reverse_geocode([37.792821,-122.393992])
+    ##res.city
     @places=[] 
     unless params[:long].blank? && params[:lat].blank?
 			@places = Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order('distance ASC')

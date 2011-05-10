@@ -4,6 +4,18 @@
   $("#add_item_button").click(function () {
    $('#add_item_div').show();
   });
+  $('select#business_places_attributes_0_address_attributes_country_id').bind('change',function(){
+    var country_id = $(":selected", this).val();
+    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_0_address_attributes_city_id");
+  });
+  $('select#business_places_attributes_1_address_attributes_country_id').bind('change',function(){
+    var country_id = $(":selected", this).val();
+    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_1_address_attributes_city_id");
+  });
+  $('select#business_places_attributes_2_address_attributes_country_id').bind('change',function(){
+    var country_id = $(":selected", this).val();
+    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_2_address_attributes_city_id");
+  });
 });
 </script>
 
@@ -34,7 +46,10 @@
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  
+  <p>
+    <%= f.label :country %>
+    <%= f.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,@business.country_id)%>
+  </p>
   <p>
     <%= f.label 'Keywords' %><br />
     <%= f.text_field :tag_list %>
@@ -49,7 +64,7 @@
       <%end%>
     </p>
   </fieldset>
-  <% f.fields_for :places do |builder| %>  
+  <% f.fields_for :places,@business.places do |builder| %>  
 		<h3>Add a Branch</h3>
     <p>
       <%= builder.label :name %>
@@ -84,7 +99,32 @@
         <%end%>
       </p>
     </fieldset>
-	   <%  builder.fields_for :items do |item_form| %>
+    <fieldset>
+      <legend>Place Address</legend>
+      <%= builder.fields_for :address,builder.object.address do |address_form| %>
+        <p>
+          <%= address_form.label :street_address %>
+          <%= address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= address_form.label :neighborhood %>
+          <%= address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= address_form.label :country %>
+          <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= address_form.label :city %>
+          <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id)%>
+        </p>
+        <p>
+          <%= address_form.label :zipcode %>
+          <%= address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </fieldset>
+	   <%=  builder.fields_for :items do |item_form| %>
 	   <input type="button" value="Add New Item To This Place" id="add_item_button" />
 	   <div id="add_item_div" style="display:none">
 	     <label>Item: </label>
@@ -114,14 +154,6 @@
        </p>
 	   </div>
 	   <% end%>
-	  <%  builder.fields_for :address do |address_form| %>
-    <h3>Add an Address</h3>
-	  <p>
-      <%= address_form.label :city %>
-      <%= address_form.text_field :city %>
-    </p>
-	 
-	 <% end %>
 
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>

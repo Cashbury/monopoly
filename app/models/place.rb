@@ -27,10 +27,12 @@ class Place < ActiveRecord::Base
   has_many :followers, :as=>:followed
   has_many :place_images,:as => :uploadable, :dependent => :destroy
   
-  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :place_images
   accepts_nested_attributes_for :items, :allow_destroy => true
+  
+  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes
+  
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
   

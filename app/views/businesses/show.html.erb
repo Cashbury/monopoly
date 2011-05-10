@@ -14,12 +14,20 @@
 	</ol>
 </p>
 <p>
+  <strong>Brand:</strong>
+  <%= @business.brand.try(:name) %>
+</p>
+<p>
   <strong>Name:</strong>
   <%= @business.name %>
 </p>
 <p>
   <strong>Description:</strong>
   <%= @business.description %>
+</p>
+<p>
+  <strong>Country:</strong>
+  <%= @business.country.try(:name) %>
 </p>
 <%unless @business.business_images.empty?%>
 <p>
@@ -37,11 +45,17 @@
       <th>Address</th>    
       <th>Neiborhood</th>    
       <th>City</th>    
+      <th>Country</th>
       <th>Zipcode</th>  
     </tr>  
 	  <% for place in @business.places %>
     <tr>
       <td><%= place.name %></td> 
+      <td><%= place.try(:address).try(:street_address) %></td>
+      <td><%= place.try(:address).try(:neighborhood) %></td>
+      <td><%= place.try(:address).try(:city).try(:name) %></td>
+      <td><%= place.try(:address).try(:country).try(:name) %></td>
+      <td><%= place.try(:address).try(:zipcode) %></td>
     </tr>
 	  <% end %>  
   </table>

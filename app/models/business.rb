@@ -29,13 +29,13 @@ class Business < ActiveRecord::Base
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   belongs_to :brand
-  
+  belongs_to :country
   has_and_belongs_to_many :categories
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :business_images
   
   attr_accessor :categories_list
-  
+
   before_save :add_business_name_to_business_tag_lists
   after_save :update_categories
   

@@ -26,12 +26,10 @@ class BusinessesController < ApplicationController
     @categories = Category.all
     3.times { @business.places.build}
     @business.places.each do |place|
+      place.build_address
       3.times {place.place_images.build}
     end
     3.times { @business.business_images.build}
-    @business.places.each do | place|
-      place.address = Address.new
-    end
   end
   
   def create
@@ -43,8 +41,12 @@ class BusinessesController < ApplicationController
     else
     	@brands  = Brand.all
     	@categories = Category.all
-    	3.times { @business.places.build }
-    	3.times { @business.business_images.build}
+    	3.times { @business.places.build}
+      @business.places.each do |place|
+        place.build_address
+        3.times {place.place_images.build}
+      end
+      3.times { @business.business_images.build}
       render :action => 'new'
     end
   end
@@ -55,11 +57,9 @@ class BusinessesController < ApplicationController
     @categories = Category.all
     3.times { @business.places.build }
     @business.places.each do |place|
-      3.times {place.place_images.build}
+      place.build_address if place.address.nil?
+      (3-place.place_images.size).times {place.place_images.build}
     end
-    @business.places.each do | place|
-      1.times { place.items.build }
-     end
     (3-@business.business_images.size).times { @business.business_images.build}
    end
   
@@ -83,7 +83,14 @@ class BusinessesController < ApplicationController
     flash[:notice] = "Successfully destroyed business."
     redirect_to businesses_url
   end
-  
+  def update_cities
+    @cities = City.where(:country_id=> params[:id])
+    @selector_id=params[:selector_id]
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
   private
   def set_tag_lists_for_business_places(business)
     business.places.each_with_index do |place,index|

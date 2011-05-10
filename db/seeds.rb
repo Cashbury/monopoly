@@ -5,16 +5,20 @@
 #
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
-
-User.create(:username => "user1", :name => "user", :password => "kazdoor", :password_confirmation => "kazdoor", :email => "user1@kazdoor.com")
-
-c1 = Category.create(:name => "Food and Beverages", :description => "F&B business", :parent_id => nil)
-c2 = Category.create(:name => "coffee", :description => "Coffee shops", :parent_id => c1.id)
-
-b = Business.create(:name => "Gloria Jeans", :description => "Coffee Shop")
-b.categories << c1
-b.categories << c2
-
-b.places.create(:name => "Hamra", :description => "Makdessi Street", :long => "33,896499", :lat => "35,480575")
-b.engagements.create(:name => "Hello world", :engagement_type => "stamp", :points => "20")
-b.rewards.create(:name => "Free cup of coffee")
+puts 'Create an admin account'
+User.create(:username => "admin", :name => "Admin", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true)
+transaction_type=TransactionType.create!(:name=>"Loyalty Collect", :fee_amount=>0.0, :fee_percentage=>0.0)
+Action.create!([{:name=>"Engagement", :transaction_type_id=>transaction_type.id},{:name=>"Redeem",:transaction_type_id=>transaction_type.id}])
+puts 'Creating countries and cities from contries_cities,txt ...'
+open(Rails.root.join('db').join('countries_cities.txt')) do |records|
+  country=nil
+  records.read.each_line do |record|
+    if record.chomp.end_with?(":")
+      country_name=record.split(":")
+      country=Country.find_or_create_by_name(:name=>country_name[0].lstrip.rstrip)
+      next
+    end
+    city_name=record
+    City.find_or_create_by_name(:name=>city_name.lstrip.rstrip,:country_id=>country.id)
+  end
+end
