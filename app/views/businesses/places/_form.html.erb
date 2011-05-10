@@ -1,4 +1,4 @@
-<%= form_for [@business,@place] do |f| %>
+<%= form_for([@business,@place],:html => { :multipart => true }) do |f| %>
   <%= f.error_messages %>
   <p>
     <%= f.label :name %><br />
@@ -20,6 +20,14 @@
     <%= f.label :time_zone %><br />
     <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
   </p>
+  <fieldset>
+    <legend>Place Images</legend>
+    <p>
+      <% f.fields_for :place_images do |pimage| %>
+        <p><%= pimage.label 'Place Image: ' %> <%= pimage.file_field :photo %></p>
+      <%end%>
+    </p>
+  </fieldset>
   <p>
     <%= f.label 'Keywords' %><br />
     <%= f.text_field :tag_list %>

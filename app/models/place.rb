@@ -25,10 +25,12 @@ class Place < ActiveRecord::Base
   has_many :qr_codes,:as=>:associatable
   has_many :open_hours
   has_many :followers, :as=>:followed
+  has_many :place_images,:as => :uploadable, :dependent => :destroy
   
-  attr_accessible :name, :long, :lat, :description, :business, :time_zone
+  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes
   accepts_nested_attributes_for :address
-
+  accepts_nested_attributes_for :place_images
+  
   validates_presence_of :name, :long, :lat 
   validates_numericality_of :long,:lat 
   

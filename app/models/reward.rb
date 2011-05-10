@@ -21,12 +21,13 @@ class Reward < ActiveRecord::Base
   has_and_belongs_to_many :items
   has_and_belongs_to_many :users
   has_and_belongs_to_many :enjoyed_users, :class_name=>"User" , :join_table => "users_enjoyed_rewards"
-
   
+  has_one :reward_image, :as => :uploadable, :dependent => :destroy
+  accepts_nested_attributes_for :reward_image
   #attr_accessor :places_list
   
   #after_save :update_categories
-  validates_presence_of :campaign_id,:name,:needed_amount,:description,:legal_term
+  validates_presence_of :campaign_id,:name,:needed_amount,:heading1,:heading2,:legal_term
   validates_numericality_of :needed_amount,:max_claim
   
   #  private

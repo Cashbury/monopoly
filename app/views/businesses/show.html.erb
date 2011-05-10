@@ -21,12 +21,14 @@
   <strong>Description:</strong>
   <%= @business.description %>
 </p>
+<%unless @business.business_images.empty?%>
 <p>
   <strong>Images</strong>
   <%for image in @business.business_images%> 
     <%= image_tag image.photo.url(:thumb) %>
   <%end%>
 </p>
+<%end%>
 <h3>Branches</h3>
 <p>
   <table>

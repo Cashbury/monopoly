@@ -23,6 +23,7 @@ class Businesses::PlacesController < ApplicationController
   
   def new
     @place=@business.places.build
+    3.times {@place.place_images.build}
   end
   
   def create
@@ -38,6 +39,7 @@ class Businesses::PlacesController < ApplicationController
   
   def edit
     @place = Place.find(params[:id])
+    3.times {@place.place_images.build}
   end
   
   def update

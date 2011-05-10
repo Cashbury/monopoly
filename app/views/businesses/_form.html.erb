@@ -30,12 +30,15 @@
     <%= f.text_field :tag_list %>
     <small>Required, comma separated</small>
   </p>
-  <p>
-    <%= f.label 'Images' %><br />
-    <% f.fields_for :business_images do |bimage| %>
-      <p><%= bimage.file_field :photo %></p>
-    <%end%>
-  </p>
+  <fieldset>
+    <legend>Business Images</legend>
+    <p>
+      <%= f.label 'Images' %><br />
+      <% f.fields_for :business_images do |bimage| %>
+        <p><%= bimage.file_field :photo %></p>
+      <%end%>
+    </p>
+  </fieldset>
   <% f.fields_for :places do |builder| %>  
 		<h3>Add a Branch</h3>
     <p>
@@ -63,6 +66,14 @@
 	    <%= builder.label :latitude %>
 	    <%= builder.text_field :lat %>
 	  </p>
+	  <fieldset>
+	    <legend>Place Images</legend>
+  	  <p>
+        <% builder.fields_for :place_images do |pimage| %>
+          <p><%= pimage.label 'Place Image: ' %> <%= pimage.file_field :photo %></p>
+        <%end%>
+      </p>
+    </fieldset>
 	  <%  builder.fields_for :address do |address_form| %>
     <h3>Add an Address</h3>
 	  <p>

@@ -20,7 +20,18 @@
   <strong>Time Zone:</strong>
   <%= @place.time_zone %>
 </p>
-
+<p>
+  <strong>Tag List:</strong>
+  <%= @place.tag_list %>
+</p>
+<%unless @place.place_images.empty?%>
+<p>
+  <strong>Images</strong>
+  <%for image in @place.place_images%> 
+    <%= image_tag image.photo.url(:thumb) %>
+  <%end%>
+</p>
+<%end%>
 <p>
   <%= link_to "Edit",  edit_business_place_path %> |
   <%= link_to "Destroy", business_place_path(@business, @place), :confirm => 'Are you sure?', :method => :delete %> |

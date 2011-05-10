@@ -22,7 +22,14 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
   
   def create
     @reward = @campaign.rewards.new(params[:reward])
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      @image = RewardImage.new()
+      @image.uploadable = @reward
+      @image.photo= params[:upload][:photo]
+    end
     if @reward.save
+      @image.save! if @image
       flash[:notice] = "Successfully created reward."
       redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
     else
@@ -35,9 +42,15 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
   end
   
   def update
-    
     @reward = Reward.find(params[:id])
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      @image = RewardImage.new()
+      @image.uploadable = @reward
+      @image.photo= params[:upload][:photo]
+    end
     if @reward.update_attributes(params[:reward])
+      @image.save! if @image
       flash[:notice] = "Successfully updated reward."
       redirect_to business_program_campaign_reward_url(@business, @program, @campaign,@reward)
     else

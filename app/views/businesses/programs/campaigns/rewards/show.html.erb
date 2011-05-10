@@ -5,10 +5,17 @@
   <%= @reward.name %>
 </p>
 <p>
-  <strong>Description: </strong>
-  <%= @reward.description %>
+  <strong>Short Description:</strong>
+  <%= @reward.heading1 %>
 </p>
-
+<p>
+  <strong>Description:</strong>
+  <%= @reward.heading2 %>
+</p>
+<p>
+  <strong>Needed Amount</strong>
+  <%= @reward.needed_amount %>
+</p>
 <% unless @campaign.engagements.empty? %>
 <p>
   <strong>Stamp Description: </strong>
@@ -16,6 +23,16 @@
   <%= eng.name %>
   <%end%>
 </p>
+<p>
+  <b>Photo:</b>
+  <% if @reward.reward_image%>
+    <%= image_tag @reward.reward_image.photo.url(:thumb) %>
+  <% end %>
+</p>
+<p>
+  <strong>Legal Terms:</strong>
+  <%= @reward.legal_term  %>
+</p>  
 <% end %>
 
 <p>

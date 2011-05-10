@@ -26,6 +26,9 @@ class BusinessesController < ApplicationController
     @business = Business.new
     @categories = Category.all
     3.times { @business.places.build}
+    @business.places.each do |place|
+      3.times {place.place_images.build}
+    end
     3.times { @business.business_images.build}
     @business.places.each do | place|
       place.address = Address.new
@@ -53,6 +56,9 @@ class BusinessesController < ApplicationController
     @business = Business.find(params[:id])
     @categories = Category.all
     3.times { @business.places.build }
+    @business.places.each do |place|
+      3.times {place.place_images.build}
+    end
     (3-@business.business_images.size).times { @business.business_images.build}
   end
   

@@ -22,7 +22,14 @@ class RewardsController < ApplicationController
   def create
     @reward = Reward.new(params[:reward])
     @reward.campaign_id = params[:campaign_id]
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      @image = RewardImage.new()
+      @image.uploadable = @reward
+      @image.photo= params[:upload][:photo]
+    end
     if @reward.save
+      @image.save! if @image
       flash[:notice] = "Successfully created reward."
       redirect_to reward_url(@reward)
     else
@@ -36,7 +43,14 @@ class RewardsController < ApplicationController
   
   def update
     @reward = Reward.find(params[:id])
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      @image = RewardImage.new()
+      @image.uploadable = @reward
+      @image.photo= params[:upload][:photo]
+    end
     if @reward.update_attributes(params[:reward])
+      @image.save! if @image
       flash[:notice] = "Successfully updated reward."
       redirect_to reward_url(@reward)
     else

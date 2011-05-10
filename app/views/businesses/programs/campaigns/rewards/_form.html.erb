@@ -3,63 +3,68 @@
 	Rewards are items that your customers can redeem after earning enough points or stamps.
 </p>
 <div id="left_main">
-	<div class="row">
-		<div class="basic_info_caption1">
-			What is the Reward?
-		</div><%= f.text_field :name, :class =>"basic_info_input"  %>
-	</div>
-	<div class="row">
-		<div class="basic_info_caption1">
-			Add a Short Message
-		</div><%= f.text_area :description, :class=>"basic_info_input", :rows=>5 %>
-	</div>
-	
-	<div class="row">
-		<div class="basic_info_caption1"> Enter Amount Needed </div>
-		<div id="Enter_Num_Stamp">
-			<%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
-			<%= @campaign.measurement_type.name %>
-		</div>
-	</div>
-	<div class="row">
-		<div class="basic_info_caption1">
-			How many times can this reward be claimed?
-		</div><%= f.text_field :max_claim , :class=>"basic_info_input"%>
-	</div>
-	
-	<div class="row">
-    <div class="basic_info_caption1">
-      How many times can this reward be claimed by each user?
-    </div><%= f.text_field :max_claim_per_user , :class=>"basic_info_input"%>
-  </div>
-	
-	<div class="row">
-		<div class="basic_info_caption1">
-			This reward will be available untill
+  <fieldset>
+    <legend>Create The card</legend>
+    <div class="row">
+      <div class="basic_info_caption1">Card Template</div>
+      <select><option>punch card</option></select>
+    </div> 
+    <div class="row">
+      <div class="basic_info_caption1">What is the Reward?</div>
+      <%= f.text_field :name, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Add a Short Description</div>
+      <%= f.text_area :heading1, :class=>"basic_info_input", :rows=>5 %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Description</div>
+      <%= f.text_area :heading2, :class=>"basic_info_input", :rows=>5 %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
+      <div id="Enter_Num_Stamp">
+        <%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
       </div>
-      <select class="selectruntime" id="reward_runtill">
-			<option value="stop">
-				I Stop it
-			</option>
-			<option value="stop">
-				A set time
-			</option>
-			<option value="setnum">
-				A set number of people get it
-			</option>
-			<option value="sellout">
-				It sells out
-			</option>
-		</select>
-  </div>
-  
+      <div id="points" class="setgoaltype"></div>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Image</div>
+      <input type="file" name="upload[photo]"/>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Legal Terms</div>
+      <%= f.text_area :legal_term %>
+    </div>
+  </fieldset>
   <div class="row">
-		<div class="basic_info_caption1">
-			Legal Terms
-		</div>
-    <%= f.text_area :legal_term %>
+    <div class="basic_info_caption1">How many times can this reward be claimed?</div>
+    <%= f.text_field :max_claim , :class=>"basic_info_input"%>
   </div>
-
+     <div class="row">
+      <div class="basic_info_caption1">
+        How many times can this reward be claimed by each user?
+      </div><%= f.text_field :max_claim_per_user , :class=>"basic_info_input"%>
+      </div>
+      <div class="row">
+        <div class="basic_info_caption1">
+          This reward will be available untill
+        </div>
+        <select class="selectruntime" id="reward_runtill">
+          <option value="stop">
+            I Stop it
+          </option>
+          <option value="stop">
+            A set time
+          </option>
+          <option value="setnum">
+            A set number of people get it
+          </option>
+          <option value="sellout">
+            It sells out
+          </option>
+        </select>
+    </div>
    	
     <div class="row">
 		<input type="submit" value="" name="commit" id="save_cont_btn" class="save">
