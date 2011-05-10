@@ -22,6 +22,7 @@ class Business < ActiveRecord::Base
   has_many :announcements
   has_many :logs
   has_many :legal_ids , :as=>:associatable
+  has_many :items
   has_many :business_images,:as => :uploadable, :dependent => :destroy
   
   has_one :account_holder, :as=>:model

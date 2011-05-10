@@ -21,7 +21,6 @@ class BusinessesController < ApplicationController
   end
   
   def new
-    #@brands  = current_user.brands
     @brands  = Brand.all
     @business = Business.new
     @categories = Category.all
@@ -51,7 +50,6 @@ class BusinessesController < ApplicationController
   end
   
   def edit
-    #@brands  = current_user.brands
     @brands  = Brand.all
     @business = Business.find(params[:id])
     @categories = Category.all
@@ -59,19 +57,25 @@ class BusinessesController < ApplicationController
     @business.places.each do |place|
       3.times {place.place_images.build}
     end
+    @business.places.each do | place|
+      1.times { place.items.build }
+     end
     (3-@business.business_images.size).times { @business.business_images.build}
-  end
+   end
   
   def update
+    @brands  = Brand.all
+    @categories = Category.all
     @business = Business.find(params[:id])
+    
     if @business.update_attributes(params[:business])
-      flash[:notice] = "Successfully updated business."
-      redirect_to @business
+       flash[:notice] = "Successfully updated business."
+       redirect_to @business
     else
       (3-@business.business_images.size).times { @business.business_images.build}
       render :action => 'edit'
     end
-  end
+   end
   
   def destroy
     @business = Business.find(params[:id])
