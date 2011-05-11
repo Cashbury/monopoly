@@ -22,7 +22,7 @@ class Place < ActiveRecord::Base
   belongs_to :address
   has_and_belongs_to_many :items
   has_and_belongs_to_many :amenities
-  
+  has_and_belongs_to_many :campaigns
   has_many :qr_codes,:as=>:associatable
   has_many :open_hours
   has_many :followers, :as=>:followed

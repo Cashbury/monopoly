@@ -3,7 +3,7 @@ class Campaign < ActiveRecord::Base
 	has_many   :accounts
 	has_many   :engagements
 	has_many   :rewards
-
+  has_and_belongs_to_many :places
 	belongs_to :program
 	belongs_to :measurement_type
 	

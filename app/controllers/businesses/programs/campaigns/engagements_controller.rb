@@ -32,6 +32,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def new
     @engagement = Engagement.new
+    @items= @engagement.items_list(@campaign)
   end
   
   def create
@@ -46,6 +47,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def edit
     @engagement = Engagement.find(params[:id])
+    @items= @engagement.items_list
   end
   
   def update
@@ -107,7 +109,8 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
     @program = Program.find(params[:program_id])
     @business = @program.business
     @campaign = Campaign.find(params[:campaign_id])
-    @engagement_types = EngagementType.where("business_id = :business_id OR business_id is null", {:business_id => @business.id})
+    @engagement_types = EngagementType.order("name ASC")
+    @items=[]
   end
   
   def save_image(url)

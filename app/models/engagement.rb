@@ -18,12 +18,12 @@ require "digest"
 class Engagement < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :engagement_type
+  belongs_to :item
   
   has_many :qr_codes, :as=>:associatable
   has_many :logs
   
   scope :stamps, where(:engagement_type => QrCode::STAMP) 
-  
   attr_accessor :places_list
  
   validates :name, :presence =>true,
@@ -39,8 +39,9 @@ class Engagement < ActiveRecord::Base
   def get_states
     ["deployed", "paused", "offline"]
   end
-  
-  
+  def items_list(campaign)
+    campaign.places.joins(:items).select("items.*")
+  end
   def start
     self.is_started =true
     save!

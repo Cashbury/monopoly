@@ -1,3 +1,15 @@
+<script type="text/javascript">
+ $(document).ready(function(){
+  $("#engagement_type_selection_list").change(function () {
+      buy_item_option = $(":selected", this).text();
+      if(buy_item_option == "Buy a product/service")
+        $('#item_div').show();
+      else{
+        $('#item_div').hide();
+      }
+  });
+});
+</script>
 <%= form_for [@business,@program ,@campaign, @engagement] do |f| %>
   <%= f.error_messages %>
   
@@ -8,14 +20,16 @@
   
   <p>
     <%= f.label :engagement_type_id, "Engagement Type" %><br />
-   
-    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} %>
+    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {}, {:id=>"engagement_type_selection_list"}%>
+  </p>
+  <p id="item_div">
+    <%= f.label :item %><br />
+    <%= f.select :item_id, @items.collect {|item| [item.name, item.id]},{:include_blank =>true} %>
   </p>
   <p>
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  
   <p>
     <%= f.label :is_started %><br />
     <%= f.select :is_started, options_for_select([ ['started', 'true'],['stopped','false']],@engagement.is_started)%>
