@@ -1,3 +1,6 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
 <script type="text/javascript" language="javascript" charset="utf-8">
 //<![CDATA[
 jQuery(function(){
@@ -100,7 +103,8 @@ jQuery(function(){
   </div>
   <div class="row">
    <div class="basic_info_caption1">Start Date</div>
-    <%= datetime_select("reward", "start_date", {:order => [:day,:month, :year,:hour],:prompt =>["day", "month", "year", "hour"], :discard_minute => true, :use_month_names => MONTHS},{:class =>'small'})  %>
+    <%= f.calendar_date_select :start_date %>
+    <!--<%= datetime_select("reward", "start_date", {:order => [:day,:month, :year,:hour],:prompt =>["day", "month", "year", "hour"], :discard_minute => true, :use_month_names => MONTHS},{:class =>'small'})  %>-->
   	<br /><br />
   </div>
   	  

@@ -25,6 +25,10 @@ open(Rails.root.join('db').join('countries_cities.txt')) do |records|
 end
 
 puts "Creating system engagement types"
-EngagementType.create([{:name=>"Check-IN"},{:name=>"Buy a product/service",:has_item=>true},{:name=>"Question"}, {:name=>"Spend"}])
+EngagementType.find_or_create_by_name(:name=>"Check-IN")
+EngagementType.find_or_create_by_name(:name=>"Buy a product/service",:has_item=>true)
+EngagementType.find_or_create_by_name(:name=>"Question")
+EngagementType.find_or_create_by_name(:name=>"Spend")
 puts "Creating system measurement types"
-MeasurementType.create([{:name=>"Money"},{:name=>"Points"}])
+MeasurementType.find_or_create_by_name(:name=>"Money")
+MeasurementType.find_or_create_by_name(:name=>"Points")

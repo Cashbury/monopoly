@@ -1,19 +1,17 @@
 <%= javascript_include_tag 'prototype' %>
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
-<%= javascript_include_tag 'jquery'%>
 <script type="text/javascript">
- $(document).ready(function(){
+ jQuery(document).ready(function(){
    
-  $("select").change(function () {
-    $("select option:selected").each(function () {
-      other_option = $(this).text();
+  jQuery("select").change(function () {
+    jQuery("select option:selected").each(function () {
+      other_option = jQuery(this).text();
       if(other_option == "Other"){
-        $('#new_measurement_type_div').show();
-        $('#initial_amount_div').hide();
+        jQuery('#new_measurement_type_div').show();
       }
       else{
-        $('#new_measurement_type_div').hide();
+        jQuery('#new_measurement_type_div').hide();
       }
     });
   });
@@ -59,7 +57,7 @@
     <%= text_field_tag :measurement_name %>
    </div><br />
   
-  <div id="initial_amount_div" class="field">
+  <div class="field">
     <%= f.label :initial_amount %>
     <%= f.text_field :initial_amount %>
   </div><br />

@@ -13,7 +13,7 @@
   <% for engagement in @engagements %>
     <tr>
       <td><%= link_to engagement.name , business_program_campaign_engagement_url(@business, @program,@campaign ,engagement) %></td>
-      <td><%= link_to engagement.engagement_type.name, business_program_campaign_engagement_url(@business, @program,@campaign, engagement) %></td>
+      <td><%= link_to engagement.engagement_type.try(:name), business_program_campaign_engagement_url(@business, @program,@campaign, engagement) %></td>
       <td><%= engagement.amount %></td>
       <td id="current_status_<%=engagement.id%>"><%= engagement.is_started %></td>
       <td><%= link_to "Edit", edit_business_program_campaign_engagement_path(@business,@program, @campaign,engagement) %></td>
