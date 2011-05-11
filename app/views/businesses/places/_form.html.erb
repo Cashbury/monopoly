@@ -1,3 +1,14 @@
+<script type="text/javascript">
+ $(document).ready(function(){
+   
+   $('select#place_address_attributes_country_id').bind('change',function(){
+    var country_id = $(":selected", this).val();
+    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
+  });
+  
+});
+</script>
+
 <%= form_for([@business,@place],:html => { :multipart => true }) do |f| %>
   <%= f.error_messages %>
   <p>
@@ -25,6 +36,33 @@
     <p>
       <% f.fields_for :place_images do |pimage| %>
         <p><%= pimage.label 'Place Image: ' %> <%= pimage.file_field :photo %></p>
+      <%end%>
+    </p>
+  </fieldset>
+  <fieldset>
+    <legend>Place Address</legend>
+    <p>
+      <%= f.fields_for :address, f.object.address do |address_form| %>
+        <p>
+          <%= address_form.label :street_address %>
+          <%= address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= address_form.label :neighborhood %>
+          <%= address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= address_form.label :country %>
+          <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= address_form.label :city %>
+          <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id)%>
+        </p>
+         <p>
+          <%= address_form.label :zipcode %>
+          <%= address_form.text_field :zipcode %>
+        </p> 
       <%end%>
     </p>
   </fieldset>

@@ -21,9 +21,6 @@ class RewardsController < ApplicationController
   end
   
   def create
-    puts "create Reward ****************************************************************"
-    puts params.inspect
-    
     @reward = Reward.new(params[:reward])
     @reward.campaign_id = params[:campaign_id]
     params[:upload] ||= {}

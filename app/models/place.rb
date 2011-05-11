@@ -35,14 +35,15 @@ class Place < ActiveRecord::Base
   
   attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes
   
-  validates_presence_of :name, :long, :lat, :address_id 
+  validates_presence_of :name, :long, :lat 
+  validates :address, :presence=>true
   validates_numericality_of :long,:lat
-  
+  validates_associated :address
    
   scope :with_address, order("places.name desc")
                       .joins(:address=>[:city,:country])
                       .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,countries.name as country_name")
-  before_save :add_amenities_name_and_place_name_to_place_tag_lists
+ # before_save :add_amenities_name_and_place_name_to_place_tag_lists
   
   def is_open?
     current_datetime=DateTime.now.in_time_zone(self.time_zone)
@@ -67,6 +68,6 @@ class Place < ActiveRecord::Base
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
     end
-    self.tag_list << self.name
+    self.tag_list << self.name unless self.tag_list.empty?
   end
 end

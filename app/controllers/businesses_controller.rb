@@ -34,6 +34,7 @@ class BusinessesController < ApplicationController
   
   def create
     @business = Business.new(params[:business])
+    @business.tag_list << @business.name
     set_tag_lists_for_business_places(@business)   
     if @business.save
       flash[:notice] = "Successfully created business."
@@ -67,7 +68,6 @@ class BusinessesController < ApplicationController
     @brands  = Brand.all
     @categories = Category.all
     @business = Business.find(params[:id])
-    
     if @business.update_attributes(params[:business])
        flash[:notice] = "Successfully updated business."
        redirect_to @business
@@ -94,7 +94,9 @@ class BusinessesController < ApplicationController
   private
   def set_tag_lists_for_business_places(business)
     business.places.each_with_index do |place,index|
-      place.tag_list = params[:business][:places_attributes][index.to_s][:tag_list] 
+      if params[:business][:places_attributes][index.to_s][:tag_list]
+        place.tag_list = params[:business][:places_attributes][index.to_s][:tag_list] 
+      end
     end
   end
 end
