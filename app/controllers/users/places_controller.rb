@@ -1,47 +1,42 @@
 class Users::PlacesController < Users::BaseController
-  include Geokit::Geocoders
   def index
-    ##res=GoogleGeocoder.reverse_geocode([37.792821,-122.393992])
-    ##res.city
     @places=[] 
     is_my_city=false
     if params[:city_id] #given specific city listing all places at that city
-      @places=  Place.all_places.where("addresses.city_id=#{params[:city_id]}")
+      @places=  Place.with_address.where("addresses.city_id=#{params[:city_id]}")
     elsif params[:lat] && params[:long]
-      res=Geokit::Geocoders::MultiGeocoder.reverse_geocode([params[:lat],params[:long]])
-      if res.city
-        city=City.where(:name=>res.city).first
-      elsif res.full_address
-        keywords=res.full_address.downcase.chomp.split(",")
-        query_string=""
-        keywords.each_with_index do |k,index| 
-          query_string+="lower(name) LIKE '%#{k.lstrip.rstrip}%'"
-          query_string+=" OR " unless index==keywords.size-1
-        end
-        city=City.where(query_string).first
-      end
-      @places = city ? Place.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).all_places.where("addresses.city_id=#{city.id}") : Place.all_places 
-      is_my_city=!city.nil?	               
-	  else
-	  	@places = Place.all_places
+      @places = Place.with_address.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f])
+      city=@places.first.try(:address).try(:city) unless @places.empty?
+      is_my_city=!city.nil?
     end
     unless params[:keywords].blank?
 			keys=params[:keywords].split(/[^A-Za-z0-9_\-]+/)
 	  	matched_places=[]
 	  	Business.tagged_with(keys,:any=>true).collect{|b| matched_places +=b.places}
-	  	temp_places = Place.tagged_with(keys,:any=>true).joins(:address)
+	  	temp_places = Place.tagged_with(keys,:any=>true).with_address
 	  	matched_places = matched_places | temp_places # merging places resulted from Business matched tags with Places matched tags
 	  	@places= @places & matched_places # Intersection
 	  end
     current_user.auto_enroll_at(@places)
     respond_to do |format|
-      format.xml { render :xml => prepare_result(@places,is_my_city) }
+      format.xml { render :xml => prepare_result(@places,is_my_city,city) }
     end
   end
   
-  def prepare_result(places,is_my_city)
+  def list_all_cities
+    @cities=City.select("cities.name,cities.id")
+    respond_to do |format|
+      format.xml { render :xml => @cities }
+    end
+  end
+  
+  def prepare_result(places,is_my_city,city)
   	@result={}
   	@result["is_my_city"]=is_my_city
+  	if city
+  	  @result["city-id"]  =city.id
+  	  @result["city-name"]=city.name
+  	end
   	@result["places"]=[]
     places.each_with_index do |place,index|
     	@result["places"][index] = place.attributes
@@ -51,7 +46,6 @@ class Users::PlacesController < Users::BaseController
 	    	@result["places"][index]["brand-name"]=business.brand.name
 	    	@result["places"][index]["brand-image"]=business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:thumb) 
 	    	@result["places"][index]["is_open"]   =place.is_open?
-	    	puts ">>>>>>>>place open hours size #{place.open_hours.size} and id =#{place.id}"
 	    	@result["places"][index]["open-hours"]=place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:place_id=>oh.place_id,:day=>OpenHour::DAYS.index(oh.day_no)}}
 	    	@result["places"][index]["accounts"]  =[]
 				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder])

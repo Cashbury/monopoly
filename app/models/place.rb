@@ -14,6 +14,7 @@
 #
 
 class Place < ActiveRecord::Base
+  include Geokit::Geocoders
 	acts_as_mappable  :lng_column_name => :long
 	acts_as_taggable
   belongs_to :business
@@ -37,16 +38,29 @@ class Place < ActiveRecord::Base
   validates_numericality_of :long,:lat
   
    
-  scope :all_places, order("places.name desc")
-                    .joins(:address=>[:city,:country])
-                    .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,addresses.city_id,cities.name as city_name,countries.name as country_name")
+  scope :with_address, order("places.name desc")
+                      .joins(:address=>[:city,:country])
+                      .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,countries.name as country_name")
   before_save :add_amenities_name_and_place_name_to_place_tag_lists
   
   def is_open?
     current_datetime=DateTime.now.in_time_zone(self.time_zone)
     !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?
   end
-  
+  def get_city_given_geoloacation(lat,lng)
+    res=Geokit::Geocoders::MultiGeocoder.reverse_geocode([lat,lng])
+    if res.city
+      city=City.where(:name=>res.city).first
+    elsif res.full_address
+      keywords=res.full_address.downcase.chomp.split(",")
+      query_string=""
+      keywords.each_with_index do |k,index| 
+        query_string+="lower(name) LIKE '%#{k.lstrip.rstrip}%'"
+        query_string+=" OR " unless index==keywords.size-1
+      end
+    end
+    city=City.where(query_string).first
+  end  
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
