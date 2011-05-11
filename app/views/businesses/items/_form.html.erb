@@ -1,3 +1,7 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+
 <%= form_for [@business ,@item] do |f| %>
   <%= f.error_messages %>
   <p>
@@ -18,7 +22,7 @@
   </p>
   <p>
     <%= f.label :expiry_date %>
-    <%= date_select("item","expiry_date", {:order => [:day,:month,:year],:use_month_names => MONTHS,:prompt => { :day => "Day", :month => "Month", :year => "Year"},:start_year => Time.now.year , :end_year => 1920} ) %>
+    <%= f.calendar_date_select :expiry_date %>
   </p>
   <p>
     <%= f.label :cost %><br />
