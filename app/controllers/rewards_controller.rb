@@ -17,9 +17,13 @@ class RewardsController < ApplicationController
   
   def new
     @reward = Reward.new
+    @reward.items.build
   end
   
   def create
+    puts "create Reward ****************************************************************"
+    puts params.inspect
+    
     @reward = Reward.new(params[:reward])
     @reward.campaign_id = params[:campaign_id]
     params[:upload] ||= {}
@@ -27,6 +31,9 @@ class RewardsController < ApplicationController
       @image = RewardImage.new()
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]
+    end
+    unless params[:item_id].blank?
+      @reward.items[0]  = Item.where(:id => params[:item_id]).first # supporting one item for now for each reward
     end
     if @reward.save
       @image.save! if @image
@@ -85,6 +92,15 @@ class RewardsController < ApplicationController
   
    def update_campaigns
     @campaigns= Campaign.where(:program_id=> params[:id]) 
+
+    respond_to do |format|
+      format.js 
+    end
+    
+  end
+  
+  def update_items
+    @items = Reward.get_available_items(params[:id]) 
 
     respond_to do |format|
       format.js 

@@ -15,6 +15,11 @@ jQuery(function(){
       var program_id = jQuery(":selected", this).val();
       jQuery.getScript("/rewards/update_campaigns/"+program_id);
     }); 
+    
+    jQuery('select#campaign_id').bind('change',function(){
+      var campaign_id = jQuery(":selected", this).val();
+      jQuery.getScript("/rewards/update_items/"+campaign_id);
+    }); 
   
 })
 //]]>
@@ -23,6 +28,22 @@ jQuery(function(){
 <%= f.error_messages %>
 <p class="subcap">Rewards are items that your customers can redeem after earning enough points or stamps.</p>
 <div id="left_main">
+   <div class="row">
+     <div class="basic_info_caption1"> Objective</div>
+      <select>
+        <option value="">Attarct New Customer</option>
+        <option value="">Retain Customers</option>
+      </select>
+      <br />
+    </div>
+    <div class="row">
+     <div class="basic_info_caption1"> Reward Type</div>
+      <select>
+        <option value="">from the menu – item</option>
+      </select> <br />
+      <br />
+     </div>
+ 
   <fieldset>
     <legend>Create The card</legend>
     <div class="row">
@@ -77,30 +98,55 @@ jQuery(function(){
     <div class="basic_info_caption1">How many times can this reward be claimed?</div>
     <%= f.text_field :max_claim , :class=>"basic_info_input"%>
   </div>
-  	 <div class="row">
+  <div class="row">
+   <div class="basic_info_caption1">Start Date</div>
+    <%= datetime_select("reward", "start_date", {:order => [:day,:month, :year,:hour],:prompt =>["day", "month", "year", "hour"], :discard_minute => true, :use_month_names => MONTHS},{:class =>'small'})  %>
+  	<br /><br />
+  </div>
+  	  
+  <fieldset >
+     <legend>Who is this reward offered to<legend>
+      <select>
+        <option 1>Attract New Customers   </option 1>
+        <option 2>Attract Exisit Customers</option 2>
+       </select>
+       <br />
+  </fieldset> <br />
+  <fieldset>
+    <legend>Settings</legend>
+    <div class="row">
+      <%= f.fields_for :items,@reward.items do |item_form| %>  
+         <div class="basic_info_caption1">Item</div>
+         <%= select_tag :item_id , ""%>
+      <% end %> 
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Sales Price</div>
+      <%= f.text_field :sales_price, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Cost</div>
+      <%= f.text_field :cost, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Offer Price</div>
+      <%= f.text_field :offer_price, :class =>"basic_info_input"  %>
+    </div>
+     <div class="row">
+      <div class="basic_info_caption1">Total Quantity Available</div>
+      <%= text_field_tag :total_quantity_available ,"", :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
       <div class="basic_info_caption1">
-        How many times can this reward be claimed by each user?
+        Max Enjoyments Per User
       </div><%= f.text_field :max_claim_per_user , :class=>"basic_info_input"%>
       </div>
-  		<div class="row">
-        <div class="basic_info_caption1">
-  				This reward will be available untill
-        </div>
-        <select class="selectruntime" id="reward_runtill">
-          <option value="stop">
-  					I Stop it
-  				</option>
-  				<option value="stop">
-  					A set time
-  				</option>
-  				<option value="setnum">
-  					A set number of people get it
-  				</option>
-  				<option value="sellout">
-  					It sells out
-  				</option>
-  			</select>
-  	</div>
+      <div class="row">
+      <div class="basic_info_caption1">
+        Foreign-Identifier
+      </div><%= f.text_field :foreign_identifier , :class=>"basic_info_input"%>
+      </div>
+  </fieldset>
       <div class="row">
         <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
   			<%= link_to "Cancel", rewards_path, :class => "cancel right" %>

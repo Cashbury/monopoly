@@ -37,6 +37,15 @@ class Reward < ActiveRecord::Base
   #   selected_categories.each {|place| self.places << place}
   # end
   
+  def self.get_available_items(campaign_id) # this should be refactored to scopes
+    @places = Campaign.where(:id =>campaign_id).first.places
+    @items = @places[0].items if @places[0]
+    @places.each do |place|
+      @items = @items | place.items
+    end
+    return @items
+  end
+  
   def is_claimed_by(user,user_account,place_id,lat,lng)
     business_account=self.campaign.business_account
     date=Date.today.to_s

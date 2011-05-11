@@ -31,10 +31,11 @@ Kazdoor::Application.routes.draw do
 	resources :program_types
 	resources :programs
 	resources :rewards do
-	  get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
-    get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
-    get "update_campaigns/:id"     ,:action=>:update_campaigns, :on =>:collection, :as =>"update_campaigns"
-    
+	  get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection  ,:as =>"update_business"
+    get "update_programs/:id"     ,:action=>:update_programs   , :on =>:collection  ,:as =>"update_programs"
+    get "update_campaigns/:id"    ,:action=>:update_campaigns  , :on =>:collection  ,:as =>"update_campaigns"
+    get "update_items/:id"        ,:action=>:update_items     , :on =>:collection  ,:as =>"update_items"
+   
 	end
 	resources :businesses do
 	  get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
