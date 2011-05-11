@@ -33,9 +33,13 @@ class Place < ActiveRecord::Base
   
   attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes
   
-  validates_presence_of :name, :long, :lat 
-  validates_numericality_of :long,:lat 
+  validates_presence_of :name, :long, :lat, :address_id 
+  validates_numericality_of :long,:lat
   
+   
+  scope :all_places, order("places.name desc")
+                    .joins(:address=>[:city,:country])
+                    .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,addresses.city_id,cities.name as city_name,countries.name as country_name")
   before_save :add_amenities_name_and_place_name_to_place_tag_lists
   
   def is_open?

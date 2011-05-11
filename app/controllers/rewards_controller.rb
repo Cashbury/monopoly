@@ -43,6 +43,7 @@ class RewardsController < ApplicationController
   
   def update
     @reward = Reward.find(params[:id])
+    @reward.campaign_id = params[:campaign_id]
     params[:upload] ||= {}
     unless params[:upload][:photo].blank?
       @image = RewardImage.new()
