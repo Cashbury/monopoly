@@ -37,6 +37,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def create
     @engagement = @campaign.engagements.new(params[:engagement])
+    @engagement.amount=1 if @campaign.measurement_type.business
     if @engagement.save
       flash[:notice] = "Successfully created engagement."
       redirect_to business_program_campaign_engagement_url(@business, @program,@campaign ,@engagement)
@@ -52,7 +53,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def update
     @engagement = Engagement.find(params[:id])
-    
+    @engagement.amount=1 if @campaign.measurement_type.business
     if @engagement.update_attributes(params[:engagement])
       flash[:notice] = "Successfully updated engagement."
       redirect_to business_program_campaign_engagement_url(@business, @program, @campaign,@engagement)
