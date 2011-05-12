@@ -43,16 +43,16 @@ class Users::PlacesController < Users::BaseController
     	business=place.business
     	unless business.nil?
 	    	programs=business.programs
-	    	@result["places"][index]["brand-name"]=business.brand.name
+	    	@result["places"][index]["brand-name"] =business.brand.name
 	    	@result["places"][index]["brand-image"]=business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:thumb) 
-	    	@result["places"][index]["is_open"]   =place.is_open?
-	    	@result["places"][index]["open-hours"]=place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:place_id=>oh.place_id,:day=>OpenHour::DAYS.index(oh.day_no)}}
-	    	@result["places"][index]["accounts"]  =[]
-				accounts=programs.joins(:campaigns=>[:accounts=>:account_holder])
-				                 .select("accounts.campaign_id,accounts.amount,accounts.measurement_type_id")
-				                 .where("account_holders.model_id=#{current_user.id} && ('#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date)")
+	    	@result["places"][index]["is_open"]    =place.is_open?
+	    	@result["places"][index]["open-hours"] =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:place_id=>oh.place_id,:day=>OpenHour::DAYS.key(oh.day_no)}}
+	    	@result["places"][index]["accounts"]   =[]
+				accounts=programs.joins(:campaigns=>[:accounts=>[:measurement_type,:account_holder]])
+				                 .select("account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type,campaigns.start_date,campaigns.end_date")
+				                 .where("account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ('#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date)")
 				accounts.each do |account|
-					@result["places"][index]["accounts"] << account.attributes
+					@result["places"][index]["accounts"] << account.attributes.delete_if {|key, value| key == "model_id" || key=="model_type" || key=="start_date" || key=="end_date"}
 				end
 				@result["places"][index]["rewards"]=[] 
 				normal_rewards=programs.joins(:campaigns=>:rewards)
@@ -60,12 +60,14 @@ class Users::PlacesController < Users::BaseController
 				                       .where("'#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date")				                       
 				normal_rewards.each_with_index do |reward,i|
 					attributes=reward.attributes
-					if attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i && attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i  
-						@result["places"][index]["rewards"] << attributes
-						reward_obj=Reward.find(reward.reward_id)
-						@result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : reward_obj.reward_image.photo.url(:thumb)
-            how_to_get_amount_text=""  
-						@result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} amount\n"}.first 
+					reward_obj=Reward.find(reward.reward_id)
+					if !reward_obj.campaign.has_target? || (reward_obj.campaign.has_target? and current_user.is_targeted_from?(reward_obj.campaign))
+  					if attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i && attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i  
+  						@result["places"][index]["rewards"] << attributes
+  						@result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : reward_obj.reward_image.photo.url(:thumb)
+              how_to_get_amount_text=""  
+  						@result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} amount\n"}.first 
+  					end
 					end
 				end
 			end

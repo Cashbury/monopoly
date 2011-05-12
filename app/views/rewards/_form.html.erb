@@ -98,24 +98,11 @@ jQuery(function(){
     <p><%= select_tag :campaign_id , ""%></p>
   </div>
   <div class="row">
-    <div class="basic_info_caption1">How many times can this reward be claimed?</div>
-    <%= f.text_field :max_claim , :class=>"basic_info_input"%>
-  </div>
-  <div class="row">
    <div class="basic_info_caption1">Start Date</div>
     <%= f.calendar_date_select :start_date %>
     <!--<%= datetime_select("reward", "start_date", {:order => [:day,:month, :year,:hour],:prompt =>["day", "month", "year", "hour"], :discard_minute => true, :use_month_names => MONTHS},{:class =>'small'})  %>-->
   	<br /><br />
   </div>
-  	  
-  <fieldset >
-     <legend>Who is this reward offered to<legend>
-      <select>
-        <option 1>Attract New Customers   </option 1>
-        <option 2>Attract Exisit Customers</option 2>
-       </select>
-       <br />
-  </fieldset> <br />
   <fieldset>
     <legend>Settings</legend>
     <div class="row">
@@ -139,6 +126,10 @@ jQuery(function(){
      <div class="row">
       <div class="basic_info_caption1">Total Quantity Available</div>
       <%= text_field_tag :total_quantity_available ,"", :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+    <div class="basic_info_caption1">How many times can this reward be claimed?</div>
+      <%= f.text_field :max_claim , :class=>"basic_info_input"%>
     </div>
     <div class="row">
       <div class="basic_info_caption1">

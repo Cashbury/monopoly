@@ -19,6 +19,8 @@ class Business < ActiveRecord::Base
   has_many :engagement_types
   has_many :followers, :as=>:followed
   has_many :users, :through=>:followers
+  has_many :business_customers
+  has_many :users, :through=> :business_customers
   has_many :announcements
   has_many :logs
   has_many :legal_ids , :as=>:associatable

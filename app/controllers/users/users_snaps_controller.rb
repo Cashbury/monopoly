@@ -1,6 +1,6 @@
 class Users::UsersSnapsController < Users::BaseController
 	def snap
-		begin		
+		#begin		
 		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash],:associatable_type=>"Engagement").first	       
       if !qr_code.status
         respond_with_error("QR Code not Active!")
@@ -12,10 +12,10 @@ class Users::UsersSnapsController < Users::BaseController
           format.xml {render :xml => snap_hash(account,campaign,program,after_fees_amount), :status => 200}
         end
       end											 
-		rescue Exception=>e
-      logger.error "Exception #{e.class}: #{e.message}"
-      render :text => e.message, :status => 500
-    end
+		# rescue Exception=>e
+		#       logger.error "Exception #{e.class}: #{e.message}"
+		#       render :text => e.message, :status => 500
+		#     end
   end
   
   private

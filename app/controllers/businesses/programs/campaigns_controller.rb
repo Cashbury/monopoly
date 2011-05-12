@@ -23,7 +23,6 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def new
     @campaign = Campaign.new
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @campaign }
@@ -36,9 +35,19 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def create
     @campaign = @program.campaigns.new(params[:campaign])
+    if params[:target_id].present?
+      @campaign.has_target=true
+      unless @campaign.targets.empty?
+        @campaign.targets.update_all(:target_id=>params[:target_id])
+      else
+        @campaign.targets << Target.find(params[:target_id])
+      end 
+    else
+      @campaign.targets.delete_all    
+      @campaign.has_target=false   
+    end 
     if params[:measurement_name].present?
-      @measurement_type = add_new_measurement_type 
-      @campaign.measurement_type = @measurement_type
+      @campaign.measurement_type = MeasurementType.create!(:name=>params[:measurement_name], :business_id=>params[:business_id])
     end
     respond_to do |format|
       if @campaign.save
@@ -53,6 +62,20 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def update
     @campaign = Campaign.find(params[:id])
+    if params[:target_id].present?
+      @campaign.has_target=true
+      unless @campaign.targets.empty?
+        @campaign.targets.update_all(:target_id=>params[:target_id])
+      else
+        @campaign.targets << Target.find(params[:target_id])
+      end
+    else    
+      @campaign.targets.delete_all
+      @campaign.has_target=false
+    end 
+    if params[:measurement_name].present?
+      @campaign.measurement_type_id = MeasurementType.create!(:name=>params[:measurement_name], :business_id=>params[:business_id]).id
+    end
     respond_to do |format|
       if @campaign.update_attributes(params[:campaign])
         format.html { redirect_to(business_program_campaign_url(@business, @program,@campaign), :notice => 'Campaign was successfully updated.') }
@@ -73,17 +96,7 @@ class Businesses::Programs::CampaignsController < ApplicationController
       format.xml  { head :ok }
     end
   end
-  
-  def add_new_measurement_type
-    @measurement_type = MeasurementType.new
-    @measurement_type.name = params[:measurement_name]
-    @measurement_type.business_id = params[:business_id]
-    if @measurement_type.save
-      return @measurement_type
-    else
-      return nil
-    end
- end
+ 
   private
   def find_business_and_program
     @business = Business.find(params[:business_id])

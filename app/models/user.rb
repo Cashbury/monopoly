@@ -38,7 +38,8 @@ class User < ActiveRecord::Base
   has_many :employees #same user with different positions
   has_many :logs
   has_many :followers, :as=>:followed
-  
+  has_many :business_customers
+  has_many :businesses, :through=>:business_customers
   has_one :qr_code, :as=>:associatable
   has_one :account_holder, :as=>:model
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
@@ -46,8 +47,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
 
-	def has_account_with_campaign?(campaign_id)
-	  acch=self.account_holder
+	def has_account_with_campaign?(acch,campaign_id)
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
 	end
 	
@@ -59,10 +59,11 @@ class User < ActiveRecord::Base
       businesses.each do |business|
         business.programs.each do |program|
           program.campaigns.each do |campaign|
-            unless self.has_account_with_campaign?(campaign.id)
-              accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless accholder
-              accholder.accounts << Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
-              accholder.save!
+            unless self.has_account_with_campaign?(accholder,campaign.id)
+              if accholder.nil?
+                accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s)
+              end
+              Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type,:account_holder=>accholder)
             end
           end
         end
@@ -87,6 +88,10 @@ class User < ActiveRecord::Base
     date=Date.today.to_s
     Account.transaction do
       qr_code.scan
+      #check if user has engaged with biz before else create record for it
+      if self.business_customers.where(:business_id=>campaign.program.business).empty?
+        self.business_customers.create(:business_id=>campaign.program.business)
+      end
       if user_account.nil?
         accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless self.account_holder
         account=Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
@@ -147,5 +152,15 @@ class User < ActiveRecord::Base
   
   def full_name
     "#{self.first_name} #{self.last_name}"
+  end
+  
+  def engaged_with_business?(business)
+    !self.business_customers.where(:business_id=>business.id).empty?
+  end
+  
+  def is_targeted_from?(campaign)
+    campaign.targets.each do |target|
+      return target.name=="new_comers" ? !self.engaged_with_business?(campaign.program.business) : self.engaged_with_business?(campaign.program.business)
+    end
   end
 end

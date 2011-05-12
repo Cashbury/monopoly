@@ -32,3 +32,6 @@ EngagementType.find_or_create_by_name(:name=>"Spend")
 puts "Creating system measurement types"
 MeasurementType.find_or_create_by_name(:name=>"Money")
 MeasurementType.find_or_create_by_name(:name=>"Points")
+puts "Creatring system targets"
+Target.find_or_create_by_name(:name=>"new_comers")
+Target.find_or_create_by_name(:name=>"returning_comers")

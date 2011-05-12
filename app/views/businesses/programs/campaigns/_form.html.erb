@@ -65,10 +65,11 @@
     <%= f.label :initial_biz_amount %>
     <%= f.text_field :initial_biz_amount %>
   </div><br />
-  
-  
- <br />
-  
+  <div class="field">
+    <%= label_tag "Who is this campaign offered to?" %>
+    <%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %><br />
+  </div>
+  <br />
   <div class="actions">
     <%= f.submit %>
   </div>

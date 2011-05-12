@@ -4,6 +4,7 @@ class Campaign < ActiveRecord::Base
 	has_many   :engagements
 	has_many   :rewards
   has_and_belongs_to_many :places
+  has_and_belongs_to_many :targets
 	belongs_to :program
 	belongs_to :measurement_type
 	
@@ -14,10 +15,8 @@ class Campaign < ActiveRecord::Base
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
 	after_create :create_campaign_business_account
-	
-	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
-	
 	after_initialize :init
+	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
 	
   def init
     self.initial_biz_amount ||= 10000 
@@ -39,7 +38,7 @@ class Campaign < ActiveRecord::Base
 	private
 	def create_campaign_business_account
 	  account_holder  = AccountHolder.where(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first 
-	  if !account_holder
+	  unless account_holder
 	    account_holder  = AccountHolder.create!(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s) 
 	  end
 	  account = Account.create!(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder => account_holder)
