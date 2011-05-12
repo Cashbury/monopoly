@@ -36,4 +36,5 @@
   <%= link_to "Edit",  edit_business_place_path %> |
   <%= link_to "Destroy", business_place_path(@business, @place), :confirm => 'Are you sure?', :method => :delete %> |
   <%= link_to "View All", business_places_path %>
+   <%= link_to "Show Items", business_place_items_path(@business,@place) %>
 </p>

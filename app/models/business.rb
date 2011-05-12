@@ -1,15 +1,3 @@
-# == Schema Information
-# Schema version: 20101218032208
-#
-# Table name: businesses
-#
-#  id          :integer         primary key
-#  name        :string(255)
-#  description :text
-#  created_at  :timestamp
-#  updated_at  :timestamp
-#
-
 class Business < ActiveRecord::Base
 	acts_as_taggable
 	has_many :targets
@@ -36,7 +24,6 @@ class Business < ActiveRecord::Base
   
   attr_accessor :categories_list
 
-  #after_save :add_business_name_to_business_tag_lists
   after_save :update_categories
   
 	validates :tag_list, :presence=>true
@@ -50,7 +37,5 @@ class Business < ActiveRecord::Base
     selected_categories = categories_list.nil? ? [] : categories_list.keys.collect{|id| Category.find(id)}
     selected_categories.each {|category| self.categories << category}
   end
-  def add_business_name_to_business_tag_lists
-    self.tag_list << self.name unless self.tag_list.empty?
-  end
+  
 end

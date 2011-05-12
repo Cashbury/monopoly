@@ -31,6 +31,11 @@
     <%= f.label :time_zone %><br />
     <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
   </p>
+  <p>
+    <%= f.label 'Keywords' %><br />
+    <%= f.text_field :tag_list %>
+    <small>Optional, comma separated</small>
+  </p>
   <fieldset>
     <legend>Place Images</legend>
     <p>
@@ -39,6 +44,7 @@
       <%end%>
     </p>
   </fieldset>
+   <br />
   <fieldset>
     <legend>Place Address</legend>
     <p>
@@ -66,11 +72,31 @@
       <%end%>
     </p>
   </fieldset>
-  <p>
-    <%= f.label 'Keywords' %><br />
-    <%= f.text_field :tag_list %>
-    <small>Optional, comma separated</small>
-  </p>
+  <br />
+  <fieldset>
+    <legend>Assign Items to Place</legend>
+    <p>
+      <%= f.label :items, "Items" %><br />
+      <% @business.items.each do |item| %>
+      <%= check_box_tag(
+                        "place[items_list][#{item.id}]", 
+                        "1", 
+                        @place.items.detect{|i| i.id == item.id}) %>
+       <%= "#{item.name}"%><br />
+      <% end %>
+    </p>
+  </fieldset>
+  <fieldset>
+    <legend>Add New Item to Place</legend>
+    <p>
+      <%= f.fields_for :items do |item_form| %>
+       <p>
+         <%= item_form.label :name %><br />
+         <%= item_form.text_field :name %>
+       </p>
+      <% end %>
+    </p>
+  </fieldset>
   
   <p><%= f.submit %></p>
 <% end %>
