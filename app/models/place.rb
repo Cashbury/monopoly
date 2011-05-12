@@ -1,18 +1,3 @@
-# == Schema Information
-# Schema version: 20101218032208
-#
-# Table name: places
-#
-#  id          :integer         primary key
-#  name        :string(255)
-#  long        :string(255)
-#  lat         :string(255)
-#  business_id :integer
-#  description :text
-#  created_at  :timestamp
-#  updated_at  :timestamp
-#
-
 class Place < ActiveRecord::Base
   include Geokit::Geocoders
 	acts_as_mappable  :lng_column_name => :long
@@ -20,7 +5,8 @@ class Place < ActiveRecord::Base
   belongs_to :business
   belongs_to :place_type
   belongs_to :address
-  has_and_belongs_to_many :items
+  has_many :item_places
+  has_many :items , :through => :item_places
   has_and_belongs_to_many :amenities
   has_and_belongs_to_many :campaigns
 
@@ -31,19 +17,20 @@ class Place < ActiveRecord::Base
   
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :place_images
-  accepts_nested_attributes_for :items, :allow_destroy => true
+  accepts_nested_attributes_for :items
   
-  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes
-  
-  validates_presence_of :name, :long, :lat, :address_id 
+  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes
+  attr_accessor :items_list
+  validates_presence_of :name, :long, :lat 
+  validates :address, :presence=>true
   validates_numericality_of :long,:lat
-  
+  validates_associated :address
    
   scope :with_address, order("places.name desc")
                       .joins(:address=>[:city,:country])
                       .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,countries.name as country_name")
-  before_save :add_amenities_name_and_place_name_to_place_tag_lists
-  
+ before_save :add_amenities_name_and_place_name_to_place_tag_lists
+ after_save :update_items
   def is_open?
     current_datetime=DateTime.now.in_time_zone(self.time_zone)
     !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?
@@ -67,6 +54,12 @@ class Place < ActiveRecord::Base
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
     end
-    self.tag_list << self.name
+    self.tag_list << self.name unless self.tag_list.empty?
+  end
+  def update_items
+    items.delete_all
+    selected_items = items_list.nil? ? [] : items_list.keys.collect{|id| Item.find(id)}
+    selected_items.each {|item| self.items << item}
+    
   end
 end

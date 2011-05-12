@@ -124,37 +124,6 @@
         </p> 
       <%end%>
     </fieldset>
-	   <%=  builder.fields_for :items do |item_form| %>
-	   <input type="button" value="Add New Item To This Place" id="add_item_button" />
-	   <div id="add_item_div" style="display:none">
-	     <label>Item: </label>
-	     <p>
-         <%= item_form.label :name %>
-         <%= item_form.text_field :name %>
-       </p>
-       <p>
-         <%= item_form.label :description %>
-         <%= item_form.text_field :description %>
-       </p>
-       <p>
-         <%= item_form.label :price %>
-         <%= item_form.text_field :price %>
-       </p>
-       <p>
-         <%= item_form.label :available %>
-         <%= item_form.select :available, options_for_select([ ['yes', 'true'],['no','false']])%>
-       </p>
-       <p>
-         <%= item_form.label :cost %><br />
-         <%= item_form.text_field :cost %>
-       </p>
-       <p>
-        <%= item_form.label :product_code %><br />
-        <%= item_form.text_field :product_code %>
-       </p>
-	   </div>
-	   <% end%>
-
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>
   <% end %>

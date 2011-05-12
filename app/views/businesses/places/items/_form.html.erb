@@ -2,7 +2,7 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 
-<%= form_for [@business ,@item] do |f| %>
+<%= form_for [@business ,@place,@item] do |f| %>
   <%= f.error_messages %>
   <p>
     <%= f.label :name %><br />
@@ -32,7 +32,5 @@
     <%= f.label :product_code %><br />
     <%= f.text_field :product_code %>
   </p>
-  <input type="hidden" name="item[business_id]" value="<%=@business.id%>" />
-
   <p><%= f.submit %></p>
 <% end %>

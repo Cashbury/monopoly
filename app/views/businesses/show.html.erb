@@ -26,6 +26,10 @@
   <%= @business.description %>
 </p>
 <p>
+  <strong>Tag List:</strong>
+  <%= @business.tag_list %>
+</p>
+<p>
   <strong>Country:</strong>
   <%= @business.country.try(:name) %>
 </p>
@@ -68,5 +72,5 @@
 <p>
   <%= link_to "Show Programs", business_programs_path(@business) %><br />
   <%= link_to "New Measurement Type", new_business_measurement_type_path(@business) %><br />
-  <%= link_to "New Item", new_business_item_path(@business) %><br />
+  <%= link_to "Show Items", business_items_path(@business)  %><br />
 </p>

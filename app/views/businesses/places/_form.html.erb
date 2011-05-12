@@ -1,3 +1,14 @@
+<script type="text/javascript">
+ $(document).ready(function(){
+   
+   $('select#place_address_attributes_country_id').bind('change',function(){
+    var country_id = $(":selected", this).val();
+    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
+  });
+  
+});
+</script>
+
 <%= form_for([@business,@place],:html => { :multipart => true }) do |f| %>
   <%= f.error_messages %>
   <p>
@@ -20,6 +31,11 @@
     <%= f.label :time_zone %><br />
     <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
   </p>
+  <p>
+    <%= f.label 'Keywords' %><br />
+    <%= f.text_field :tag_list %>
+    <small>Optional, comma separated</small>
+  </p>
   <fieldset>
     <legend>Place Images</legend>
     <p>
@@ -28,11 +44,59 @@
       <%end%>
     </p>
   </fieldset>
-  <p>
-    <%= f.label 'Keywords' %><br />
-    <%= f.text_field :tag_list %>
-    <small>Optional, comma separated</small>
-  </p>
+   <br />
+  <fieldset>
+    <legend>Place Address</legend>
+    <p>
+      <%= f.fields_for :address, f.object.address do |address_form| %>
+        <p>
+          <%= address_form.label :street_address %>
+          <%= address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= address_form.label :neighborhood %>
+          <%= address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= address_form.label :country %>
+          <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= address_form.label :city %>
+          <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id)%>
+        </p>
+         <p>
+          <%= address_form.label :zipcode %>
+          <%= address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </p>
+  </fieldset>
+  <br />
+  <fieldset>
+    <legend>Assign Items to Place</legend>
+    <p>
+      <%= f.label :items, "Items" %><br />
+      <% @business.items.each do |item| %>
+      <%= check_box_tag(
+                        "place[items_list][#{item.id}]", 
+                        "1", 
+                        @place.items.detect{|i| i.id == item.id}) %>
+       <%= "#{item.name}"%><br />
+      <% end %>
+    </p>
+  </fieldset>
+  <fieldset>
+    <legend>Add New Item to Place</legend>
+    <p>
+      <%= f.fields_for :items do |item_form| %>
+       <p>
+         <%= item_form.label :name %><br />
+         <%= item_form.text_field :name %>
+       </p>
+      <% end %>
+    </p>
+  </fieldset>
   
   <p><%= f.submit %></p>
 <% end %>

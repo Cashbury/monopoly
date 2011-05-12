@@ -16,11 +16,11 @@
       <td><%= item.cost %></td>
       <td><%= item.product_code %></td>
       
-      <td><%= link_to "Show", business_item_path(@business,item) %></td>
-      <td><%= link_to "Edit", edit_business_item_path(@business,item) %></td>
-      <td><%= link_to "Destroy", business_item_path(@business, item), :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= link_to "Show", business_place_item_path(@business,@place,item) %></td>
+      <td><%= link_to "Edit", edit_business_place_item_path(@business,@place,item) %></td>
+      <td><%= link_to "Destroy", business_place_item_path(@business, @place,item), :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
-<p><%= link_to "New Item", new_business_item_path(@business) %></p>
+<p><%= link_to "New Item", new_business_place_item_path(@business,@place) %></p>
 

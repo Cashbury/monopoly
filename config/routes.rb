@@ -92,7 +92,9 @@ Kazdoor::Application.routes.draw do
   resources :businesses do
     resources :measurement_types, :controller => "businesses/measurement_types"
     resources :items, :controller => "businesses/items"
-    resources :places, :controller => "businesses/places"
+    resources :places, :controller => "businesses/places" do
+      resources :items, :controller => "businesses/places/items" 
+    end
     
     resources :programs , :controller => "businesses/programs" do
       resources :campaigns , :controller => "businesses/programs/campaigns" do
