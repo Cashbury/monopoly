@@ -133,6 +133,7 @@ class User < ActiveRecord::Base
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,
                   :engagement_id  =>engagement.id,
+                  :campaign_id    =>campaign.id,
                   :business_id    =>campaign.program.business.id,
                   :transaction_id =>transaction.id,
                   :place_id       =>place_id,
@@ -162,5 +163,8 @@ class User < ActiveRecord::Base
     campaign.targets.each do |target|
       return target.name=="new_comers" ? !self.engaged_with_business?(campaign.program.business) : self.engaged_with_business?(campaign.program.business)
     end
+  end
+  def is_engaged_with_campaign?(campaign)
+    !self.logs.where(:campaign_id=>campaign.id).limit(1).empty?
   end
 end

@@ -61,7 +61,7 @@ class Users::PlacesController < Users::BaseController
 				normal_rewards.each_with_index do |reward,i|
 					attributes=reward.attributes
 					reward_obj=Reward.find(reward.reward_id)
-					if !reward_obj.campaign.has_target? || (reward_obj.campaign.has_target? and current_user.is_targeted_from?(reward_obj.campaign))
+					if current_user.is_engaged_with_campaign?(reward_obj.campaign) || !reward_obj.campaign.has_target? || (reward_obj.campaign.has_target? and current_user.is_targeted_from?(reward_obj.campaign))
   					if attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i && attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i  
   						@result["places"][index]["rewards"] << attributes
   						@result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : reward_obj.reward_image.photo.url(:thumb)
