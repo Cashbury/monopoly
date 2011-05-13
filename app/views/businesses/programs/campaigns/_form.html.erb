@@ -76,7 +76,8 @@
       <p>
         <%= f.label :places, "Places" %><br />
         <% @business.places.each do |place| %>
-          <%= check_box_tag("campaign[places_list][#{place.id}]", "1", @business.places.detect{|i| i.id == place.id}) %>
+          <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
+          <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
           <%= "#{place.name}"%><br />
         <% end %>
       </p>

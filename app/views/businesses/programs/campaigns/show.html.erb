@@ -42,6 +42,14 @@
   <b>Initial Business Account Amount:</b>
   <%= @campaign.initial_biz_amount %>
 </p>
+<p>
+  <b>Assigned Places:</b>
+  <ul>
+  <%@campaign.places.each do |place|%>
+    <li><%= place.name %></li>
+  <%end%>
+  </ul>
+</p>
 
 <p>
 <%= link_to "Show Rewards", business_program_campaign_rewards_path(@business, @program,@campaign) %><br />

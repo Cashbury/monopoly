@@ -45,7 +45,7 @@ class Log < ActiveRecord::Base
       @results = Log.engagements_logs
                     .select("users.first_name,users.last_name,count(*) as total,businesses.name as bname,places.name as pname")
                     .joins([:user,"LEFT OUTER JOIN places ON logs.place_id=places.id INNER JOIN businesses on logs.business_id = businesses.id"])
-                    .group(:user_id,:place_id)
+                    .group("logs.user_id",:place_id)
                     .where(@params)
                     .order("total DESC")
                     .paginate(:page => options[:page],:per_page => per_page)

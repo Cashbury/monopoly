@@ -28,6 +28,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]
     end
+    params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.save
       @image.save! if @image
       flash[:notice] = "Successfully created reward."
@@ -49,6 +50,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]
     end
+    params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.update_attributes(params[:reward])
       @image.save! if @image
       flash[:notice] = "Successfully updated reward."

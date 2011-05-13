@@ -15,8 +15,8 @@
 <% @programs.each do |program| %>
   <tr>
     <td><%= link_to program.program_type.name, business_program_url(@business, program)%></td>
-    <td><%= program.program_type_id %></td>
-    <td><%= program.business_id %></td>
+    <td><%= program.program_type.name %></td>
+    <td><%= program.business.name %></td>
     
     <td><%= link_to 'Show', business_program_path(@business,program) %></td>
     <td><%= link_to 'Edit', edit_business_program_path(@business,program) %></td>

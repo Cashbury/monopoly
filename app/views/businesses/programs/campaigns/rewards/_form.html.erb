@@ -1,8 +1,34 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+jQuery(function(){
+  jQuery('select#campaign_id').bind('change',function(){
+    var campaign_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_items/"+campaign_id);
+  });
+})
+//]]>
+</script>
 <%= f.error_messages %>
 <p class="subcap">
 	Rewards are items that your customers can redeem after earning enough points or stamps.
 </p>
 <div id="left_main">
+  <div class="row">
+    <div class="basic_info_caption1"> Objective</div>
+      <select>
+        <option value="">Attarct New Customer</option>
+        <option value="">Retain Customers</option>
+      </select><br />
+  </div>
+  <div class="row">
+  <div class="basic_info_caption1"> Reward Type</div>
+    <select>
+      <option value="">from the menu – item</option>
+    </select> <br /><br />
+  </div>
   <fieldset>
     <legend>Create The card</legend>
     <div class="row">
@@ -24,7 +50,10 @@
     <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
       <div id="Enter_Num_Stamp">
-        <%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+        <div class="basic_info_caption1">
+          <%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+          <%=@reward.try(:campaign).try(:measurement_type).try(:name)%>
+        </div>
       </div>
       <div id="points" class="setgoaltype"></div>
     </div>
@@ -38,38 +67,48 @@
     </div>
   </fieldset>
   <div class="row">
-    <div class="basic_info_caption1">How many times can this reward be claimed?</div>
-    <%= f.text_field :max_claim , :class=>"basic_info_input"%>
+   <div class="basic_info_caption1">Start Date</div>
+    <%= f.calendar_date_select :start_date %>
+    <br /><br />
   </div>
-     <div class="row">
+  <fieldset>
+    <legend>Settings</legend>
+    <div class="row">  
+         <div class="basic_info_caption1">Item</div>
+         <%= select_tag "item_id", "<option value=''>...None...</option>".html_safe+ options_from_collection_for_select(Item.all , :id, :name, @reward.try(:items).try(:first).try(:id)) %><br /> 
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Sales Price</div>
+      <%= f.text_field :sales_price, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Cost</div>
+      <%= f.text_field :cost, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Offer Price</div>
+      <%= f.text_field :offer_price, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Total Quantity Available</div>
+        <%= f.text_field :max_claim , :class=>"basic_info_input"%>
+    </div>
+    <div class="row">
       <div class="basic_info_caption1">
-        How many times can this reward be claimed by each user?
+        Max Enjoyments Per User
       </div><%= f.text_field :max_claim_per_user , :class=>"basic_info_input"%>
       </div>
       <div class="row">
-        <div class="basic_info_caption1">
-          This reward will be available untill
-        </div>
-        <select class="selectruntime" id="reward_runtill">
-          <option value="stop">
-            I Stop it
-          </option>
-          <option value="stop">
-            A set time
-          </option>
-          <option value="setnum">
-            A set number of people get it
-          </option>
-          <option value="sellout">
-            It sells out
-          </option>
-        </select>
+      <div class="basic_info_caption1">
+        Foreign-Identifier
+      </div><%= f.text_field :foreign_identifier , :class=>"basic_info_input"%>
+      </div>
+  </fieldset>
+      <div class="row">
+        <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
+        <%= link_to "Cancel", rewards_path, :class => "cancel right" %>
+      </div>
     </div>
-   	
-    <div class="row">
-		<input type="submit" value="" name="commit" id="save_cont_btn" class="save">
-		<%= link_to "Cancel", business_program_campaign_rewards_path(@business,@program,@campaign), :class => "cancel right" %>
-	</div>
 </div>
 <br/>
 <br/>

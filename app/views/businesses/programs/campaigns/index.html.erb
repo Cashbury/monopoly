@@ -9,7 +9,9 @@
     <th>End date</th>
     <th>Business</th>
     <th>Program</th>
-    <th>Initial points</th>
+    <th>Initial user amount</th>
+    <th>Initial biz amount</th>
+    <th>Measurement Type</th>
     <th></th>
     <th></th>
     <th></th>
@@ -20,8 +22,11 @@
     <td><%= link_to campaign.name, business_program_campaign_url(@business, @program, campaign)%></td>
     <td><%= campaign.start_date %></td>
     <td><%= campaign.end_date %></td>
-    <td><%= campaign.program.business_id %></td>
+    <td><%= campaign.program.try(:business).try(:name) %></td>
+    <td><%= campaign.program.try(:program_type_name) %></td>
     <td><%= campaign.initial_amount %></td>
+    <td><%= campaign.initial_biz_amount %></td>
+    <td><%= campaign.measurement_type.try(:name) %></td>
    
     <td><%= link_to 'Show', business_program_campaign_path(@business,@program,campaign) %></td>
     <td><%= link_to 'Edit', edit_business_program_campaign_path(@business,@program, campaign) %></td>

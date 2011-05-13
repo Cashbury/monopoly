@@ -48,7 +48,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def edit
     @engagement = Engagement.find(params[:id])
-    @items= @engagement.items_list
+    @items= @engagement.items_list(@campaign)
   end
   
   def update

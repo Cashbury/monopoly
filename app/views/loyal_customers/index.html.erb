@@ -30,7 +30,7 @@
 	  </tr>
   <% for result in @results %>
     <tr>
-      <td><%= result.full_name    %></td>
+      <td><%= "#{result.first_name} #{result.last_name}"%></td>
       <td><%= result.bname        %></td>
       <td><%= result.pname        %></td>
       <td><%= result.total        %></td>

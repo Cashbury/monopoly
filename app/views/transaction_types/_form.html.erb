@@ -2,7 +2,6 @@
   <% if @transaction_type.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@transaction_type.errors.count, "error") %> prohibited this transaction type from being saved:</h2>
-
       <ul>
       <% @transaction_type.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -19,7 +18,7 @@
     <%= f.label "Related Actions" %><br />
     <% for action in Action.all%>    
       <%= check_box_tag "transaction_type[actions_ids][]", action.id, @transaction_type.actions.include?(action) %>                    
-      <%= f.label :actions, action.name %>
+      <%= action.name %>
     <%end%>
   </div>
   <br />

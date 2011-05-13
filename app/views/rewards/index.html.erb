@@ -3,10 +3,12 @@
 <table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
+    <th>Campaign</th>
   </tr>
   <% for reward in @rewards %>
     <tr>
       <td><%= link_to reward.name, reward_path(reward) %></td>
+      <td><%= reward.campaign.try(:name) %></td>
       <td><%= link_to "Edit", edit_reward_path(reward) %></td>
       <td><%= button_to "Destroy", reward_path(reward), :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
