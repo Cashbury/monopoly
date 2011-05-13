@@ -70,6 +70,19 @@
     <%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %><br />
   </div>
   <br />
+  <div class="field">
+     <fieldset>
+      <legend>Assign Campaign to Places</legend>
+      <p>
+        <%= f.label :places, "Places" %><br />
+        <% @business.places.each do |place| %>
+          <%= check_box_tag("campaign[places_list][#{place.id}]", "1", @business.places.detect{|i| i.id == place.id}) %>
+          <%= "#{place.name}"%><br />
+        <% end %>
+      </p>
+    </fieldset>
+  </div>
+  <br />
   <div class="actions">
     <%= f.submit %>
   </div>

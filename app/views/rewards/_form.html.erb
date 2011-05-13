@@ -22,7 +22,7 @@ jQuery(function(){
     jQuery('select#campaign_id').bind('change',function(){
       var campaign_id = jQuery(":selected", this).val();
       jQuery.getScript("/rewards/update_items/"+campaign_id);
-    }); 
+    });
   
 })
 //]]>
@@ -68,7 +68,10 @@ jQuery(function(){
     <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
       <div id="Enter_Num_Stamp">
-        <%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+        <div class="basic_info_caption1">
+          <%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+          <%=@reward.try(:campaign).try(:measurement_type).try(:name)%>
+        </div>
       </div>
       <div id="points" class="setgoaltype"></div>
     </div>
@@ -83,33 +86,30 @@ jQuery(function(){
   </fieldset>
   <div class="row">
     <div class="basic_info_caption1">Brand</div>
-    <p><%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %></p>
+    <p><%= select_tag :brand_id ,"<option value=''>..Select One..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, @reward.try(:campaign).try(:program).try(:business).try(:brand).try(:id)) %></p>
   </div>
   <div class="row">
     <div class="basic_info_caption1">Business</div>
-    <p><%= select_tag :business_id , ""%></p>
+    <p><%= select_tag :business_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name, @reward.try(:campaign).try(:program).try(:business).try(:id)) %></p>
   </div>	
   <div class="row">
     <div class="basic_info_caption1">Program</div>
-    <p><%= select_tag :program_id , ""%></p>
+    <p><%= select_tag :program_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Program.all, :id, :program_type_name, @reward.try(:campaign).try(:program).try(:id)) %></p>
   </div>
   <div class="row">
     <div class="basic_info_caption1">Campaign</div>
-    <p><%= select_tag :campaign_id , ""%></p>
+    <p><%= select_tag :campaign_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Campaign.all , :id, :name, @reward.try(:campaign).try(:id)) %></p>
   </div>
   <div class="row">
    <div class="basic_info_caption1">Start Date</div>
     <%= f.calendar_date_select :start_date %>
-    <!--<%= datetime_select("reward", "start_date", {:order => [:day,:month, :year,:hour],:prompt =>["day", "month", "year", "hour"], :discard_minute => true, :use_month_names => MONTHS},{:class =>'small'})  %>-->
   	<br /><br />
   </div>
   <fieldset>
     <legend>Settings</legend>
-    <div class="row">
-      <%= f.fields_for :items,@reward.items do |item_form| %>  
+    <div class="row">  
          <div class="basic_info_caption1">Item</div>
-         <%= select_tag :item_id , ""%>
-      <% end %> 
+         <%= select_tag "item_id", "<option value=''>...None...</option>".html_safe+ options_from_collection_for_select(Item.all , :id, :name, @reward.try(:items).try(:first).try(:id)) %><br /> 
     </div>
     <div class="row">
       <div class="basic_info_caption1">Sales Price</div>
@@ -123,13 +123,9 @@ jQuery(function(){
       <div class="basic_info_caption1">Offer Price</div>
       <%= f.text_field :offer_price, :class =>"basic_info_input"  %>
     </div>
-     <div class="row">
-      <div class="basic_info_caption1">Total Quantity Available</div>
-      <%= text_field_tag :total_quantity_available ,"", :class =>"basic_info_input"  %>
-    </div>
     <div class="row">
-    <div class="basic_info_caption1">How many times can this reward be claimed?</div>
-      <%= f.text_field :max_claim , :class=>"basic_info_input"%>
+      <div class="basic_info_caption1">Total Quantity Available</div>
+        <%= f.text_field :max_claim , :class=>"basic_info_input"%>
     </div>
     <div class="row">
       <div class="basic_info_caption1">

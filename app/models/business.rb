@@ -12,10 +12,10 @@ class Business < ActiveRecord::Base
   has_many :announcements
   has_many :logs
   has_many :legal_ids , :as=>:associatable
-  has_many :items
+  has_many :items,:dependent => :destroy
   has_many :business_images,:as => :uploadable, :dependent => :destroy
   
-  has_one :account_holder, :as=>:model
+  has_one :account_holder, :as=>:model, :dependent=> :destroy
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   belongs_to :brand

@@ -56,7 +56,7 @@ class Users::PlacesController < Users::BaseController
 				end
 				@result["places"][index]["rewards"]=[] 
 				normal_rewards=programs.joins(:campaigns=>:rewards)
-				                       .select("rewards.*,rewards.id as reward_id,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems")\
+				                       .select("rewards.*,rewards.id as reward_id,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems")
 				                       .where("'#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date")				                       
 				normal_rewards.each_with_index do |reward,i|
 					attributes=reward.attributes

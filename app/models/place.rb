@@ -6,12 +6,11 @@ class Place < ActiveRecord::Base
   belongs_to :place_type
   belongs_to :address
   has_many :item_places
-  has_many :items , :through => :item_places
+  has_many :items , :through => :item_places, :dependent => :destroy
   has_and_belongs_to_many :amenities
   has_and_belongs_to_many :campaigns
-
-  has_many :qr_codes,:as=>:associatable
-  has_many :open_hours
+  has_many :qr_codes,:as=>:associatable, :dependent => :destroy
+  has_many :open_hours, :dependent => :destroy
   has_many :followers, :as=>:followed
   has_many :place_images,:as => :uploadable, :dependent => :destroy
   
@@ -59,7 +58,6 @@ class Place < ActiveRecord::Base
   def update_items
     items.delete_all
     selected_items = items_list.nil? ? [] : items_list.keys.collect{|id| Item.find(id)}
-    selected_items.each {|item| self.items << item}
-    
+    selected_items.each {|item| self.items << item}  
   end
 end

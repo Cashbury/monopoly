@@ -23,6 +23,7 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def new
     @campaign = Campaign.new
+    @campaign.places.build
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @campaign }
@@ -35,6 +36,7 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def create
     @campaign = @program.campaigns.new(params[:campaign])
+    @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
     if params[:target_id].present?
       @campaign.has_target=true
       unless @campaign.targets.empty?
@@ -62,6 +64,7 @@ class Businesses::Programs::CampaignsController < ApplicationController
 
   def update
     @campaign = Campaign.find(params[:id])
+    @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
     if params[:target_id].present?
       @campaign.has_target=true
       unless @campaign.targets.empty?

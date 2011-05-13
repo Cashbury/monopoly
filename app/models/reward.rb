@@ -29,21 +29,20 @@ class Reward < ActiveRecord::Base
   #after_save :update_categories
   validates_presence_of :campaign_id,:name,:needed_amount,:heading1,:heading2,:legal_term
   validates_numericality_of :needed_amount,:max_claim
-  
   #  private
   # def update_categories
   #   places.delete_all
   #   selected_categories = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
   #   selected_categories.each {|place| self.places << place}
   # end
-  
   def self.get_available_items(campaign_id) # this should be refactored to scopes
-    @places = Campaign.where(:id =>campaign_id).first.places
-    @items = @places[0].items if @places[0]
-    @places.each do |place|
-      @items = @items | place.items
-    end
-    return @items
+    Campaign.find(campaign_id).places.joins(:items).select("DISTINCT items.*")
+    # @places = Campaign.where(:id =>campaign_id).first.places
+    # @items = @places[0].items if @places[0]
+    # @places.each do |place|
+    #   @items = @items | place.items
+    # end
+    # return @items
   end
   
   def is_claimed_by(user,user_account,place_id,lat,lng)
