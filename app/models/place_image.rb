@@ -3,7 +3,7 @@ class PlaceImage < Image
   
   has_attached_file :photo,
                     :styles => {
-                      :thumb  => "100x100>"
+                      :thumb  => "100x100>",
                     },
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",

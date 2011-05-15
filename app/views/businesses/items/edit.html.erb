@@ -3,6 +3,6 @@
 <%= render 'form' %>
 
 <p>
-  <%= link_to "Show",  business_place_item_path(@business,@place,@item) %> |
-  <%= link_to "View All", business_place_items_path(@business,@place) %>
+  <%= link_to "Show",  business_item_path(@business,@item) %> |
+  <%= link_to "View All", business_items_path(@business) %>
 </p>

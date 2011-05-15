@@ -14,9 +14,7 @@
 <p>
   <b>Photo:</b>
   <% if @brand.brand_image%>
-    <%= image_tag @brand.brand_image.photo.url(:thumb) %>
-  <%else%>
-    Processing & uploading ...
+    <%= image_tag @brand.brand_image.photo.url(:normal) %>
   <% end %>
 </p>  
 <%= link_to 'Edit', edit_brand_path(@brand) %> |

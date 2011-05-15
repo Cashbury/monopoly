@@ -2,7 +2,7 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 
-<%= form_for [@business ,@item] do |f| %>
+<%= form_for [@business ,@item],:html => { :multipart => true } do |f| %>
   <%= f.error_messages %>
   <p>
     <%= f.label :name %><br />
@@ -10,18 +10,14 @@
   </p>
   <p>
     <%= f.label :description %><br />
-    <%= f.text_field :description %>
+    <%= f.text_area :description %>
   </p>
   <p>
     <%= f.label :price %><br />
     <%= f.text_field :price %>
   </p>
-   <p>
-    <%= f.label :available %><br />
-    <%= f.select :available, options_for_select([ ['yes', 'true'],['no','false']],@item.available)%>
-  </p>
   <p>
-    <%= f.label :expiry_date %>
+    <%= f.label :expiry_date %><br />
     <%= f.calendar_date_select :expiry_date %>
   </p>
   <p>
@@ -32,7 +28,13 @@
     <%= f.label :product_code %><br />
     <%= f.text_field :product_code %>
   </p>
-  
-
+  <p>
+    <%= f.label "Upload Image" %><br />
+    <input type="file" name="upload[photo]"/>
+  </p>
+  <p>
+    <%= f.label :available %>
+    <%= f.check_box :available%>
+  </p>
   <p><%= f.submit %></p>
 <% end %>

@@ -23,7 +23,16 @@
   <strong>Product Code:</strong>
   <%= @item.product_code %>
 </p>
-
+<p>
+  <strong>Available ?</strong>
+  <%= @item.available %>
+</p>
+<p>
+  <b>Photo:</b>
+  <% if @item.item_image%>
+    <%= image_tag @item.item_image.photo.url(:thumb) %>
+  <% end %>
+</p>
 <p>
   <%= link_to "Edit", edit_business_item_path(@business,@item) %> |
   <%= link_to "Destroy", business_item_path(@business,@item), :confirm => 'Are you sure?', :method => :delete %> |
