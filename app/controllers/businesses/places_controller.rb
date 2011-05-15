@@ -1,7 +1,7 @@
 class Businesses::PlacesController < ApplicationController
   before_filter :authenticate_user!, :except => [:index, :show]
-  before_filter :find_business
-  
+  before_filter :find_business 
+  before_filter :prepare_business_items , :only => [ :new , :create , :edit , :update]
   def index
     @places = @business.places
     
@@ -24,14 +24,14 @@ class Businesses::PlacesController < ApplicationController
   def new
     @place=@business.places.build
     @place.build_address
-    @place.items.build # allwowing the operator to create one new item within the place.
     ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
   
-  def create 
+  def create  
     @place =  @business.places.build(params[:place])
     @place.items_list = params[:place][:items_list] unless params[:place][:items_list].blank?
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
+    @place.add_item(params[:item]) unless params[:item][:name].blank?
     if @place.save
       flash[:notice] = "Successfully created place."
       redirect_to business_place_url(@business,@place)
@@ -49,6 +49,7 @@ class Businesses::PlacesController < ApplicationController
     @place = Place.find(params[:id])
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
     @place.items_list = params[:place][:items_list] unless params[:place][:items_list].blank?
+    @place.add_item(params[:item]) unless params[:item][:name].blank?
     if @place.update_attributes(params[:place])
       flash[:notice] = "Successfully updated place."
       redirect_to business_place_url(@business,@place)
@@ -67,5 +68,10 @@ class Businesses::PlacesController < ApplicationController
   private
   def find_business
     @business = Business.find(params[:business_id])
+  end
+  def prepare_business_items
+    @items = @business.items
+    @place = Place.where(:id => params[:id]).first unless params[:id].nil?
+    @items = @business.items | @place.items  if @place # Merging the Business items with Place items.
   end
 end

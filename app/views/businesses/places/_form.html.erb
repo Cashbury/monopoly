@@ -1,9 +1,17 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+
 <script type="text/javascript">
- $(document).ready(function(){
+ jQuery(document).ready(function(){
    
-   $('select#place_address_attributes_country_id').bind('change',function(){
-    var country_id = $(":selected", this).val();
-    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
+   jQuery('select#place_address_attributes_country_id').bind('change',function(){
+    var country_id = jQuery(":selected", this).val();
+    jQuery.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
+  });
+  
+  jQuery('#add_new_item_button').click(function(){
+    jQuery('#add_new_item_fieldset').toggle();
   });
   
 });
@@ -179,7 +187,7 @@
     <legend>Assign Items to Place</legend>
     <p>
       <%= f.label :items, "Items" %><br />
-      <% @business.items.each do |item| %>
+      <% @items.each do |item| %>
       <%= check_box_tag(
                         "place[items_list][#{item.id}]", 
                         "1", 
@@ -188,15 +196,39 @@
       <% end %>
     </p>
   </fieldset>
-  <fieldset>
+  <input type="button" value="Add New Item"  id="add_new_item_button"/>
+  <fieldset id="add_new_item_fieldset" style="display:none">
     <legend>Add New Item to Place</legend>
     <p>
-      <%= f.fields_for :items do |item_form| %>
-       <p>
-         <%= item_form.label :name %><br />
-         <%= item_form.text_field :name %>
-       </p>
-      <% end %>
+        <p>
+           <%= label_tag "name" %><br />
+           <%= text_field_tag "item[name]"  %>
+        </p>
+        <p>
+           <%= label_tag "description" %><br />
+           <%= text_field_tag "item[description]"  %>
+        </p>
+        <p>
+           <%= label_tag "price" %><br />
+           <%= text_field_tag "item[price]"  %>
+        </p>
+        <p>
+           <%= label_tag "available" %><br />
+           <%= select_tag "item[available]", options_for_select([ ['yes', 'true'],['no','false']])%>
+        </p>
+        <p>
+           <%= label_tag "expiry_date" %>
+           <%= calendar_date_select_tag "item[expiry_date]" %>
+         </p>
+         <p>
+           <%= label_tag "cost" %><br />
+           <%= text_field_tag "item[cost]"  %>
+        </p>
+        <p>
+           <%= label_tag "product_code" %><br />
+           <%= text_field_tag "item[product_code]"  %>
+        </p>
+        
     </p>
   </fieldset>
   

@@ -6,7 +6,7 @@ class Place < ActiveRecord::Base
   belongs_to :place_type
   belongs_to :address
   has_many :item_places
-  has_many :items , :through => :item_places, :dependent => :destroy
+  has_many :items , :through => :item_places
   has_and_belongs_to_many :amenities
   has_and_belongs_to_many :campaigns
   has_many :qr_codes,:as=>:associatable, :dependent => :destroy
@@ -59,6 +59,9 @@ class Place < ActiveRecord::Base
       end
     end
     city=City.where(query_string).first
+  end
+  def add_item(item_params)
+    self.items.build(item_params)
   end  
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
@@ -68,8 +71,12 @@ class Place < ActiveRecord::Base
     self.tag_list << self.name unless self.tag_list.empty?
   end
   def update_items
-    items.delete_all
     selected_items = items_list.nil? ? [] : items_list.keys.collect{|id| Item.find(id)}
-    selected_items.each {|item| self.items << item}  
+    selected_items.each {|item| 
+      unless self.items.include?(item)
+        self.items << item
+      end
+    }  
   end
+  
 end
