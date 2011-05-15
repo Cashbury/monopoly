@@ -1,24 +1,4 @@
-<script type="text/javascript">
- $(document).ready(function(){
-   
-  $("#add_item_button").click(function () {
-   $('#add_item_div').show();
-  });
-  $('select#business_places_attributes_0_address_attributes_country_id').bind('change',function(){
-    var country_id = $(":selected", this).val();
-    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_0_address_attributes_city_id");
-  });
-  $('select#business_places_attributes_1_address_attributes_country_id').bind('change',function(){
-    var country_id = $(":selected", this).val();
-    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_1_address_attributes_city_id");
-  });
-  $('select#business_places_attributes_2_address_attributes_country_id').bind('change',function(){
-    var country_id = $(":selected", this).val();
-    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_2_address_attributes_city_id");
-  });
-});
-</script>
-
+<%= render 'business_scripts'%>
 <%= form_for(@business,:html => { :multipart => true }) do |f| %>
 
 
@@ -55,6 +35,56 @@
     <%= f.text_field :tag_list %>
     <small>Required, comma separated</small>
   </p>
+    <fieldset>
+      <legend>Mailing Address</legend>
+      <%= f.fields_for :mailing_address,f.object.mailing_address do |mailing_address_form| %>
+        <p>
+          <%= mailing_address_form.label :street_address %>
+          <%= mailing_address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= mailing_address_form.label :neighborhood %>
+          <%= mailing_address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= mailing_address_form.label :country %>
+          <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= mailing_address_form.label :city %>
+          <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.city_id)%>
+        </p>
+        <p>
+          <%= mailing_address_form.label :zipcode %>
+          <%= mailing_address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </fieldset>
+      <fieldset>
+      <legend>Billing Address</legend>
+      <%= f.fields_for :billing_address,f.object.billing_address do |billing_address_form| %>
+        <p>
+          <%= billing_address_form.label :street_address %>
+          <%= billing_address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= billing_address_form.label :neighborhood %>
+          <%= billing_address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= billing_address_form.label :country %>
+          <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= billing_address_form.label :city %>
+          <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.city_id)%>
+        </p>
+        <p>
+          <%= billing_address_form.label :zipcode %>
+          <%= billing_address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </fieldset>
   <fieldset>
     <legend>Business Images</legend>
     <p>

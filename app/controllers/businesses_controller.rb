@@ -30,6 +30,8 @@ class BusinessesController < ApplicationController
       3.times {place.place_images.build}
     end
     3.times { @business.business_images.build}
+     @business.build_mailing_address
+     @business.build_billing_address
   end
   
   def create
@@ -62,6 +64,8 @@ class BusinessesController < ApplicationController
       (3-place.place_images.size).times {place.place_images.build}
     end
     (3-@business.business_images.size).times { @business.business_images.build}
+    @business.build_mailing_address if @business.mailing_address.nil?
+    @business.build_billing_address if @business.billing_address.nil?
    end
   
   def update
