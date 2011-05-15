@@ -41,7 +41,11 @@ class Businesses::Places::ItemsController < ApplicationController
   
   def destroy
     @item = Item.find(params[:id])
-    @item.destroy
+    if @item.business_id.nil?
+      @item.destroy 
+    else
+      ItemPlace.where(:place_id=>@place.id , :item_id => @item.id).first.destroy
+    end 
     flash[:notice] = "Successfully destroyed Item."
     redirect_to business_place_items_url(@business,@place)
   end
