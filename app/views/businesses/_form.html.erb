@@ -59,9 +59,30 @@
     <legend>Business Images</legend>
     <p>
       <%= f.label 'Images' %><br />
-      <% f.fields_for :business_images do |bimage| %>
-        <p><%= bimage.file_field :photo %></p>
+      <%if ENABLE_DELAYED_UPLOADS%>
+        <% f.fields_for :business_images do |bimage| %>
+            <%= bimage.label(:delete_photo, 'Delete photo') %>
+            <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+            <%= bimage.check_box(:delete_photo) %><br />
+        <%end%>
+        <% f.fields_for :tmp_images do |bimage| %>
+          <%= bimage.label(:photo, 'Upload photo') %>
+          <%= bimage.file_field(:photo) %><br />
+        <%end%>
+      <%else%>
+        <% f.fields_for :business_images do |bimage| %>
+          <%- unless bimage.object.new_record?-%>
+            <%= bimage.label(:delete_photo, 'Delete photo') %>
+            <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+            <%= bimage.check_box(:delete_photo) %><br />
+          <%- else -%>
+            <br />
+            <%= bimage.label(:photo, 'Upload photo') %>
+            <%= bimage.file_field(:photo) %><br />
+          <%- end -%>
+        <%end%>
       <%end%>
+      
     </p>
   </fieldset>
   <% f.fields_for :places,@business.places do |builder| %>  
@@ -94,8 +115,28 @@
 	  <fieldset>
 	    <legend>Place Images</legend>
   	  <p>
-        <% builder.fields_for :place_images do |pimage| %>
-          <p><%= pimage.label 'Place Image: ' %> <%= pimage.file_field :photo %></p>
+  	    <%if ENABLE_DELAYED_UPLOADS%>
+          <% builder.fields_for :place_images do |pimage| %>
+              <%= pimage.label(:delete_photo, 'Delete photo') %>
+              <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+              <%= pimage.check_box(:delete_photo) %><br />
+          <%end%>
+          <% builder.fields_for :tmp_images do |pimage| %>
+            <%= pimage.label(:photo, 'Upload photo') %>
+            <%= pimage.file_field(:photo) %><br />
+          <%end%>
+        <%else%>
+          <% builder.fields_for :place_images do |pimage| %>
+            <%- unless pimage.object.new_record?-%>
+              <%= pimage.label(:delete_photo, 'Delete photo') %>
+              <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+              <%= pimage.check_box(:delete_photo) %><br />
+            <%- else -%>
+              <br />
+              <%= pimage.label(:photo, 'Upload photo') %>
+              <%= pimage.file_field(:photo) %><br />
+            <%- end -%>
+          <%end%>
         <%end%>
       </p>
     </fieldset>

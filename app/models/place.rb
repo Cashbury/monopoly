@@ -13,12 +13,14 @@ class Place < ActiveRecord::Base
   has_many :open_hours, :dependent => :destroy
   has_many :followers, :as=>:followed
   has_many :place_images,:as => :uploadable, :dependent => :destroy
+  has_many :tmp_images,:as => :uploadable, :dependent => :destroy
   
+  accepts_nested_attributes_for :tmp_images
   accepts_nested_attributes_for :address
-  accepts_nested_attributes_for :place_images
+  accepts_nested_attributes_for :place_images,:allow_destroy=>true
   accepts_nested_attributes_for :items
   
-  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes
+  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes
   attr_accessor :items_list
   validates_presence_of :name, :long, :lat 
   validates :address, :presence=>true
@@ -28,8 +30,18 @@ class Place < ActiveRecord::Base
   scope :with_address, order("places.name desc")
                       .joins(:address=>[:city,:country])
                       .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,countries.name as country_name")
- before_save :add_amenities_name_and_place_name_to_place_tag_lists
- after_save :update_items
+  before_save :add_amenities_name_and_place_name_to_place_tag_lists
+  after_save :update_items
+  before_validation :clear_photos
+  
+  def clear_photos
+    self.tmp_images.each do |tmp_image|
+      tmp_image.upload_type="PlaceImage"
+    end
+    self.place_images.each do |image|
+      image.destroy if image.delete_photo? && !image.photo.dirty?
+    end
+  end
   def is_open?
     current_datetime=DateTime.now.in_time_zone(self.time_zone)
     !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?

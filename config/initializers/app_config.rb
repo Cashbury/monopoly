@@ -3,3 +3,4 @@ IMAGES_CONTENT_TYPE = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'i
 IMAGES_CONTENT_TYPE_NAME = ['JPG', 'PNG', 'BMP','JPEG']
 DISTANCE=10
 MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September","October", "November", "December"]
+ENABLE_DELAYED_UPLOADS=false

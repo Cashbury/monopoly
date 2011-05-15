@@ -2,18 +2,13 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 <script type="text/javascript">
- jQuery(document).ready(function(){
-   
-  jQuery("select").change(function () {
-    jQuery("select option:selected").each(function () {
-      other_option = jQuery(this).text();
-      if(other_option == "Other"){
+ jQuery(document).ready(function(){ 
+  jQuery("#measurement_type_selection").change(function () {
+      other_option = jQuery(":selected", this).text();
+      if(other_option == "Other")
         jQuery('#new_measurement_type_div').show();
-      }
-      else{
+      else
         jQuery('#new_measurement_type_div').hide();
-      }
-    });
   });
 });
 
@@ -49,7 +44,7 @@
   </div><br />
   <div class="field">
     <%= f.label :measurement_type_id %><%= mark_required(@campaign, :measurement_type) %>
-    <%= f.select :measurement_type_id,@measurement_types.collect { |mt| [mt.name,mt.id]} %>
+    <%= f.select :measurement_type_id,@measurement_types.collect { |mt| [mt.name,mt.id]}, {}, {:id=>"measurement_type_selection"} %>
   </div><br />
   
   <div class="field" id="new_measurement_type_div" style="display:none">

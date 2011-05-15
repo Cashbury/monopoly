@@ -23,9 +23,9 @@ class Businesses::PlacesController < ApplicationController
   
   def new
     @place=@business.places.build
-    3.times {@place.place_images.build}
     @place.build_address
     @place.items.build # allwowing the operator to create one new item within the place.
+    ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
   
   def create 
@@ -42,7 +42,7 @@ class Businesses::PlacesController < ApplicationController
   
   def edit
     @place = Place.find(params[:id])
-    3.times {@place.place_images.build}
+    ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
   
   def update

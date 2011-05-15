@@ -9,4 +9,8 @@ class BrandImage < Image
                     :path => "brands/:id/:style/:filename"
                     
   validates :photo_content_type, :inclusion => { :in => IMAGES_CONTENT_TYPE }
+
+  # def photo
+  #   self.uploadable.tmp_image ? self.brand.tmp_image.photo : self.photo
+  # end
 end

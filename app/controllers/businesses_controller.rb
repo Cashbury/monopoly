@@ -27,9 +27,9 @@ class BusinessesController < ApplicationController
     3.times { @business.places.build}
     @business.places.each do |place|
       place.build_address
-      3.times {place.place_images.build}
+      ENABLE_DELAYED_UPLOADS ? 3.times { place.tmp_images.build} : 3.times { place.place_images.build}
     end
-    3.times { @business.business_images.build}
+    ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build} 
   end
   
   def create
@@ -47,7 +47,7 @@ class BusinessesController < ApplicationController
         place.build_address
         3.times {place.place_images.build}
       end
-      3.times { @business.business_images.build}
+      ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
       render :action => 'new'
     end
   end
@@ -56,23 +56,18 @@ class BusinessesController < ApplicationController
     @brands  = Brand.all
     @business = Business.find(params[:id])
     @categories = Category.all
-    3.times { @business.places.build }
-    @business.places.each do |place|
-      place.build_address if place.address.nil?
-      (3-place.place_images.size).times {place.place_images.build}
-    end
-    (3-@business.business_images.size).times { @business.business_images.build}
+    ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
    end
   
   def update
-    @brands  = Brand.all
-    @categories = Category.all
     @business = Business.find(params[:id])
     if @business.update_attributes(params[:business])
        flash[:notice] = "Successfully updated business."
        redirect_to @business
     else
-      (3-@business.business_images.size).times { @business.business_images.build}
+      @brands  = Brand.all
+      @categories = Category.all
+      ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
       render :action => 'edit'
     end
    end

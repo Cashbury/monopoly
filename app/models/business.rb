@@ -14,6 +14,7 @@ class Business < ActiveRecord::Base
   has_many :legal_ids , :as=>:associatable
   has_many :items,:dependent => :destroy
   has_many :business_images,:as => :uploadable, :dependent => :destroy
+  has_many :tmp_images,:as => :uploadable, :dependent => :destroy
   
   has_one :account_holder, :as=>:model, :dependent=> :destroy
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
@@ -22,8 +23,8 @@ class Business < ActiveRecord::Base
   belongs_to :country
   has_and_belongs_to_many :categories
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
-  accepts_nested_attributes_for :business_images
-  
+  accepts_nested_attributes_for :business_images,:allow_destroy => true
+  accepts_nested_attributes_for :tmp_images
   attr_accessor :categories_list
 
   after_save :update_categories
@@ -32,7 +33,17 @@ class Business < ActiveRecord::Base
 	validates :brand_id, :presence=>true , :numericality => true 
 	validates_presence_of :name
 	validates_associated :places
-	
+	before_validation :clear_photos
+  
+  def clear_photos
+    self.tmp_images.each do |tmp_image|
+      tmp_image.upload_type="BusinessImage"
+    end
+    self.business_images.each do |image|
+      image.destroy if image.delete_photo? && !image.photo.dirty?
+    end
+  end
+  
   private
   def update_categories
     categories.delete_all
