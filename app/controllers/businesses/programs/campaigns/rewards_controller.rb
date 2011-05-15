@@ -46,6 +46,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     @reward = Reward.find(params[:id])
     params[:upload] ||= {}
     unless params[:upload][:photo].blank?
+      @reward.reward_image.try(:destroy)
       @image = RewardImage.new()
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]

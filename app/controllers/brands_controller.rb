@@ -72,6 +72,7 @@ class BrandsController < ApplicationController
     @brand.user_id = current_user.id
     params[:upload] ||= {}
     unless params[:upload][:photo].blank?
+      @brand.brand_image.try(:destroy)
       image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
       image.upload_type = "BrandImage"
       image.uploadable = @brand

@@ -48,6 +48,7 @@ class RewardsController < ApplicationController
     @reward.campaign_id = params[:campaign_id]
     params[:upload] ||= {}
     unless params[:upload][:photo].blank?
+      @reward.reward_image.try(:destroy) 
       @image = RewardImage.new()
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]
