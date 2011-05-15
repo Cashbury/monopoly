@@ -55,7 +55,7 @@ jQuery(function(){
     </div> 
     <div class="row">
       <div class="basic_info_caption1">What is the Reward?</div>
-      <%= f.text_field :name, :class =>"basic_info_input"  %>
+      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>"16"  %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Add a Short Description</div>
@@ -99,11 +99,6 @@ jQuery(function(){
   <div class="row">
     <div class="basic_info_caption1">Campaign</div>
     <p><%= select_tag :campaign_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Campaign.all , :id, :name, @reward.try(:campaign).try(:id)) %></p>
-  </div>
-  <div class="row">
-   <div class="basic_info_caption1">Start Date</div>
-    <%= f.calendar_date_select :start_date %>
-  	<br /><br />
   </div>
   <fieldset>
     <legend>Settings</legend>

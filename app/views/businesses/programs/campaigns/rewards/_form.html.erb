@@ -37,7 +37,7 @@ jQuery(function(){
     </div> 
     <div class="row">
       <div class="basic_info_caption1">What is the Reward?</div>
-      <%= f.text_field :name, :class =>"basic_info_input"  %>
+      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>"16"  %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Add a Short Description</div>
@@ -66,11 +66,6 @@ jQuery(function(){
       <%= f.text_area :legal_term %>
     </div>
   </fieldset>
-  <div class="row">
-   <div class="basic_info_caption1">Start Date</div>
-    <%= f.calendar_date_select :start_date %>
-    <br /><br />
-  </div>
   <fieldset>
     <legend>Settings</legend>
     <div class="row">  

@@ -38,7 +38,7 @@
     <legend>Business Images</legend>
     <p>
       <%= f.label 'Images' %><br />
-      <%if ENABLE_DELAYED_UPLOADS%>
+      <%if ENABLE_DELAYED_UPLOADS %>
         <% f.fields_for :business_images do |bimage| %>
             <%= bimage.label(:delete_photo, 'Delete photo') %>
             <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>

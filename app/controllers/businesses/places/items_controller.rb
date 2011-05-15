@@ -17,7 +17,14 @@ class Businesses::Places::ItemsController < ApplicationController
  def create
     @item = @place.items.build(params[:item])
     @place.items << @item
+    unless params[:upload][:photo].blank?
+      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : ItemImage.new()
+      image.upload_type = "ItemImage"
+      image.uploadable = @item
+      image.photo = params[:upload][:photo]
+    end
     if @item.save and @place.save
+      image.save! if image
       flash[:notice] = "Successfully created Item."
       redirect_to business_place_item_url(@business,@place,@item)
     else
@@ -31,7 +38,15 @@ class Businesses::Places::ItemsController < ApplicationController
   
   def update
     @item = Item.find(params[:id])
+    unless params[:upload][:photo].blank?
+      @item.item_image.try(:destroy)
+      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : ItemImage.new()
+      image.upload_type = "ItemImage"
+      image.uploadable = @item
+      image.photo = params[:upload][:photo]
+    end
     if @item.update_attributes(params[:item])
+      image.save! if image
       flash[:notice] = "Successfully updated Item."
       redirect_to  business_place_item_url(@business,@place,@item)
     else
