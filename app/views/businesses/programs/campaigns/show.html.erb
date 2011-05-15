@@ -1,4 +1,4 @@
-<% title "Campaing: #{@campaign.name}" %>
+<% title "Campaign: #{@campaign.name}" %>
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -23,16 +23,32 @@
 
 <p>
   <b>Measurement Type:</b>
-  <%= @campaign.measurement_type.name %>
+  <%= @campaign.measurement_type.try(:name) %>
 </p>
 <p>
   <b>Initial User Account Amount:</b>
   <%= @campaign.initial_amount %>
 </p>
+<p>
+  <b>Targeted to:</b>
+  <%unless @campaign.targets.empty?%>
+    <%= Target::TARGETS_LABELS[@campaign.targets.first.try(:name)] %>
+  <%else%>
+    Everyone
+  <%end%>
+</p>
 
 <p>
   <b>Initial Business Account Amount:</b>
   <%= @campaign.initial_biz_amount %>
+</p>
+<p>
+  <b>Assigned Places:</b>
+  <ul>
+  <%@campaign.places.each do |place|%>
+    <li><%= place.name %></li>
+  <%end%>
+  </ul>
 </p>
 
 <p>

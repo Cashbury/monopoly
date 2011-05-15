@@ -1,55 +1,57 @@
 <% title "Reward" %>
 <div id="left_main">
-<p>
-  <strong>Name:</strong>
-  <%= @reward.name %>
-</p>
-<p>
-  <strong>Short Description:</strong>
-  <%= @reward.heading1 %>
-</p>
-<p>
-  <strong>Description:</strong>
-  <%= @reward.heading2 %>
-</p>
-<p>
-  <strong>Program:</strong>
-  <%= @reward.try(:campaign).try(:program).try(:program_type_name) %>
-</p>
-
-<p>
-  <strong>Campaign:</strong>
-  <%= @reward.try(:campaign).try(:name)  %>
-</p>
-<p>
-  <strong>Needed Amount</strong>
-  <%= @reward.needed_amount %>
-</p>
-<% @reward.campaign.engagements.each do |en| %>
-<p>
-  <strong>Stamp Description</strong>
-  <%= en.name %>
-</p>
-<p>
-  <b>Photo:</b>
-  <% if @reward.reward_image%>
-    <%= image_tag @reward.reward_image.photo.url(:thumb) %>
+  <p>
+    <strong>Name:</strong>
+    <%= @reward.name %>
+  </p>
+  <p>
+    <strong>Short Description:</strong>
+    <%= @reward.heading1 %>
+  </p>
+  <p>
+    <strong>Description:</strong>
+    <%= @reward.heading2 %>
+  </p>
+  <p>
+    <strong>Program:</strong>
+    <%= @reward.try(:campaign).try(:program).try(:program_type_name) %>
+  </p>
+  
+  <p>
+    <strong>Campaign:</strong>
+    <%= @reward.try(:campaign).try(:name)  %>
+  </p>
+  <p>
+    <strong>Needed Amount</strong>
+    <%= @reward.needed_amount %>
+  </p>
+  <p>
+    <strong>Cost</strong>
+    <%= @reward.cost %>
+  </p>
+  <p>
+    <strong>Sales Price</strong>
+    <%= @reward.sales_price %>
+  </p>
+  <strong>Engagements:</strong>
+  <% @reward.campaign.engagements.each do |en| %>
+    <ul>
+      <li><%= en.name %></li>
+    </ul>
   <% end %>
-</p>
-<p>
-  <strong>Legal Terms:</strong>
-  <%= @reward.legal_term  %>
-</p>  
-
-
-</div>
-
-<% end %>
-
-
-<div>
-  <%= link_to "Edit", edit_reward_path(@reward) %> <br />
-   <%= link_to "Back to List", rewards_path %> <br />
-  <%= button_to "Destroy", reward_path(@reward), :confirm => 'Are you sure?', :method => :delete %> <br /> 
- 
+  <p>
+    <strong>Photo:</strong>
+    <% if @reward.reward_image%>
+      <%= image_tag @reward.reward_image.photo.url(:thumb) %>
+    <% end %>
+  </p>
+  <p>
+    <strong>Legal Terms:</strong>
+    <%= @reward.legal_term  %>
+  </p>
+  <div>
+    <%= link_to "Edit", edit_reward_path(@reward) %> <br />
+    <%= link_to "Back to List", rewards_path %> <br />
+    <%= button_to "Destroy", reward_path(@reward), :confirm => 'Are you sure?', :method => :delete %> <br /> 
+  </div>
 </div>

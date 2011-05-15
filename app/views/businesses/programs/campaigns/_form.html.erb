@@ -2,18 +2,13 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 <script type="text/javascript">
- jQuery(document).ready(function(){
-   
-  jQuery("select").change(function () {
-    jQuery("select option:selected").each(function () {
-      other_option = jQuery(this).text();
-      if(other_option == "Other"){
+ jQuery(document).ready(function(){ 
+  jQuery("#measurement_type_selection").change(function () {
+      other_option = jQuery(":selected", this).text();
+      if(other_option == "Other")
         jQuery('#new_measurement_type_div').show();
-      }
-      else{
+      else
         jQuery('#new_measurement_type_div').hide();
-      }
-    });
   });
 });
 
@@ -49,7 +44,7 @@
   </div><br />
   <div class="field">
     <%= f.label :measurement_type_id %><%= mark_required(@campaign, :measurement_type) %>
-    <%= f.select :measurement_type_id,@measurement_types.collect { |mt| [mt.name,mt.id]} %>
+    <%= f.select :measurement_type_id,@measurement_types.collect { |mt| [mt.name,mt.id]}, {}, {:id=>"measurement_type_selection"} %>
   </div><br />
   
   <div class="field" id="new_measurement_type_div" style="display:none">
@@ -65,10 +60,25 @@
     <%= f.label :initial_biz_amount %>
     <%= f.text_field :initial_biz_amount %>
   </div><br />
-  
-  
- <br />
-  
+  <div class="field">
+    <%= label_tag "Who is this campaign offered to?" %>
+    <%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %><br />
+  </div>
+  <br />
+  <div class="field">
+     <fieldset>
+      <legend>Assign Campaign to Places</legend>
+      <p>
+        <%= f.label :places, "Places" %><br />
+        <% @business.places.each do |place| %>
+          <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
+          <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
+          <%= "#{place.name}"%><br />
+        <% end %>
+      </p>
+    </fieldset>
+  </div>
+  <br />
   <div class="actions">
     <%= f.submit %>
   </div>

@@ -17,11 +17,11 @@ class RewardsController < ApplicationController
   
   def new
     @reward = Reward.new
-    @reward.items.build
   end
   
   def create
     @reward = Reward.new(params[:reward])
+    @campaign= @reward.campaign
     @reward.campaign_id = params[:campaign_id]
     params[:upload] ||= {}
     unless params[:upload][:photo].blank?
@@ -29,9 +29,7 @@ class RewardsController < ApplicationController
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]
     end
-    unless params[:item_id].blank?
-      @reward.items[0]  = Item.where(:id => params[:item_id]).first # supporting one item for now for each reward
-    end
+    params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.save
       @image.save! if @image
       flash[:notice] = "Successfully created reward."
@@ -54,6 +52,7 @@ class RewardsController < ApplicationController
       @image.uploadable = @reward
       @image.photo= params[:upload][:photo]
     end
+    params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.update_attributes(params[:reward])
       @image.save! if @image
       flash[:notice] = "Successfully updated reward."

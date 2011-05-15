@@ -1,7 +1,7 @@
 <% title "Reward" %>
 
 <p>
-  <strong>Name: </strong>
+  <strong>Name:</strong>
   <%= @reward.name %>
 </p>
 <p>
@@ -13,18 +13,28 @@
   <%= @reward.heading2 %>
 </p>
 <p>
+  <strong>Program:</strong>
+  <%= @reward.try(:campaign).try(:program).try(:program_type_name) %>
+</p>
+
+<p>
+  <strong>Campaign:</strong>
+  <%= @reward.try(:campaign).try(:name)  %>
+</p>
+<p>
   <strong>Needed Amount</strong>
   <%= @reward.needed_amount %>
 </p>
-<% unless @campaign.engagements.empty? %>
 <p>
-  <strong>Stamp Description: </strong>
-  <% for eng in @campaign.engagements %>
-  <%= eng.name %>
-  <%end%>
+  <strong>Cost</strong>
+  <%= @reward.cost %>
 </p>
 <p>
-  <b>Photo:</b>
+  <strong>Sales Price</strong>
+  <%= @reward.sales_price %>
+</p>
+<p>
+  <strong>Photo:</strong>
   <% if @reward.reward_image%>
     <%= image_tag @reward.reward_image.photo.url(:thumb) %>
   <% end %>
@@ -32,8 +42,15 @@
 <p>
   <strong>Legal Terms:</strong>
   <%= @reward.legal_term  %>
-</p>  
-<% end %>
+</p>
+<p>
+  <strong>Engagements:</strong>
+  <% @reward.campaign.engagements.each do |en| %>
+  <ul>
+    <li><%= en.name %></li>
+  </ul>
+  <% end %>
+</p>
 
 <p>
   <%= link_to "Edit", edit_business_program_campaign_reward_path(@business, @program, @campaign ,@reward) %> |

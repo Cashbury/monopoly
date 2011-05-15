@@ -5,6 +5,7 @@
     <th>Name</th>
     <th>Engagement Type</th>
     <th>Amount</th>
+    <th>Item</th>
     <th>Is Started?</th>
     <th></th>
     <th></th>
@@ -15,6 +16,7 @@
       <td><%= link_to engagement.name , business_program_campaign_engagement_url(@business, @program,@campaign ,engagement) %></td>
       <td><%= link_to engagement.engagement_type.try(:name), business_program_campaign_engagement_url(@business, @program,@campaign, engagement) %></td>
       <td><%= engagement.amount %></td>
+      <td><%= engagement.item.try(:name) %></td>
       <td id="current_status_<%=engagement.id%>"><%= engagement.is_started %></td>
       <td><%= link_to "Edit", edit_business_program_campaign_engagement_path(@business,@program, @campaign,engagement) %></td>
       <td><%= link_to "Destroy", business_program_campaign_engagement_path(@business, @program, @campaign,engagement), :confirm => 'Are you sure?', :method => :delete %></td>

@@ -40,7 +40,7 @@ class Engagement < ActiveRecord::Base
     ["deployed", "paused", "offline"]
   end
   def items_list(campaign)
-    campaign.places.joins(:items).select("items.*")
+    campaign.places.joins(:items).select("DISTINCT items.*")
   end
   def start
     self.is_started =true

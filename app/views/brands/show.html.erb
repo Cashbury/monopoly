@@ -1,3 +1,4 @@
+<% title "Brand | #{@brand.name}" %>
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -14,6 +15,8 @@
   <b>Photo:</b>
   <% if @brand.brand_image%>
     <%= image_tag @brand.brand_image.photo.url(:thumb) %>
+  <%else%>
+    Processing & uploading ...
   <% end %>
 </p>  
 <%= link_to 'Edit', edit_brand_path(@brand) %> |

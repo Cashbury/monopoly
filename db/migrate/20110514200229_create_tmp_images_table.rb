@@ -1,6 +1,6 @@
-class CreateTmpUploadsTable < ActiveRecord::Migration
+class CreateTmpImagesTable < ActiveRecord::Migration
   def self.up
-    create_table :tmp_uploads do |t|
+    create_table :tmp_images do |t|
       t.integer   :uploadable_id
       t.string    :uploadable_type
       t.string    :photo_file_name
@@ -10,9 +10,11 @@ class CreateTmpUploadsTable < ActiveRecord::Migration
       
       t.timestamps
     end
+    add_column :images, :upload_type, :string
   end
 
   def self.down
-    drop_table :tmp_uploads
+    #remove_column :images, :upload_type
+    drop_table :tmp_images
   end
 end

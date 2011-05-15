@@ -1,5 +1,4 @@
-<h1>Editing <%=@campaign.name%></h1>
-
+<% title "Editing #{@campaign.name}" %>
 <%= render 'form' %>
 
 <%= link_to 'Show', business_program_campaign_path(@business,@program,@campaign) %> |
