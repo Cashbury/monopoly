@@ -2,6 +2,7 @@ class Businesses::PlacesController < ApplicationController
   before_filter :authenticate_user!, :except => [:index, :show]
   before_filter :find_business 
   before_filter :prepare_business_items , :only => [ :new , :create , :edit , :update]
+  before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
   def index
     @places = @business.places
     
@@ -32,6 +33,7 @@ class Businesses::PlacesController < ApplicationController
     @place.items_list = params[:place][:items_list] unless params[:place][:items_list].blank?
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
     @place.add_item(params[:item]) unless params[:item][:name].blank?
+    @place.add_open_hours(params[:open_hour])
     if @place.save
       flash[:notice] = "Successfully created place."
       redirect_to business_place_url(@business,@place)
@@ -50,6 +52,7 @@ class Businesses::PlacesController < ApplicationController
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
     @place.items_list = params[:place][:items_list] unless params[:place][:items_list].blank?
     @place.add_item(params[:item]) unless params[:item][:name].blank?
+    @place.add_open_hours(params[:open_hour])
     if @place.update_attributes(params[:place])
       flash[:notice] = "Successfully updated place."
       redirect_to business_place_url(@business,@place)
@@ -73,5 +76,17 @@ class Businesses::PlacesController < ApplicationController
     @items = @business.items
     @place = Place.where(:id => params[:id]).first unless params[:id].nil?
     @items = @business.items | @place.items  if @place # Merging the Business items with Place items.
+  end
+  def prepare_hours
+    @hours = []
+    12.downto(1) do | i |
+       @hours << "#{i}:00 AM"
+       @hours << "#{i}:30 AM"
+    end
+    12.downto(1) do | i |
+       @hours << "#{i}:00 PM"
+       @hours << "#{i}:30 PM"
+    end
+    return @hours
   end
 end

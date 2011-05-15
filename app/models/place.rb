@@ -19,6 +19,7 @@ class Place < ActiveRecord::Base
   accepts_nested_attributes_for :address
   accepts_nested_attributes_for :place_images,:allow_destroy=>true
   accepts_nested_attributes_for :items
+  accepts_nested_attributes_for :open_hours
   
   attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes
   attr_accessor :items_list
@@ -62,7 +63,25 @@ class Place < ActiveRecord::Base
   end
   def add_item(item_params)
     self.items.build(item_params)
-  end  
+  end
+  def add_open_hours(open_hours_params)
+    OpenHour::DAYS.each_with_index do |(key,value),index|
+       open_hour = OpenHour.new
+       i = index.to_s
+       if open_hours_params[i].present?
+         from_hour, from_min = parse_date(open_hours_params[i]["from"])
+         open_hour.from = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, from_hour.to_i , from_min.to_i)
+         
+         to_hour, to_min = parse_date(open_hours_params[i]["to"])
+         open_hour.to = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, to_hour.to_i , to_min.to_i)
+         
+         open_hour.day_no = open_hours_params[i][:day_no] 
+         open_hour.place_id = open_hours_params[i][:place_id]
+         self.open_hours << open_hour
+       end
+    end
+  end
+    
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
@@ -77,6 +96,15 @@ class Place < ActiveRecord::Base
         self.items << item
       end
     }  
+  end
+  def parse_date(hour_text)
+    tmp = hour_text.split(':')
+    hour = tmp[0].to_i
+    tmp2 = tmp[1].split(' ')
+    min = tmp2[0]
+    am_or_pm = tmp2[1]
+    hour +=12 if am_or_pm == "PM"
+    [hour,min]
   end
   
 end
