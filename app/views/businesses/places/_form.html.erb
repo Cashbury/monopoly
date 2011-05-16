@@ -14,6 +14,8 @@
     jQuery('#add_new_item_fieldset').toggle();
   });
   
+  
+  
 });
 </script>
 
@@ -100,16 +102,33 @@
     </p>
   </fieldset>
   <br />
+  <% if @place.new_record?%>
   <fieldset>
     <legend>Hours of operations?</legend>
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
       <p> <%=key%></p>
-       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours)) %>
-       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours)) %>
+       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours),:style => 'width:142px;') %>
+       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours),:style => 'width:142px;') %>
        <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
        <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+       <%= label_tag "Closed?"%>
+       <%= check_box_tag "open_hour[#{index}][closed]" %>
      <% end %>
   </fieldset>
+  <%else%>
+  <fieldset>
+    <legend>Hours of operations?</legend>
+     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+      <p> <%=key%></p>
+       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@place.get_hour(index,:from) ) ,:style => 'width:142px;') %>
+       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@place.get_hour(index,:to) ) ,:style => 'width:142px;') %>
+       <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
+       <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+       <%= label_tag "Closed?"%>
+       <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index) %>
+     <%end%>
+  </fieldset>
+  <%end%>
   <br />
 
   <fieldset>

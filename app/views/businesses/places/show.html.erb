@@ -28,8 +28,8 @@
   <strong>Open Hours:</strong>
   <% @place.open_hours.each do  |open_hour|%>
   <p> <%= OpenHour::DISPLAY_DAYS[open_hour.day_no]%> <br />
-   <label> From </label> <%= open_hour.from.hour.to_s%>:<%= open_hour.from.min.to_s%> 
-   <label> To  </label>  <%= open_hour.to.hour.to_s%>:<%= open_hour.to.min.to_s%>   
+   <label> From </label> <%= open_hour.format_time(open_hour.from)%>
+   <label> To  </label>  <%= open_hour.format_time(open_hour.to)%>
   </p>
   <% end%>
 </p>

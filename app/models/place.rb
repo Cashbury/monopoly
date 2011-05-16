@@ -65,23 +65,43 @@ class Place < ActiveRecord::Base
     self.items.build(item_params)
   end
   def add_open_hours(open_hours_params)
+    self.open_hours.delete_all
     OpenHour::DAYS.each_with_index do |(key,value),index|
        open_hour = OpenHour.new
        i = index.to_s
        if open_hours_params[i].present?
-         from_hour, from_min = parse_date(open_hours_params[i]["from"])
-         open_hour.from = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, from_hour.to_i , from_min.to_i)
-         
-         to_hour, to_min = parse_date(open_hours_params[i]["to"])
-         open_hour.to = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, to_hour.to_i , to_min.to_i)
-         
-         open_hour.day_no = open_hours_params[i][:day_no] 
-         open_hour.place_id = open_hours_params[i][:place_id]
-         self.open_hours << open_hour
+           if open_hours_params[i]["closed"].blank? and open_hours_params[i]["apply_to_all"].blank?
+             from_hour, from_min = parse_date(open_hours_params[i]["from"])
+             open_hour.from = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, from_hour.to_i , from_min.to_i)
+             
+             to_hour, to_min = parse_date(open_hours_params[i]["to"])
+             open_hour.to = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, to_hour.to_i , to_min.to_i)
+             
+             open_hour.day_no = open_hours_params[i][:day_no] 
+             open_hour.place_id = open_hours_params[i][:place_id]
+             self.open_hours << open_hour
+          end           
        end
     end
   end
-    
+  def get_hour(day_num, hour_type)
+    open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num).first
+    return_hour = "12:00 AM"
+    if open_hour
+      datetime = open_hour.from if hour_type == :from
+      datetime =  open_hour.to if hour_type == :to
+      return_hour= open_hour.format_time(datetime)
+    end
+    return return_hour
+  end
+  def is_closed(day_num)
+     open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num).first
+     if open_hour 
+       return false
+     else 
+       return true
+     end
+  end
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
