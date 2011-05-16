@@ -29,6 +29,10 @@ class Reward < ActiveRecord::Base
   #after_save :update_categories
   validates_presence_of :campaign_id,:name,:needed_amount,:heading1,:heading2,:legal_term
   validates_numericality_of :needed_amount,:max_claim
+  validates_length_of :name, :maximum => 16
+  validates_length_of :heading1, :maximum => 40
+  validates_length_of :heading2, :maximum => 84
+
   #  private
   # def update_categories
   #   places.delete_all

@@ -8,6 +8,17 @@ jQuery(function(){
     var campaign_id = jQuery(":selected", this).val();
     jQuery.getScript("/rewards/update_items/"+campaign_id);
   });
+  jQuery('#description_field').bind('keypress',function(){
+    var desc_text = jQuery(this).val();
+    if ( desc_text.length > 84 ){
+      jQuery(this).val(desc_text.substring( 0, 84 ));
+      alert( 'Description value can only be 84 characters in length.' );
+      return false;
+    }
+    else{
+      jQuery('#counter_field').val(84 - desc_text.length);
+    }
+  });
 })
 //]]>
 </script>
@@ -37,15 +48,18 @@ jQuery(function(){
     </div> 
     <div class="row">
       <div class="basic_info_caption1">What is the Reward?</div>
-      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>"16"  %>
+      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>16  %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Add a Short Description</div>
-      <%= f.text_area :heading1, :class=>"basic_info_input", :rows=>5 %>
+      <%= f.text_field :heading1, :class=>"basic_info_input", :maxlength=>40, :rows=>5 %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Description</div>
-      <%= f.text_area :heading2, :class=>"basic_info_input", :rows=>5 %>
+      <%= f.text_area :heading2, :class=>"basic_info_input",:id=>"description_field",:maxlength=>84,:rows=>5 %>
+    </div>
+    <div class="row">
+      <input type="text" name="counter" maxlength="3" size="3" value="84" id="counter_field"> chars remaining
     </div>
     <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
