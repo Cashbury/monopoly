@@ -20,7 +20,7 @@ class OpenHour < ActiveRecord::Base
     6=>"Saturday"
   }
 	validates_presence_of :day_no,:from,:to
-	#validates_uniqueness_of :place_id,:scope=>[:day_no,:from,:to]
+	validates_uniqueness_of :place_id,:scope=>[:day_no,:from,:to]
  def format_time(datetime)
    return_hour = ""
    if datetime.hour >= 13 and datetime.hour <=23

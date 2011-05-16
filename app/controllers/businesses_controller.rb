@@ -1,5 +1,6 @@
 class BusinessesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
+  before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
   
   def index
     @businesses = Business.all
@@ -37,6 +38,9 @@ class BusinessesController < ApplicationController
   
   def create
     @business = Business.new(params[:business])
+    @business.places.each_with_index do |place, index|
+      place.add_open_hours(params["open_hour_#{index}"])
+    end
     @business.tag_list << @business.name
     set_tag_lists_for_business_places(@business)   
     if @business.save
@@ -104,5 +108,17 @@ class BusinessesController < ApplicationController
         place.tag_list = params[:business][:places_attributes][index.to_s][:tag_list] 
       end
     end
+  end
+  def prepare_hours
+    @hours = []
+    12.downto(1) do | i |
+       @hours << "#{i}:00 AM"
+       @hours << "#{i}:30 AM"
+    end
+    12.downto(1) do | i |
+       @hours << "#{i}:00 PM"
+       @hours << "#{i}:30 PM"
+    end
+    return @hours
   end
 end
