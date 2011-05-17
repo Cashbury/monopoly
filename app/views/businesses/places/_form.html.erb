@@ -13,8 +13,14 @@
   jQuery('#add_new_item_button').click(function(){
     jQuery('#add_new_item_fieldset').toggle();
   });
-  
 });
+
+function Split_hour(index){
+  from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
+  from_to_html = from_to_html.replace(/from/g, "from2");
+  from_to_html = from_to_html.replace(/to/g, "to2");
+  jQuery('#open_hour_div_'+index).append("<p>"+from_to_html+"</p>");
+};
 </script>
 
 <%= form_for([@business,@place],:html => { :multipart => true }) do |f| %>
@@ -100,16 +106,42 @@
     </p>
   </fieldset>
   <br />
+  <% if @place.new_record?%>
   <fieldset>
     <legend>Hours of operations?</legend>
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
       <p> <%=key%></p>
-       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours)) %>
-       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours)) %>
+      <div id="open_hour_div_<%=index%>">
+       <div >
+       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours),:style => 'width:142px;') %>
+       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours),:style => 'width:142px;') %>
+       </div>
        <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
        <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+       <%= label_tag "Closed?"%>
+       <%= check_box_tag "open_hour[#{index}][closed]" %>
+       <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+      </div>
      <% end %>
   </fieldset>
+  <%else%>
+  <fieldset>
+    <legend>Hours of operations?</legend>
+     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+      <p> <%=key%></p>
+       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@place.get_hour(index,:from,false) ) ,:style => 'width:142px;') %>
+       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@place.get_hour(index,:to,false) ) ,:style => 'width:142px;') %>
+       <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
+       <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+       <%= label_tag "Closed?"%>
+       <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index) %>
+       <% if OpenHour.has_two_hour_for_same_day(@place,index)%>
+        <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@place.get_hour(index,:from, true) ) ,:style => 'width:142px;') %>
+        <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@place.get_hour(index,:to,true) ) ,:style => 'width:142px;') %>
+      <%end%>
+     <%end%>
+  </fieldset>
+  <%end%>
   <br />
 
   <fieldset>

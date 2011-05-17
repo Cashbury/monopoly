@@ -114,7 +114,8 @@
     </p>
     <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
   </fieldset>
-  <% f.fields_for :places,@business.places do |builder| %>  
+  <% @business.places.each_with_index do |place, i| %>
+  <% f.fields_for :places, place, :child_index => i do |builder| %> 
 		<h3>Add a Branch</h3>
     <p>
       <%= builder.label :name %>
@@ -171,6 +172,18 @@
       <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
     </fieldset>
     <fieldset>
+      <legend>Place Hours of operations?</legend>
+      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+        <p> <%=key%></p>
+        <%= select_tag("open_hour_#{i}[#{index}][from]", options_for_select(@hours),:style => 'width:142px;') %>
+        <%= select_tag("open_hour_#{i}[#{index}][to]", options_for_select(@hours),:style => 'width:142px;') %>
+        <input type="hidden" name="open_hour_<%=i%>[<%=index%>][place_id]" value="<%=builder.object.id%>" />
+        <input type="hidden" name="open_hour_<%=i%>[<%=index%>][day_no]"    value="<%=value%>"    />
+        <%= label_tag "Closed?"%>
+        <%= check_box_tag "open_hour_#{i}[#{index}][closed]" %>
+      <% end %>
+   </fieldset>
+    <fieldset>
       <legend>Place Address</legend>
       <%= builder.fields_for :address,builder.object.address do |address_form| %>
         <p>
@@ -198,5 +211,6 @@
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>
   <% end %>
+ <%end%> 
   <p><%= f.submit %></p>
   <% end %>
