@@ -24,7 +24,7 @@ class Users::PlacesController < Users::BaseController
   end
   
   def list_all_cities
-    @cities=City.select("cities.name,cities.id")
+    @cities=City.order("name ASC").select("cities.name,cities.id")
     respond_to do |format|
       format.xml { render :xml => @cities }
     end
