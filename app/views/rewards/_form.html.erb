@@ -4,25 +4,37 @@
 <script type="text/javascript" language="javascript" charset="utf-8">
 //<![CDATA[
 jQuery(function(){
-    jQuery('select#brand_id').bind('change',function(){
-      var brand_id = jQuery(":selected", this).val();
-      jQuery.getScript("/rewards/update_businesses/"+brand_id);
-    });        
+  jQuery('select#brand_id').bind('change',function(){
+    var brand_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_businesses/"+brand_id);
+  });        
   
-   jQuery('select#business_id').bind('change',function(){
-      var business_id = jQuery(":selected", this).val();
-      jQuery.getScript("/rewards/update_programs/"+business_id);
-    }); 
-    
-    jQuery('select#program_id').bind('change',function(){
-      var program_id = jQuery(":selected", this).val();
-      jQuery.getScript("/rewards/update_campaigns/"+program_id);
-    }); 
-    
-    jQuery('select#campaign_id').bind('change',function(){
-      var campaign_id = jQuery(":selected", this).val();
-      jQuery.getScript("/rewards/update_items/"+campaign_id);
-    });
+  jQuery('select#business_id').bind('change',function(){
+    var business_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_programs/"+business_id);
+  }); 
+  
+  jQuery('select#program_id').bind('change',function(){
+    var program_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_campaigns/"+program_id);
+  }); 
+  
+  jQuery('select#campaign_id').bind('change',function(){
+    var campaign_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_items/"+campaign_id);
+  });
+  jQuery('#description_field').bind('keypress',function(){
+    var desc_text = jQuery(this).val();
+    if ( desc_text.length > 84 ){
+      jQuery(this).val(desc_text.substring( 0, 84 ));
+      alert( 'Description value can only be 84 characters in length.' );
+      return false;
+    }
+    else{
+      jQuery('#counter_field').val(84 - desc_text.length);
+    }
+  });
+
   
 })
 //]]>
@@ -55,16 +67,20 @@ jQuery(function(){
     </div> 
     <div class="row">
       <div class="basic_info_caption1">What is the Reward?</div>
-      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>"16"  %>
+      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>16  %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Add a Short Description</div>
-      <%= f.text_area :heading1, :class=>"basic_info_input", :rows=>5 %>
+      <%= f.text_field :heading1, :class=>"basic_info_input", :maxlength=>40, :rows=>5 %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Description</div>
-      <%= f.text_area :heading2, :class=>"basic_info_input", :rows=>5 %>
+      <%= f.text_area :heading2, :class=>"basic_info_input",:id=>"description_field",:maxlength=>84,:rows=>5 %>
     </div>
+    <div class="row">
+      <input type="text" name="counter" maxlength="3" size="3" value="84" id="counter_field"> chars remaining
+    </div>
+      
     <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
       <div id="Enter_Num_Stamp">
@@ -133,30 +149,9 @@ jQuery(function(){
       </div><%= f.text_field :foreign_identifier , :class=>"basic_info_input"%>
       </div>
   </fieldset>
-      <div class="row">
-        <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
-  			<%= link_to "Cancel", rewards_path, :class => "cancel right" %>
-  		</div>
-  	</div>
-</div>  	
-	<br/>
-	<br/>
-	<br/>
-	<script language="javascript" type="text/javascript">
-//<![CDATA[
-	jQuery(function() {
-					jQuery('#goal_type').change(function(){
-							jQuery('.setgoaltype').hide();
-							jQuery('#' + jQuery(this).val()).show();
-					});
-			});
-
-
-	jQuery(function() {
-			jQuery('#reward_runtill').change(function(){
-					jQuery('.runtill').hide();
-					jQuery('#' + $(this).val()).show();
-			});
-	});
-	//]]>
-	</script><!-- End of Wrap -->
+  <div class="row">
+    <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
+		<%= link_to "Cancel", rewards_path, :class => "cancel right" %>
+	</div>
+</div>
+</div>

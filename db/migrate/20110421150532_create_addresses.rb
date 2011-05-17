@@ -20,7 +20,6 @@ class CreateAddresses < ActiveRecord::Migration
   def self.down
     add_column :places, :address2, :string
     add_column :places, :address1, :string
-    add_column :places, :street_address, :string
     add_column :places, :neighborhood, :string
     add_column :places, :zipcode, :string
     add_column :places, :city, :string

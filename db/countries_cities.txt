@@ -2,3 +2,5 @@ Egypt:
 Alexandria
 America:
 San Francisco
+Lebanon:
+Beirut

@@ -30,9 +30,8 @@ class BusinessesController < ApplicationController
       place.build_address
       ENABLE_DELAYED_UPLOADS ? 3.times { place.tmp_images.build} : 3.times { place.place_images.build}
     end
-    3.times { @business.business_images.build}
-     @business.build_mailing_address
-     @business.build_billing_address
+    @business.build_mailing_address
+    @business.build_billing_address
     ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build} 
   end
   
@@ -66,9 +65,8 @@ class BusinessesController < ApplicationController
     3.times { @business.places.build }
     @business.places.each do |place|
       place.build_address if place.address.nil?
-      (3-place.place_images.size).times {place.place_images.build}
+      3.times {place.place_images.build}
     end
-    (3-@business.business_images.size).times { @business.business_images.build}
     @business.build_mailing_address if @business.mailing_address.nil?
     @business.build_billing_address if @business.billing_address.nil?
     ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
