@@ -175,13 +175,24 @@
       <legend>Place Hours of operations?</legend>
       <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
         <p> <%=key%></p>
-        <%= select_tag("open_hour_#{i}[#{index}][from]", options_for_select(@hours),:style => 'width:142px;') %>
-        <%= select_tag("open_hour_#{i}[#{index}][to]", options_for_select(@hours),:style => 'width:142px;') %>
-        <input type="hidden" name="open_hour_<%=i%>[<%=index%>][place_id]" value="<%=builder.object.id%>" />
-        <input type="hidden" name="open_hour_<%=i%>[<%=index%>][day_no]"    value="<%=value%>"    />
-        <%= label_tag "Closed?"%>
-        <%= check_box_tag "open_hour_#{i}[#{index}][closed]" %>
-      <% end %>
+        <div id="open_hour_div_<%=i%>_<%=index%>">
+         <div >
+          <%= select_tag("open_hour_#{i}[#{index}][from]", options_for_select(@hours),:style => 'width:142px;',:class=>"from_class_#{i}") %>
+          <%= select_tag("open_hour_#{i}[#{index}][to]", options_for_select(@hours),:style => 'width:142px;',:class=>"to_class_#{i}") %>
+         </div>
+         <input type="hidden" name="open_hour_<%=i%>[<%=index%>][place_id]" value="<%=builder.object.id%>" />
+         <input type="hidden" name="open_hour_<%=i%>[<%=index%>][day_no]"    value="<%=value%>"    />
+         <%= label_tag "Closed?"%>
+         <%= check_box_tag "open_hour_#{i}[#{index}][closed]" %>
+         <input type="button" id="split_hour_<%=i%>_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>,<%=i%>)" />
+         <% if index == 0 %>
+           <label> Apply To All</label>
+           <%= check_box_tag "open_hour_#{i}[apply_to_all]" ,"#{i}",false,{:class=>"apply"} %>
+         <%end%>
+        </div>
+        <br />
+        <br />
+     <% end %>
    </fieldset>
     <fieldset>
       <legend>Place Address</legend>
