@@ -1,6 +1,6 @@
-Egypt:
+Egypt:EG
 Alexandria
-America:
+United States:US
 San Francisco
-Lebanon:
+Lebanon:LB
 Beirut

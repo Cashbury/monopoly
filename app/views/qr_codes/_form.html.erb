@@ -13,24 +13,20 @@
   <% end %>
   <%= render "shared/engagement_selector" %>
 
-
-  <div class="field">
+  <p class="row">
     <%= f.label :associatable_id %><br />
     <%= f.collection_select :associatable_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
-  </div>
-  <div class="field">
+  </p>
     <%= f.hidden_field :associatable_type, :value=>"Engagement"%>
-  </div>
-   <div class="field">
-    <%= f.label :status , "Active" %><br />
+  <p class="row">
+    <%= f.label :status , "Active" %>
     <%= f.check_box :status %>
-    </div> 
-    <div class="field">
+  </p>
+  <p class="row">
     <%= f.label :code_type , "Multi use" %><br />
     <%= f.select :code_type , [["Single Use",0],["MultiUse", 1] ]%>
-    </div> 
- 
-  <div class="actions">
+  </p>
+  <p class="row">
     <%= f.submit %>
-  </div>
+  </p>
 <% end %>
