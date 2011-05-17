@@ -30,7 +30,9 @@ class Place < ActiveRecord::Base
    
   scope :with_address, order("places.name desc")
                       .joins(:address=>[:city,:country])
-                      .select("places.*,addresses.zipcode,addresses.neighborhood,addresses.street_address,countries.name as country_name")
+                      .select("places.id,places.name,places.long,places.lat,places.description,places.address_id,places.is_user_defined,places.business_id,places.time_zone,
+                               addresses.zipcode,addresses.neighborhood,addresses.street_address,
+                               countries.name as country_name")
   before_save :add_amenities_name_and_place_name_to_place_tag_lists
   after_save :update_items
   before_validation :clear_photos
