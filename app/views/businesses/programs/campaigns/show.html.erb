@@ -18,7 +18,7 @@
 
 <p>
   <b>Business:</b>
-  <%= @campaign.program.business_id %>
+  <%= @campaign.program.business.try(:name) %>
 </p>
 
 <p>

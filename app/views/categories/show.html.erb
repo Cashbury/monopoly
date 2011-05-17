@@ -10,7 +10,7 @@
 </p>
 <p>
   <strong>Parent:</strong>
-  <%= @category.parent_id %>
+  <%= @category.parent.try(:name) %>
 </p>
 
 <p>

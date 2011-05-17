@@ -91,9 +91,9 @@ class Place < ActiveRecord::Base
     end 
     return_hour = "12:00 AM"
     if open_hour
-      datetime = open_hour.from if hour_type == :from
-      datetime =  open_hour.to if hour_type == :to
-      return_hour= OpenHour.format_time(datetime)
+      datetime    = open_hour.from if hour_type == :from
+      datetime    =  open_hour.to if hour_type == :to
+      return_hour = OpenHour.format_time(datetime)
     end
     return return_hour
   end
@@ -105,10 +105,18 @@ class Place < ActiveRecord::Base
        return true
      end
   end
+  
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
+    end
+    self.business.categories.each do |cat|
+      self.tag_list << cat.name
+      while (parent=cat.parent) !=nil
+        self.tag_list << parent.name unless self.tag_list.include?(parent.name)
+        cat=parent 
+      end
     end
     self.tag_list << self.name unless self.tag_list.empty?
   end
