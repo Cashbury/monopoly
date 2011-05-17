@@ -45,12 +45,15 @@
   }); 
 });
 
-function Split_hour(index){
-  from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
-  from_to_html = from_to_html.replace(/from/g, "from2");
-  from_to_html = from_to_html.replace(/to/g, "to2");
-  jQuery('#open_hour_div_'+index).append("<p>"+from_to_html+"</p>");
-};
+  function Split_hour(index){
+    from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
+    from_to_html = from_to_html.replace(/from/g, "from2");
+    from_to_html = from_to_html.replace(/to/g, "to2");
+    closed1_label ="<label> Closed? </label>";
+    closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
+    final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
+    jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
+  };
 </script>
 
 <%= form_for([@business,@place],:html => { :multipart => true }) do |f| %>
@@ -166,16 +169,31 @@ function Split_hour(index){
     <legend>Hours of operations?</legend>
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
       <p> <%=key%></p>
-       <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@place.get_hour(index,:from,false) ) ,:style => 'width:142px;') %>
-       <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@place.get_hour(index,:to,false) ) ,:style => 'width:142px;') %>
+      <div id="open_hour_div_<%=index%>">
+       <div >
+        <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@place.get_hour(index,:from,false) ) ,:style => 'width:142px;',:class=>"from_class") %>
+        <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@place.get_hour(index,:to,false) ) ,:style => 'width:142px;',:class=>"to_class") %>
+       </div>
        <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
        <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
        <%= label_tag "Closed?"%>
        <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index) %>
+       <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+         <% if index == 0 %>
+           <label> Apply To All</label>
+           <%= check_box_tag "open_hour[apply_to_all]" %>
+         <%end%>
        <% if OpenHour.has_two_hour_for_same_day(@place,index)%>
-        <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@place.get_hour(index,:from, true) ) ,:style => 'width:142px;') %>
-        <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@place.get_hour(index,:to,true) ) ,:style => 'width:142px;') %>
+       <p>
+        <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@place.get_hour(index,:from, true) ) ,:style => 'width:142px;',:class=>"from2_class") %>
+        <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@place.get_hour(index,:to,true) ) ,:style => 'width:142px;',:class=>"to2_class") %>
+        <%= label_tag "Closed?"%>
+        <input type='checkbox' value='1'  name="open_hour[<%=index%>]["closed2"]"  />
+       </p>
       <%end%>
+      </div>
+      <br />
+      <br />
      <%end%>
   </fieldset>
   <%end%>
@@ -204,18 +222,14 @@ function Split_hour(index){
         </p>
         <p>
            <%= label_tag "description" %><br />
-           <%= text_field_tag "item[description]"  %>
+           <%= text_area_tag "item[description]"  %>
         </p>
         <p>
            <%= label_tag "price" %><br />
            <%= text_field_tag "item[price]"  %>
         </p>
         <p>
-           <%= label_tag "available" %><br />
-           <%= select_tag "item[available]", options_for_select([ ['yes', 'true'],['no','false']])%>
-        </p>
-        <p>
-           <%= label_tag "expiry_date" %>
+           <%= label_tag "expiry_date" %><br />
            <%= calendar_date_select_tag "item[expiry_date]" %>
          </p>
          <p>
@@ -225,6 +239,10 @@ function Split_hour(index){
         <p>
            <%= label_tag "product_code" %><br />
            <%= text_field_tag "item[product_code]"  %>
+        </p>
+        <p>
+          <%= label_tag "Available" %>
+          <%= check_box_tag "item[available]","",1%>
         </p>
         
     </p>

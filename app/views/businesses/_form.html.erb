@@ -111,8 +111,8 @@
           <%- end -%>
         <%end%>
       <%end%>
-      
     </p>
+    <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
   </fieldset>
   <% @business.places.each_with_index do |place, i| %>
   <% f.fields_for :places, place, :child_index => i do |builder| %> 
@@ -169,6 +169,7 @@
           <%end%>
         <%end%>
       </p>
+      <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
     </fieldset>
     <fieldset>
       <legend>Place Hours of operations?</legend>

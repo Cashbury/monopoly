@@ -31,25 +31,21 @@ $(function(){
 //]]>
 </script>
 <div id="associate_box" class="row">
-    <strong>Associate with:</strong><br/>
+  <strong>Associate with:</strong><br/>
     <p class="row">
-     <strong> Brands </strong> <br/>
-     <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>
+      <strong> Brands </strong> <br/>
+      <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>
     </p>
-    
     <p class="row">
-     <strong> Businesses </strong> <br/>
+      <strong> Businesses </strong> <br/>
       <%= select_tag :business_id , ""%>
     </p>
-    
     <p class="row">
-     <strong>  Programs </strong> <br/>
-     <%= select_tag :program_id , ""%>
+      <strong>  Programs </strong> <br/>
+      <%= select_tag :program_id , ""%>
     </p>
-    
     <p class="row">
-     <strong> Campaign  </strong> <br/>
-     <%= select_tag :campaign_id , ""%>
+      <strong> Campaign  </strong> <br/>
+      <%= select_tag :campaign_id , ""%>
     </p>
-
   </div>

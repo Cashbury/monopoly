@@ -1,6 +1,6 @@
 <% title "Categories" %>
 
-<table>
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Description</th>
@@ -10,7 +10,7 @@
     <tr>
       <td><%= category.name %></td>
       <td><%= category.description %></td>
-      <td><%= category.parent_id %></td>
+      <td><%= category.parent.try(:name) %></td>
       <td><%= link_to "Show", category %></td>
       <td><%= link_to "Edit", edit_category_path(category) %></td>
       <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>

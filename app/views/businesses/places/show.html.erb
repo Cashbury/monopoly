@@ -1,4 +1,4 @@
-<% title "Place" %>
+<% title "Place | #{@place.name}" %>
 
 <p>
   <strong>Name:</strong>
@@ -26,12 +26,11 @@
 </p>
 <p>
   <strong>Open Hours:</strong>
-  <% @place.open_hours.each do  |open_hour|%>
-  <p> <%= OpenHour::DISPLAY_DAYS[open_hour.day_no]%> <br />
-   <label> From </label> <%= OpenHour.format_time(open_hour.from)%>
-   <label> To  </label>  <%= OpenHour.format_time(open_hour.to)%>
-  </p>
-  <% end%>
+  <ul>
+    <% @place.open_hours.each do  |open_hour|%>
+      <li><%= OpenHour::DISPLAY_DAYS[open_hour.day_no]%> From <%= OpenHour.format_time(open_hour.from)%> To  <%= OpenHour.format_time(open_hour.to)%></li>
+    <% end%>
+  </ul>
 </p>
 <%unless @place.place_images.empty?%>
 <p>

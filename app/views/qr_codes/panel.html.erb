@@ -24,8 +24,11 @@ $(function(){
 
 
   $("#associate_link").click(function(){
-    $(this).html("hide");
-    $("#associate_box").slideDown(); 
+    if ($(this).html()=="Show")
+      $(this).html("Hide");
+    else 
+      $(this).html("Show");
+    $("#associate_box").slideToggle(); 
     
   })
 })

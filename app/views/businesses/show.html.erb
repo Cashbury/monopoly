@@ -43,7 +43,7 @@
 <%end%>
 <h3>Branches</h3>
 <p>
-  <table>
+  <table width="100%" border="1" cellspacing="0" cellpadding="0">
     <tr>
       <th>Name</th>    
       <th>Address</th>    
@@ -54,7 +54,7 @@
     </tr>  
 	  <% for place in @business.places %>
     <tr>
-      <td><%= place.name %></td> 
+      <td><%= link_to place.name, business_place_path(@business,place) %></td> 
       <td><%= place.try(:address).try(:street_address) %></td>
       <td><%= place.try(:address).try(:neighborhood) %></td>
       <td><%= place.try(:address).try(:city).try(:name) %></td>

@@ -38,6 +38,8 @@ class Businesses::PlacesController < ApplicationController
       flash[:notice] = "Successfully created place."
       redirect_to business_place_url(@business,@place)
     else
+      @place.build_address
+      ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
       render :action => 'new'
     end
   end
@@ -57,6 +59,7 @@ class Businesses::PlacesController < ApplicationController
       flash[:notice] = "Successfully updated place."
       redirect_to business_place_url(@business,@place)
     else
+      ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
       render :action => 'edit'
     end
   end
