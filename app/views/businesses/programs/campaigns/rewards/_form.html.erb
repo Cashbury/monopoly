@@ -119,25 +119,3 @@ jQuery(function(){
       </div>
     </div>
 </div>
-<br/>
-<br/>
-<br/>
-<script language="javascript" type="text/javascript">
-//<![CDATA[
-jQuery(function() {
-		jQuery('#goal_type').change(function(){
-				jQuery('.setgoaltype').hide();
-				jQuery.getScript("<%= stamps_business_program_campaign_engagements_path %>.js",function(data){});
-				jQuery('#' + jQuery(this).val()).show();
-		});
-});
-
-
-jQuery(function() {
-		jQuery('#reward_runtill').change(function(){
-				jQuery('.runtill').hide();
-				jQuery('#' + $(this).val()).show();
-		});
-});
-//]]>
-</script><!-- End of Wrap -->

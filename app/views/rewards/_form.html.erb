@@ -149,30 +149,9 @@ jQuery(function(){
       </div><%= f.text_field :foreign_identifier , :class=>"basic_info_input"%>
       </div>
   </fieldset>
-      <div class="row">
-        <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
-  			<%= link_to "Cancel", rewards_path, :class => "cancel right" %>
-  		</div>
-  	</div>
-</div>  	
-	<br/>
-	<br/>
-	<br/>
-	<script language="javascript" type="text/javascript">
-//<![CDATA[
-	jQuery(function() {
-					jQuery('#goal_type').change(function(){
-							jQuery('.setgoaltype').hide();
-							jQuery('#' + jQuery(this).val()).show();
-					});
-			});
-
-
-	jQuery(function() {
-			jQuery('#reward_runtill').change(function(){
-					jQuery('.runtill').hide();
-					jQuery('#' + $(this).val()).show();
-			});
-	});
-	//]]>
-	</script><!-- End of Wrap -->
+  <div class="row">
+    <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
+		<%= link_to "Cancel", rewards_path, :class => "cancel right" %>
+	</div>
+</div>
+</div>
