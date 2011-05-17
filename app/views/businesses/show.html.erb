@@ -54,7 +54,7 @@
     </tr>  
 	  <% for place in @business.places %>
     <tr>
-      <td><%= place.name %></td> 
+      <td><%= link_to place.name, business_place_path(@business,place) %></td> 
       <td><%= place.try(:address).try(:street_address) %></td>
       <td><%= place.try(:address).try(:neighborhood) %></td>
       <td><%= place.try(:address).try(:city).try(:name) %></td>

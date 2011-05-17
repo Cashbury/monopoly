@@ -47,7 +47,7 @@ class Users::PlacesController < Users::BaseController
 	    	@result["places"][index]["brand-image"]   =business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:normal) 
 	    	@result["places"][index]["brand-image-fb"]=business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:thumb)
 	    	@result["places"][index]["is_open"]       =place.is_open?
-	    	@result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:place_id=>oh.place_id,:day=>OpenHour::DAYS.key(oh.day_no)}}
+	    	@result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
 	    	@result["places"][index]["accounts"]      =[]
 				accounts=programs.joins(:campaigns=>[:accounts=>[:measurement_type,:account_holder]])
 				                 .select("account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type,campaigns.start_date,campaigns.end_date")
