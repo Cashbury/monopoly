@@ -70,27 +70,30 @@ class Place < ActiveRecord::Base
        open_hour = OpenHour.new
        i = index.to_s
        if open_hours_params[i].present?
-           if open_hours_params[i]["closed"].blank? and open_hours_params[i]["apply_to_all"].blank?
-             from_hour, from_min = parse_date(open_hours_params[i]["from"])
-             open_hour.from = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, from_hour.to_i , from_min.to_i)
-             
-             to_hour, to_min = parse_date(open_hours_params[i]["to"])
-             open_hour.to = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, to_hour.to_i , to_min.to_i)
-             
+           if open_hours_params[i]["closed"].blank?
+             open_hour.from = create_date_time(open_hours_params[i]["from"])
+             open_hour.to   = create_date_time(open_hours_params[i]["to"])
              open_hour.day_no = open_hours_params[i][:day_no] 
              open_hour.place_id = open_hours_params[i][:place_id]
              self.open_hours << open_hour
-          end           
+             if open_hours_params[i]["from2"].present? and open_hours_params[i]["to2"].present?
+               add_new_open_hour_for_same_day(open_hours_params[i])
+             end
+           end
        end
-    end
+     end
   end
-  def get_hour(day_num, hour_type)
-    open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num).first
+  def get_hour(day_num, hour_type, second_record_for_same_day)
+    if second_record_for_same_day
+     open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num).last
+    else
+     open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num).first 
+    end 
     return_hour = "12:00 AM"
     if open_hour
       datetime = open_hour.from if hour_type == :from
       datetime =  open_hour.to if hour_type == :to
-      return_hour= open_hour.format_time(datetime)
+      return_hour= OpenHour.format_time(datetime)
     end
     return return_hour
   end
@@ -126,5 +129,16 @@ class Place < ActiveRecord::Base
     hour +=12 if am_or_pm == "PM"
     [hour,min]
   end
-  
+  def create_date_time(hour_txt)
+    hour, min = parse_date(hour_txt)
+    datetime = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, hour.to_i , min.to_i)
+  end
+  def add_new_open_hour_for_same_day(open_hours_params)
+    new_open_hour = OpenHour.new
+    new_open_hour.from = create_date_time(open_hours_params["from2"])
+    new_open_hour.to   = create_date_time(open_hours_params["to2"])
+    new_open_hour.day_no = open_hours_params[:day_no] 
+    new_open_hour.place_id = open_hours_params[:place_id]
+    self.open_hours << new_open_hour
+  end
 end
