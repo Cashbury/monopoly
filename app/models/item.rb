@@ -7,6 +7,7 @@ class Item < ActiveRecord::Base
 	has_many :engagements
 	
 	accepts_nested_attributes_for :places
+	accepts_nested_attributes_for :item_image
 	
 	validates_presence_of :name
 end
