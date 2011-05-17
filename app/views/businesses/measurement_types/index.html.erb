@@ -1,9 +1,8 @@
 <% title "Measurement Type" %>
 
-<table>
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
-   
   </tr>
   <% for measurement_type in @measurement_types %>
     <tr>
@@ -17,3 +16,4 @@
 </table>
 
 <p><%= link_to "New Measurement Type", new_business_measurement_type_path(@business) %></p>
+<p><%= link_to "Back to business", business_path(@business) %></p>

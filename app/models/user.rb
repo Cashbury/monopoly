@@ -57,8 +57,7 @@ class User < ActiveRecord::Base
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
 	end
 	
-	def snapped_qrcode(qr_code,place_id,lat,lng)
-    engagement=qr_code.engagement
+	def snapped_qrcode(qr_code,engagement,place_id,lat,lng)
     campaign=engagement.campaign
  
     user_account=campaign.user_account(self)
