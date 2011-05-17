@@ -30,8 +30,10 @@
   </p>
   <p>
     <%= f.label "Upload Image" %><br />
-    <input type="file" name="upload[photo]"/><br />
-    <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+    <%=f.fields_for :item_image do |image_builder| %>
+      <%=image_builder.file_field :photo%><br />
+      <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+    <%end%>
   </p>
   <p>
     <%= f.label :available %>
