@@ -49,6 +49,22 @@
     <strong>Legal Terms:</strong>
     <%= @reward.legal_term  %>
   </p>
+  <p>
+    <strong>Reward Item:</strong>
+    <%= @reward.items.try(:first).try(:name)  %>
+  </p>
+  <p>
+    <strong>Foreign Identifier:</strong>
+    <%= @reward.foreign_identifier %>
+  </p>
+  <p>
+    <strong>Total Quantity Available:</strong>
+    <%= @reward.max_claim %>
+  </p>
+  <p>
+    <strong>Max Enjoyments Per User:</strong>
+    <%= @reward.max_claim_per_user %>
+  </p>
   <div>
     <%= link_to "Edit", edit_reward_path(@reward) %> <br />
     <%= link_to "Back to List", rewards_path %> <br />
