@@ -137,9 +137,15 @@ class Place < ActiveRecord::Base
     tmp = hour_text.split(':')
     hour = tmp[0].to_i
     tmp2 = tmp[1].split(' ')
-    min = tmp2[0]
+    min = tmp2[0].to_i
     am_or_pm = tmp2[1]
-    hour +=12 if am_or_pm == "PM"
+    hour +=12 if am_or_pm == "PM" && hour >= 1 && hour <=11 
+    hour  =0  if am_or_pm == "AM" && hour ==12
+    # if hour >= 1 and hour <=11 and am_or_pm.upcase == "PM"
+    #   hour +=12
+    # elsif am_or_pm.upcase=="AM" and hour=12
+    #   hour  =0
+    # end 
     [hour,min]
   end
   def create_date_time(hour_txt)

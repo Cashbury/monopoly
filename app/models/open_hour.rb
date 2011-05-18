@@ -22,13 +22,18 @@ class OpenHour < ActiveRecord::Base
 	validates_presence_of :day_no,:from,:to
 	validates_uniqueness_of :place_id,:scope=>[:day_no,:from,:to]
  def self.format_time(datetime)
-   return_hour = ""
-   if datetime.hour >= 13 and datetime.hour <=23
-      return_hour= "#{(datetime.hour-12).to_s}:#{sprintf('%02d',datetime.min)} PM"
-   else
-      return_hour= "#{(datetime.hour).to_s}:#{sprintf('%02d',datetime.min)} AM"
-   end
-   return return_hour
+   #datetime.strftime("%I:%M %p").upcase
+  return_hour = ""
+  if datetime.hour >= 13 and datetime.hour <=23
+    return_hour= "#{(datetime.hour-12).to_s}:#{sprintf('%02d',datetime.min)} PM"
+  elsif datetime.hour ==12
+    return_hour= "#{(datetime.hour).to_s}:#{sprintf('%02d',datetime.min)} PM"
+  elsif datetime.hour ==0
+    return_hour= "12:#{sprintf('%02d',datetime.min)} AM"
+  else
+    return_hour= "#{(datetime.hour).to_s}:#{sprintf('%02d',datetime.min)} AM"
+  end
+  return return_hour
  end
  def self.has_two_hour_for_same_day(place, day_num)
    open_hours = OpenHour.where(:place_id=>place.id,:day_no=>day_num)
