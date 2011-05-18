@@ -24,7 +24,7 @@
   </p>
   <p id="item_div">
     <%= f.label :item %><br />
-    <%= f.select :item_id, @items.collect {|item| [item.name, item.id]},{:include_blank =>true} %>
+    <%= select_tag "engagement[item_id]", "<option value=''>...Select...</option>".html_safe+options_from_collection_for_select(@items,"id","name",@engagement.try(:item).try(:id)) %>
   </p>
   <p>
     <%= f.label :description %><br />

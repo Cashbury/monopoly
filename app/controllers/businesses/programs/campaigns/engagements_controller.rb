@@ -42,6 +42,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
       flash[:notice] = "Successfully created engagement."
       redirect_to business_program_campaign_engagement_url(@business, @program,@campaign ,@engagement)
     else
+      @items= @engagement.items_list(@campaign)
       render :action => 'new'
     end
   end
@@ -58,6 +59,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
       flash[:notice] = "Successfully updated engagement."
       redirect_to business_program_campaign_engagement_url(@business, @program, @campaign,@engagement)
     else
+      @items= @engagement.items_list(@campaign)
       render :action => 'edit'
     end
   end

@@ -18,6 +18,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
   
   def new
     @reward = Reward.new
+    @items  = Reward.get_available_items(@campaign.id)
   end
   
   def create
@@ -34,12 +35,14 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
       flash[:notice] = "Successfully created reward."
       redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
     else
+      @items= Reward.get_available_items(@campaign.id)
       render :action => 'new'
     end
   end
   
   def edit
     @reward = Reward.find(params[:id])
+    @items  = Reward.get_available_items(@campaign.id)
   end
   
   def update
@@ -57,6 +60,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
       flash[:notice] = "Successfully updated reward."
       redirect_to business_program_campaign_reward_url(@business, @program, @campaign,@reward)
     else
+      @items= Reward.get_available_items(@campaign.id)
       render :action => 'edit'
     end
   end
@@ -73,7 +77,8 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     @program     = Program.find(params[:program_id])
     @business    = @program.business
     @campaign    = Campaign.find(params[:campaign_id]) 
-    @engagements = @campaign.engagements.stamps #TODO check this will be sub with what ? 
+    @engagements = @campaign.engagements.stamps #TODO check this will be sub with what ?
+    @items       = [] 
   end
 
   def places_under_business

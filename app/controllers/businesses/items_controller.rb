@@ -2,20 +2,20 @@ class Businesses::ItemsController < ApplicationController
  before_filter :prepare_business
  
  
- def index
+  def index
     @items = Item.where(:business_id => @business.id)
   end
   
   def show
     @item = Item.find(params[:id])
   end
+  
+  def new
+    @item = @business.items.build
+    @item.build_item_image
+  end
  
- def new
-  @item = @business.items.build
-  @item.build_item_image
- end
- 
- def create
+  def create
     @item = @business.items.build(params[:item])
     if @item.save
       flash[:notice] = "Successfully created Item."
@@ -23,9 +23,9 @@ class Businesses::ItemsController < ApplicationController
     else
       render :action => 'new'
     end
- end
+  end
  
- def edit
+  def edit
     @item = Item.find(params[:id])
     @item.build_item_image if @item.item_image.blank?
   end
