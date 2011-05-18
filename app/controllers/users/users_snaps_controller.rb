@@ -29,7 +29,7 @@ class Users::UsersSnapsController < Users::BaseController
 		s[:snap].merge!({:campaign_id          => campaign.id})
 		s[:snap].merge!({:program_id           => program.id})
 		s[:snap].merge!({:item_name            => item.try(:name)})
-		s[:snap].merge!({:item_image           => photo.nil? ? nil : photo.url(:thumb) })
+		s[:snap].merge!({:item_image           => photo.nil? ? "http://#{request.host_with_port}/images/icon.png" : photo.url(:thumb) })
 		s[:snap].merge!({:engagement_amount    => after_fees_amount})
 		s[:snap].merge!({:account_amount       => account.amount})
     s
