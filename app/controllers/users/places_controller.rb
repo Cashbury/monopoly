@@ -39,7 +39,7 @@ class Users::PlacesController < Users::BaseController
   	end
   	@result["places"]=[]
     places.each_with_index do |place,index|
-    	@result["places"][index] = place.attributes.reject{|k,v| k=="address_id" || k=="business_id"}
+    	@result["places"][index] = place.attributes.reject{|k,v| k=="address_id"}
     	business=place.business
     	unless business.nil?
 	    	programs=business.programs
