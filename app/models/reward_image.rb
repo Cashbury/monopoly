@@ -4,7 +4,7 @@ class RewardImage < Image
   has_attached_file :photo,
                     :styles => {
                       :thumb  => "100x100>", #for fb share
-                      :normal => "81x52>"
+                      :normal => "79x54>"
                     },
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",

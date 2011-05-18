@@ -91,7 +91,7 @@ class QrCodesController < ApplicationController
   def panel
     if request.post?
       quantity =  params[:quantity].to_i
-      engagement = Engagement.find(params[:associatable_id])
+      engagement = Engagement.where(:id=>params[:associatable_id]).first
       codes = []
       if engagement.blank? 
         quantity.times{
