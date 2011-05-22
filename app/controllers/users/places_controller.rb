@@ -44,30 +44,30 @@ class Users::PlacesController < Users::BaseController
     	unless business.nil?
 	    	programs=business.programs
 	    	@result["places"][index]["brand-name"]    =business.brand.name
-	    	@result["places"][index]["brand-image"]   =business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:normal) 
-	    	@result["places"][index]["brand-image-fb"]=business.brand.brand_image.nil? ? nil : business.brand.brand_image.photo.url(:thumb)
+	    	@result["places"][index]["brand-image"]   =business.brand.brand_image.nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:normal)) 
+	    	@result["places"][index]["brand-image-fb"]=business.brand.brand_image.nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:thumb))
 	    	@result["places"][index]["is_open"]       =place.is_open?
 	    	@result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
 	    	@result["places"][index]["accounts"]      =[]
 				accounts=programs.joins(:campaigns=>[:accounts=>[:measurement_type,:account_holder]])
 				                 .select("account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type,campaigns.start_date,campaigns.end_date")
-				                 .where("account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ('#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date)")
+				                 .where("account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")
 				accounts.each do |account|
 					@result["places"][index]["accounts"] << account.attributes.reject {|key, value| key == "model_id" || key=="model_type" || key=="start_date" || key=="end_date"}
 				end
 				@result["places"][index]["rewards"]=[] 
 				normal_rewards=programs.joins(:campaigns=>:rewards)
 				                       .select("rewards.*,rewards.id as reward_id,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems")
-				                       .where("'#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date")				                       
+				                       .where("((campaigns.end_date IS NOT null and '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")				                       
 				normal_rewards.each_with_index do |reward,i|
 					attributes=reward.attributes
 					reward_obj=Reward.find(reward.reward_id)
 					if !reward_obj.campaign.has_target? || current_user.is_engaged_with_campaign?(reward_obj.campaign) || (reward_obj.campaign.has_target? and current_user.is_targeted_from?(reward_obj.campaign))
-  					if attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i && attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i  
+  					if (attributes["max_claim_per_user"].nil? || attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i) and (attributes["max_claim"].nil? || attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i)  
   						@result["places"][index]["rewards"][i]=attributes.reject {|k,v| k=="created_at" || k=="updated_at" || k=="unlocked" || k=="start_date"}
   						if @result["places"][index]["rewards"][i].present?
-  						  @result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : reward_obj.reward_image.photo.url(:normal)
-  						  @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_obj.reward_image.nil? ? nil : reward_obj.reward_image.photo.url(:thumb)
+  						  @result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : URI.escape(reward_obj.reward_image.photo.url(:normal))
+  						  @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_obj.reward_image.nil? ? nil : URI.escape(reward_obj.reward_image.photo.url(:thumb))
                 how_to_get_amount_text=""  
   						  @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} amount\n"}.first
   					  end 

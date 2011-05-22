@@ -1,6 +1,6 @@
 class Users::RewardsController < Users::BaseController
 	def claim
-		#begin
+		begin
 			reward=Reward.find(params[:id])
 			if reward.campaign.nil?
 				respond_with_error(ERRORS[:msg_not_related_to_campaign])
@@ -16,10 +16,10 @@ class Users::RewardsController < Users::BaseController
           end
 				end
 			end
-		# rescue Exception => e
-		# 	logger.error "Exception #{e.class}: #{e.message}"
-		# 	respond_with_error(e.message)
-		# end
+    rescue Exception => e
+      logger.error "Exception #{e.class}: #{e.message}"
+		 	respond_with_error(e.message)
+		 end
 	end
 	
 	ERRORS={

@@ -61,7 +61,7 @@ class Businesses::CampaignsController < ApplicationController
     @campaign = Campaign.find(params[:id])
     @engagement=@campaign.engagements.first
     @reward=@campaign.rewards.first
-    @reward.build_reward_image
+    @reward.build_reward_image unless @reward.reward_image.present?
   end
   
   def update

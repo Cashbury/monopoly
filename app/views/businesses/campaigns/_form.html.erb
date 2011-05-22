@@ -82,16 +82,10 @@
         <%= reward.text_field :max_claim_per_user , :class=>"basic_info_input"%>
       </div>
       <div class="row">
-        <%=reward.fields_for :reward_image do |image|%>
-          <%- unless image.object.new_record?-%>
-            <%= image.label(:delete_photo, 'Delete photo') %>
-            <%= image_tag(image.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
-            <%= pimage.check_box(:delete_photo) %><br />
-          <%- else -%>
-            <div class="basic_info_caption1">Image</div>
-            <%=image.file_field :photo%><br />
-            <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
-          <%- end -%>
+        <%=reward.fields_for :reward_image,@reward.try(:reward_image) do |image|%>
+          <div class="basic_info_caption1">Image</div>
+          <%= image.file_field :photo%><br />
+          <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
         <%- end -%>
       </div>
     <br /><br />
