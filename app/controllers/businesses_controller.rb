@@ -1,5 +1,5 @@
 class BusinessesController < ApplicationController
-  #before_filter :authenticate_user!, :require_admin
+  before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
   
   def index
