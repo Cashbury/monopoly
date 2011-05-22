@@ -21,11 +21,13 @@ class Place < ActiveRecord::Base
   accepts_nested_attributes_for :items
   accepts_nested_attributes_for :open_hours
   
-  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes
+  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone
   attr_accessor :items_list
   validates_presence_of :name, :long, :lat 
   validates :address, :presence=>true
   validates_numericality_of :long,:lat
+  validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+
   validates_associated :address
    
   scope :with_address, order("places.name desc")

@@ -68,6 +68,7 @@
       <th>Name</th>    
       <th>Address</th>    
       <th>Neiborhood</th>    
+      <th>Phone Number</th>
       <th>City</th>    
       <th>Country</th>
       <th>Zipcode</th>  
@@ -75,9 +76,10 @@
 	  <% for place in @business.places %>
     <tr>
       <td><%= link_to place.name, business_place_path(@business,place) %></td> 
-      <td><%= place.try(:address).try(:street_address) %></td>
-      <td><%= place.try(:address).try(:neighborhood) %></td>
-      <td><%= place.try(:address).try(:city).try(:name) %></td>
+      <td><%= place.try(:address).try(:street_address) %>   </td>
+      <td><%= place.try(:address).try(:neighborhood) %>     </td>
+      <td><%= place.phone %>                                </td>
+      <td><%= place.try(:address).try(:city).try(:name) %>  </td>
       <td><%= place.try(:address).try(:country).try(:name) %></td>
       <td><%= place.try(:address).try(:zipcode) %></td>
     </tr>

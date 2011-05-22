@@ -64,7 +64,7 @@ class Users::PlacesController < Users::BaseController
 					reward_obj=Reward.find(reward.reward_id)
 					if !reward_obj.campaign.has_target? || current_user.is_engaged_with_campaign?(reward_obj.campaign) || (reward_obj.campaign.has_target? and current_user.is_targeted_from?(reward_obj.campaign))
   					if (attributes["max_claim_per_user"].nil? || attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i) and (attributes["max_claim"].nil? || attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i)  
-  						@result["places"][index]["rewards"][i]=attributes.reject {|k,v| k=="created_at" || k=="updated_at" || k=="unlocked" || k=="start_date"}
+  						@result["places"][index]["rewards"][i] = attributes.reject {|k,v| k=="created_at" || k=="updated_at" || k=="unlocked" || k=="start_date"}
   						if @result["places"][index]["rewards"][i].present?
   						  @result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : URI.escape(reward_obj.reward_image.photo.url(:normal))
   						  @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_obj.reward_image.nil? ? nil : URI.escape(reward_obj.reward_image.photo.url(:thumb))
