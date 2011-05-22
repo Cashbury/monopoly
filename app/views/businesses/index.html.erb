@@ -19,3 +19,18 @@
 </table>
 
 <p><%= link_to "New Business", new_business_path %></p>
+<%form_tag '/users/sign_in.xml',:method=>"POST" do %>
+  <%=text_field_tag :email%>
+  <%=text_field_tag :password%>
+  <%=text_field_tag :first_name%>
+  <%=text_field_tag :last_name%>
+  <%=submit_tag "sign in" %>
+<%end%>
+<%form_tag '/users.xml',:method=>"POST" do %>
+  <%=text_field_tag :email%>
+  <%=text_field_tag :password%>
+  <%=text_field_tag :password_confirmation%>
+  <%=text_field_tag :first_name%>
+  <%=text_field_tag :last_name%>
+  <%=submit_tag "sign up" %>
+<%end%>

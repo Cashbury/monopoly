@@ -1,8 +1,8 @@
 class Businesses::MeasurementTypesController < ApplicationController
- before_filter :prepare_business
+  before_filter :prepare_business
  
  
- def index
+  def index
     @measurement_types = MeasurementType.where(:business_id => @business.id)
   end
   
@@ -10,11 +10,11 @@ class Businesses::MeasurementTypesController < ApplicationController
     @measurement_type = MeasurementType.find(params[:id])
   end
  
- def new
-  @measurement_type = MeasurementType.new
- end
+  def new
+    @measurement_type = MeasurementType.new
+  end
  
- def create
+  def create
     @measurement_type = MeasurementType.new(params[:measurement_type])
     if @measurement_type.save
       flash[:notice] = "Successfully created Measurement Type."
@@ -22,9 +22,9 @@ class Businesses::MeasurementTypesController < ApplicationController
     else
       render :action => 'new'
     end
- end
+  end
  
- def edit
+  def edit
     @measurement_type = MeasurementType.find(params[:id])
   end
   
@@ -46,9 +46,9 @@ class Businesses::MeasurementTypesController < ApplicationController
   end
   
  
- private 
- def prepare_business
-   @business = Business.find(params[:business_id])
- end
+  private 
+  def prepare_business
+    @business = Business.find(params[:business_id])
+  end
  
 end

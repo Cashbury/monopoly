@@ -8,9 +8,9 @@ class Campaign < ActiveRecord::Base
 	belongs_to :program
 	belongs_to :measurement_type
 	
-	validates_presence_of :name,:measurement_type_id,:program_id
+	validates_presence_of :name,:measurement_type_id,:program_id,:start_date
 	validates_format_of :start_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
-	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
+	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd",:allow_nil=>true
 	validates_numericality_of :initial_amount
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
@@ -19,6 +19,8 @@ class Campaign < ActiveRecord::Base
 	after_save :update_places
 	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
 	attr_accessor   :places_list
+	accepts_nested_attributes_for :engagements
+	accepts_nested_attributes_for :rewards
   def init
     self.initial_biz_amount ||= 10000 
   end

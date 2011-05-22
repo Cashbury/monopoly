@@ -54,11 +54,7 @@ Kazdoor::Application.routes.draw do
 	end
 
 	resources :users
-
-	#match '/login.(:format)' => "users_sessions#login" #this route is for quick testing fb connect and should be disabled later
-
-	#match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
-
+	
   resources :templates
 
   resources :print_jobs
@@ -109,6 +105,7 @@ Kazdoor::Application.routes.draw do
      end
    end
     resources :rewards
+    resources :campaigns,:controller => "businesses/campaigns"
   end
   
 	# resources :places

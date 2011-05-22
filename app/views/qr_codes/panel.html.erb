@@ -30,7 +30,7 @@ $(function(){
       $(this).html("Show");
     $("#associate_box").slideToggle(); 
     
-  })
+  });
 })
 //]]>
 </script>
@@ -49,7 +49,7 @@ $(function(){
     <%=  text_field_tag :quantity , 1 , :class => "basic_info_input"%> *(max 100)
   </p>
   <p class="row">
-    <a id="associate_link" href="#">Show</a>
+    <a id="associate_link" href="javascript:void(0)">Show</a>
   </p>
   <div id="associate_box" class="row" style="display:none">
     <strong>Associate with:</strong><br/>

@@ -19,7 +19,7 @@ class User < ActiveRecord::Base
   has_many :followers, :as=>:followed
   has_many :business_customers
   has_many :businesses, :through=>:business_customers
-  has_one :qr_code, :as=>:associatable
+  has_one  :qr_code, :as=>:associatable
   has_one :account_holder, :as=>:model
   has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"

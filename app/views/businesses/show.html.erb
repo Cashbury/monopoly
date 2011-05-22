@@ -90,6 +90,8 @@
   <%= button_to "Destroy", @business, :confirm => 'Are you sure?', :method => :delete %>
 </p>
 <p>
+  <%= link_to "Make an offer", new_business_campaign_path(@business) %><br />
+  <%= link_to "Current offers", business_campaigns_path(@business) %><br />
   <%= link_to "Show Programs", business_programs_path(@business) %><br />
   <%= link_to "New Measurement Type", new_business_measurement_type_path(@business) %><br />
   <%= link_to "Show Items", business_items_path(@business)  %><br />

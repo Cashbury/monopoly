@@ -27,8 +27,8 @@ class Reward < ActiveRecord::Base
   #attr_accessor :places_list
   
   #after_save :update_categories
-  validates_presence_of :campaign_id,:name,:needed_amount,:heading1,:heading2,:legal_term
-  validates_numericality_of :needed_amount,:max_claim
+  validates_presence_of :name,:needed_amount
+  validates_numericality_of :needed_amount,:max_claim, :allow_nil=>true
   validates_length_of :name, :maximum => 16
   validates_length_of :heading1, :maximum => 40
   validates_length_of :heading2, :maximum => 84

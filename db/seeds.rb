@@ -27,7 +27,8 @@ puts "Creating system program types"
 ProgramType.find_or_create_by_name(:name=>"Marketing")
 ProgramType.find_or_create_by_name(:name=>"Money")
 puts "Creating system engagement types"
-EngagementType.find_or_create_by_name(:name=>"Check-IN")
+EngagementType.delete_all(:name=>"Check-IN")
+EngagementType.find_or_create_by_name(:name=>"Visit/Check-IN", :is_visit=>true)
 EngagementType.find_or_create_by_name(:name=>"Buy a product/service",:has_item=>true)
 EngagementType.find_or_create_by_name(:name=>"Question")
 EngagementType.find_or_create_by_name(:name=>"Spend")
