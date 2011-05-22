@@ -33,9 +33,9 @@ class Businesses::CampaignsController < ApplicationController
     if eng_type.has_item?
       item=Item.find(eng_attrs[:item_id]) unless eng_attrs[:item_id].blank?
       item_name=item.nil? ? "item points": item.name
-      @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>item_name,:business_id=>@business.id)
+      @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"#{item_name.capitalize} points",:business_id=>@business.id)
     elsif eng_type.is_visit?
-      @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"visit points",:business_id=>@business.id)
+      @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"Visit points",:business_id=>@business.id)
     else
       @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
     end
@@ -86,7 +86,7 @@ class Businesses::CampaignsController < ApplicationController
     if eng_type.has_item?
       item=Item.find(eng_attrs[:item_id]) unless eng_attrs[:item_id].blank?
       item_name=item.nil? ? "item points": item.name
-      @campaign.measurement_type=MeasurementType.find_or_create_by_name(:name=>item_name,:business_id=>@business.id)
+      @campaign.measurement_type=MeasurementType.find_or_create_by_name(:name=>"#{item_name.capitalize} points",:business_id=>@business.id)
     elsif eng_type.is_visit?
       @campaign.measurement_type=MeasurementType.find_or_create_by_name(:name=>"visit points",:business_id=>@business.id)
     else

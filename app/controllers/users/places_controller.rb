@@ -49,16 +49,16 @@ class Users::PlacesController < Users::BaseController
 	    	@result["places"][index]["is_open"]       =place.is_open?
 	    	@result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
 	    	@result["places"][index]["accounts"]      =[]
-				accounts=programs.joins(:campaigns=>[:accounts=>[:measurement_type,:account_holder]])
+				accounts=programs.joins(:campaigns=>[:places,:accounts=>[:measurement_type,:account_holder]])
 				                 .select("account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type,campaigns.start_date,campaigns.end_date")
-				                 .where("account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")
+				                 .where("account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id=#{place.id}")
 				accounts.each do |account|
 					@result["places"][index]["accounts"] << account.attributes.reject {|key, value| key == "model_id" || key=="model_type" || key=="start_date" || key=="end_date"}
 				end
 				@result["places"][index]["rewards"]=[] 
-				normal_rewards=programs.joins(:campaigns=>:rewards)
+				normal_rewards=programs.joins(:campaigns=>[:rewards,:places])
 				                       .select("rewards.*,rewards.id as reward_id,((SELECT amount FROM accounts WHERE campaign_id=rewards.campaign_id AND accounts.account_holder_id=#{current_user.account_holder.id}) >= rewards.needed_amount) As unlocked,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems")
-				                       .where("((campaigns.end_date IS NOT null and '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")				                       
+				                       .where("((campaigns.end_date IS NOT null and '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id=#{place.id}")				                       
 				normal_rewards.each_with_index do |reward,i|
 					attributes=reward.attributes
 					reward_obj=Reward.find(reward.reward_id)
@@ -69,7 +69,7 @@ class Users::PlacesController < Users::BaseController
   						  @result["places"][index]["rewards"][i]["reward-image"]=reward_obj.reward_image.nil? ? nil : URI.escape(reward_obj.reward_image.photo.url(:normal))
   						  @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_obj.reward_image.nil? ? nil : URI.escape(reward_obj.reward_image.photo.url(:thumb))
                 how_to_get_amount_text=""  
-  						  @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} amount\n"}.first
+  						  @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{eng.campaign.try(:measurement_type).try(:name)}\n"}.first
   					  end 
   					end
 					end
