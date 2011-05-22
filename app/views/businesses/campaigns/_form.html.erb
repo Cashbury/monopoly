@@ -3,22 +3,22 @@
 <% CalendarDateSelect.format=(:iso_date)%>
 <%= form_for([@business ,@campaign],:html => { :multipart => true }) do |f| %>
   <% if @campaign.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
+  <div id="error_explanation">
+    <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
       <ul>
         <% @campaign.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
         <% end %>
       </ul>
-    </div>
+  </div>
   <% end %>
   <fieldset>
-    <legend><label class="basic_info_caption1" style="width:auto"> Set the offer</label></legend>
+    <legend class="section_title">Set the offer</legend>
     <p>
     <%= f.fields_for :engagements do |engagement|%>
       <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
-      <%= engagement.select :item_id, "<option value=''>...Item...</option>".html_safe+options_from_collection_for_select(@business.items,"id","name",engagement.try(:object).try(:item).try(:id)) ,{},{:style=>"width:170px",:id=>"item_div"}%>
+      <input type="text" class="basic_info_caption1" style="width:135px;float:none" name="item_name" id="item_text_field" value="<%=@item_name%>"/>
       <%= f.fields_for :rewards do |reward|%>
         <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1", :style=>"width:45px;float:none"} %>times, Get a free
         <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
@@ -26,7 +26,7 @@
   </fieldset>
   <br /><br />
   <fieldset >
-    <legend><label class="basic_info_caption1" style="width:auto"> Select the branches where this offer will be available</label></legend>
+    <legend class="section_title">Select the branches where this offer will be available</legend>
     <p>
       <%= f.label :places, "Places" %><br />
       <% @business.places.each do |place| %>
@@ -38,14 +38,16 @@
   </fieldset>
   <br /><br />
   <fieldset >
-    <legend><label class="basic_info_caption1" style="width:auto">Who is this offer targeted to</label></legend>
+    <legend class="section_title">Who is this offer targeted to</legend>
     <p><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></p>
   </fieldset>
-  <p>Launch now <%= check_box_tag("launch_today",1) %> or at <%= f.calendar_date_select :start_date%></p>
   <p><a id="add_details_link" href="javascript:void(0)">Add More Details</a></p>
   <br /><br />
   <fieldset id="details_box" style="display:none">
-    <legend><label class="basic_info_caption1" style="width:auto">More Details</label></legend>
+    <legend class="section_title">More Details</legend>
+      <div class="row">
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= f.calendar_date_select :start_date%>
+      </div>
       <div class="row">
         <%= f.label :initial_amount %><br />
         <%= f.text_field :initial_amount , {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
@@ -57,6 +59,10 @@
       <div class="row">
         <%= f.label "This offer should be available until" %><br />
         <%= f.calendar_date_select :end_date%>
+      </div>
+      <div class="row" id="item_div">
+        <%= engagement.label "Associated/Purchased Item" %><br />
+        <%= engagement.select :item_id, "<option value=''>...Item...</option>".html_safe+options_from_collection_for_select(@business.items,"id","name",engagement.try(:object).try(:item).try(:id)) ,{},{:style=>"width:170px"}%>
       </div>
       <div class="row">
         <%= reward.label "Reward Short Description" %><br />
@@ -83,7 +89,7 @@
       </div>
       <div class="row">
         <%=reward.fields_for :reward_image,@reward.try(:reward_image) do |image|%>
-          <div class="basic_info_caption1">Image</div>
+          <%= image.label "Reward Image" %><br />
           <%= image.file_field :photo%><br />
           <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
         <%- end -%>
@@ -124,11 +130,14 @@ jQuery(document).ready(function(){
 
   function update_select_item_list_display(object){
     buy_item_option = jQuery(":selected", object).text();
-    if(buy_item_option == "Buy a product/service")
+    if(buy_item_option == "Buy a product/service"){
       jQuery('#item_div').show();
-    else{
+      jQuery('#item_text_field').show();
+    }else{
       jQuery('#item_div').hide();
+      jQuery('#item_text_field').hide();
       jQuery('#item_div').val("");
+      jQuery('#item_text_field').val("");
     }
   }
   

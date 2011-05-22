@@ -2,7 +2,7 @@
 <p id="notice"><%= notice %></p>
 <p>
   <b>The Offer:</b>
-  <%= "#{@engagement.engagement_type.has_item? ? 'Buy': @engagement.engagement_type.try(:name)} #{@engagement.item.try(:name)} #{@reward.needed_amount} times, Get a free #{@reward.name}"   %>
+  <%= @engagement.description %>
 </p>
 
 <p>

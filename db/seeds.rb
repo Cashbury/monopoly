@@ -30,8 +30,6 @@ puts "Creating system engagement types"
 EngagementType.delete_all(:name=>"Check-IN")
 EngagementType.find_or_create_by_name(:name=>"Visit/Check-IN", :is_visit=>true)
 EngagementType.find_or_create_by_name(:name=>"Buy a product/service",:has_item=>true)
-EngagementType.find_or_create_by_name(:name=>"Question")
-EngagementType.find_or_create_by_name(:name=>"Spend")
 puts "Creating system measurement types"
 MeasurementType.find_or_create_by_name(:name=>"Money")
 MeasurementType.find_or_create_by_name(:name=>"Points")

@@ -33,16 +33,20 @@ class User < ActiveRecord::Base
 	def auto_enroll_at(places)
 	  begin
       ids=places.collect{|p| p.business_id}
+      targeted_campaigns_ids=[]
       businesses=Business.where(:id=>ids)
       accholder=self.account_holder
       businesses.each do |business|
         business.programs.each do |program|
           program.campaigns.each do |campaign|
-            unless self.has_account_with_campaign?(accholder,campaign.id)
-              if accholder.nil?
-                accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s)
-              end
-              Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type,:account_holder=>accholder)
+            if !campaign.has_target? || self.is_engaged_with_campaign?(campaign) || (campaign.has_target? and self.is_targeted_from?(campaign))
+              targeted_campaigns_ids << campaign.id
+              unless self.has_account_with_campaign?(accholder,campaign.id)
+                if accholder.nil?
+                  accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s)
+                end
+                Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type,:account_holder=>accholder)
+              end                
             end
           end
         end
@@ -51,6 +55,7 @@ class User < ActiveRecord::Base
       puts "Exception: #{e.message}"
       logger.error "Exception #{e.class}: #{e.message}"
     end
+    targeted_campaigns_ids
 	end
 	
 	def account_holder

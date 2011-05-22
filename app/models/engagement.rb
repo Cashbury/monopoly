@@ -30,7 +30,7 @@ class Engagement < ActiveRecord::Base
                    :length =>{:within=>3..50}
 
   validates_presence_of :engagement_type_id,:amount
-  validates_presence_of :item_id, :if=>Proc.new{|eng| eng.engagement_type.has_item?}
+  #validates_presence_of :item_id, :if=>Proc.new{|eng| eng.engagement_type.has_item?}
   validates_numericality_of :amount
   
   def engagement_types
