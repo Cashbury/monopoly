@@ -1,4 +1,5 @@
 class Businesses::ItemsController < ApplicationController
+ before_filter :authenticate_user!, :require_admin
  before_filter :prepare_business
  
  

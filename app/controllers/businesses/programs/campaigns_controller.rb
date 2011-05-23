@@ -1,5 +1,5 @@
 class Businesses::Programs::CampaignsController < ApplicationController
-	before_filter :authenticate_user!,:require_admin, :except => [:index, :show]
+	before_filter :authenticate_user!, :require_admin
 	before_filter :find_business_and_program
 
   def index

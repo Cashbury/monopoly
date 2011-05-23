@@ -1,5 +1,5 @@
 class Businesses::PlacesController < ApplicationController
-  before_filter :authenticate_user!, :except => [:index, :show]
+  before_filter :authenticate_user!, :require_admin
   before_filter :find_business 
   before_filter :prepare_business_items , :only => [ :new , :create , :edit , :update]
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]

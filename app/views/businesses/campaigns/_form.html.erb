@@ -116,7 +116,7 @@ jQuery(document).ready(function(){
       jQuery(this).html("Add More Details");
     jQuery("#details_box").slideToggle(); 
   });
-  jQuery('#description_field').bind('keypress',function(){
+  jQuery('#description_field').keydown(function(){
     var desc_text = jQuery(this).val();
     if ( desc_text.length > 84 ){
       jQuery(this).val(desc_text.substring( 0, 84 ));

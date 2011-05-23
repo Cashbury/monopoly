@@ -1,5 +1,5 @@
 class Businesses::Programs::Campaigns::RewardsController < ApplicationController
-  before_filter :authenticate_user!,:require_admin, :except => [:index]
+  before_filter :authenticate_user!, :require_admin
   before_filter :find_business_and_program_and_campaign
   before_filter :places_under_business , :items_uder_business
 
