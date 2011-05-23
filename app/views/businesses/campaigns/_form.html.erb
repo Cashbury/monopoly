@@ -14,32 +14,32 @@
   <% end %>
   <fieldset>
     <legend class="section_title">Set the offer</legend>
-    <p>
+    <div class="form_item_div">
     <%= f.fields_for :engagements do |engagement|%>
       <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
-      <input type="text" class="basic_info_caption1" style="width:135px;float:none" name="item_name" id="item_text_field" value="<%=@item_name%>"/>
+      <input type="text" class="basic_info_caption1" style="width:135px" name="item_name" id="item_text_field" value="<%=@item_name%>"/>
       <%= f.fields_for :rewards do |reward|%>
-        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1", :style=>"width:45px;float:none"} %>times, Get a free
-        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
-    </p>
+        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1", :style=>"width:45px;margin:0 0 0"} %><label> times, Get a free </label>
+        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:350px;margin:0 0 0"}%>
+    </div>
   </fieldset>
   <br /><br />
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
-    <p>
+    <div class="form_item_div">
       <%= f.label :places, "Places" %><br />
       <% @business.places.each do |place| %>
         <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
         <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
         <%= "#{place.name}"%><br />
       <% end %>
-    </p>
+    </div>
   </fieldset>
   <br /><br />
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
-    <p><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></p>
+    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
   </fieldset>
   <p><a id="add_details_link" href="javascript:void(0)">Add More Details</a></p>
   <br /><br />

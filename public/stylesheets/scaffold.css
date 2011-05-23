@@ -23,12 +23,22 @@ div.field, div.actions {
 #notice {
   color: green;
 }
+.form_item_div{
+  float:left;
 
+}
+.form_item_div input{float:left;margin:0 10px 0 0}
+.form_item_div label{float:left;margin:0 10px}
+.form_item_div select{float:left;margin-right:10px}
+
+.form_item_div .field_with_errors
+{float:left}
 .field_with_errors {
   padding: 2px;
   background-color: red;
-  display: table;
+ 
 }
+
 
 #error_explanation {
   width: 450px;
