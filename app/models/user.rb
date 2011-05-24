@@ -42,9 +42,7 @@ class User < ActiveRecord::Base
             if !campaign.has_target? || self.is_engaged_with_campaign?(campaign) || (campaign.has_target? and self.is_targeted_from?(campaign))
               targeted_campaigns_ids << campaign.id
               unless self.has_account_with_campaign?(accholder,campaign.id)
-                if accholder.nil?
-                  accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s)
-                end
+                accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) if accholder.nil?
                 Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type,:account_holder=>accholder)
               end                
             end
