@@ -1,4 +1,4 @@
-body { background-color: #fff; color: #333; }
+/*body { background-color: #fff; color: #333; }
 
 body, p, ol, ul, td {
   font-family: verdana, arial, helvetica, sans-serif;
@@ -18,7 +18,7 @@ a:hover { color: #fff; background-color:#000; }
 
 div.field, div.actions {
   margin-bottom: 10px;
-}
+}*/
 
 #notice {
   color: green;
@@ -71,7 +71,7 @@ div.field, div.actions {
   th,td{
     border-right:1px #ccc solid;
     border-bottom:1px #ccc solid;
-    text-align:center;
+    text-align:left;
     padding:5px;
   }
   th{
