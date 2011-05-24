@@ -6,6 +6,8 @@
     <th>Long</th>
     <th>Lat</th>
     <th>Description</th>
+    <th>Business</th>
+    <th>Phone Number</th>
   </tr>
   <% for place in @places %>
     <tr>
@@ -13,6 +15,8 @@
       <td><%= place.long %></td>
       <td><%= place.lat %></td>
       <td><%= place.description %></td>
+      <td><%= place.business.try(:name) %></td>
+      <td><%= place.phone %></td>
       <td><%= link_to "Show", place %></td>
       <td><%= link_to "Edit", edit_place_path(place) %></td>
       <td><%= link_to "Destroy", place, :confirm => 'Are you sure?', :method => :delete %></td>

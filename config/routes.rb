@@ -49,6 +49,7 @@ Kazdoor::Application.routes.draw do
 	#       end
 	#     end
 	# end
+	resources :places
 	resources :places do
 		get '/for_businessid/:id' ,:action=>:for_businessid, :on =>:collection
 	end

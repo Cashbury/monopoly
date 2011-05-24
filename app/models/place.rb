@@ -21,7 +21,7 @@ class Place < ActiveRecord::Base
   accepts_nested_attributes_for :items
   accepts_nested_attributes_for :open_hours
   
-  attr_accessible :name, :long, :lat, :description, :business, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone
+  attr_accessible :name, :long, :lat, :description, :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business
   attr_accessor :items_list
   validates_presence_of :name, :long, :lat 
   validates :address, :presence=>true
@@ -118,11 +118,13 @@ class Place < ActiveRecord::Base
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
     end
-    self.business.categories.each do |cat|
-      self.tag_list << cat.name
-      while (parent=cat.parent) !=nil
-        self.tag_list << parent.name unless self.tag_list.include?(parent.name)
-        cat=parent 
+    unless self.business.try(:categories).nil?
+      self.business.try(:categories).each do |cat|
+        self.tag_list << cat.name
+        while (parent=cat.parent) !=nil
+          self.tag_list << parent.name unless self.tag_list.include?(parent.name)
+          cat=parent 
+        end
       end
     end
     self.tag_list << self.name unless self.tag_list.empty?

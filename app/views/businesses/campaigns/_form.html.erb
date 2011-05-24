@@ -21,7 +21,7 @@
       <input type="text" class="basic_info_caption1" style="width:135px" name="item_name" id="item_text_field" value="<%=@item_name%>"/>
       <%= f.fields_for :rewards do |reward|%>
         <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1", :style=>"width:45px;margin:0 0 0"} %><label> times, Get a free </label>
-        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:350px;margin:0 0 0"}%>
+        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:330px;margin:0 0 0"}%>
     </div>
   </fieldset>
   <br /><br />
