@@ -14,12 +14,12 @@
       jQuery(document).ready(function(){
         jQuery(".sub_menu").hide();
         jQuery(".main_header").click(function(){
-          elements = $('.menu_item');
+          elements = jQuery('.menu_item');
           selected_link=jQuery(this)
-          elements.each(function() {
-            if(selected_link != jQuery(this)){
-             jQuery(this).removeClass('menu_item');
-             jQuery(this).next(".sub_menu").slideUp(300);
+          elements.each(function(index, domEle) {
+            if(selected_link[0] != jQuery(domEle)[0]){
+             jQuery(domEle).removeClass('menu_item');
+             jQuery(domEle).next(".sub_menu").slideUp(300);
             } 
           });
           selected_link.toggleClass('menu_item');
