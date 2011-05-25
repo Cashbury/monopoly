@@ -34,7 +34,7 @@ Paperclip.options[:command_path] = '/usr/bin'
 	  :domain => "www.espace.com.eg",
 	  :authentication => :login,
 	  :user_name => "tester@espace.com.eg",
-	  :password => "tester",
+	  :password => "t3st3r!@#",
 		:tls => true
 	}
 
