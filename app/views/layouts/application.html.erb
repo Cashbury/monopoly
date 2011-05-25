@@ -13,10 +13,17 @@
     //]]>
       jQuery(document).ready(function(){
         jQuery(".sub_menu").hide();
-        //toggle the componenet with class msg_body
         jQuery(".main_header").click(function(){
-          jQuery(this).toggleClass('menu_item');
-          jQuery(this).next(".sub_menu").slideToggle(300);
+          elements = $('.menu_item');
+          selected_link=jQuery(this)
+          elements.each(function() {
+            if(selected_link != jQuery(this)){
+             jQuery(this).removeClass('menu_item');
+             jQuery(this).next(".sub_menu").slideUp(300);
+            } 
+          });
+          selected_link.toggleClass('menu_item');
+          selected_link.next(".sub_menu").slideToggle(300);
         });
       });
     </script>
@@ -30,10 +37,10 @@
           </h1> 
           <div class="user_menu">
             <% if user_signed_in? %>
-              <p>Signed in as <%= current_user.email %>. Not you?</p>
+              <p>Signed in as <%= current_user.email %></p>
               <p><%= link_to "Sign out", destroy_user_session_path %></p>
             <% else %>
-              <p><%= link_to "New user sign up", new_user_registration_path %></p> 
+              <p><%= link_to "Sign up", new_user_registration_path %></p> 
               <p><%= link_to "Sign in", new_user_session_path %></p>
             <% end %>
           </div>
@@ -47,7 +54,7 @@
               <li><%= link_to "Brands", brands_path %></li> 
               <li><%= link_to "Businesses", businesses_path %></li>
               <li><%= link_to "Places", places_path %></li>
-              <li><%= link_to "Analytics", "javascript:void(0)", :class=>"main_header" %>
+              <li><%= link_to "Analytics", "javascript:void(0)", :class=>"main_header"%>
                 <ul class="sub_menu"> 
                   <li><%= link_to "Reports", users_snaps_path %></li> 
                   <li><%= link_to "Loyal Customers", loyal_customers_path %></li> 
@@ -68,11 +75,15 @@
                 <li><%= link_to "Categories", categories_path %></li> 
               </ul> 
             <%end%>
-        </div><!-- side Ends --> 
-        <div id="leftContainer">     
+        </div><!-- side Ends -->
+        <%if current_user.blank?%>
+          <div style="margin:0 0 0 30px" id="leftContainer" >
+        <%else%>
+          <div id="leftContainer">
+        <%end%>    
   	      <div id="main_header">
   		      <% flash.each do |name, msg| %>
-  	          <%= content_tag :div, msg, :id => "flash_#{name}" %>
+  	          <%= content_tag :div, msg, :id => "flash_#{name}", :style=>"padding:15px 0 0 0" %>
   	        <% end %>
   	        <%= content_tag :h1, yield(:title) if show_title? %>
     	      <div id="canvas container">
