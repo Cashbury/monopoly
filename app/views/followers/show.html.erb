@@ -1,0 +1,21 @@
+<% title "Follower" %>
+
+
+<p>
+  <strong>Business Name:</strong>
+  <%= @follower.biz_name %>
+</p>
+<p>
+  <strong>Email:</strong>
+  <%= @follower.user_email %>
+</p>
+city
+<p>
+  <strong>City:</strong>
+  <%= @follower.city %>
+</p>
+<p>
+  <%= link_to "Edit", edit_follower_path(@follower) %> |
+  <%= link_to "Destroy", @follower, :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", followers_path %>
+</p>

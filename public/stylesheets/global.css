@@ -56,12 +56,16 @@ img {
 #header {
   margin: 0 auto;
   padding: 0px;
-  width: 1000px;
-  height: 150px;
-}
-
-
-
+  height: 130px;
+  background:url("../images/admin/header_bg.png") repeat-x scroll 0 0 #FFFFFF;}
+#header h1{margin:0 0 0 20px;}
+#header .user_menu{margin:20px 20px 0 0;float:right;text-align:right;color:#999;880px}
+#header .user_menu a{color:#999;}
+#header .user_menu p{margin:3px 0 0 0}
+.cushbury_logo{ float: left;background:url("../images/admin/logo.png") no-repeat;height:100px;width:200px;text-indent:-1000px;clear:both;}
+a.cushbury_logo:hover{;background:url("../images/admin/logo.png") no-repeat;}
+/*.wrapper{width:1000px;margin:0 auto;}
+*/
 #header_logo {
   float: left;
   width: 250px;
@@ -91,21 +95,25 @@ img {
 #gradient_bg {
   background: #FFF url(/images/main_bg.png) center top no-repeat;
   margin: 30px auto 0;
-  width: 925px;
-}
-
+/*  width: 925px;
+*/}
 #main {
-  margin: 0 auto;
-  text-align: left;
-  width: 960px;  
+  width: 100%;  
 }
-
-
+#side{float:left;width:170px;padding-left:20px;}
+	#side h2{width:100%;font-size:2em;text-align:left;color:#dddee0;}
+	#side ul{margin:0;padding:0;}
+	#side li{list-style:none;margin:5px 20px 15px 0;float:left;display:block;width:100%}
+	#side li a{color:#979ba4;text-decoration:none;font-size:1.2em;font-weight:bold;float:left;display:block;width:100%}
+	#side li a.menu_item{color:#fcea00}
+	#side li ul.sub_menu a{color:#979ba4;text-decoration:none;font-size:0.9em;font-weight:bold;float:left;display:block;width:100%}
+	#side h2.settings{color:#fcea00;font-size:1.8em;}
 #canvas { 
 margin: 0 auto;
 padding: 0 20px 20px;
+width:100%;
 }
-
+#leftContainer{float:left;width:990px;position:relative;padding:20px;border: 1px solid #eee;min-height:555px}
 
 #left_main { 
 float: left;
@@ -117,16 +125,13 @@ width: 500px;
 float: right;
 } 
 
-
-
-
 #main_header {
 
-background:url("/images/background-white.png") no-repeat scroll 0 0 transparent;
+/*background:url("/images/background-white.png") no-repeat scroll 0 0 transparent;*/
 margin:-45px 0 10px -25px;
 padding:20px 20px 0;
 position:relative;
-width:960px;
+width:880px;
 height: 150px;
 }
 

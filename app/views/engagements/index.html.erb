@@ -5,14 +5,14 @@
     <th>Name</th>
     <th>Engagement Type</th>
     <th>Points</th>
-    <th>State</th>
+    <th>Is Started?</th>
   </tr>
   <% for engagement in @engagements %>
     <tr>
       <td><%= link_to engagement.name , business_campaign_engagement_url(@business, @campaign, engagement) %></td>
       <td><%= link_to engagement.engagement_type, business_campaign_engagement_url(@business, @campaign, engagement) %></td>
       <td><%= engagement.points %></td>
-      <td><%= engagement.state %></td>
+      <td><%= engagement.is_started? %></td>
       <td><%= link_to "Edit", edit_business_campaign_engagement_path(@business, @campaign, engagement) %></td>
       <td><%= link_to "Destroy", business_campaign_engagement_path(@business, @campaign, engagement), :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

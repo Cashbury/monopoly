@@ -1,11 +1,12 @@
 source :gemcutter
+source "http://gemcutter.org"
 gem 'rack', "1.2.1"
 gem 'rails', '3.0.3'
-gem 'mysql'
+gem 'mysql', "=2.8.1"
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 group :development do
-  #gem 'railroady'
+  gem 'railroady'
   #gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
@@ -39,26 +40,28 @@ gem 'devise', "~>1.1.5"
 #:path=>'vendor/gems/rails_admin' 
 # gem 'sinatra', '1.0'
 # gem 'taps'
-gem 'nifty-generators'
+gem 'nifty-generators', '=0.4.5'
 gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
-gem 'jquery-rails'
 
 group :test do
-	gem 'shoulda'
-	gem 'mocha'
-	gem 'factory_girl_rails'
+	gem 'shoulda', '=2.11.3'
+	gem 'mocha', '=0.9.12'
+	gem 'factory_girl_rails','=1.0.1'
 end
 
-gem 'annotate-models'
-gem 'jquery-rails'
-gem 'carmen'
-gem 'wicked_pdf'
-gem 'simple_form'
-gem 'geokit-rails3'
+gem 'annotate-models','=1.0.4'
+gem 'jquery-rails','=0.2.7'
+gem 'carmen','=0.2.5'
+gem 'wicked_pdf','=0.6.0'
+gem 'simple_form','=1.3.1'
+gem 'geokit-rails3','=0.1.2'
 gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch =>'rails3test'
-gem 'wkhtmltopdf'
-gem 'carrierwave'
-gem 'delayed_job'
+gem 'wkhtmltopdf','=0.1.2'
+gem 'carrierwave','=0.5.2'
+gem 'delayed_job','=2.1.4'
 gem 'acts-as-taggable-on', '=2.0.6'
-gem 'rmagick' #server has this
+gem 'rmagick','=2.13.1' #server has this
+gem 'aws-s3','=0.6.2'
+gem 'paperclip','=2.3.11'
+#gem 'delayed_paperclip','=0.6.5'

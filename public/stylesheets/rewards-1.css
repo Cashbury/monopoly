@@ -104,16 +104,20 @@ width:450px;
 
 
 
- .basic_info_caption1, .basic_info_caption2, .basic_info_caption3, .location_caption {
+.basic_info_caption1, .basic_info_caption2, .basic_info_caption3, .location_caption {
   
-    font-size:138.5%;
+  font-size:138.5%;
 	color:#555555;
-    width:410px;
-    margin:0px 10px 0px 0px;
+  width:410px;
+  margin:0px 10px 0px 0px;
 	padding-bottom:5px;
 	float:left;
-    }
+}
 
+.section_title {
+  font-size:138.5%;
+  color:#555555;
+} 
 .goal_caption {
 	font-size:138.5%;
 	color:#555555;

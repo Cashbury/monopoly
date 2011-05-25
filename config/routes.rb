@@ -1,4 +1,5 @@
 Kazdoor::Application.routes.draw do
+  resources :transaction_types
 	devise_for :users, :controllers => { :sessions => "users/sessions", :registrations=>"users/registrations", :password=>"users/passwords" }
 	
 	devise_scope :user do
@@ -16,10 +17,8 @@ Kazdoor::Application.routes.draw do
 		resources :places
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
-		end
-		resources :programs do  
-			get "/enroll.:format" , :action=>:enroll, :on =>:member
-		end
+    end
+    get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places
 	end
 	
   resources :users_snaps
@@ -32,7 +31,16 @@ Kazdoor::Application.routes.draw do
 	end 
 	resources :program_types
 	resources :programs
-	resources :rewards
+	resources :rewards do
+	  get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection  ,:as =>"update_business"
+    get "update_programs/:id"     ,:action=>:update_programs   , :on =>:collection  ,:as =>"update_programs"
+    get "update_campaigns/:id"    ,:action=>:update_campaigns  , :on =>:collection  ,:as =>"update_campaigns"
+    get "update_items/:id"        ,:action=>:update_items     , :on =>:collection  ,:as =>"update_items"
+   
+	end
+	resources :businesses do
+	  get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
+	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
 	#       get "stamps", :on => :collection
@@ -41,38 +49,37 @@ Kazdoor::Application.routes.draw do
 	#       end
 	#     end
 	# end
+	resources :places
 	resources :places do
 		get '/for_businessid/:id' ,:action=>:for_businessid, :on =>:collection
 	end
 
 	resources :users
-
-	#match '/login.(:format)' => "users_sessions#login" #this route is for quick testing fb connect and should be disabled later
-
-	#match '/users_snaps/businesses/:business_id/places/:place_id/start_date/:start_date/end_date/:end_date' =>"users_snaps#index"
-
+	
   resources :templates
 
   resources :print_jobs
 
   resources :brands
-
-  resources :newsletters
+  
   resources :qr_codes do
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
     get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
+    get "update_campaigns/:id"     ,:action=>:update_campaigns, :on =>:collection, :as =>"update_campaigns"
     post "panel" , :on =>:collection 
     get "panel"  , :on =>:collection 
     post "printable", :on=>:collection
   end
+  
+  
 
   resources :activities do
     post "earn", :on => :collection
     post "spend", :on => :collection
   end
   
-  resources :categories ,:newsletters
+  resources :categories ,:followers
 
   
   resources :accounts do
@@ -80,22 +87,26 @@ Kazdoor::Application.routes.draw do
   end
   
   resources :businesses do
+    resources :measurement_types, :controller => "businesses/measurement_types"
+    resources :items, :controller => "businesses/items"
     resources :places, :controller => "businesses/places" do
-      resources :reports, :only => [:create, :show, :index]
+      resources :items, :controller => "businesses/places/items" 
     end
-    resources :reports, :only => [:create, :show, :index]
     
     resources :programs , :controller => "businesses/programs" do
-	    resources :engagements,:controller => "businesses/programs/engagements" do
-	      get "stamps", :on => :collection
+      resources :campaigns , :controller => "businesses/programs/campaigns" do
+         resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
+	        get "stamps", :on => :collection
 	      resources :places , :only=>[:issue_code] do 
-	        get "issue_code" ,:on =>:member
+	         get "issue_code" ,:on =>:member
+	       end
+	       resources :rewards, :controller=>"businesses/programs/campaigns/engagements/rewards"
 	      end
-	      resources :rewards, :controller=>"businesses/programs/engagements/rewards"
-	    end
-	    resources :rewards, :controller=>"businesses/programs/rewards"
-    end
+	      resources :rewards, :controller=>"businesses/programs/campaigns/rewards"
+     end
+   end
     resources :rewards
+    resources :campaigns,:controller => "businesses/campaigns"
   end
   
 	# resources :places
@@ -103,8 +114,8 @@ Kazdoor::Application.routes.draw do
 	#   match "/places"             						=> "places#index"
   match "/engagements/:id"    						=> "engagements#display"
   match "/engagements/:id/change_status"   => "engagements#change_status"
-  match '/foryou'             						=> "newsletters#index" ,:as =>:foryou
-  match '/foryourbiz'         						=> "newsletters#new"   , :as =>:foryourbiz
+  match '/foryou'             						=> "followers#index" ,:as =>:foryou
+  match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
   
   #devise_for :users
   
@@ -158,7 +169,7 @@ Kazdoor::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   #root :to => "businesses#index"
-  root :to =>"newsletters#index"
+  root :to =>"followers#index"
 
   # See how all your routes lay out with "rake routes"
 

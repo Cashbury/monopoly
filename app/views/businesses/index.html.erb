@@ -12,7 +12,6 @@
       <td><%= link_to business.name, business %></td>
       <td><%= business.description %></td>
       <td><%= link_to "#{business.name} branches", business_places_path(business) %></td>
-      <td><%= link_to "Reports", business_reports_path(business) %></td>
       <td><%= link_to "Edit", edit_business_path(business) %></td>
       <td><%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>

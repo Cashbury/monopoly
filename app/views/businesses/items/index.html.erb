@@ -1,0 +1,26 @@
+<% title "Item" %>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Price</th>
+    <th>Cost</th>
+    <th>Product Code</th>
+  </tr>
+  <% for item in @items %>
+    <tr>
+      <td><%= item.name %></td>
+      <td><%= item.description %></td>
+      <td><%= item.price %></td>
+      <td><%= item.cost %></td>
+      <td><%= item.product_code %></td>
+      
+      <td><%= link_to "Show", business_item_path(@business,item) %></td>
+      <td><%= link_to "Edit", edit_business_item_path(@business,item) %></td>
+      <td><%= link_to "Destroy", business_item_path(@business, item), :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
+</table>
+<p><%= link_to "New Item", new_business_item_path(@business) %></p>
+<p><%= link_to "Back to business", business_path(@business) %></p>

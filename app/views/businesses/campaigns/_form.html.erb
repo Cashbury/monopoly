@@ -1,0 +1,145 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+<%= form_for([@business ,@campaign],:html => { :multipart => true }) do |f| %>
+  <% if @campaign.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
+      <ul>
+        <% @campaign.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+  </div>
+  <% end %>
+  <fieldset>
+    <legend class="section_title">Set the offer</legend>
+    <div class="form_item_div">
+    <%= f.fields_for :engagements do |engagement|%>
+      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px"}%>
+      <%= engagement.hidden_field :amount, :value=>1%>
+      <input type="text" class="basic_info_caption1" style="width:135px" name="item_name" id="item_text_field" value="<%=@item_name%>"/>
+      <%= f.fields_for :rewards do |reward|%>
+        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1", :style=>"width:45px;margin:0 0 0"} %><label> times, Get a free </label>
+        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:330px;margin:0 0 0"}%>
+    </div>
+  </fieldset>
+  <br /><br />
+  <fieldset >
+    <legend class="section_title">Select the branches where this offer will be available</legend>
+    <div class="form_item_div">
+      <%= f.label :places, "Places" %><br />
+      <% @business.places.each do |place| %>
+        <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
+        <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
+        <%= "#{place.name}"%><br />
+      <% end %>
+    </div>
+  </fieldset>
+  <br /><br />
+  <fieldset >
+    <legend class="section_title">Who is this offer targeted to</legend>
+    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
+  </fieldset>
+  <p><a id="add_details_link" href="javascript:void(0)">Add More Details</a></p>
+  <br /><br />
+  <fieldset id="details_box" style="display:none">
+    <legend class="section_title">More Details</legend>
+      <div class="row">
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= f.calendar_date_select :start_date%>
+      </div>
+      <div class="row">
+        <%= f.label :initial_amount %><br />
+        <%= f.text_field :initial_amount , {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
+      </div>
+      <div class="row">
+        <%= f.label :initial_biz_amount %><br />
+        <%= f.text_field :initial_biz_amount , {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
+      </div>
+      <div class="row">
+        <%= f.label "This offer should be available until" %><br />
+        <%= f.calendar_date_select :end_date%>
+      </div>
+      <div class="row" id="item_div">
+        <%= engagement.label "Associated/Purchased Item" %><br />
+        <%= engagement.select :item_id, "<option value=''>...Item...</option>".html_safe+options_from_collection_for_select(@business.items,"id","name",engagement.try(:object).try(:item).try(:id)) ,{},{:style=>"width:170px"}%>
+      </div>
+      <div class="row">
+        <%= reward.label "Reward Short Description" %><br />
+        <%= reward.text_field :heading1, :class=>"basic_info_input", :maxlength=>40%>
+      </div>
+      <div class="row">
+        <%= reward.label "Reward Description" %><br />
+        <%= reward.text_area :heading2, :class=>"basic_info_input",:id=>"description_field",:maxlength=>84,:rows=>5 %>
+      </div>
+      <div class="row">
+        <input type="text" name="counter" maxlength="3" size="3" value="84" id="counter_field"> chars remaining
+      </div>
+      <div class="row">
+        <%= reward.label "Reward Legal Terms" %><br />
+        <%= reward.text_area :legal_term ,:rows=>3%>
+      </div>
+      <div class="row">
+        <%= reward.label "Total Quantity Available of reward" %><br />
+        <%= reward.text_field :max_claim , :class=>"basic_info_input"%>
+      </div>
+      <div class="row">
+        <%= reward.label "Reward Max Enjoyments Per User" %><br />
+        <%= reward.text_field :max_claim_per_user , :class=>"basic_info_input"%>
+      </div>
+      <div class="row">
+        <%=reward.fields_for :reward_image,@reward.try(:reward_image) do |image|%>
+          <%= image.label "Reward Image" %><br />
+          <%= image.file_field :photo%><br />
+          <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+        <%- end -%>
+      </div>
+    <br /><br />
+  </fieldset>
+  <%end%>
+  <%end%>
+  <div class="actions">
+    <p><%= f.submit "Make Offer"%></p>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  update_select_item_list_display(jQuery("#engagement_type_selection_list"));
+  jQuery("#engagement_type_selection_list").change(function () {
+    update_select_item_list_display(this);
+  });
+  jQuery("#add_details_link").click(function(){
+    if (jQuery(this).html()=="Add More Details")
+      jQuery(this).html("Hide Details");
+    else 
+      jQuery(this).html("Add More Details");
+    jQuery("#details_box").slideToggle(); 
+  });
+  jQuery('#description_field').keydown(function(){
+    var desc_text = jQuery(this).val();
+    if ( desc_text.length > 84 ){
+      jQuery(this).val(desc_text.substring( 0, 84 ));
+      alert( 'Description value can only be 84 characters in length.' );
+      return false;
+    }
+    else{
+      jQuery('#counter_field').val(84 - desc_text.length);
+    }
+  });
+
+  function update_select_item_list_display(object){
+    buy_item_option = jQuery(":selected", object).text();
+    if(buy_item_option == "Buy a product/service"){
+      jQuery('#item_div').show();
+      jQuery('#item_text_field').show();
+    }else{
+      jQuery('#item_div').hide();
+      jQuery('#item_text_field').hide();
+      jQuery('#item_div').val("");
+      jQuery('#item_text_field').val("");
+    }
+  }
+  
+});
+</script>

@@ -1,123 +1,158 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+jQuery(function(){
+  jQuery('select#brand_id').bind('change',function(){
+    var brand_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_businesses/"+brand_id);
+  });        
+  
+  jQuery('select#business_id').bind('change',function(){
+    var business_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_programs/"+business_id);
+  }); 
+  
+  jQuery('select#program_id').bind('change',function(){
+    var program_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_campaigns/"+program_id);
+  }); 
+  
+  jQuery('select#campaign_id').bind('change',function(){
+    var campaign_id = jQuery(":selected", this).val();
+    jQuery.getScript("/rewards/update_items/"+campaign_id);
+  });
+  jQuery('#description_field').keydown(function(){
+    var desc_text = jQuery(this).val();
+    if ( desc_text.length > 84 ){
+      jQuery(this).val(desc_text.substring( 0, 84 ));
+      alert( 'Description value can only be 84 characters in length.' );
+      return false;
+    }
+    else{
+      jQuery('#counter_field').val(84 - desc_text.length);
+    }
+  });
+
+  
+})
+//]]>
+</script>
+
 <%= f.error_messages %>
-	<p class="subcap">
-		Rewards are items that your customers can redeem after earning enough points or stamps.
-	</p>
-	<div id="left_main">
-		<div class="row">
-			<div class="basic_info_caption1">
-				What is the Reward?
-			</div><%= f.text_field :name, :class =>"basic_info_input"  %>
-		</div>
-		<div class="row">
-			<div class="basic_info_caption1">
-				Add a Short Message
-			</div><%= f.text_area :description, :class=>"basic_info_input", :rows=>5 %>
-		</div>
-		<div class="row">
-			<div class="basic_info_caption1">
-				Program
-			</div>
-			<div style="clear:both"></div>
-			<div class="place-checkbox">
-				<%= f.select :program_id,Program.all.map{|p| [p.name, p.id]}, :prompt=>"-- Select Program --"%>
-			</div>
-		</div>
-		<div class="row">
-			<div class="basic_info_caption1">
-				Set the goal required to unlock this reward
-			</div>
-			<div id="Enter_Num_Stamp">
-				<%= f.text_field :points ,:class=>'enter_value_g',:id=> "reward_stamps" %>
-			</div><select class="selectgoaltype" id="goal_type">
-				<option value="points">
-					Points
-				</option>
-				<option value="stamps">
-					Stamps
-				</option>
-			</select>
-			<div id="points" class="setgoaltype"></div>
-			<div id="stamps" class="setgoaltype" style="display:none">
-				<%= select :reward, :engagement_id, Engagement.all.map{|engagement| [engagement.name, engagement.id]}, :prompt=>"select one",:id =>'reward_stamp_type',:class=>"selectStampType"%>
-			</div>
-		</div>
-		<div class="row">
-			<div class="basic_info_caption1">
-				How many times can this reward be claimed?
-			</div><%= f.text_field :claim , :class=>"basic_info_input"%>
-		</div>
-		<div class="row">
-			<div class="basic_info_caption1">
-				Do you offer this reward in an Auto-unlocked/Free state to users who never engaged with your business? <%= f.check_box :auto_unlock %>
-			</div>
-		</div>
-		<div class="row">
-			<div class="basic_info_caption1">
-				This reward will be available untill
-        </div>
-        <select class="selectruntime" id="reward_runtill">
-				<option value="stop">
-					I Stop it
-				</option>
-				<option value="stop">
-					A set time
-				</option>
-				<option value="setnum">
-					A set number of people get it
-				</option>
-				<option value="sellout">
-					It sells out
-				</option>
-			</select>
-			<div id="stop" class="runtill"></div>
-			<div id="setnum" class="runtill" style="display:none">
-				Enter the maximum number you want to grant
-			</div>
-			<div id="sellout" class="runtill" style="display:none">
-				Enter the maximum number available
-			</div>
+<p class="subcap">Rewards are items that your customers can redeem after earning enough points or stamps.</p>
+<div id="left_main">
+   <div class="row">
+     <div class="basic_info_caption1"> Objective</div>
+      <select>
+        <option value="">Attarct New Customer</option>
+        <option value="">Retain Customers</option>
+      </select>
+      <br />
     </div>
     <div class="row">
-			<div class="basic_info_caption1">
-				Legal Terms
-			</div>
+     <div class="basic_info_caption1"> Reward Type</div>
+      <select>
+        <option value="">from the menu – item</option>
+      </select> <br />
+      <br />
+     </div>
+ 
+  <fieldset>
+    <legend>Create The card</legend>
+    <div class="row">
+      <div class="basic_info_caption1">Card Template</div>
+      <select><option>punch card</option></select>
+    </div> 
+    <div class="row">
+      <div class="basic_info_caption1">What is the Reward?</div>
+      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>16  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Add a Short Description</div>
+      <%= f.text_field :heading1, :class=>"basic_info_input", :maxlength=>40%>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Description</div>
+      <%= f.text_area :heading2, :class=>"basic_info_input",:id=>"description_field",:maxlength=>84,:rows=>5 %>
+    </div>
+    <div class="row">
+      <input type="text" name="counter" maxlength="3" size="3" value="84" id="counter_field"> chars remaining
+    </div>
+      
+    <div class="row">
+      <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
+      <div id="Enter_Num_Stamp">
+        <div class="basic_info_caption1">
+          <%= f.text_field :needed_amount ,:class=>'enter_value_g',:id=> "reward_stamps" %>
+          <%=@reward.try(:campaign).try(:measurement_type).try(:name)%>
+        </div>
+      </div>
+      <div id="points" class="setgoaltype"></div>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Image</div>
+      <input type="file" name="upload[photo]"/><br />
+      <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Legal Terms</div>
       <%= f.text_area :legal_term %>
     </div>
+  </fieldset>
+  <div class="row">
+    <div class="basic_info_caption1">Brand</div>
+    <p><%= select_tag :brand_id ,"<option value=''>..Select One..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, @reward.try(:campaign).try(:program).try(:business).try(:brand).try(:id)) %></p>
+  </div>
+  <div class="row">
+    <div class="basic_info_caption1">Business</div>
+    <p><%= select_tag :business_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name, @reward.try(:campaign).try(:program).try(:business).try(:id)) %></p>
+  </div>	
+  <div class="row">
+    <div class="basic_info_caption1">Program</div>
+    <p><%= select_tag :program_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Program.all, :id, :program_type_name, @reward.try(:campaign).try(:program).try(:id)) %></p>
+  </div>
+  <div class="row">
+    <div class="basic_info_caption1">Campaign</div>
+    <p><%= select_tag :campaign_id , "<option value=''>..None..</option>".html_safe + options_from_collection_for_select(Campaign.all , :id, :name, @reward.try(:campaign).try(:id)) %></p>
+  </div>
+  <fieldset>
+    <legend>Settings</legend>
+    <div class="row">  
+         <div class="basic_info_caption1">Item</div>
+         <%= select_tag "item_id", "<option value=''>...None...</option>".html_safe+ options_from_collection_for_select(Item.all , :id, :name, @reward.try(:items).try(:first).try(:id)) %><br /> 
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Sales Price</div>
+      <%= f.text_field :sales_price, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Cost</div>
+      <%= f.text_field :cost, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Offer Price</div>
+      <%= f.text_field :offer_price, :class =>"basic_info_input"  %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Total Quantity Available</div>
+        <%= f.text_field :max_claim , :class=>"basic_info_input"%>
+    </div>
     <div class="row">
       <div class="basic_info_caption1">
-        Product Price
+        Max Enjoyments Per User
+      </div><%= f.text_field :max_claim_per_user , :class=>"basic_info_input"%>
       </div>
-      <%= f.text_field :price ,:class=>'basic_info_input'%>
-    </div>
       <div class="row">
       <div class="basic_info_caption1">
-        Product ID
+        Foreign-Identifier
+      </div><%= f.text_field :foreign_identifier , :class=>"basic_info_input"%>
       </div>
-      <%= f.text_field :product_id , :class=>'basic_info_input'%>
-      </div>	
-      <div class="row">
-			<input type="submit" value="" name="commit" id="save_cont_btn" class="save">
-			<%= link_to "Cancel", rewards_path, :class => "cancel right" %>
-		</div>
+  </fieldset>
+  <div class="row">
+    <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
+		<%= link_to "Cancel", rewards_path, :class => "cancel right" %>
 	</div>
-	<br/>
-	<br/>
-	<br/>
-	<script language="javascript" type="text/javascript">
-//<![CDATA[
-	jQuery(function() {
-					jQuery('#goal_type').change(function(){
-							jQuery('.setgoaltype').hide();
-							jQuery('#' + jQuery(this).val()).show();
-					});
-			});
-
-
-	jQuery(function() {
-			jQuery('#reward_runtill').change(function(){
-					jQuery('.runtill').hide();
-					jQuery('#' + $(this).val()).show();
-			});
-	});
-	//]]>
-	</script><!-- End of Wrap -->
+</div>
+</div>

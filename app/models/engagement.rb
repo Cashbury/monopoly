@@ -5,7 +5,6 @@
 #
 #  id              :integer         primary key
 #  engagement_type :string(255)
-#  points          :string(255)
 #  state           :string(255)
 #  description     :string(255)
 #  campaign_id     :integer
@@ -17,44 +16,22 @@ require 'uri'
 require "digest"
 
 class Engagement < ActiveRecord::Base
-  include ActiveRecord::Transitions
-  STARTED="started"
-  STOPPED="stopped"
-  state_machine :initial => :started do
-    #state :pending
-    state :started
-    state :stopped
-    #state :expired
-
-    event :start do
-      #transitions :to => :started, :from => [:pending]
-      transitions :to=> :started, :from=>[:stopped]
-    end
-    
-    event :stop do
-      transitions :to => :stopped, :from => [:started]
-    end
-    
-    # event :expire do
-    #   transitions :to => :expired, :from => [:started, :stopped]
-    # end
-  end
+  belongs_to :campaign
+  belongs_to :engagement_type
+  belongs_to :item
   
-  belongs_to :program
-  belongs_to :reward
-  has_and_belongs_to_many :places
-
-  has_many :qr_codes
+  has_many :qr_codes, :as=>:associatable
+  has_many :logs
   
   scope :stamps, where(:engagement_type => QrCode::STAMP) 
-  
   attr_accessor :places_list
-  after_save :update_places
  
   validates :name, :presence =>true,
                    :length =>{:within=>3..50}
-  validates_presence_of :engagement_type,:description,:points                   
-  validates_numericality_of :points
+
+  validates_presence_of :engagement_type_id,:amount
+  #validates_presence_of :item_id, :if=>Proc.new{|eng| eng.engagement_type.has_item?}
+  validates_numericality_of :amount
   
   def engagement_types
     ["check-in", QrCode::STAMP , "question", "spend"]
@@ -63,15 +40,16 @@ class Engagement < ActiveRecord::Base
   def get_states
     ["deployed", "paused", "offline"]
   end
+  def items_list(campaign)
+    campaign.places.joins(:items).select("DISTINCT items.*")
+  end
+  def start
+    self.is_started =true
+    save!
+  end
   
-  #  private
-  def update_places    
-    places.delete_all
-    selected_places = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
-    selected_places.each{|place|
-      self.places << place
-    }    
-  end  
-  
-
+  def stop
+    self.is_started=false
+    save!
+  end
 end

@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  from_account: 1
+  to_account: 1
+  amount: 9.99
+  account_type: MyString
+  is_money: false
+
+two:
+  from_account: 1
+  to_account: 1
+  amount: 9.99
+  account_type: MyString
+  is_money: false

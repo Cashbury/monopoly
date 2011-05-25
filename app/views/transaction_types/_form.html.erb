@@ -1,0 +1,38 @@
+<%= form_for(@transaction_type,:html => { :multipart => true }) do |f| %>
+  <% if @transaction_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@transaction_type.errors.count, "error") %> prohibited this transaction type from being saved:</h2>
+      <ul>
+      <% @transaction_type.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </div>
+  <br />
+  <div class="field">
+    <%= f.label "Related Actions" %><br />
+    <% for action in Action.all%>    
+      <%= check_box_tag "transaction_type[actions_ids][]", action.id, @transaction_type.actions.include?(action) %>                    
+      <%= action.name %>
+    <%end%>
+  </div>
+  <br />
+  <div class="field">
+    <%= f.label :fee_amount %><br />
+    <%= f.text_field :fee_amount %>
+  </div>
+  <br />
+  <div class="field">
+    <%= f.label :fee_percentage %><br />
+    <%= f.text_field :fee_percentage %> %
+  </div>
+  <br />
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

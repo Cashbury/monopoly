@@ -1,40 +1,43 @@
 class Users::UsersSnapsController < Users::BaseController
 	def snap
-		begin
- 			result =Program.joins(:engagements=>:qr_codes).where(:qr_codes => { :hash_code => params[:qr_code_hash] }).select("programs.id,programs.initial_points,engagements.points").first
-			account=Account.where(:user_id=>current_user.id,:program_id=>result.id).first
-			date=Date.today.to_s
-			Account.transaction do
-				qr_code=QrCode.find_by_hash_code(params[:qr_code_hash])
-				qr_code.scan
-				
-				if account.nil?
-					account=Account.create!(:user_id=>current_user.id,:program_id=>result.id,:points=>result.initial_points)
-				end
-				account.increment!(:points,result.points.to_i)
-				snap=UserAction.create!(:user_id    =>current_user.id,
-		  										  	  :qr_code_id =>qr_code.id,
-		  										  	  :business_id=>account.program.business.id,
-		  										  	  :place_id   =>params[:place_id],
-		  										  	  :used_at    =>date)
-			end							     
-			respond_to do |format|
-			  format.xml {render :xml => snap_hash(account,account.program,result.points), :status => 200}
-	    end											 
-		rescue Exception=>e
-			logger.error "Exception #{e.class}: #{e.message}"
-			render :text => e.message, :status => 500
-		end
+		begin		
+		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash],:associatable_type=>"Engagement").first
+		  engagement=qr_code.engagement       
+      if !qr_code.status
+        respond_with_error("QR Code not Active!")
+      elsif !engagement.is_started
+        respond_with_error("Engagement no longer running")          
+      else
+        respond_to do |format|
+          account,campaign,program,after_fees_amount=current_user.snapped_qrcode(qr_code,engagement,params[:place_id],params[:lat],params[:long])
+          format.xml {render :xml => snap_hash(account,engagement,campaign,program,after_fees_amount), :status => 200}
+        end
+      end											 
+    rescue Exception=>e
+      logger.error "Exception #{e.class}: #{e.message}"
+      render :text => e.message, :status => 500
+    end
   end
   
   private
-  def snap_hash(account,program,engagement_points)
+  def snap_hash(account,engagement,campaign,program,after_fees_amount)
+    item=engagement.item
+    photo=item.try(:item_image).try(:photo)
     s = {:snap => {}}
 		s[:snap].merge!({:business_id          => program.business.id})
 		s[:snap].merge!({:business_name        => program.business.name})
+		s[:snap].merge!({:campaign_id          => campaign.id})
 		s[:snap].merge!({:program_id           => program.id})
-		s[:snap].merge!({:engagements_points   => engagement_points})
-		s[:snap].merge!({:account_points       => account.points})
+		s[:snap].merge!({:item_name            => item.try(:name)})
+		s[:snap].merge!({:item_image           => photo.nil? ? "http://#{request.host_with_port}/images/icon.png" : photo.url(:thumb) })
+		s[:snap].merge!({:engagement_amount    => after_fees_amount})
+		s[:snap].merge!({:account_amount       => account.amount})
     s
+  end
+  
+  def respond_with_error(msg)
+    respond_to do |format|
+      format.xml { render :text => msg ,:status=>500 }
+    end
   end
 end

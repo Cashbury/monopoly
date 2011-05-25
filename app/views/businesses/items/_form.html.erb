@@ -1,0 +1,43 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+
+<%= form_for [@business ,@item],:html => { :multipart => true } do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_area :description %>
+  </p>
+  <p>
+    <%= f.label :price %><br />
+    <%= f.text_field :price %>
+  </p>
+  <p>
+    <%= f.label :expiry_date %><br />
+    <%= f.calendar_date_select :expiry_date %>
+  </p>
+  <p>
+    <%= f.label :cost %><br />
+    <%= f.text_field :cost %>
+  </p>
+  <p>
+    <%= f.label :product_code %><br />
+    <%= f.text_field :product_code %>
+  </p>
+  <p>
+    <%= f.label "Upload Image" %><br />
+    <%=f.fields_for :item_image do |image_builder| %>
+      <%=image_builder.file_field :photo%><br />
+      <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+    <%end%>
+  </p>
+  <p>
+    <%= f.label :available %>
+    <%= f.check_box :available%>
+  </p>
+  <p><%= f.submit %></p>
+<% end %>

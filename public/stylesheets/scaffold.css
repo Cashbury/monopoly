@@ -1,4 +1,4 @@
-body { background-color: #fff; color: #333; }
+/*body { background-color: #fff; color: #333; }
 
 body, p, ol, ul, td {
   font-family: verdana, arial, helvetica, sans-serif;
@@ -18,17 +18,27 @@ a:hover { color: #fff; background-color:#000; }
 
 div.field, div.actions {
   margin-bottom: 10px;
-}
+}*/
 
 #notice {
   color: green;
 }
+.form_item_div{
+  float:left;
 
+}
+.form_item_div input{float:left;margin:0 10px 0 0}
+.form_item_div label{float:left;margin:0 10px}
+.form_item_div select{float:left;margin-right:10px}
+
+.form_item_div .field_with_errors
+{float:left}
 .field_with_errors {
   padding: 2px;
   background-color: red;
-  display: table;
+ 
 }
+
 
 #error_explanation {
   width: 450px;
@@ -61,7 +71,7 @@ div.field, div.actions {
   th,td{
     border-right:1px #ccc solid;
     border-bottom:1px #ccc solid;
-    text-align:center;
+    text-align:left;
     padding:5px;
   }
   th{

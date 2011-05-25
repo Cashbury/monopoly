@@ -1,0 +1,12 @@
+<% title "Measurement Type" %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @measurement_type.name %>
+</p>
+
+<p>
+  <%= link_to "Edit", edit_business_measurement_type_path(@business,@measurement_type) %> |
+  <%= link_to "Destroy", business_measurement_type_path(@business,@measurement_type), :confirm => 'Are you sure?', :method => :delete %> |
+  <%= link_to "View All", business_measurement_types_path(@business) %>
+</p>

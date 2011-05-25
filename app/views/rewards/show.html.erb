@@ -1,45 +1,73 @@
 <% title "Reward" %>
-
-<p>
-  <strong>Name:</strong>
-  <%= @reward.name %>
-</p>
-<p>
-  <strong>Description:</strong>
-  <%= @reward.description %>
-</p>
-<p>
-  <strong>Program:</strong>
-  <%= @reward.try(:program).try(:name) %>
-</p>
-<p>
-  <strong>Points</strong>
-  <%= @reward.points %>
-</p>
-<% @reward.engagements.each do |en| %>
-<p>
-  <strong>Stamp Description</strong>
-  <%= en.name %>
-</p>
-<% end %>
-<p>
-  <strong>Active Places</strong>
-  <% for place in @reward.places %>
-  <br/><%= place.name %>    
+<div id="left_main">
+  <p>
+    <strong>Name:</strong>
+    <%= @reward.name %>
+  </p>
+  <p>
+    <strong>Short Description:</strong>
+    <%= @reward.heading1 %>
+  </p>
+  <p>
+    <strong>Description:</strong>
+    <%= @reward.heading2 %>
+  </p>
+  <p>
+    <strong>Program:</strong>
+    <%= @reward.try(:campaign).try(:program).try(:program_type_name) %>
+  </p>
+  
+  <p>
+    <strong>Campaign:</strong>
+    <%= @reward.try(:campaign).try(:name)  %>
+  </p>
+  <p>
+    <strong>Needed Amount</strong>
+    <%= @reward.needed_amount %>
+  </p>
+  <p>
+    <strong>Cost</strong>
+    <%= @reward.cost %>
+  </p>
+  <p>
+    <strong>Sales Price</strong>
+    <%= @reward.sales_price %>
+  </p>
+  <strong>Engagements:</strong>
+  <% @reward.campaign.engagements.each do |en| %>
+    <ul>
+      <li><%= en.name %></li>
+    </ul>
   <% end %>
-</p>
-
-<p>
-  <strong>Price</strong>
-  <%= @reward.price %>
-</p>
-
-<p>
-  <strong>Product Id</strong>
-  <%= @reward.product_id %>
-</p>
-<p>
-  <%= link_to "Edit", edit_reward_path(@reward) %> |
-  <%= button_to "Destroy", reward_path(@reward), :confirm => 'Are you sure?', :method => :delete %> | 
-  <%= link_to "Back to List", rewards_path %>
-</p>
+  <p>
+    <strong>Photo:</strong>
+    <% if @reward.reward_image%>
+      <%= image_tag @reward.reward_image.photo.url(:thumb) %>
+    <% end %>
+  </p>
+  <p>
+    <strong>Legal Terms:</strong>
+    <%= @reward.legal_term  %>
+  </p>
+  <p>
+    <strong>Reward Item:</strong>
+    <%= @reward.items.try(:first).try(:name)  %>
+  </p>
+  <p>
+    <strong>Foreign Identifier:</strong>
+    <%= @reward.foreign_identifier %>
+  </p>
+  <p>
+    <strong>Total Quantity Available:</strong>
+    <%= @reward.max_claim %>
+  </p>
+  <p>
+    <strong>Max Enjoyments Per User:</strong>
+    <%= @reward.max_claim_per_user %>
+  </p>
+  <div>
+    <%= link_to "Edit", edit_reward_path(@reward) %> <br />
+    <%= link_to "Back to List", rewards_path %> <br />
+    <%= button_to "Destroy", reward_path(@reward), :confirm => 'Are you sure?', :method => :delete %> <br /> 
+  </div>
+</div>

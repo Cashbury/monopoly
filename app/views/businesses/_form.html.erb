@@ -1,4 +1,6 @@
-<%= form_for @business do |f| %>
+<%= render 'business_scripts'%>
+<%= form_for(@business,:html => { :multipart => true }) do |f| %>
+
 
   <%= f.error_messages %>
 
@@ -24,26 +26,108 @@
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  
+  <p>
+    <%= f.label :country %>
+    <%= f.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,@business.country_id)%>
+  </p>
   <p>
     <%= f.label 'Keywords' %><br />
     <%= f.text_field :tag_list %>
-    <small>Required, comma separated</small>
   </p>
-  
-  <% f.fields_for :places do |builder| %>  
-		<hr/>
+    <fieldset>
+      <legend>Mailing Address</legend>
+      <%= f.fields_for :mailing_address,f.object.mailing_address do |mailing_address_form| %>
+        <p>
+          <%= mailing_address_form.label :street_address %>
+          <%= mailing_address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= mailing_address_form.label :neighborhood %>
+          <%= mailing_address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= mailing_address_form.label :country %>
+          <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= mailing_address_form.label :city %>
+          <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.city_id)%>
+        </p>
+        <p>
+          <%= mailing_address_form.label :zipcode %>
+          <%= mailing_address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </fieldset>
+      <fieldset>
+      <legend>Billing Address</legend>
+      <%= f.fields_for :billing_address,f.object.billing_address do |billing_address_form| %>
+        <p>
+          <%= billing_address_form.label :street_address %>
+          <%= billing_address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= billing_address_form.label :neighborhood %>
+          <%= billing_address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= billing_address_form.label :country %>
+          <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= billing_address_form.label :city %>
+          <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.city_id)%>
+        </p>
+        <p>
+          <%= billing_address_form.label :zipcode %>
+          <%= billing_address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </fieldset>
+  <fieldset>
+    <legend>Business Images</legend>
+    <p>
+      <%= f.label 'Images' %><br />
+      <%if ENABLE_DELAYED_UPLOADS%>
+        <% f.fields_for :business_images do |bimage| %>
+            <%= bimage.label(:delete_photo, 'Delete photo') %>
+            <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+            <%= bimage.check_box(:delete_photo) %><br />
+        <%end%>
+        <% f.fields_for :tmp_images do |bimage| %>
+          <%= bimage.label(:photo, 'Upload photo') %>
+          <%= bimage.file_field(:photo) %><br />
+        <%end%>
+      <%else%>
+        <% f.fields_for :business_images do |bimage| %>
+          <%- unless bimage.object.new_record?-%>
+            <%= bimage.label(:delete_photo, 'Delete photo') %>
+            <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+            <%= bimage.check_box(:delete_photo) %><br />
+          <%- else -%>
+            <br />
+            <%= bimage.label(:photo, 'Upload photo') %>
+            <%= bimage.file_field(:photo) %><br />
+          <%- end -%>
+        <%end%>
+      <%end%>
+    </p>
+    <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+  </fieldset>
+  <% @business.places.each_with_index do |place, i| %>
+  <% f.fields_for :places, place, :child_index => i do |builder| %> 
 		<h3>Add a Branch</h3>
-    
-
-  
-  <p>
-    <%= builder.label :name %>
-    <%= builder.text_field :name %>
-  </p>
+    <p>
+      <%= builder.label :name %>
+      <%= builder.text_field :name %>
+    </p>
     <p>
 	    <%= builder.label :description %>
 	    <%= builder.text_field :description %>
+    </p>
+    <p>
+      <%= builder.label :phone %>
+      <%= builder.text_field :phone %>
     </p>
     <p>
       <%= builder.label 'Keywords' %>
@@ -51,32 +135,9 @@
       <small>Optional, comma separated</small>
     </p>
     <p>
-	    <%= builder.label :address1 %>
-	    <%= builder.text_field :address1 %>
-	  </p>
-
-    <p>
-	    <%= builder.label :address2 %>
-	    <%= builder.text_field :address2 %>
-	  </p>
-
-    <p>
-	    <%= builder.label :neighborhood %>
-	    <%= builder.text_field :neighborhood %>
-	  </p>
-    <p>
-	    <%= builder.label :city %>
-	    <%= builder.text_field :city %>
-	  </p>
-    <p>
-	    <%= builder.label :zipcode %>
-	    <%= builder.text_field :zipcode %>
-    </p>  
-    <p>
-	    <%= builder.label :country %>
-			<%= builder.select :country, Carmen.countries %>
-    </p>  
-    
+      <%= builder.label :time_zone %>
+      <%= builder.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+    </p>
     <p>
 	    <%= builder.label :longitude %>
 	    <%= builder.text_field :long %>
@@ -85,9 +146,86 @@
 	    <%= builder.label :latitude %>
 	    <%= builder.text_field :lat %>
 	  </p>
-
+	  <fieldset>
+	    <legend>Place Images</legend>
+  	  <p>
+  	    <%if ENABLE_DELAYED_UPLOADS%>
+          <% builder.fields_for :place_images do |pimage| %>
+              <%= pimage.label(:delete_photo, 'Delete photo') %>
+              <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+              <%= pimage.check_box(:delete_photo) %><br />
+          <%end%>
+          <% builder.fields_for :tmp_images do |pimage| %>
+            <%= pimage.label(:photo, 'Upload photo') %>
+            <%= pimage.file_field(:photo) %><br />
+          <%end%>
+        <%else%>
+          <% builder.fields_for :place_images do |pimage| %>
+            <%- unless pimage.object.new_record?-%>
+              <%= pimage.label(:delete_photo, 'Delete photo') %>
+              <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+              <%= pimage.check_box(:delete_photo) %><br />
+            <%- else -%>
+              <br />
+              <%= pimage.label(:photo, 'Upload photo') %>
+              <%= pimage.file_field(:photo) %><br />
+            <%- end -%>
+          <%end%>
+        <%end%>
+      </p>
+      <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+    </fieldset>
+    <fieldset>
+      <legend>Place Hours of operations?</legend>
+      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+        <p> <%=key%></p>
+        <div id="open_hour_div_<%=i%>_<%=index%>">
+         <div >
+          <%= select_tag("open_hour_#{i}[#{index}][from]", options_for_select(@hours),:style => 'width:142px;',:class=>"from_class_#{i}") %>
+          <%= select_tag("open_hour_#{i}[#{index}][to]", options_for_select(@hours),:style => 'width:142px;',:class=>"to_class_#{i}") %>
+         </div>
+         <input type="hidden" name="open_hour_<%=i%>[<%=index%>][place_id]" value="<%=builder.object.id%>" />
+         <input type="hidden" name="open_hour_<%=i%>[<%=index%>][day_no]"    value="<%=value%>"    />
+         <%= label_tag "Closed?"%>
+         <%= check_box_tag "open_hour_#{i}[#{index}][closed]" %>
+         <input type="button" id="split_hour_<%=i%>_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>,<%=i%>)" />
+         <% if index == 0 %>
+           <label> Apply To All</label>
+           <%= check_box_tag "open_hour_#{i}[apply_to_all]" ,"#{i}",false,{:class=>"apply"} %>
+         <%end%>
+        </div>
+        <br />
+        <br />
+     <% end %>
+   </fieldset>
+    <fieldset>
+      <legend>Place Address</legend>
+      <%= builder.fields_for :address,builder.object.address do |address_form| %>
+        <p>
+          <%= address_form.label :street_address %>
+          <%= address_form.text_field :street_address %>
+        </p>
+        <p>
+          <%= address_form.label :neighborhood %>
+          <%= address_form.text_field :neighborhood %>
+        </p>
+        <p>
+          <%= address_form.label :country %>
+          <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id)%>
+        </p>
+        <p>
+          <%= address_form.label :city %>
+          <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id)%>
+        </p>
+        <p>
+          <%= address_form.label :zipcode %>
+          <%= address_form.text_field :zipcode %>
+        </p> 
+      <%end%>
+    </fieldset>
     <%= builder.check_box :_destroy %>  
     <%= builder.label :_destroy, "Remove Place" %>
   <% end %>
+ <%end%> 
   <p><%= f.submit %></p>
   <% end %>

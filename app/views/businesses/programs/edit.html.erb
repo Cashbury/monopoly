@@ -1,6 +1,6 @@
-<h1>Editing <%=@program.name%></h1>
+<%title "Editing #{@program.program_type.name}"%>
 
 <%= render 'form' %>
 
-<%= link_to 'Show', @program %> |
-<%= link_to 'Back', programs_path %>
+<%= link_to 'Show',business_program_path(@business,@program) %> |
+<%= link_to 'Back', business_programs_path %>

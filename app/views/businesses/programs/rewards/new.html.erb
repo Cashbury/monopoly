@@ -1,9 +1,0 @@
-<style type="text/css" media="screen">
-  .place-checkbox{float:left; display:block}
-</style>
-
-<% title "New Reward" %>
-
-<%= form_for @reward, :url => business_program_rewards_path(@business, @program) do |f| %>
-	<%= render :partial => 'form', :locals => {:f => f} %>
-<% end %>

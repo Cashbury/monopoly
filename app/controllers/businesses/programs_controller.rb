@@ -1,6 +1,6 @@
 class Businesses::ProgramsController < ApplicationController
-	before_filter :authenticate_user!,:require_admin, :except => [:index, :show]
-	before_filter :find_business
+  before_filter :authenticate_user!, :require_admin
+  before_filter :find_business
 
   def index
     @programs = @business.programs
