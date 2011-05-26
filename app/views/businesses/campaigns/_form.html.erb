@@ -99,7 +99,7 @@
   <%end%>
   <%end%>
   <div class="actions">
-    <p><%= f.submit "Make Offer"%></p>
+    <p><%= f.submit @campaign.new_record? ? "Make Offer" : "Edit Offer"%></p>
   </div>
 <% end %>
 
@@ -126,21 +126,6 @@ jQuery(document).ready(function(){
     else{
       jQuery('#counter_field').val(84 - desc_text.length);
     }
-  });
-  jQuery(".inst").each(function(i) {
-    var beginStyle = jQuery(this).attr("style"); 
-    jQuery(this).attr("style", "color: #bbb;" + beginStyle).val(jQuery(this).attr("title"));
-    jQuery(this).bind("focus", function(e) {
-      if (jQuery(this).val() == jQuery(this).attr("title")) {
-        jQuery(this).val("");
-        jQuery(this).attr("style", beginStyle);
-      }
-    });
-    jQuery(this).bind("blur", function(e) {
-      if (jQuery(this).val() == "") {
-        jQuery(this).attr("style", "color: #bbb;" + beginStyle).val(jQuery(this).attr("title"));
-      }
-    });
   });
   function update_select_item_list_display(object){
     buy_item_option = jQuery(":selected", object).text();
