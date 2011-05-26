@@ -5,7 +5,8 @@ class Businesses::CampaignsController < ApplicationController
   def index
     program_type=ProgramType.find_or_create_by_name(:name=>"Marketing")
     program=Program.where(:business_id=>@business.id,:program_type_id=>program_type.id).first
-    @campaigns=program.nil? ? [] : program.campaigns
+    @campaigns=program.nil? ? [] : program.campaigns.select {|c| c.engagements.size==1 && c.rewards.size==1}
+    
     respond_to do |format|
       format.html
     end

@@ -18,10 +18,10 @@
     <%= f.fields_for :engagements do |engagement|%>
       <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
-      <input type="text" class="basic_info_caption1" style="width:135px" name="item_name" id="item_text_field" value="<%=@item_name%>"/>
+      <input type="text" class="basic_info_caption1 inst" style="width:135px" name="item_name" id="item_text_field" title="Coffee Drink" value="<%=@item_name%>" />
       <%= f.fields_for :rewards do |reward|%>
-        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1", :style=>"width:45px;margin:0 0 0"} %><label> times, Get a free </label>
-        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:330px;margin:0 0 0"}%>
+        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0",:title=>"10"} %><label> times, Get a free </label>
+        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:330px;margin:0 0 0",:title=>"Coffee"}%>
     </div>
   </fieldset>
   <br /><br />
@@ -127,7 +127,21 @@ jQuery(document).ready(function(){
       jQuery('#counter_field').val(84 - desc_text.length);
     }
   });
-
+  jQuery(".inst").each(function(i) {
+    var beginStyle = jQuery(this).attr("style"); 
+    jQuery(this).attr("style", "color: #bbb;" + beginStyle).val(jQuery(this).attr("title"));
+    jQuery(this).bind("focus", function(e) {
+      if (jQuery(this).val() == jQuery(this).attr("title")) {
+        jQuery(this).val("");
+        jQuery(this).attr("style", beginStyle);
+      }
+    });
+    jQuery(this).bind("blur", function(e) {
+      if (jQuery(this).val() == "") {
+        jQuery(this).attr("style", "color: #bbb;" + beginStyle).val(jQuery(this).attr("title"));
+      }
+    });
+  });
   function update_select_item_list_display(object){
     buy_item_option = jQuery(":selected", object).text();
     if(buy_item_option == "Buy a product/service"){
