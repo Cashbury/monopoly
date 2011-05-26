@@ -53,6 +53,8 @@ class BusinessesController < ApplicationController
         place.build_address
         3.times {place.place_images.build}
       end
+      @business.build_mailing_address
+      @business.build_billing_address
       ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
       render :action => 'new'
     end
@@ -80,6 +82,8 @@ class BusinessesController < ApplicationController
     else
       @brands  = Brand.all
       @categories = Category.all
+      @business.build_mailing_address if @business.mailing_address.nil?
+      @business.build_billing_address if @business.billing_address.nil?
       ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
       render :action => 'edit'
     end

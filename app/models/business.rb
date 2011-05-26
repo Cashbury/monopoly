@@ -26,8 +26,8 @@ class Business < ActiveRecord::Base
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :business_images,:allow_destroy => true
   accepts_nested_attributes_for :tmp_images
-  accepts_nested_attributes_for :mailing_address
-  accepts_nested_attributes_for :billing_address
+  accepts_nested_attributes_for :mailing_address,:reject_if => proc { |attributes| attributes['country_id'].blank? || attributes['city_id'].blank?}
+  accepts_nested_attributes_for :billing_address,:reject_if => proc { |attributes| attributes['country_id'].blank? || attributes['city_id'].blank?}
   attr_accessor :categories_list
 
   after_save :update_categories
