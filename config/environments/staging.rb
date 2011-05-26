@@ -51,13 +51,12 @@ Kazdoor::Application.configure do
   config.action_mailer.delivery_method = :smtp
 
 	config.action_mailer.smtp_settings = {
-	  :enable_starttls_auto => true,
-	  :address => "smtp.gmail.com",
-	  :port => 587,
-	  :domain => "www.espace.com.eg",
-	  :authentication => :login,
-	  :user_name => "tester@espace.com.eg",
-	  :password => "t3st3r!@#",
-		:tls => true
-	}
+    :address  => "Octeth.SMTP.com",
+    :port  => 2525,
+    :user_name => "solutions@espace.com.eg",
+    :password => "C@$3sMtP",
+    :authentication  => :login,
+    :enable_starttls_auto => true,
+    :tls => true
+  }
 end
