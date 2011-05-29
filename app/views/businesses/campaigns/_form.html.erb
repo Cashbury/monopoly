@@ -28,7 +28,6 @@
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">
-      <%= f.label :places, "Places" %><br />
       <% @business.places.each do |place| %>
         <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
         <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
@@ -41,10 +40,10 @@
     <legend class="section_title">Who is this offer targeted to</legend>
     <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
   </fieldset>
-  <p><a id="add_details_link" href="javascript:void(0)">Add More Details</a></p>
+  <p><a id="add_details_link" href="javascript:void(0)"><%=@campaign.new_record? ? "Add More Details" : "Edit Details"%></a></p>
   <br /><br />
   <fieldset id="details_box" style="display:none">
-    <legend class="section_title">More Details</legend>
+    <legend class="section_title"><%=@campaign.new_record? ? "More Details" : "Edit Details"%></legend>
       <div class="row">
         Launch now <%= check_box_tag("launch_today","",1) %> or at <%= f.calendar_date_select :start_date%>
       </div>
@@ -99,7 +98,7 @@
   <%end%>
   <%end%>
   <div class="actions">
-    <p><%= f.submit @campaign.new_record? ? "Make Offer" : "Edit Offer"%></p>
+    <p><%= f.submit @campaign.new_record? ? "Make Offer" : "Update Offer"%></p>
   </div>
 <% end %>
 
@@ -110,10 +109,15 @@ jQuery(document).ready(function(){
     update_select_item_list_display(this);
   });
   jQuery("#add_details_link").click(function(){
-    if (jQuery(this).html()=="Add More Details")
+    if (jQuery(this).html()=="Add More Details" || jQuery(this).html()=="Edit Details")
       jQuery(this).html("Hide Details");
-    else 
-      jQuery(this).html("Add More Details");
+    else{
+      <%if @campaign.new_record? %> 
+        jQuery(this).html("Add More Details");
+      <%else%>
+        jQuery(this).html("Edit Details");
+      <%end%>
+    }
     jQuery("#details_box").slideToggle(); 
   });
   jQuery('#description_field').keydown(function(){
