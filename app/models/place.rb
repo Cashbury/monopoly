@@ -21,7 +21,7 @@ class Place < ActiveRecord::Base
   accepts_nested_attributes_for :items
   accepts_nested_attributes_for :open_hours
   
-  attr_accessible :name, :long, :lat, :description, :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business
+  attr_accessible :name, :long, :lat, :description, :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance
   attr_accessor :items_list
   validates_presence_of :name, :long, :lat 
   validates :address, :presence=>true
@@ -30,8 +30,7 @@ class Place < ActiveRecord::Base
 
   validates_associated :address
    
-  scope :with_address, order("places.name desc")
-                      .joins(:address=>[:city,:country])
+  scope :with_address,joins(:address=>[:city,:country])
                       .select("places.id,places.name,places.long,places.lat,places.description,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
                                addresses.zipcode,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")

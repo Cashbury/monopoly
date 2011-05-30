@@ -2,7 +2,7 @@ class BrandImage < Image
   belongs_to :brand
   has_attached_file :photo,
                     :styles => {
-                      :normal  => "81x52>" 
+                      :normal  => "79x54>" 
                     },
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",

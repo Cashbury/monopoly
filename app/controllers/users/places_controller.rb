@@ -3,11 +3,28 @@ class Users::PlacesController < Users::BaseController
     @places=[] 
     is_my_city=false
     if params[:city_id] #given specific city listing all places at that city
-      @places=  Place.with_address.where("addresses.city_id=#{params[:city_id]}")
+      city= City.closest(:origin=>[params[:lat].to_f,params[:long].to_f]).first
+      if city.id == params[:city_id]
+        @places=Place.with_address.geo_scope(:origin=>[params[:lat].to_f,params[:long].to_f])
+                                  .where("cities.id=#{params[:city_id]}")
+                                  .order("distance ASC")
+        is_my_city=!city.nil?                                  
+      else
+        city=City.where(:id=>params[:city_id]).first
+        @places=Place.with_address.where("cities.id=#{params[:city_id]}").order("places.name ASC")                                  
+      end                             
     elsif params[:lat] && params[:long]
-      @places = Place.with_address.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f])
-      city=@places.first.try(:address).try(:city) unless @places.empty?
+      #Get Nearest City
+      city    = City.closest(:origin=>[params[:lat].to_f,params[:long].to_f]).first
+      @places = Place.with_address.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order("distance ASC") #List nearby places
+      #List all city places order by distance ASC if no nearby places
+      @places = Place.with_address.geo_scope(:origin=>[params[:lat].to_f,params[:long].to_f])
+                                  .where("cities.id=#{city.id}")
+                                  .order("distance ASC") if @places.empty?
       is_my_city=!city.nil?
+    else #default is San Fransisco all places
+      city   =City.find_by_name("San Francisco")
+      @places=Place.with_address.where("cities.id=#{city.id}").order("places.name ASC")
     end
     unless params[:keywords].blank?
       keys=params[:keywords].split(/[^A-Za-z0-9_\-]+/)
@@ -39,7 +56,7 @@ class Users::PlacesController < Users::BaseController
     end
     @result["places"]=[]
     places.each_with_index do |place,index|
-      @result["places"][index] = place.attributes.reject{|k,v| k=="address_id"}
+      @result["places"][index] = place.attributes.reject{|k,v| k=="address_id" || k=="distance"}
       business=place.business
       unless business.nil?
         programs=business.programs

@@ -19,8 +19,8 @@ open(Rails.root.join('db').join('countries_cities.txt')) do |records|
       country=Country.find_or_create_by_name(:name=>country_attrs[0].lstrip.rstrip,:abbr=>country_attrs[1].lstrip.rstrip)
       next
     end
-    city_name=record
-    City.find_or_create_by_name(:name=>city_name.lstrip.rstrip,:country_id=>country.id)
+    city_attrs=record.split(",")
+    City.find_or_create_by_name(:name=>city_attrs[0].lstrip.rstrip,:country_id=>country.id,:lat=>city_attrs[1],:lng=>city_attrs[2])
   end
 end
 puts "Creating system program types"
