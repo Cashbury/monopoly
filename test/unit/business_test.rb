@@ -7,7 +7,7 @@ class BusinessTest < ActiveSupport::TestCase
       @business=Factory.create(:business)
     end
     should "add business name into business tag list" do
-      assert_equal @business.tag_list.include?(@business.name), true
+      assert Business.find(@business.id).tag_list.include?(@business.name)
     end
   end
 end

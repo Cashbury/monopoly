@@ -1,6 +1,7 @@
 Factory.define :reward do |reward|
   reward.name "A cup of coffee"
-  reward.description "Buy 10 cups of coffee and get one free"
+  reward.heading1 "A short desc"
+  reward.heading2 "Buy 10 cups of coffee and get one free"
   reward.needed_amount 10
   reward.campaign_id {Factory(:campaign).id}
   reward.legal_term "A Legal Term"

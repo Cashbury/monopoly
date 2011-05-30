@@ -5,12 +5,12 @@ class UserTest < ActiveSupport::TestCase
     setup do
       @user=Factory.create(:user)
       @campaign=Factory.create(:campaign)
-      account_holder=Factory.create(:account_holder,:model_id=>@user.id)
+      @account_holder=Factory.create(:account_holder,:model_id=>@user.id)
       account=Factory.create(:account,:campaign_id=>@campaign.id,
-                                      :account_holder_id=>account_holder.id)
+                                      :account_holder_id=>@account_holder.id)
     end
     should "has account with campaign" do
-      assert @user.has_account_with_campaign?(@campaign.id)
+      assert @user.has_account_with_campaign?(@account_holder,@campaign.id)
     end
   end
   
@@ -18,9 +18,12 @@ class UserTest < ActiveSupport::TestCase
     setup do
       @user=Factory.create(:user)
       @places=[]
+      country=Factory.create(:country,:name=>"Egypt",:abbr=>"EG")
+      city=Factory.create(:city,:name=>"Alexandria",:lat=>"31.2135",:lng=>"29.9443",:country=>country)
+      address=Factory.create(:address,:city_id=>city.id,:country_id=>country.id)
       3.times do |n|
         business=Factory.create(:business)
-        place=Factory.create(:place,:business_id=>business.id)
+        place=Factory.create(:place,:business_id=>business.id,:address_id=>address.id)
         @places << place
         program=Factory.create(:program,:business_id=>business.id)
         campaign=Factory.create(:campaign,:program_id=>program.id)
@@ -33,7 +36,7 @@ class UserTest < ActiveSupport::TestCase
       assert_equal Campaign.count, 3
       assert_equal @user.account_holder.accounts.size,3
       Campaign.all.each do |campaign|
-        assert @user.has_account_with_campaign?(campaign.id)
+        assert @user.has_account_with_campaign?(@user.account_holder,campaign.id)
       end
     end
   end 
@@ -41,7 +44,10 @@ class UserTest < ActiveSupport::TestCase
   context "test snapping a qr code" do
     setup do
       @user=Factory.create(:user)
-      @place=Factory.create(:place)
+      country=Factory.create(:country,:name=>"Egypt",:abbr=>"EG")
+      city=Factory.create(:city,:name=>"Alexandria",:lat=>"31.2135",:lng=>"29.9443",:country=>country)
+      address=Factory.create(:address,:city_id=>city.id,:country_id=>country.id)
+      @place=Factory.create(:place,:address_id=>address.id)
       program=Factory.create(:program,:business_id=>@place.business.id)
       @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_amount=>10)
       @engagement=Factory.create(:engagement,:campaign_id=>@campaign.id,:amount=>5)
@@ -53,7 +59,7 @@ class UserTest < ActiveSupport::TestCase
     
     should "increment user's account created within the campaign by engagement's amount" do
       total_logs=Log.count
-      @user.snapped_qrcode(@qr_code,@place.id,@place.lat,@place.long)
+      @user.snapped_qrcode(@qr_code,@engagement,@place.id,@place.lat,@place.long)
       transaction=Transaction.last
       assert_equal @user.account_holder.accounts.where(:campaign_id=>@campaign.id).first.amount,15
       assert_equal Log.count,total_logs+1

@@ -37,6 +37,7 @@ class Business < ActiveRecord::Base
 	validates_presence_of :name
 	validates_associated :places
 	before_validation :clear_photos
+  before_save :add_business_name_to_biz_tag_list
   
   def clear_photos
     self.tmp_images.each do |tmp_image|
@@ -54,4 +55,7 @@ class Business < ActiveRecord::Base
     selected_categories.each {|category| self.categories << category}
   end
   
+  def add_business_name_to_biz_tag_list
+    self.tag_list << self.name
+  end
 end

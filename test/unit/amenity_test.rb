@@ -4,7 +4,10 @@ class AmenityTest < ActiveSupport::TestCase
   # Replace this with your real tests
   context "testing amenities" do
     setup do
-    	@place=Factory.create(:place)
+      country=Factory.create(:country,:name=>"Egypt",:abbr=>"EG")
+      city=Factory.create(:city,:name=>"Alexandria",:lat=>"31.2135",:lng=>"29.9443",:country=>country)
+      address=Factory.create(:address,:city_id=>city.id,:country_id=>country.id)
+    	@place=Factory.create(:place,:address_id=>address.id)
       @amenity=Factory.create(:amenity)
       @place.amenities << @amenity
       @place.save

@@ -10,7 +10,10 @@ class RewardTest < ActiveSupport::TestCase
       places=[]
       @user=Factory.create(:user)
       business=Factory.create(:business)
-      @place=Factory.create(:place,:business_id=>business.id)
+      country=Factory.create(:country,:name=>"Egypt",:abbr=>"EG")
+      city=Factory.create(:city,:name=>"Alexandria",:lat=>"31.2135",:lng=>"29.9443",:country=>country)
+      address=Factory.create(:address,:city_id=>city.id,:country_id=>country.id)
+      @place=Factory.create(:place,:business_id=>business.id,:address_id=>address.id)
       places << @place
       program=Factory.create(:program,:business_id=>business.id)
       @campaign=Factory.create(:campaign,:program_id=>program.id,:initial_amount=>10)

@@ -126,7 +126,7 @@ class Place < ActiveRecord::Base
         end
       end
     end
-    self.tag_list << self.name unless self.tag_list.empty?
+    self.tag_list << self.name
   end
   def update_items
     selected_items = items_list.nil? ? [] : items_list.keys.collect{|id| Item.find(id)}
