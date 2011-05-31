@@ -2,7 +2,7 @@ class Users::PlacesController < Users::BaseController
   def index
     @places=[] 
     is_my_city=false
-    if params[:city_id] #given specific city listing all places at that city
+    if !params[:city_id].blank?#given specific city listing all places at that city
       city= City.closest(:origin=>[params[:lat].to_f,params[:long].to_f]).first
       if city.id == params[:city_id]
         @places=Place.with_address.geo_scope(:origin=>[params[:lat].to_f,params[:long].to_f])
@@ -13,7 +13,7 @@ class Users::PlacesController < Users::BaseController
         city=City.where(:id=>params[:city_id]).first
         @places=Place.with_address.where("cities.id=#{params[:city_id]}").order("places.name ASC")                                  
       end                             
-    elsif params[:lat] && params[:long]
+    elsif !params[:lat].blank? && !params[:long].blank?
       #Get Nearest City
       city    = City.closest(:origin=>[params[:lat].to_f,params[:long].to_f]).first
       @places = Place.with_address.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order("distance ASC") #List nearby places
