@@ -23,7 +23,7 @@ class Place < ActiveRecord::Base
   
   attr_accessible :name, :long, :lat, :description, :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance
   attr_accessor :items_list
-  validates_presence_of :name, :long, :lat 
+  validates_presence_of :name, :long, :lat
   validates :address, :presence=>true
   validates_numericality_of :long,:lat
   validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
@@ -70,23 +70,23 @@ class Place < ActiveRecord::Base
   def add_open_hours(open_hours_params) 
     self.open_hours.delete_all
     OpenHour::DAYS.each_with_index do |(key,value),index|
-       i = index.to_s
-       if open_hours_params[i].present?
-           add_one_open_hour_to_place(open_hours_params[i],"from","to","closed")
-           if open_hours_params[i]["from2"].present? and open_hours_params[i]["to2"].present?
-             add_one_open_hour_to_place(open_hours_params[i],"from2","to2","closed2")
-           end
-       end
-     end # End of ( if open_hours_params[i].present?)  
+      i = index.to_s
+      if !open_hours_params.nil? && open_hours_params[i].present?
+        add_one_open_hour_to_place(open_hours_params[i],"from","to","closed")
+        if open_hours_params[i]["from2"].present? and open_hours_params[i]["to2"].present?
+          add_one_open_hour_to_place(open_hours_params[i],"from2","to2","closed2")
+        end
+      end # End of ( if open_hours_params[i].present?) 
+    end  
   end
   def add_one_open_hour_to_place(open_hours_params,from,to,closed)
     open_hour = OpenHour.new
-    if open_hours_params[closed].blank?
-        open_hour.from = create_date_time(open_hours_params[from])
-        open_hour.to   = create_date_time(open_hours_params[to])
-        open_hour.day_no = open_hours_params[:day_no] 
-        open_hour.place_id = open_hours_params[:place_id]
-        self.open_hours << open_hour
+    if !open_hours_params.nil? && open_hours_params[closed].blank?
+      open_hour.from = create_date_time(open_hours_params[from])
+      open_hour.to   = create_date_time(open_hours_params[to])
+      open_hour.day_no = open_hours_params[:day_no] 
+      open_hour.place_id = open_hours_params[:place_id]
+      self.open_hours << open_hour
     end
   end
   def get_hour(day_num, hour_type, second_record_for_same_day)

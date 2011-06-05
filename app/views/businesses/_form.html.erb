@@ -99,7 +99,7 @@
           <%= bimage.file_field(:photo) %><br />
         <%end%>
       <%else%>
-        <% f.fields_for :business_images do |bimage| %>
+        <%= f.fields_for :business_images do |bimage| %>
           <%- unless bimage.object.new_record?-%>
             <%= bimage.label(:delete_photo, 'Delete photo') %>
             <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
@@ -115,7 +115,7 @@
     <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
   </fieldset>
   <% @business.places.each_with_index do |place, i| %>
-  <% f.fields_for :places, place, :child_index => i do |builder| %> 
+  <%= f.fields_for :places, place, :child_index => i do |builder| %> 
 		<h3>Add a Branch</h3>
     <p>
       <%= builder.label :name %>
@@ -160,7 +160,7 @@
             <%= pimage.file_field(:photo) %><br />
           <%end%>
         <%else%>
-          <% builder.fields_for :place_images do |pimage| %>
+          <%= builder.fields_for :place_images do |pimage| %>
             <%- unless pimage.object.new_record?-%>
               <%= pimage.label(:delete_photo, 'Delete photo') %>
               <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>

@@ -27,14 +27,17 @@ class PlacesController < ApplicationController
   end
   
   def create  
+    puts "PARAMS: #{params[:place]}"
     @place = Place.new(params[:place])
-    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
+    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.add_open_hours(params[:open_hour])
+    @place.valid?
+    puts "ERRORS:  #{@place.errors.full_messages.join(',')}"
     if @place.save
       flash[:notice] = "Successfully created place."
       redirect_to place_url(@place)
     else
-      @place.build_address
+      @place.build_address(params[:place][:address_attributes])
       ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
       render :action => 'new'
     end
@@ -47,7 +50,7 @@ class PlacesController < ApplicationController
   
   def update
     @place = Place.find(params[:id])
-    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
+    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.add_open_hours(params[:open_hour])
     if @place.update_attributes(params[:place])
       flash[:notice] = "Successfully updated place."

@@ -1,8 +1,10 @@
 require 'test_helper'
 
 class ProgramTypesControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
   setup do
   	user=Factory.create(:user)
+  	user.confirm!
   	sign_in user
     @program_type = Factory.create(:program_type)
   end

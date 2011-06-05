@@ -100,7 +100,7 @@
           <%= bimage.file_field(:photo) %><br />
         <%end%>
       <%else%>
-        <% f.fields_for :business_images do |bimage| %>
+        <%= f.fields_for :business_images do |bimage| %>
           <%- unless bimage.object.new_record?-%>
             <%= bimage.label(:delete_photo, 'Delete photo') %>
             <%= image_tag(bimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>

@@ -1,6 +1,14 @@
 require 'test_helper'
 
 class BusinessesControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
+  setup do
+    @user=Factory.create(:user,:admin=>true)
+    @user.confirm!
+    sign_in @user
+    @business = Factory.create(:business)
+  end
+  
   def test_index
     get :index
     assert_template 'index'
@@ -23,8 +31,9 @@ class BusinessesControllerTest < ActionController::TestCase
   end
 
   def test_create_valid
-    Business.any_instance.stubs(:valid?).returns(true)
-    post :create
+    assert_difference('Business.count') do
+      post :create, :business => @business.attributes
+    end
     assert_redirected_to business_url(assigns(:business))
   end
   

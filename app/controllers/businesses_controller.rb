@@ -53,8 +53,8 @@ class BusinessesController < ApplicationController
         place.build_address
         3.times {place.place_images.build}
       end
-      @business.build_mailing_address
-      @business.build_billing_address
+      @business.build_mailing_address(params[:business][:mailing_address_attributes])
+      @business.build_billing_address(params[:business][:billing_address_attributes])
       ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
       render :action => 'new'
     end
