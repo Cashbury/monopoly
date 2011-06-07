@@ -39,19 +39,19 @@ jQuery(function () {
 	});
 })
 
-function change_engagement_status(id)
+function change_engagement_status(biz_id,prog_id,c_id,eng_id)
 {
 	jQuery.ajax({
   	type: 'POST',
-  	url: "/engagements/"+id+"/change_status",
+  	url: "/businesses/"+biz_id+"/programs/"+prog_id+"/campaigns/"+c_id+"/engagements/"+eng_id+"/change_status",
 		success: function(){
-			if(jQuery('#current_status_'+id).text()=="stopped"){
-				jQuery('#status_'+id).text("Stop");
-				jQuery('#current_status_'+id).text("started");
+			if(jQuery('#current_status_'+eng_id).text()=="false"){
+				jQuery('#status_'+eng_id).text("Stop");
+				jQuery('#current_status_'+eng_id).text("true");
 			}
 			else{
-				jQuery('#status_'+id).text("Start");
-				jQuery('#current_status_'+id).text("stopped");
+				jQuery('#status_'+eng_id).text("Start");
+				jQuery('#current_status_'+eng_id).text("false");
 			}
   	}
 	});return false;

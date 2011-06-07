@@ -3,7 +3,7 @@ require 'test_helper'
 class ProgramTypesControllerTest < ActionController::TestCase
   include Devise::TestHelpers
   setup do
-  	user=Factory.create(:user)
+  	user=Factory.create(:user,:admin=>true)
   	user.confirm!
   	sign_in user
     @program_type = Factory.create(:program_type)
@@ -18,6 +18,7 @@ class ProgramTypesControllerTest < ActionController::TestCase
   test "should get new" do
     get :new
     assert_response :success
+    assert_not_nil assigns(:program_type)
   end
 
   test "should create program_type" do

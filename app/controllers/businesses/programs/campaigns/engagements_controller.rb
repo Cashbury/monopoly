@@ -106,7 +106,16 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
     end    
   end
     
-
+  def change_status
+    @engagement = Engagement.find(params[:id])
+    if @engagement.is_started == false
+      @engagement.start
+    else 
+      @engagement.stop
+    end
+    render :nothing=>true ,:status=>:ok
+  end
+  
   private
   def find_business_and_program_and_and_campaign
     @program = Program.find(params[:program_id])

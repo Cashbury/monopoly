@@ -33,6 +33,7 @@ class TransactionTypesController < ApplicationController
       end
     end
   end
+  
   def update
     @transaction_type = TransactionType.find(params[:id])
 

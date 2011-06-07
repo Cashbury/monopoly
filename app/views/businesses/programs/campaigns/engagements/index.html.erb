@@ -22,9 +22,9 @@
       <td><%= link_to "Destroy", business_program_campaign_engagement_path(@business, @program, @campaign,engagement), :confirm => 'Are you sure?', :method => :delete %></td>
       <td>
       	<%if engagement.is_started ==  true%>
-      		<%= link_to "Stop",  "#", :onclick=>"change_engagement_status('#{engagement.id}')",:id=>"status_#{engagement.id}"%>
+      		<%= link_to "Stop",  "javascript:void(0)", :onclick=>"change_engagement_status('#{@business.id}','#{@program.id}','#{@campaign.id}','#{engagement.id}')",:id=>"status_#{engagement.id}"%>
       	<%else%>
-      		<%= link_to "Start","#", :onclick=>"change_engagement_status('#{engagement.id}')" ,:id=>"status_#{engagement.id}"%>
+      		<%= link_to "Start","javascript:void(0)", :onclick=>"change_engagement_status('#{@business.id}','#{@program.id}','#{@campaign.id}','#{engagement.id}')" ,:id=>"status_#{engagement.id}"%>
 				<%end%>
 			</td>
     </tr>

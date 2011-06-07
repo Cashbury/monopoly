@@ -1,7 +1,12 @@
 require 'test_helper'
 
 class LoyalCustomersControllerTest < ActionController::TestCase
-  # Replace this with your real tests.
+  include Devise::TestHelpers
+  setup do
+    @user=Factory.create(:user,:admin=>true)
+    @user.confirm!
+    sign_in @user
+  end
   test "the truth" do
     assert true
   end

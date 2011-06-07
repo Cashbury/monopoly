@@ -96,6 +96,7 @@ Kazdoor::Application.routes.draw do
     resources :programs , :controller => "businesses/programs" do
       resources :campaigns , :controller => "businesses/programs/campaigns" do
          resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
+          post "change_status"   ,:on =>:member
 	        get "stamps", :on => :collection
 	      resources :places , :only=>[:issue_code] do 
 	         get "issue_code" ,:on =>:member
@@ -112,8 +113,6 @@ Kazdoor::Application.routes.draw do
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
 	#   match "/places"             						=> "places#index"
-  match "/engagements/:id"    						=> "engagements#display"
-  match "/engagements/:id/change_status"   => "engagements#change_status"
   match '/foryou'             						=> "followers#index" ,:as =>:foryou
   match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
   

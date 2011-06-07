@@ -8,56 +8,46 @@ class BusinessesControllerTest < ActionController::TestCase
     sign_in @user
     @business = Factory.create(:business)
   end
-  
-  def test_index
+
+  test "should get index" do
     get :index
-    assert_template 'index'
-  end
-  
-  def test_show
-    get :show, :id => Business.first
-    assert_template 'show'
-  end
-  
-  def test_new
-    get :new
-    assert_template 'new'
-  end
-  
-  def test_create_invalid
-    Business.any_instance.stubs(:valid?).returns(false)
-    post :create
-    assert_template 'new'
+    assert_response :success
+    assert_not_nil assigns(:businesses)
   end
 
-  def test_create_valid
+  test "should get new" do
+    get :new
+    assert_response :success
+  end
+
+  test "should create business" do
     assert_difference('Business.count') do
       post :create, :business => @business.attributes
     end
-    assert_redirected_to business_url(assigns(:business))
-  end
-  
-  def test_edit
-    get :edit, :id => Business.first
-    assert_template 'edit'
-  end
-  
-  def test_update_invalid
-    Business.any_instance.stubs(:valid?).returns(false)
-    put :update, :id => Business.first
-    assert_template 'edit'
+
+    assert_redirected_to business_path(assigns(:business))
   end
 
-  def test_update_valid
-    Business.any_instance.stubs(:valid?).returns(true)
-    put :update, :id => Business.first
-    assert_redirected_to business_url(assigns(:business))
+  test "should show business" do
+    get :show, :id => @business.to_param
+    assert_response :success
   end
-  
-  def test_destroy
-    business = Business.first
-    delete :destroy, :id => business
-    assert_redirected_to businesses_url
-    assert !Business.exists?(business.id)
+
+  test "should get edit" do
+    get :edit, :id => @business.to_param
+    assert_response :success
+  end
+
+  test "should update business" do
+    put :update, :id => @business.to_param, :business => @business.attributes
+    assert_redirected_to business_path(assigns(:business))
+  end
+
+  test "should destroy business" do
+    assert_difference('Business.count', -1) do
+      delete :destroy, :id => @business.to_param
+    end
+
+    assert_redirected_to businesses_path
   end
 end
