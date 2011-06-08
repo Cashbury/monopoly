@@ -31,8 +31,8 @@ class Businesses::PlacesController < ApplicationController
   def create  
     @place =  @business.places.build(params[:place])
     @place.items_list = params[:place][:items_list] unless params[:place][:items_list].blank?
-    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
-    @place.add_item(params[:item]) unless params[:item][:name].blank?
+    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
+    @place.add_item(params[:item]) unless params[:item].nil? || params[:item][:name].blank?
     @place.add_open_hours(params[:open_hour])
     if @place.save
       flash[:notice] = "Successfully created place."
@@ -51,9 +51,9 @@ class Businesses::PlacesController < ApplicationController
   
   def update
     @place = Place.find(params[:id])
-    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].empty?
+    @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.items_list = params[:place][:items_list] unless params[:place][:items_list].blank?
-    @place.add_item(params[:item]) unless params[:item][:name].blank?
+    @place.add_item(params[:item]) unless params[:item].nil? || params[:item][:name].blank?
     @place.add_open_hours(params[:open_hour])
     if @place.update_attributes(params[:place])
       flash[:notice] = "Successfully updated place."

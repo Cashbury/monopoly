@@ -31,13 +31,13 @@ div.field, div.actions {
 .form_item_div label{float:left;margin:0 10px}
 .form_item_div select{float:left;margin-right:10px}
 
-.form_item_div .field_with_errors
+/*.form_item_div .field_with_errors
 {float:left}
 .field_with_errors {
   padding: 2px;
   background-color: red;
  
-}
+}*/
 
 
 #error_explanation {

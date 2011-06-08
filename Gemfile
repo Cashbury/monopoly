@@ -48,6 +48,7 @@ group :test do
 	gem 'shoulda', '=2.11.3'
 	gem 'mocha', '=0.9.12'
 	gem 'factory_girl_rails','=1.0.1'
+	gem 'rcov','=0.9.9'
 end
 
 gem 'annotate-models','=1.0.4'

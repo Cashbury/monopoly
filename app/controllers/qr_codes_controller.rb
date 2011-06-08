@@ -1,4 +1,5 @@
 class QrCodesController < ApplicationController
+  before_filter :authenticate_user!, :require_admin
   # GET /qr_codes
   # GET /qr_codes.xml
   def index

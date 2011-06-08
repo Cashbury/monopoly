@@ -1,5 +1,5 @@
 class LoyalCustomersController < ApplicationController
-  
+  before_filter :authenticate_user!, :require_admin
 	def index
 		@business_id = params[:business_id].to_i.zero? ? nil : params[:business_id].to_i
 		@place_id = params[:place_id].to_i.zero? ? nil : params[:place_id].to_i

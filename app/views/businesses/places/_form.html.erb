@@ -100,7 +100,7 @@
           <%= pimage.file_field(:photo) %><br />
         <%end%>
       <%else%>
-        <% f.fields_for :place_images do |pimage| %>
+        <%= f.fields_for :place_images do |pimage| %>
           <%- unless pimage.object.new_record?-%>
             <%= pimage.label(:delete_photo, 'Delete photo') %>
             <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>

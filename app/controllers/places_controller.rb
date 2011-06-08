@@ -27,12 +27,10 @@ class PlacesController < ApplicationController
   end
   
   def create  
-    puts "PARAMS: #{params[:place]}"
     @place = Place.new(params[:place])
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.add_open_hours(params[:open_hour])
     @place.valid?
-    puts "ERRORS:  #{@place.errors.full_messages.join(',')}"
     if @place.save
       flash[:notice] = "Successfully created place."
       redirect_to place_url(@place)
