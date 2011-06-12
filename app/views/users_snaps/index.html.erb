@@ -1,0 +1,55 @@
+<% title "Reports" %>
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+<%= field_set_tag do %>
+	<h2>Filter By</h2>
+	<form id="snaps_filter_form">
+		<p>
+			<label style="margin:10px;">From Date</label><%= calendar_date_select_tag "filters_from_date", @from_date %>
+			<label style="margin:10px;">Business</label><%= select_tag "filters_business_id", options_for_select(Business.all.collect {|b| [ b.name, b.id ] },@business_id),{:include_blank=>true} %>
+		</p>
+    <p>
+    	<label style="margin:10px;">To Date</label><%= calendar_date_select_tag "filters_to_date", @to_date %>
+    	<label style="margin:25px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
+    </p>
+		<p><a href="javascript:void(0)" onclick="submitUsersSnapsSearch($('#snaps_filter_form'), 1)">Filter</a></p>
+	</form>
+<%end%>
+<%if @results.empty?%>
+	<p>No results found</p>
+<%else%>
+	<br />
+	<%= will_paginate @results %>
+	<br/>
+	<table width="100%" border="1" cellspacing="0" cellpadding="0">
+	  <tr>
+	    <th>Name</th>
+	    <th>Gained Amount</th>
+	    <th>Amount Type</th>
+	    <th>Engagement</th>
+	    <th>Campaign</th>
+	    <th>Program</th>
+	    <th>Business</th>
+	    <th>Place</th>
+	    <th>Date</th>
+	  </tr>
+  <% for result in @results %>
+    <tr>
+      <td><%= "#{result.try(:first_name)} #{result.try(:last_name)}"  %></td>
+      <td><%= result.gained_amount      %></td>
+      <td><%= result.amount_type        %></td>
+      <td><%= result.ename              %></td>
+      <td><%= result.cname              %></td>
+      <td><%= result.program_name       %></td>
+      <td><%= result.bname              %></td>
+      <td><%= result.pname              %></td>
+      <td><%= result.created_on         %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%end%>
+<br />
+<%= will_paginate @results %>
+<br />

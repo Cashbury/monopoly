@@ -1,0 +1,85 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+<script type="text/javascript">
+ jQuery(document).ready(function(){ 
+  jQuery("#measurement_type_selection").change(function () {
+      other_option = jQuery(":selected", this).text();
+      if(other_option == "Other")
+        jQuery('#new_measurement_type_div').show();
+      else
+        jQuery('#new_measurement_type_div').hide();
+  });
+});
+
+</script>
+
+
+<%= form_for([@business,@program,@campaign]) do |f| %>
+  <% if @campaign.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:</h2>
+
+      <ul>
+      <% @campaign.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><%= mark_required(@campaign, :name) %>
+    <%= f.text_field :name %>
+  </div>
+  <br />
+
+  <div class="field">
+    <%= f.label :start_date %>
+    <%= f.calendar_date_select :start_date%>
+  </div><br />
+  <div class="field">
+    <%= f.label :end_date %>
+    <%= f.calendar_date_select :end_date%>
+  </div><br />
+  <div class="field">
+    <%= f.label :measurement_type_id %><%= mark_required(@campaign, :measurement_type) %>
+    <%= f.select :measurement_type_id,@measurement_types.collect { |mt| [mt.name,mt.id]}, {}, {:id=>"measurement_type_selection"} %>
+  </div><br />
+  
+  <div class="field" id="new_measurement_type_div" style="display:none">
+    <%= label_tag :measurement_name %><br />
+    <%= text_field_tag :measurement_name %>
+   </div><br />
+  
+  <div class="field">
+    <%= f.label :initial_amount %>
+    <%= f.text_field :initial_amount %>
+  </div><br />
+  <div class="field">
+    <%= f.label :initial_biz_amount %>
+    <%= f.text_field :initial_biz_amount %>
+  </div><br />
+  <div class="field">
+    <%= label_tag "Who is this campaign offered to?" %>
+    <%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %><br />
+  </div>
+  <br />
+  <div class="field">
+     <fieldset>
+      <legend>Assign Campaign to Places</legend>
+      <p>
+        <%= f.label :places, "Places" %><br />
+        <% @business.places.each do |place| %>
+          <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
+          <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
+          <%= "#{place.name}"%><br />
+        <% end %>
+      </p>
+    </fieldset>
+  </div>
+  <br />
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

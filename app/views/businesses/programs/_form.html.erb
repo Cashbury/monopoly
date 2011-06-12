@@ -1,0 +1,29 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%>
+
+<%= form_for([@business,@program]) do |f| %>
+  <% if @program.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@program.errors.count, "error") %> prohibited this program from being saved:</h2>
+
+      <ul>
+      <% @program.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+
+  <div class="field">
+    <%= f.label :program_type_id %><%= mark_required(@program, :program_type_id) %>
+    <%= f.select :program_type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]} %>
+  </div><br />
+  
+  <br />
+  
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

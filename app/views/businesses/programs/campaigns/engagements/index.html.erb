@@ -1,0 +1,35 @@
+<% title "Engagements" %>
+
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Engagement Type</th>
+    <th>Amount</th>
+    <th>Item</th>
+    <th>Is Started?</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+  <% for engagement in @engagements %>
+    <tr>
+      <td><%= link_to engagement.name , business_program_campaign_engagement_url(@business, @program,@campaign ,engagement) %></td>
+      <td><%= link_to engagement.engagement_type.try(:name), business_program_campaign_engagement_url(@business, @program,@campaign, engagement) %></td>
+      <td><%= engagement.amount %></td>
+      <td><%= engagement.item.try(:name) %></td>
+      <td id="current_status_<%=engagement.id%>"><%= engagement.is_started %></td>
+      <td><%= link_to "Edit", edit_business_program_campaign_engagement_path(@business,@program, @campaign,engagement) %></td>
+      <td><%= link_to "Destroy", business_program_campaign_engagement_path(@business, @program, @campaign,engagement), :confirm => 'Are you sure?', :method => :delete %></td>
+      <td>
+      	<%if engagement.is_started ==  true%>
+      		<%= link_to "Stop",  "javascript:void(0)", :onclick=>"change_engagement_status('#{@business.id}','#{@program.id}','#{@campaign.id}','#{engagement.id}')",:id=>"status_#{engagement.id}"%>
+      	<%else%>
+      		<%= link_to "Start","javascript:void(0)", :onclick=>"change_engagement_status('#{@business.id}','#{@program.id}','#{@campaign.id}','#{engagement.id}')" ,:id=>"status_#{engagement.id}"%>
+				<%end%>
+			</td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Engagement", new_business_program_campaign_engagement_path(@business,@program,@campaign) %></p>
+<p><%= link_to "Back to Campaign", business_program_campaign_path(@business,@program,@campaign) %></p>

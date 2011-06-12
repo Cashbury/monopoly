@@ -4,6 +4,6 @@
 
 <% title "New Reward" %>
 
-<%= form_for @reward, :url => business_rewards_path(@business) do |f| %>
+<%= form_for(@reward,:url => rewards_path,:html => { :multipart => true }) do |f| %>
 	<%= render :partial => 'form', :locals => {:f => f} %>
 <% end %>

@@ -1,6 +1,6 @@
-<h1>Listing programs</h1>
+<% title "Listing Programs" %>
 
-<table>
+<table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Type</th>
@@ -17,8 +17,8 @@
 
 <% @programs.each do |program| %>
   <tr>
-    <td><%= program.name %></td>
-    <td><%= program.type_id %></td>
+    <td><%= link_to program.name, program %></td>
+    <td><%= program.program_type_id %></td>
     <td><%= program.auto_enroll %></td>
     <td><%= program.start_date %></td>
     <td><%= program.end_date %></td>
@@ -27,12 +27,11 @@
     <td><%= program.max_points %></td>
     <td><%= link_to 'Show', program %></td>
     <td><%= link_to 'Edit', edit_program_path(program) %></td>
-    <td><%= link_to 'Destroy', program, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= button_to "Destroy", program_path(program), :method=>:delete, :class=>:destroy,:confirm=>"Are you sure?" %></td>
   </tr>
 <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New Program', new_program_path %><br />
-<%= link_to "Show all types", program_types_path %>
+<%= link_to 'New Program', new_program_path %>

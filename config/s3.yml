@@ -1,0 +1,17 @@
+development:
+  bucket: cashbury-dev
+  access_key_id: 06X121ESANG8XVR40S02
+  secret_access_key: Xu7sG1N9bwQHESwU/mbrI73MWw+2VGcIMLLFPUh8
+test:
+  bucket: cashbury-test
+  access_key_id: 06X121ESANG8XVR40S02
+  secret_access_key: Xu7sG1N9bwQHESwU/mbrI73MWw+2VGcIMLLFPUh8
+production:
+  bucket: cashbury
+  access_key_id: AKIAJBDGLEVGARPCK3QQ
+  secret_access_key: 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
+staging:
+  bucket: cashbury-pro
+  access_key_id: 06X121ESANG8XVR40S02
+  secret_access_key: Xu7sG1N9bwQHESwU/mbrI73MWw+2VGcIMLLFPUh8
+  

@@ -5,13 +5,13 @@ class HomeController < ApplicationController
   end
 
   def welcome
-    @newsletter = Newsletter.new 
-    logger.info(@newsletter.inspect)
+    @follower = Follower.new 
+    logger.info(@follower.inspect)
   end
 
   def create
-    @newsletter = Newsletter.new(params[:newsletter])
-    if @newsletter.save
+    @follower = Follower.new(params[:follower])
+    if @follower.save
       flash[:notice] = "Thank you registering in beta program !."
       redirect_to "index"
     else

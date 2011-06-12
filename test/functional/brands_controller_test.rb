@@ -1,8 +1,12 @@
 require 'test_helper'
 
 class BrandsControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
   setup do
-    @brand = brands(:one)
+    @user=Factory.create(:user,:admin=>true)
+    @user.confirm!
+    sign_in @user
+    @brand = Factory.create(:brand)
   end
 
   test "should get index" do

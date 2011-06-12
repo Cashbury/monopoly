@@ -1,54 +1,53 @@
 require 'test_helper'
 
 class CategoriesControllerTest < ActionController::TestCase
-  def test_index
+  include Devise::TestHelpers
+  setup do
+    @user=Factory.create(:user,:admin=>true)
+    @user.confirm!
+    sign_in @user
+    @category = Factory.create(:category)
+  end
+
+  test "should get index" do
     get :index
-    assert_template 'index'
+    assert_response :success
+    assert_not_nil assigns(:categories)
   end
-  
-  def test_show
-    get :show, :id => Category.first
-    assert_template 'show'
-  end
-  
-  def test_new
+
+  test "should get new" do
     get :new
-    assert_template 'new'
-  end
-  
-  def test_create_invalid
-    Category.any_instance.stubs(:valid?).returns(false)
-    post :create
-    assert_template 'new'
+    assert_response :success
   end
 
-  def test_create_valid
-    Category.any_instance.stubs(:valid?).returns(true)
-    post :create
-    assert_redirected_to category_url(assigns(:category))
-  end
-  
-  def test_edit
-    get :edit, :id => Category.first
-    assert_template 'edit'
-  end
-  
-  def test_update_invalid
-    Category.any_instance.stubs(:valid?).returns(false)
-    put :update, :id => Category.first
-    assert_template 'edit'
+  test "should create category" do
+    assert_difference('Category.count') do
+      post :create, :category => @category.attributes
+    end
+
+    assert_redirected_to category_path(assigns(:category))
   end
 
-  def test_update_valid
-    Category.any_instance.stubs(:valid?).returns(true)
-    put :update, :id => Category.first
-    assert_redirected_to category_url(assigns(:category))
+  test "should show category" do
+    get :show, :id => @category.to_param
+    assert_response :success
   end
-  
-  def test_destroy
-    category = Category.first
-    delete :destroy, :id => category
-    assert_redirected_to categories_url
-    assert !Category.exists?(category.id)
+
+  test "should get edit" do
+    get :edit, :id => @category.to_param
+    assert_response :success
+  end
+
+  test "should update category" do
+    put :update, :id => @category.to_param, :category => @category.attributes
+    assert_redirected_to category_path(assigns(:category))
+  end
+
+  test "should destroy category" do
+    assert_difference('Category.count', -1) do
+      delete :destroy, :id => @category.to_param
+    end
+
+    assert_redirected_to categories_path
   end
 end

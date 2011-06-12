@@ -1,0 +1,2 @@
+var options = "<%= escape_javascript("<option value=''>Select....</option>".html_safe + options_from_collection_for_select( @programs , :id , :program_type_name ))%>"
+jQuery('select#program_id').html(options)

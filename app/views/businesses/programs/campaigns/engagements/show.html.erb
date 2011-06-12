@@ -1,0 +1,32 @@
+<% title "Engagement: #{@engagement.name}" %>
+<p>
+  <strong>Engagement Name:</strong>
+  <%= @engagement.name %>
+</p>
+<p>
+  <strong>Engagement Type:</strong>
+  <%= @engagement.engagement_type.name %>
+</p>
+<%if @engagement.try(:engagement_type).try(:has_item?)%>
+<p>
+  <strong>Item:</strong>
+  <%= @engagement.item.try(:name) %>
+</p>
+<%end%>
+<p>
+  <strong>Description:</strong>
+  <%= @engagement.description %>
+</p>
+<p>
+  <strong>Is Started?:</strong>
+  <%= @engagement.is_started %>
+</p>
+<p>
+  <strong>Amount:</strong>
+  <%= @engagement.amount %>
+</p>
+<p>
+  <%= link_to "Edit", edit_business_program_campaign_engagement_path(@business, @program, @campaign,@engagement) %> |
+  <%= link_to "View All", business_program_campaign_engagements_path(@business,@program,@campaign) %> |
+  <%= button_to "Destroy", business_program_campaign_engagement_path(@business, @program, @campaign,@engagement), :confirm => 'Are you sure?', :method => :delete %>
+</p>

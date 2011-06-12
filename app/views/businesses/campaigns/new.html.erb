@@ -1,0 +1,23 @@
+<% title "#{@business.name} | Make an offer" %>
+<%= render 'form' %>
+<%= link_to 'Current Offers', business_campaigns_path(@business) %> |
+<%= link_to 'Back to business', business_path(@business) %>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+  jQuery(".inst").each(function(i) {
+    var beginStyle = jQuery(this).attr("style"); 
+    jQuery(this).attr("style", "color: #bbb;" + beginStyle).val(jQuery(this).attr("title"));
+    jQuery(this).bind("focus", function(e) {
+      if (jQuery(this).val() == jQuery(this).attr("title")) {
+        jQuery(this).val("");
+        jQuery(this).attr("style", beginStyle);
+      }
+    });
+    jQuery(this).bind("blur", function(e) {
+      if (jQuery(this).val() == "") {
+        jQuery(this).attr("style", "color: #bbb;" + beginStyle).val(jQuery(this).attr("title"));
+      }
+    });
+  });
+});
+</script>

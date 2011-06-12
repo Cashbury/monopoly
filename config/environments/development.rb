@@ -1,6 +1,6 @@
 Kazdoor::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
-
+Paperclip.options[:command_path] = '/usr/bin'
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
@@ -25,5 +25,17 @@ Kazdoor::Application.configure do
   
   # Devise related setting
   config.action_mailer.default_url_options = { :host => 'localhost:3000' }
-end
+  config.action_mailer.delivery_method = :smtp
 
+	config.action_mailer.smtp_settings = {
+	  :enable_starttls_auto => true,
+	  :address => "smtp.gmail.com",
+	  :port => 587,
+	  :domain => "www.espace.com.eg",
+	  :authentication => :login,
+	  :user_name => "tester@espace.com.eg",
+	  :password => "t3st3r!@#",
+		:tls => true
+	}
+
+end

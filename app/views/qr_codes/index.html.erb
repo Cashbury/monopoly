@@ -1,4 +1,4 @@
-<h1>Listing qr_codes</h1>
+<% title "Listing qr_codes" %>
 <style type="text/css" media="screen">
   table {
     margin-top:10px;
@@ -8,7 +8,7 @@
     border-right:1px #ccc solid;
     border-bottom:1px #ccc solid;
     text-align:center;
-    padding:5px;
+    padding:3px;
   }
   th{
     background:#d2d2d2;
@@ -41,8 +41,8 @@ $(function(){
     $('select.filter').bind('change',function(){
       var url = $(this).closest('form').serialize();
       window.location="/qr_codes?"+url;
-    })   
-
+    })    
+    
     $('select#brand_id').bind('change',function(){
       var brand_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_businesses/"+brand_id);
@@ -50,9 +50,18 @@ $(function(){
     
     $('select#business_id').bind('change',function(){
       var business_id = $(":selected", this).val();
-      $.getScript("/qr_codes/update_engagements/"+business_id);
+      $.getScript("/qr_codes/update_programs/"+business_id);
+    }); 
+    
+     $('select#program_id').bind('change',function(){
+      var program_id = $(":selected", this).val();
+      $.getScript("/qr_codes/update_campaigns/"+program_id);
+    }); 
+    
+    $('select#campaign_id').bind('change',function(){
+      var campaign_id = $(":selected", this).val();
+      $.getScript("/qr_codes/update_engagements/"+campaign_id);
     });   
-
 
 
 })
@@ -74,11 +83,15 @@ $(function(){
     <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
     <br/>
 
-    <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) , :class=>"efilter"%>
+    <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, params[:brand_id]) , :class=>"efilter"%>
 
-    <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe , :class=>"efilter" %>
-
-    <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id].to_s) , :class=>"filter"  %>
+    <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe +  options_from_collection_for_select(@businesses,:id,:name,params[:business_id]), :class=>"efilter" %>
+   
+    <%= select_tag :program_id , "<option value=''>..Program..</option>".html_safe +  options_from_collection_for_select(@programs,:id,:name,params[:program_id]), :class=>"efilter" %>
+  
+    <%= select_tag :campaign_id , "<option value=''>..Campaign..</option>".html_safe +  options_from_collection_for_select(@campaigns,:id,:name,params[:campaign_id]), :class=>"efilter" %>
+   
+    <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id]) , :class=>"filter"  %>
 
     <%= select_tag :layout , options_for_select({ "Single Use Layout"=>0,"Multi Use Layout "=>1 }),:class=>"efilter" %>
     <%= submit_tag "Export to template" %>
@@ -94,6 +107,8 @@ $(function(){
     <th>Hash code</th>
     <th>Status</th>
     <th>QrType</th>
+    <th>Campaign</th>
+    <th>Program</th>
     <th>Business</th>
     <th>Brand</th>
     <th>Exported</th>
@@ -117,7 +132,7 @@ $(function(){
       <% if qr_code.engagement.blank? %>
         "not"
       <% else %>
-        <%= qr_code.engagement.engagement_type %>
+        <%= qr_code.engagement.engagement_type.name %>
       <% end %>
     </td>   
     <td><%= qr_code.hash_code %></td>
@@ -129,15 +144,20 @@ $(function(){
         <strong> Single Use</strong>
       <% end %>
     </td>
-
     <td>
-       <%= qr_code.business_name  %>
+       <%= qr_code.engagement.try(:campaign).try(:name)  %>
+    </td>
+		<td>
+       <%= qr_code.engagement.try(:campaign).try(:program).try(:program_type_name)  %>
+		</td>
+    <td>
+       <%= qr_code.engagement.campaign.program.business.name  if qr_code.engagement  %>
      </td>
      <td>
       <% if qr_code.engagement.blank? %>
         N/A
       <% else %>
-        <%= qr_code.engagement.business.brand.name %>
+        <%= qr_code.engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) %>
       <% end %>
       </td>
       <td>
@@ -150,7 +170,7 @@ $(function(){
       <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
-    <td><%= link_to 'Show', qr_code_path(qr_code.hash_code) %></td>
+    <td><%= link_to 'Show', qr_code.qr_code_image.try(:photo).try(:url) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>

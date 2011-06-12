@@ -1,8 +1,4 @@
-Factory.define :program do |pgm|
-  pgm.sequence(:name) {|n| "pgm#{n}" }
-  pgm.auto_enroll true
-  pgm.start_date Date.today
-  pgm.end_date Date.today
-  pgm.initial_points 10
-  pgm.max_points 100
+Factory.define :program do |p|
+  p.program_type_id {Factory(:program_type).id}
+  p.business_id {Factory(:business).id}
 end

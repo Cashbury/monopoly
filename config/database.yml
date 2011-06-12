@@ -5,8 +5,9 @@ development:
   encoding: utf8
   database: kazdoor_development
   username: root
-  password: toor
+  password: 
   socket: /var/run/mysqld/mysqld.sock
+  
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -25,8 +26,15 @@ test:
 
 production:
   adapter: mysql
-  host: datastore.spinninghats.com
+  host: localhost
   database: datastore1
   username: user961
   password: user961lb
   
+staging:
+  adapter: mysql
+  encoding: utf8
+  database: kazdoor
+  username: kazdoor
+  password: kazdoor
+  socket: /var/run/mysqld/mysqld.sock  

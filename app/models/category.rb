@@ -1,17 +1,8 @@
-# == Schema Information
-# Schema version: 20101218032208
-#
-# Table name: categories
-#
-#  id          :integer         primary key
-#  name        :string(255)
-#  description :text
-#  parent_id   :integer
-#  created_at  :timestamp
-#  updated_at  :timestamp
-#
-
 class Category < ActiveRecord::Base
+  belongs_to :parent, :class_name => "Category"
+  has_many :children, :class_name => "Category",:foreign_key => "parent_id"
   has_and_belongs_to_many :businesses
   attr_accessible :name, :description, :parent_id
+  
+  validates_presence_of :name
 end

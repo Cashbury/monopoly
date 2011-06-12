@@ -1,7 +1,0 @@
-$(function(){
-    <% html_code ="" %>
-    <% for engagement in @engagements  %>
-      <% html_code+= "<option value='#{engagement.id}'>#{engagement.name}</option>" %>
-    <% end %>
-    $('#reward_engagement_id').html("<%= raw html_code%>") 
-})

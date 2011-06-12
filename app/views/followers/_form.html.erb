@@ -1,0 +1,17 @@
+<%= form_for @follower do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :biz_name , "Your Business Name" %><br />
+    <%= f.text_field :biz_name , :class => "text"%>
+  </p>
+  <p>
+    <%= f.label :user_email , "Your Email" %><br />
+    <%= f.text_field :user_email , :class =>"text"%>
+  </p>
+  <p>
+    <%= f.label :city , "Your City" %><br/>
+    <%= f.text_field :city , :class =>"text" %>
+  </p>
+
+  <p><%= f.submit "I want to stay tuned !" ,:class=>"submit"%></p>
+<% end %>

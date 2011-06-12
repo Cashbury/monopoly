@@ -39,28 +39,36 @@ jQuery(function () {
 	});
 })
 
-function change_engagement_status(id)
+function change_engagement_status(biz_id,prog_id,c_id,eng_id)
 {
 	jQuery.ajax({
   	type: 'POST',
-  	url: "/engagements/"+id+"/change_status",
+  	url: "/businesses/"+biz_id+"/programs/"+prog_id+"/campaigns/"+c_id+"/engagements/"+eng_id+"/change_status",
 		success: function(){
-			if(jQuery('#current_status_'+id).text()=="stopped"){
-				jQuery('#status_'+id).text("Stop");
-				jQuery('#current_status_'+id).text("started");
+			if(jQuery('#current_status_'+eng_id).text()=="false"){
+				jQuery('#status_'+eng_id).text("Stop");
+				jQuery('#current_status_'+eng_id).text("true");
 			}
 			else{
-				jQuery('#status_'+id).text("Start");
-				jQuery('#current_status_'+id).text("stopped");
+				jQuery('#status_'+eng_id).text("Start");
+				jQuery('#current_status_'+eng_id).text("false");
 			}
   	}
 	});return false;
 }
 
-var submitUsersSnapsSearch = function(form, sortingBy, page, direction){
+var submitUsersSnapsSearch = function(form,page){
 	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
 	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
-	startDate  = (jQuery('#filters_start_date').val()=="") ? 0 : jQuery('#filters_start_date').val();
-	endDate    = (jQuery('#filters_end_date').val()=="")? 0 : jQuery('#filters_end_date').val();
-	window.location = "/admin/users_snaps/businesses/" + businessId + "/places/" + placeId + "/start_date/" + startDate + "/end_date/"+ endDate;
+	fromDate  = (jQuery('#filters_from_date').val()=="") ? 0 : jQuery('#filters_from_date').val();
+	toDate    = (jQuery('#filters_to_date').val()=="")? 0 : jQuery('#filters_to_date').val();
+	window.location = "/users_snaps/businesses/" + businessId + "/places/" + placeId + "/from_date/" + fromDate + "/to_date/"+ toDate;
+}
+
+var submitLoyalCustomersSearch = function(form,page){
+	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
+	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
+	fromDate  = (jQuery('#filters_from_date').val()=="") ? 0 : jQuery('#filters_from_date').val();
+	toDate    = (jQuery('#filters_to_date').val()=="")? 0 : jQuery('#filters_to_date').val();
+	window.location = "/loyal_customers/businesses/" + businessId + "/places/" + placeId + "/from_date/" + fromDate + "/to_date/"+ toDate;
 }

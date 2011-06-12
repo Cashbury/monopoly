@@ -1,29 +1,17 @@
 class UsersSnapsController < ApplicationController
-	
+  before_filter :authenticate_user!, :require_admin
   def index
 		@business_id = params[:business_id].to_i.zero? ? nil : params[:business_id].to_i
 		@place_id = params[:place_id].to_i.zero? ? nil : params[:place_id].to_i
-		@start_date=params[:start_date].to_i.zero? ? nil : params[:start_date]
-		@end_date=params[:end_date].to_i.zero? ? nil : params[:end_date]
+		@from_date=params[:from_date].to_i.zero? ? nil : params[:from_date]
+		@to_date=params[:to_date].to_i.zero? ? nil : params[:to_date]
 		@page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-		@results=UsersSnap.search :business_id => @business_id,
-														  :place_id    => @place_id,
-                              :start_date  => @start_date,
-                              :end_date    => @end_date,
-														  :page        => @page
-  end
-
-  def snap
-		@snap=UserSnap.new(:user_id   =>params[:user_id],
-  										 :qr_code_id=>params[:qr_code_id],
-  										 :used_at   =>params[:used_at])
-		respond_to do |format|
-			if @snap.save
-      	format.xml {render :xml => @snap, :status => :created}
-     	else
-     		format.xml {render :text => @snap.errors.full_messages, :status => 500}
-     	end
-    end											 
+		@results=Log.search :business_id => @business_id,
+												:place_id    => @place_id,
+                        :from_date   => @from_date,
+                        :to_date     => @to_date,
+											  :page        => @page,
+												:type        =>Log::SEARCH_TYPES[:engagements]
   end
   
 end

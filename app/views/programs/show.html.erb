@@ -1,3 +1,4 @@
+<% title "Program: #{@program.name}" %>
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -7,7 +8,7 @@
 
 <p>
   <b>Type:</b>
-  <%= @program.type_id %>
+  <%= @program.program_type_id %>
 </p>
 
 <p>
@@ -39,7 +40,6 @@
   <b>Max points:</b>
   <%= @program.max_points %>
 </p>
-
 
 <%= link_to 'Edit', edit_program_path(@program) %> |
 <%= link_to 'Back', programs_path %>

@@ -1,4 +1,5 @@
 class BrandsController < ApplicationController
+	before_filter :authenticate_user!, :require_admin
   # GET /brands
   # GET /brands.xml
   def index
@@ -42,25 +43,44 @@ class BrandsController < ApplicationController
   def create
     @brand = Brand.new(params[:brand])
     @brand.user_id = current_user.id
-
-    respond_to do |format|
-      if @brand.save
-        format.html { redirect_to(@brand, :notice => 'Brand was successfully created.') }
-        format.xml  { render :xml => @brand, :status => :created, :location => @brand }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
-      end
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
+      image.upload_type = "BrandImage"
+      image.uploadable = @brand
+      image.photo = params[:upload][:photo]
     end
+    Brand.transaction do
+      @brand.save!
+      image.save! if image
+    end
+    respond_to do |format|
+      format.html { redirect_to(@brand, :notice => 'Brand was successfully created.') }
+      format.xml  { render :xml => @brand, :status => :created, :location => @brand }
+    end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "new" }
+      format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
+    end 
   end
 
   # PUT /brands/1
   # PUT /brands/1.xml
   def update
     @brand = Brand.find(params[:id])
-
+    @brand.user_id = current_user.id
+    params[:upload] ||= {}
+    unless params[:upload][:photo].blank?
+      @brand.brand_image.try(:destroy)
+      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
+      image.upload_type = "BrandImage"
+      image.uploadable = @brand
+      image.photo = params[:upload][:photo]
+    end
     respond_to do |format|
       if @brand.update_attributes(params[:brand])
+        image.save! if image
         format.html { redirect_to(@brand, :notice => 'Brand was successfully updated.') }
         format.xml  { head :ok }
       else

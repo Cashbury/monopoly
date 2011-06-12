@@ -1,0 +1,6 @@
+Egypt:EG
+Alexandria,31.2135,29.9443
+United States:US
+San Francisco,37.77493,-122.419416
+Lebanon:LB
+Beirut,33.888629,35.495479

@@ -1,0 +1,62 @@
+class Businesses::Places::ItemsController < ApplicationController
+ before_filter :authenticate_user!, :require_admin
+ before_filter :prepare_business_and_place
+ 
+ 
+ def index
+    @items = @place.items
+  end
+  
+  def show
+    @item = Item.find(params[:id])
+  end
+ 
+ def new
+  @item = @place.items.build
+  @item.build_item_image
+ end
+ 
+ def create
+    @item = @place.items.build(params[:item])
+    if @place.save
+      flash[:notice] = "Successfully created Item."
+      redirect_to business_place_item_url(@business,@place,@item)
+    else
+      render :action => 'new'
+    end
+ end
+ 
+ def edit
+    @item = Item.find(params[:id])
+    @item.build_item_image if @item.item_image.blank?
+  end
+  
+  def update
+    @item = Item.find(params[:id])
+    if @item.update_attributes(params[:item])
+      flash[:notice] = "Successfully updated Item."
+      redirect_to  business_place_item_url(@business,@place,@item)
+    else
+      render :action => 'edit'
+    end
+  end
+  
+  def destroy
+    @item = Item.find(params[:id])
+    if @item.business_id.nil?
+      @item.destroy 
+    else
+      ItemPlace.where(:place_id=>@place.id , :item_id => @item.id).first.destroy
+    end 
+    flash[:notice] = "Successfully destroyed Item."
+    redirect_to business_place_items_url(@business,@place)
+  end
+  
+ 
+ private 
+ def prepare_business_and_place
+   @business = Business.find(params[:business_id])
+   @place    = Place.find(params[:place_id])
+ end
+ 
+end

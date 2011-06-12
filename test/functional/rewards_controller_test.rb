@@ -1,54 +1,53 @@
 require 'test_helper'
 
 class RewardsControllerTest < ActionController::TestCase
-  def test_index
+  include Devise::TestHelpers
+  setup do
+    @user=Factory.create(:user,:admin=>true)
+    @user.confirm!
+    sign_in @user
+    @reward = Factory.create(:reward)
+  end
+
+  test "should get index" do
     get :index
-    assert_template 'index'
+    assert_response :success
+    assert_not_nil assigns(:rewards)
   end
-  
-  def test_show
-    get :show, :id => Reward.first
-    assert_template 'show'
-  end
-  
-  def test_new
+
+  test "should get new" do
     get :new
-    assert_template 'new'
-  end
-  
-  def test_create_invalid
-    Reward.any_instance.stubs(:valid?).returns(false)
-    post :create
-    assert_template 'new'
+    assert_response :success
   end
 
-  def test_create_valid
-    Reward.any_instance.stubs(:valid?).returns(true)
-    post :create
-    assert_redirected_to reward_url(assigns(:reward))
-  end
-  
-  def test_edit
-    get :edit, :id => Reward.first
-    assert_template 'edit'
-  end
-  
-  def test_update_invalid
-    Reward.any_instance.stubs(:valid?).returns(false)
-    put :update, :id => Reward.first
-    assert_template 'edit'
+  test "should create reward" do
+    assert_difference('Reward.count') do
+      post :create, :reward => @reward.attributes
+    end
+
+    assert_redirected_to reward_path(assigns(:reward))
   end
 
-  def test_update_valid
-    Reward.any_instance.stubs(:valid?).returns(true)
-    put :update, :id => Reward.first
-    assert_redirected_to reward_url(assigns(:reward))
+  test "should show reward" do
+    get :show, :id => @reward.to_param
+    assert_response :success
   end
-  
-  def test_destroy
-    reward = Reward.first
-    delete :destroy, :id => reward
-    assert_redirected_to rewards_url
-    assert !Reward.exists?(reward.id)
+
+  test "should get edit" do
+    get :edit, :id => @reward.to_param
+    assert_response :success
+  end
+
+  test "should update reward" do
+    put :update, :id => @reward.to_param, :reward => @reward.attributes
+    assert_redirected_to reward_path(assigns(:reward))
+  end
+
+  test "should destroy reward" do
+    assert_difference('Reward.count', -1) do
+      delete :destroy, :id => @reward.to_param
+    end
+
+    assert_redirected_to rewards_path
   end
 end

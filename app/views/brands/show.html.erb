@@ -1,3 +1,4 @@
+<% title "Brand | #{@brand.name}" %>
 <p id="notice"><%= notice %></p>
 
 <p>
@@ -10,6 +11,11 @@
   <%= @brand.description %>
 </p>
 
-
+<p>
+  <b>Photo:</b>
+  <% if @brand.brand_image%>
+    <%= image_tag @brand.brand_image.photo.url(:normal) %>
+  <% end %>
+</p>  
 <%= link_to 'Edit', edit_brand_path(@brand) %> |
 <%= link_to 'Back', brands_path %>

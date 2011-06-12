@@ -1,15 +1,14 @@
 class Program < ActiveRecord::Base
-	include ActiveModel::Validations
-	has_many :accounts,:foreign_key=>'program_id'
-	has_many :engagements,:foreign_key=>'program_id'
-	belongs_to :business
-	belongs_to :program_type
-	
-	validates_presence_of :name,:program_type_id,:business_id
-	validates_format_of :start_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
-	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy/mm/dd"
-	validates_numericality_of :initial_points,:max_points
-	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
-	validates_with PointsValidator, :initial => :initial_points, :max => :max_points
-
+  belongs_to :program_type
+  belongs_to :business
+  
+  has_many :campaigns,:dependent=>:destroy
+  validates_presence_of :business_id, :program_type_id
+  validates_uniqueness_of :program_type_id, :scope=>[:business_id]  
+  
+  scope :running_campaigns, where("#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date")
+  
+  def program_type_name
+    return program_type.name
+  end
 end
