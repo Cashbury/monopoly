@@ -20,3 +20,5 @@ vendor/cache/shoulda-2.11.3.gem
 config/database.yml
 public/images/qrcodes/*.png
 .project
+.redcar
+.rvmrc
