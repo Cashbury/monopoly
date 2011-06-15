@@ -29,15 +29,16 @@ end
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-# group :development, :test do :path=>'vendor/gems/rails_admin' 
+# group :development, :test do :path=>'vendor/gems/rails_admin'
   # gem 'rspec'
   # gem 'rspec-rails'
 # end
 #
 
+gem 'rspec-rails', :group => :test
 gem 'devise', "~>1.1.5"
-#gem 'rails_admin' , :git => 'git://github.com/sferik/rails_admin.git'  
-#:path=>'vendor/gems/rails_admin' 
+#gem 'rails_admin' , :git => 'git://github.com/sferik/rails_admin.git'
+#:path=>'vendor/gems/rails_admin'
 # gem 'sinatra', '1.0'
 # gem 'taps'
 gem 'nifty-generators', '=0.4.5'
