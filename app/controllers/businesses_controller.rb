@@ -96,14 +96,20 @@ class BusinessesController < ApplicationController
     flash[:notice] = "Successfully destroyed business."
     redirect_to businesses_url
   end
+
   def update_cities
-    @cities = City.where(:country_id=> params[:id])
+    @cities = City.where(:country_id=> params[:id] )
+                  .where(['name LIKE ?', "#{params[:term]}%"])
+                  .map{|c| {:label=> c.name ,:id=>c.id }}
+
     @selector_id=params[:selector_id]
     respond_to do |format|
       format.js
     end
 
   end
+
+
   private
   def set_tag_lists_for_business_places(business)
     business.places.each_with_index do |place,index|

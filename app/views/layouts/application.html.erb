@@ -9,8 +9,6 @@
     <%= yield(:head) %>
     <script type="text/javascript" language="javascript" charset="utf-8">
     //<![CDATA[
-        $(function(){});
-    //]]>
       jQuery(document).ready(function(){
         jQuery(".sub_menu").hide();
         jQuery(".main_header").click(function(){
@@ -26,6 +24,7 @@
           selected_link.next(".sub_menu").slideToggle(300);
         });
       });
+    //]]>
     </script>
   </head>
   <body>
