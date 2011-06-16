@@ -5,12 +5,12 @@
 }
 </style>
 
-<h3>Category</h3>  
+<h3>Category</h3>
 <p>
-	<ol>  
+	<ol>
 	  <% for category in @business.categories %>
-	  <li><%= h category.name %></li>  
-	  <% end %>  
+	  <li><%= h category.name %></li>
+	  <% end %>
 	</ol>
 </p>
 <p>
@@ -36,7 +36,7 @@
 <%unless @business.business_images.empty?%>
 <p>
   <strong>Images</strong>
-  <%for image in @business.business_images%> 
+  <%for image in @business.business_images%>
     <%= image_tag image.photo.url(:thumb) %>
   <%end%>
 </p>
@@ -49,7 +49,7 @@
   <li><strong>City: </strong><%= @business.mailing_address.city.try(:name) %></li>
   <li><strong>Neighborhood: </strong><%= @business.mailing_address.neighborhood %></li>
   <li><strong>ZipCode: </strong><%= @business.mailing_address.zipcode %></li>
-</ul>  
+</ul>
 <%end%>
 <%unless @business.billing_address.blank? %>
 <h3>Billing Address</h3>
@@ -59,23 +59,23 @@
   <li><strong>City: </strong><%= @business.billing_address.city.try(:name) %></li>
   <li><strong>Neighborhood: </strong><%= @business.billing_address.neighborhood %></li>
   <li><strong>ZipCode: </strong><%= @business.billing_address.zipcode %></li>
-</ul>  
+</ul>
 <%end%>
 <h3>Branches</h3>
 <p>
   <table width="100%" border="1" cellspacing="0" cellpadding="0">
     <tr>
-      <th>Name</th>    
-      <th>Address</th>    
-      <th>Neiborhood</th>    
+      <th>Name</th>
+      <th>Address</th>
+      <th>Neiborhood</th>
       <th>Phone Number</th>
-      <th>City</th>    
+      <th>City</th>
       <th>Country</th>
-      <th>Zipcode</th>  
-    </tr>  
+      <th>Zipcode</th>
+    </tr>
 	  <% for place in @business.places %>
     <tr>
-      <td><%= link_to place.name, business_place_path(@business,place) %></td> 
+      <td><%= link_to place.name, business_place_path(@business,place) %></td>
       <td><%= place.try(:address).try(:street_address) %>   </td>
       <td><%= place.try(:address).try(:neighborhood) %>     </td>
       <td><%= place.phone %>                                </td>
@@ -83,7 +83,7 @@
       <td><%= place.try(:address).try(:country).try(:name) %></td>
       <td><%= place.try(:address).try(:zipcode) %></td>
     </tr>
-	  <% end %>  
+	  <% end %>
   </table>
 </p>
 <p>
@@ -95,6 +95,6 @@
   <%= link_to "Make an offer", new_business_campaign_path(@business) %><br />
   <%= link_to "Current offers", business_campaigns_path(@business) %><br />
   <%= link_to "Show Programs", business_programs_path(@business) %><br />
-  <%= link_to "New Measurement Type", new_business_measurement_type_path(@business) %><br />
   <%= link_to "Show Items", business_items_path(@business)  %><br />
+  <li><%= link_to "New Measurement Type", new_business_measurement_type_path(@business) %></li>
 </p>

@@ -67,3 +67,4 @@ gem 'rmagick','=2.13.1' #server has this
 gem 'aws-s3','=0.6.2'
 gem 'paperclip','=2.3.11'
 #gem 'delayed_paperclip','=0.6.5'
+gem 'cancan' , "=1.6.5"

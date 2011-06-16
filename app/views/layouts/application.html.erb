@@ -9,7 +9,7 @@
     <%= yield(:head) %>
     <script type="text/javascript" language="javascript" charset="utf-8">
     //<![CDATA[
-        $(function(){}); 
+        $(function(){});
     //]]>
       jQuery(document).ready(function(){
         jQuery(".sub_menu").hide();
@@ -20,7 +20,7 @@
             if(selected_link[0] != jQuery(domEle)[0]){
              jQuery(domEle).removeClass('menu_item');
              jQuery(domEle).next(".sub_menu").slideUp(300);
-            } 
+            }
           });
           selected_link.toggleClass('menu_item');
           selected_link.next(".sub_menu").slideToggle(300);
@@ -30,57 +30,57 @@
   </head>
   <body>
 	  <div id="wrap">
-      <div id="header"> 
-        <div class="wrapper">  
+      <div id="header">
+        <div class="wrapper">
           <h1>
             <a class="cushbury_logo" href="/">Cashbury</a>
-          </h1> 
+          </h1>
           <div class="user_menu">
             <% if user_signed_in? %>
               <p>Signed in as <%= current_user.email %></p>
               <p><%= link_to "Sign out", destroy_user_session_path %></p>
             <% else %>
-              <p><%= link_to "Sign up", new_user_registration_path %></p> 
+              <p><%= link_to "Sign up", new_user_registration_path %></p>
               <p><%= link_to "Sign in", new_user_session_path %></p>
             <% end %>
           </div>
-        </div>  
-      </div><!-- end of header --> 
+        </div>
+      </div><!-- end of header -->
 	    <div id="main">
 	      <div id="side">
-	        <% if current_user.try(:admin?)%> 
-            <h2>PANEL</h2> 
-            <ul> 
-              <li><%= link_to "Brands", brands_path %></li> 
+	        <% if current_user.try(:admin?)%>
+            <h2>PANEL</h2>
+            <ul>
+              <li><%= link_to "Brands", brands_path %></li>
               <li><%= link_to "Businesses", businesses_path %></li>
               <li><%= link_to "Places", places_path %></li>
               <li><%= link_to "Analytics", "javascript:void(0)", :class=>"main_header"%>
-                <ul class="sub_menu"> 
-                  <li><%= link_to "Reports", users_snaps_path %></li> 
-                  <li><%= link_to "Loyal Customers", loyal_customers_path %></li> 
+                <ul class="sub_menu">
+                  <li><%= link_to "Reports", users_snaps_path %></li>
+                  <li><%= link_to "Loyal Customers", loyal_customers_path %></li>
                 </ul>
-              </li> 
+              </li>
               <li><%= link_to "QR", "javascript:void(0)", :class=>"main_header" %>
                 <ul class="sub_menu">
-                  <li><%= link_to "Issue", panel_qr_codes_path %></li> 
-                  <li><%= link_to "Manage", qr_codes_path %></li> 
-                  <li><%= link_to "Templates", templates_path %></li> 
+                  <li><%= link_to "Issue", panel_qr_codes_path %></li>
+                  <li><%= link_to "Manage", qr_codes_path %></li>
+                  <li><%= link_to "Templates", templates_path %></li>
                   <li><%= link_to "Print Jobs", print_jobs_path %></li>
                 </ul>
-            </ul> 
+            </ul>
             <li><%= link_to "Settings", "javascript:void(0)", :class=>"main_header" %>
-              <ul class="sub_menu"> 
-                <li><%= link_to "Program Types", program_types_path %></li> 
-                <li><%= link_to "Transaction Types", transaction_types_path %></li> 
-                <li><%= link_to "Categories", categories_path %></li> 
-              </ul> 
+              <ul class="sub_menu">
+                <li><%= link_to "Program Types", program_types_path %></li>
+                <li><%= link_to "Transaction Types", transaction_types_path %></li>
+                <li><%= link_to "Categories", categories_path %></li>
+              </ul>
             <%end%>
         </div><!-- side Ends -->
         <%if current_user.blank?%>
           <div style="margin:0 0 0 30px" id="leftContainer" >
         <%else%>
           <div id="leftContainer">
-        <%end%>    
+        <%end%>
   	      <div id="main_header">
   		      <% flash.each do |name, msg| %>
   	          <%= content_tag :div, msg, :id => "flash_#{name}", :style=>"padding:15px 0 0 0" %>
@@ -91,7 +91,7 @@
     	      </div><!-- end of left main -->
   	        <div id="right_main"></div>
           </div><!-- end of Canvase -->
-        </div><!-- end of  leftContainer -->  
+        </div><!-- end of  leftContainer -->
 	    </div>
 	   </div><!-- end of Main -->
 	  </div><!-- wrapper-->

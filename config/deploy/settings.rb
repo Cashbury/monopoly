@@ -3,14 +3,14 @@
 #############################################################
 
 set :application, 'kazdoor'
-set :deploy_to, "/home/kazdoor/cashbury.com/"
+set :deploy_to, "/home/kazdoor/spinninghats.com/"
 
 #use trunk to deploy to production
   set :branch, "master"
   set :rails_env, "production"
 
 #production
-  set :domain, 'cashbury.com'
+  set :domain, 'spinninghats.com'
   role :app, domain
   role :web, domain
   role :db, domain, :primary => true
@@ -21,6 +21,7 @@ set :deploy_to, "/home/kazdoor/cashbury.com/"
 
 set :scm, :git
 set :repository,  "git@github.com:Kazdoor/monopoly.git"
+set :branch , "rajib"
 
 #############################################################
 #	Servers
