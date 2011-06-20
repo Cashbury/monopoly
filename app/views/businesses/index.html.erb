@@ -16,7 +16,7 @@
       <td><%= business.brand.brand_image.to_s %></td>
       <td>
         <% maddress = business.mailing_address %>
-        <%= maddress.street_address + "," + maddress.zipcode + ", "+ maddress.country.name %>
+        <%= "#{maddress.street_address} , #{maddress.zipcode} , #{maddress.country.try(:name)}" %>
       </td>
       <td>Rajib Ahmed</td>
       <td><%= link_to "#{business.places.length}", business_places_path(business) %></td>

@@ -5,7 +5,7 @@ development:
   encoding: utf8
   database: kazdoor_development
   username: root
-  password: toor 
+  password:  
   socket: /var/run/mysqld/mysqld.sock
   
 
@@ -21,7 +21,7 @@ test:
   encoding: utf8
   database: kazdoor_test
   username: root
-  password: toor
+  password: 
   socket: /var/run/mysqld/mysqld.sock
 
 production:

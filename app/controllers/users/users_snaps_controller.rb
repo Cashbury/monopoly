@@ -2,11 +2,13 @@ class Users::UsersSnapsController < Users::BaseController
 	def snap
 		begin		
 		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash],:associatable_type=>"Engagement").first
-		  engagement=qr_code.engagement       
-      if !qr_code.status
+		  engagement=qr_code.try(:engagement)       
+		  if qr_code.nil?
+		    respond_with_error("QR Code no longer exists in the system!")
+      elsif !qr_code.status
         respond_with_error("QR Code not Active!")
       elsif !engagement.is_started
-        respond_with_error("Engagement no longer running")          
+        respond_with_error("Engagement no longer running!")          
       else
         respond_to do |format|
           account,campaign,program,after_fees_amount=current_user.snapped_qrcode(qr_code,engagement,params[:place_id],params[:lat],params[:long])
@@ -32,6 +34,7 @@ class Users::UsersSnapsController < Users::BaseController
 		s[:snap].merge!({:item_image           => photo.nil? ? "http://#{request.host_with_port}/images/icon.png" : photo.url(:thumb) })
 		s[:snap].merge!({:engagement_amount    => after_fees_amount})
 		s[:snap].merge!({:account_amount       => account.amount})
+		s[:snap].merge!({:fb_engagement_msg    => engagement.fb_engagement_msg})
     s
   end
   
