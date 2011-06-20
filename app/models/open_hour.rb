@@ -1,3 +1,17 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: open_hours
+#
+#  id         :integer(4)      not null, primary key
+#  day_no     :integer(4)
+#  from       :datetime
+#  to         :datetime
+#  place_id   :integer(4)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class OpenHour < ActiveRecord::Base
 	belongs_to :place
 	DAYS={

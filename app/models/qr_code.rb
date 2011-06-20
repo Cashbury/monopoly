@@ -1,3 +1,19 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: qr_codes
+#
+#  id                :integer(4)      not null, primary key
+#  hash_code         :string(255)
+#  created_at        :datetime
+#  updated_at        :datetime
+#  code_type         :boolean(1)
+#  status            :boolean(1)
+#  exported          :boolean(1)
+#  associatable_id   :integer(4)
+#  associatable_type :string(255)
+#
+
 require 'uri'
 class QrCode < ActiveRecord::Base  
   #QrCode dependent on engagement type "stamp"

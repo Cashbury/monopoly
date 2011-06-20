@@ -1,13 +1,20 @@
 # == Schema Information
-# Schema version: 20101218032208
+# Schema version: 20110615133925
 #
 # Table name: accounts
 #
-#  id         :integer         not null, primary key
-#  points     :integer
-#  user_id    :integer
-#  created_at :datetime
-#  updated_at :datetime
+#  id                  :integer(4)      not null, primary key
+#  created_at          :datetime
+#  updated_at          :datetime
+#  account_holder_id   :integer(4)
+#  campaign_id         :integer(4)
+#  measurement_type_id :integer(4)
+#  amount              :decimal(20, 3)
+#  is_money            :boolean(1)
+#  is_external         :boolean(1)
+#  payment_gateway_id  :integer(4)
+#  program_id          :integer(4)
+#  business_id         :integer(4)
 #
 
 class Account < ActiveRecord::Base

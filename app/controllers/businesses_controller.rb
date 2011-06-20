@@ -109,6 +109,13 @@ class BusinessesController < ApplicationController
 
   end
 
+  def check_primary_place
+    @business = Business.where(params[:id]).first
+    respond_to do |f|
+      f.js
+    end
+  end
+
 
   private
   def set_tag_lists_for_business_places(business)
@@ -118,6 +125,8 @@ class BusinessesController < ApplicationController
       end
     end
   end
+
+  # Please ... use models !!
   def prepare_hours
     @hours = []
     12.downto(1) do | i |

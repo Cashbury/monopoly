@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
+    <%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
+    <%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
+    <%= stylesheet_link_tag "home" , "redmond/jquery-ui-1.8.10.custom"  %>
+    <%= javascript_include_tag  :defaults,
+                                "cufon-yui" ,
+                                "z_Arista_Light_300.font" ,
+                                'jquery.enablePlaceholder.min',
+                                "http://maps.google.com/maps/api/js?sensor=true",
+                                "http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8.1/jquery.validate.min.js"
+                              %>
+    <script type="text/javascript">
+      jQuery(function(){
+          //Cufon.replace(".content-box p");
+      });
+      </script>
+    <%= csrf_meta_tag %>
+    <%= yield(:head) %>
+  </head>
+  <body>
+    <div class="container">
+      <%= yield %>
+      <div class="footer span-24 last">
+        <p> Copyrights &copy 2010, kazdoor Inc. Contact us at <a href="mailto:hello@cashbury.com">hello@cashbury.com</a></p>
+		  </div>
+    </div>
+  </body>
+</html>

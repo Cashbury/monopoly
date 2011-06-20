@@ -5,12 +5,18 @@ Kazdoor::Application.routes.draw do
   get "primary_user/show"
 
   resources :transaction_types
-	devise_for :users, :controllers => { :sessions => "users/sessions", :registrations=>"users/registrations", :password=>"users/passwords" }
+	devise_for :users, :controllers => {
+    :sessions => "users/sessions",
+    :registrations=>"users/registrations",
+    :password=>"users/passwords",
+  }
 
 	devise_scope :user do
 		namespace :users do
 			resources :sessions, :only => [:create, :destroy]
-			resources :registrations, :only=>[:create]
+			resources :registrations, :only=>[:create] do
+			  #match 'business', :on=>:collection, :action=>:business_signup , :via =>[:get, :post]
+			end
 			resources :passwords, :only=>[:create]
 		end
 	end
@@ -45,6 +51,7 @@ Kazdoor::Application.routes.draw do
 	end
 	resources :businesses do
 	  get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
+	  get "check_primary_place/:id",:action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
 	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
@@ -120,6 +127,7 @@ Kazdoor::Application.routes.draw do
 	#   match "/places"             						=> "places#index"
   match '/foryou'             						=> "followers#index" ,:as =>:foryou
   match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
+  match '/business_signup'                => "home#business_signup"
 
   #devise_for :users
 

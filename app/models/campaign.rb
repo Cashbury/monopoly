@@ -1,3 +1,22 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: campaigns
+#
+#  id                  :integer(4)      not null, primary key
+#  name                :string(255)     not null
+#  start_date          :date
+#  end_date            :date
+#  initial_amount      :decimal(20, 3)  default(0.0)
+#  created_at          :datetime
+#  updated_at          :datetime
+#  program_id          :integer(4)
+#  measurement_type_id :integer(4)
+#  state               :string(255)
+#  initial_biz_amount  :decimal(20, 3)
+#  has_target          :boolean(1)
+#
+
 class Campaign < ActiveRecord::Base
 	include ActiveModel::Validations
 	has_many   :accounts

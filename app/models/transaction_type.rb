@@ -1,3 +1,16 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: transaction_types
+#
+#  id             :integer(4)      not null, primary key
+#  name           :string(255)
+#  fee_amount     :decimal(20, 3)
+#  fee_percentage :decimal(20, 3)
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+
 class TransactionType < ActiveRecord::Base
   has_many :transactions
   has_many :actions

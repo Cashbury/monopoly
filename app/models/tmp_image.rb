@@ -1,3 +1,19 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: tmp_images
+#
+#  id                 :integer(4)      not null, primary key
+#  uploadable_id      :integer(4)
+#  uploadable_type    :string(255)
+#  photo_file_name    :string(255)
+#  photo_content_type :string(255)
+#  photo_file_size    :integer(4)
+#  upload_type        :string(255)
+#  created_at         :datetime
+#  updated_at         :datetime
+#
+
 class TmpImage < ActiveRecord::Base
   belongs_to :uploadable, :polymorphic => true
   has_attached_file :photo,
