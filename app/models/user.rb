@@ -77,7 +77,27 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :brands,
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
 
+  before_save :set_default_role
 
+
+  def set_default_role
+    unless brands.blank?
+      roles << Role.where(:name=>Role::AS[:principal]).limit(1).first
+    else
+      roles << Role.where(:name=>Role::AS[:mobi]).limit(1).first
+    end
+  end
+
+  #convinience method ====================
+  def admin?
+    role?(Role::AS[:admin])
+  end
+
+  def super_admin?
+    role?(Role::AS[:super_admin])
+  end
+
+  #for business signup
   def with_brand
     self.brands.build
     self

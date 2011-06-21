@@ -28,8 +28,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 	def set_diff_layout
 		template = "businessend"
 		template = "application" if action_name =="new" && resource.try(:role?,"admin")
-		p template
 		template
 	end
 
+
+  def add_sign_up_path_for(resource)
+    y resource
+  end
 end
