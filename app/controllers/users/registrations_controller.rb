@@ -32,7 +32,5 @@ class Users::RegistrationsController < Devise::RegistrationsController
 	end
 
 
-  def add_sign_up_path_for(resource)
-    y resource
-  end
+
 end

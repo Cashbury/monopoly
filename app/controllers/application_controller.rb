@@ -14,6 +14,11 @@ class ApplicationController < ActionController::Base
 
 
 
+  def add_sign_up_path_for(resource_or_scope)
+    y resource_or_scope
+    "http://google.com"
+  end
+
 
   def after_sign_in_path_for(resource_or_scope)
     if current_user.role? Role::AS[:principal]

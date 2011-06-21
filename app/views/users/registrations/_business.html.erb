@@ -52,7 +52,7 @@ input.title{
 <div id="step1" class="mono-business-register span-12 last">
 
   <%= form_for(resource, resource.with_brand, :url => registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
+    <%= devise_error_messages! %>
     <% f.fields_for :brands do |brand_form| %>
     <p>
       <label class="hide" for="company-name" >Company Name</label>
@@ -77,5 +77,5 @@ input.title{
   <p>
     <%= f.submit "Signup" %>
   </p>
-  <% end %>
+  <%= end %>
 </div>
