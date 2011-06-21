@@ -21,6 +21,7 @@ class HomeController < ApplicationController
 
 
   def business_signup
+    y action_name
     render :layout=>"businessend"
   end
 

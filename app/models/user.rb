@@ -42,19 +42,22 @@
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
+
   devise :database_authenticatable, :registerable,:token_authenticatable,
          :recoverable, :rememberable, :trackable, :validatable,:confirmable
 
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,:authentication_token
-   
+  attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
+                  :authentication_token, :brands_attributes
+
   has_many :templates
+  has_many :brands
   has_many :legal_ids, :as=>:associatable
   has_many :followers
   has_many :businesses, :through=>:followers
   has_many :invitations, :foreign_key=>"from_user_id"
-  
+
   has_many :employees #same user with different positions
   has_many :logs
   has_many :followers, :as=>:followed
@@ -66,11 +69,30 @@ class User < ActiveRecord::Base
   has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
+  has_and_belongs_to_many :roles
+
+
+
+  #nested attributes
+  accepts_nested_attributes_for :brands,
+                                :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
+
+
+  def with_brand
+    self.brands.build
+    self
+  end
+
+
+  def role?(role)
+    return !!self.roles.find_by_name(role.to_s.camelize)
+  end
+
 
 	def has_account_with_campaign?(acch,campaign_id)
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
 	end
-	
+
 	def auto_enroll_at(places)
 	  begin
       ids=places.collect{|p| p.business_id}
@@ -85,7 +107,7 @@ class User < ActiveRecord::Base
               unless self.has_account_with_campaign?(accholder,campaign.id)
                 accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) if accholder.nil?
                 Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type,:account_holder=>accholder)
-              end                
+              end
             end
           end
         end
@@ -96,17 +118,17 @@ class User < ActiveRecord::Base
     end
     targeted_campaigns_ids
 	end
-	
+
 	def account_holder
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
 	end
-	
+
 	def snapped_qrcode(qr_code,engagement,place_id,lat,lng)
     campaign=engagement.campaign
- 
+
     user_account=campaign.user_account(self)
     business_account=campaign.business_account
-    
+
     date=Date.today.to_s
     Account.transaction do
       qr_code.scan
@@ -120,19 +142,19 @@ class User < ActiveRecord::Base
         accholder.accounts << account
         accholder.save!
       end
-      
+
       #debit business account and credit user account
       action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
       transaction_type=action.transaction_type
       after_fees_amount=transaction_type.fee_amount.nil? ? engagement.amount : engagement.amount-transaction_type.fee_amount
       after_fees_amount=transaction_type.fee_percentage.nil? ? after_fees_amount : (after_fees_amount-(after_fees_amount * transaction_type.fee_percentage/100))
-      
+
       business_account_before_balance=business_account.amount
       business_account.decrement!(:amount,engagement.amount)
-      
+
       user_account_before_balance=user_account.amount
       user_account.increment!(:amount,after_fees_amount)
-      
+
       #save the transaction record
       transaction=Transaction.create!(:from_account=>business_account.id,
                                       :to_account=>user_account.id,
@@ -148,7 +170,7 @@ class User < ActiveRecord::Base
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
                                       :transaction_fees=>transaction_type.fee_amount)
-                          
+
       #save this engagement action to logs
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id =>self.id,
@@ -165,22 +187,22 @@ class User < ActiveRecord::Base
                   :lat            =>lat,
                   :lng            =>lng,
                   :created_on     =>date)
-      [user_account,campaign,campaign.program,after_fees_amount]                                
+      [user_account,campaign,campaign.program,after_fees_amount]
     end
 	end
-	
+
 	def ensure_authentication_token!
     reset_authentication_token! if authentication_token.blank?
   end
-  
+
   def full_name
     "#{self.first_name} #{self.last_name}"
   end
-  
+
   def engaged_with_business?(business)
     !self.business_customers.where(:business_id=>business.id).empty?
   end
-  
+
   def is_targeted_from?(campaign)
     campaign.targets.each do |target|
       return target.name=="new_comers" ? !self.engaged_with_business?(campaign.program.business) : self.engaged_with_business?(campaign.program.business)

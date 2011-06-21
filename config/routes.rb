@@ -14,10 +14,8 @@ Kazdoor::Application.routes.draw do
 	devise_scope :user do
 		namespace :users do
 			resources :sessions, :only => [:create, :destroy]
-			resources :registrations, :only=>[:create] do
-			  #match 'business', :on=>:collection, :action=>:business_signup , :via =>[:get, :post]
-			end
-			resources :passwords, :only=>[:create]
+			resources :registrations, :only=>[:create]
+      resources :passwords, :only=>[:create]
 		end
 	end
 

@@ -1,7 +1,7 @@
 class AddPrimaryUserFieldsToBusiness < ActiveRecord::Migration
   def self.up
     add_column :businesses, :principal_user_id,   :integer
-    add_column :businesses, :legal_id  ,           :integer
+    add_column :businesses, :legal_id  ,          :string
   end
 
   def self.down

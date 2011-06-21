@@ -100,7 +100,7 @@ class BusinessesController < ApplicationController
   def update_cities
     @cities = City.where(:country_id=> params[:id] )
                   .where(['name LIKE ?', "#{params[:term]}%"])
-                  .map{|c| {:label=> c.name ,:id=>c.id }}
+                  .map{|city| {:id=>city.id, :label=>city.name }}
 
     @selector_id=params[:selector_id]
     respond_to do |format|
