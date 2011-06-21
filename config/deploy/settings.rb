@@ -3,7 +3,7 @@
 #############################################################
 
 set :application, 'kazdoor'
-set :deploy_to, "/home/cashbury/spinninghats.com/"
+set :deploy_to, "/home/cashbury/cashbury.com/"
 
 #use trunk to deploy to production
   set :branch, "master"
