@@ -25,6 +25,7 @@ class Businesses::PlacesController < ApplicationController
   def new
     @place=@business.places.build
     @place.build_address
+    @open_hours={}
     ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
   
@@ -38,7 +39,8 @@ class Businesses::PlacesController < ApplicationController
       flash[:notice] = "Successfully created place."
       redirect_to business_place_url(@business,@place)
     else
-      @place.build_address
+      @place.build_address(params[:place][:address_attributes])
+      @open_hours=params[:open_hour]
       ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
       render :action => 'new'
     end
