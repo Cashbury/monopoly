@@ -29,10 +29,6 @@
   <%= @place.tag_list %>
 </p>
 <p>
-  <strong>Is now opened?:</strong>
-  <%= @place.is_open? %>
-</p>
-<p>
   <strong>Open Hours:</strong>
   <ul>
     <% @place.open_hours.each do  |open_hour|%>

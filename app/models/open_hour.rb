@@ -42,9 +42,7 @@ class OpenHour < ActiveRecord::Base
   def self.has_two_hour_at_any_day(place)
     0.upto(6) do |day_num|
       open_hours = OpenHour.where(:place_id=>place.id,:day_no=>day_num)
-      puts "ELSIZEEEEEEE #{open_hours.size}"
       if open_hours.size == 2
-        puts ">>>>>>>>>>>>>>>>>.heeh true"
         return true
       end
     end
