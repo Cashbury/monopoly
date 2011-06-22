@@ -12,11 +12,8 @@ class ApplicationController < ActionController::Base
   end
 
 
-
-
-  def add_sign_up_path_for(resource_or_scope)
-  end
-
+  #def add_sign_up_path_for(resource_or_scope)
+  #end
 
   def after_sign_in_path_for(resource_or_scope)
     if current_user.role? Role::AS[:principal]
@@ -24,9 +21,9 @@ class ApplicationController < ActionController::Base
     elsif (current_user.role? Role::AS[:super_admin]) || (current_user.role? Role::AS[:admin])
       businesses_url
     elsif current_user.role? Role::AS[:mobi]
-      businesses_url
+      "http://google.com"
     else
-      super
+      "http://google.com"
     end
   end
 

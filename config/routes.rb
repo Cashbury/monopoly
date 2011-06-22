@@ -27,6 +27,8 @@ Kazdoor::Application.routes.draw do
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
+
+    resource :businesses
     get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places
 	end
 

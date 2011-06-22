@@ -1,54 +1,4 @@
 <% title "Business Signup" %>
-<style type="text/css" media="screen">
-  body{
-   background: url(/images/bg.png) repeat ;
-  }
-
-label{
-  display:block;
-}
-
-p{
-  margin:0;
-}
-label.tt{
-  display:inline;
-}
-input.text, input[type="search"], textarea, input[type="text"], input[type="email"], input[type="password"] {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border-radius: 4px 4px 4px 4px;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4) inset, 0 2px 1px 0 rgba(0, 0, 0, 0.2) inset, 0 2px 3px 0 rgba(0, 0, 0, 0.2) inset, 0 1px 0 0 rgba(255, 255, 255, 0.8);
-    color: #202122;
-    line-height: 18px;
-    padding: 6px 6px 4px;
-  }
-
-
-
-input.text:focus, input[type="search"]:focus, textarea:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
-  box-shadow: inset 0 0 2px 2px #f0f000;
-}
-
-input.title.double, select.double{
-  width:400px;
-  float:none;
-}
-
-input.title{
-  width:193px;
-  float:left;
-}
-
-  .ui-widget-header{
-    background:none;
-  }
-
-  #head{
-    height:150px;
-  }
-
-  </style>
-
 <div id="step1" class="mono-business-register span-12 last">
 
   <%= form_for(resource, resource.with_brand, :url => registration_path(resource_name)) do |f| %>
@@ -77,5 +27,5 @@ input.title{
   <p>
     <%= f.submit "Signup" %>
   </p>
-  <%= end %>
+  <% end %>
 </div>
