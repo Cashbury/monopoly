@@ -41,7 +41,8 @@
         </p>
         <p>
           <%= mailing_address_form.label :city %>
-          <%= mailing_address_form.text_field :city_id , :value=>"" %>
+          <%= mailing_address_form.hidden_field :city_id , :value=>"" %>
+          <input type="text" name="city" value="" id="mcity_id"/>
         </p>
         <p>
           <%= mailing_address_form.label :zipcode %>
@@ -66,7 +67,8 @@
         </p>
         <p>
           <%= billing_address_form.label :city %>
-          <%= billing_address_form.text_field :city_id , :value=>""%>
+          <%= billing_address_form.hidden_field :city_id , :value=>""%>
+          <input type="text" name="" value="" id="bcity_id"/>
         </p>
         <p>
           <%= billing_address_form.label :zipcode %>
