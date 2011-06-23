@@ -1,0 +1,55 @@
+
+
+<div id="step2" class="mono-business-register span-24">
+  <strong> Thank you for confirmation!</strong>
+</div>
+
+<div id="step3" class="mono-business-register span-24" >
+  <b>Primary Branch</b>
+
+  <%= form_for(@place,:url=> primary_place_users_businesses_path) do |f| %>
+  <%= f.error_messages %>
+  <p>
+    <%= f.label :name, 'name' ,:class=>"hide" %>
+    <%= f.text_field :name ,:class=>"title double",:placeholder=>"Place name" %>
+  </p>
+
+  <%= f.fields_for :address, f.object.address do |address_form| %>
+  <p class="clearfix" >
+    <%= address_form.label :street_address ,:class=>"hide"%>
+    <%= address_form.text_field :street_address , :class=>"title double", :placeholder=>"Street address" %>
+  </p>
+  <p>
+    <%= address_form.label :country_id , :class=>"hide" %>
+    <%= address_form.hidden_field :country_id %>
+    <input type="text" name="country" placeholder="Country" value="" id="country_id" class="title double" />
+  </p>
+  <p class="clearfix" >
+    <%= address_form.label :city_id ,:class=>"hide"%>
+    <%= address_form.hidden_field :city_id%>
+    <input type=text" name="city" value="" id="city_id" placeholder="City" class="title" />
+    <%= address_form.label :neighborhood ,:class=>"hide"%>
+    <%= address_form.text_field :neighborhood , :class=>"title", :placeholder=>"Neighborhood" %>
+  </p>
+  <% end %>
+
+  <div id="map_canvas" style="width:412px; height:400px"></div>
+  <p class="clearfix">
+    <%= f.label :phone ,:class=>"hide"%>
+    <%= f.text_field :phone , :class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
+
+    <%= f.hidden_field :lat %>
+    <%= f.hidden_field :long %>
+  </p>
+  <div class="hide">
+    <ul>
+    	<li>Import 4Square</li>
+    	<li>Add Hours of operation</li>
+    	<li>Add Place type</li>
+    </ul>
+  </div>
+</div>
+<p>
+  <%= f.submit "submit" %>
+</p>
+<% end %>

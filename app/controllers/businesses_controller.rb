@@ -1,6 +1,7 @@
 class BusinessesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
+  skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
 
   def index
     @businesses = Business.all
@@ -106,7 +107,13 @@ class BusinessesController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
 
+  def update_countries
+    @cities = Country.where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }}
+    respond_to do |format|
+      format.js
+    end
   end
 
   def check_primary_place

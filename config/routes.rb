@@ -28,7 +28,11 @@ Kazdoor::Application.routes.draw do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
 
-    resource :businesses
+    resource :businesses do
+			get '/primary_place', :action=>:primary_place,  :on =>:collection
+			post '/primary_place', :action=>:primary_place,  :on =>:collection
+			get '/set_rewards',   :action=>:set_rewards ,   :on =>:collection
+    end
     get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places
 	end
 
@@ -49,9 +53,11 @@ Kazdoor::Application.routes.draw do
     get "update_items/:id"        ,:action=>:update_items     , :on =>:collection  ,:as =>"update_items"
 
 	end
-	resources :businesses do
-	  get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
-	  get "check_primary_place/:id",:action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
+
+  resources :businesses do
+	  get "update_cities/:id",:action=>:update_cities,    :on =>:collection, :as =>"update_cities"
+	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
+	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
 	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
