@@ -45,7 +45,14 @@ class Businesses::CampaignsController < ApplicationController
     @campaign.name="#{reward_attrs[:name].capitalize} Campaign"
     respond_to do |format|
       if @campaign.save    
-        format.html { redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') }
+        format.html { 
+          if reward_attrs[:reward_image_attributes].blank?
+            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') 
+          else
+            @reward=@campaign.rewards.first
+            render :action => 'crop'  
+          end
+        }
       else
         @campaign.errors.add(:item_name,"can't be blank") if params[:item_name]==""
         @reward=@campaign.rewards.first
@@ -72,7 +79,7 @@ class Businesses::CampaignsController < ApplicationController
   end
   
   def update
-    @campaign             = Campaign.find(params[:id])
+    @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
@@ -103,7 +110,14 @@ class Businesses::CampaignsController < ApplicationController
     params[:campaign][:engagements_attributes]["0"]["description"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]} #{reward_attrs[:needed_amount]} times, Get a free #{reward_attrs[:name]}"
     respond_to do |format|
       if @campaign.update_attributes(params[:campaign])
-        format.html { redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') }
+        format.html { 
+          if reward_attrs[:reward_image_attributes].blank?
+            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
+          else
+            @reward=@campaign.rewards.first
+            render :action => 'crop'  
+          end
+        }
       else
         @campaign.errors.add(:item_name,"can't be blank") if params[:item_name]==""
         @reward=@campaign.rewards.first
@@ -113,7 +127,15 @@ class Businesses::CampaignsController < ApplicationController
       end
     end
   end
-  
+  def crop_image
+    @campaign=Campaign.find(params[:campaign_id])
+    @reward=Reward.find(params[:reward_id])
+    if @reward.update_attributes!(params[:reward])
+      redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
+    else    
+      render :action=>"crop"
+    end    
+  end
   def destroy
     @campaign = Campaign.find(params[:id])
     @campaign.destroy

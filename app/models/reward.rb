@@ -32,7 +32,16 @@ class Reward < ActiveRecord::Base
   validates_length_of :name, :maximum => 16
   validates_length_of :heading1, :maximum => 40
   validates_length_of :heading2, :maximum => 84
-
+  after_update :reprocess_photo
+  def reprocess_photo  
+    puts "ana henaaaaaaaaaaaa"
+    if !self.reward_image.nil? and self.reward_image.cropping?
+      puts "wana kamaaaaaaan"
+      puts "#{self.reward_image.crop_w} and #{self.reward_image.crop_h}"
+      self.reward_image.photo.reprocess!
+      self.reward_image.save!
+    end
+  end  
   #  private
   # def update_categories
   #   places.delete_all

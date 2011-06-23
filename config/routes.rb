@@ -9,7 +9,6 @@ Kazdoor::Application.routes.draw do
 			resources :passwords, :only=>[:create]
 		end
 	end
-	resources :images
 	namespace :users do
 		resources :users_snaps do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection
@@ -97,19 +96,22 @@ Kazdoor::Application.routes.draw do
     
     resources :programs , :controller => "businesses/programs" do
       resources :campaigns , :controller => "businesses/programs/campaigns" do
-         resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
+        resources :engagements,:controller => "businesses/programs/campaigns/engagements" do
           post "change_status"   ,:on =>:member
 	        get "stamps", :on => :collection
-	      resources :places , :only=>[:issue_code] do 
-	         get "issue_code" ,:on =>:member
-	       end
-	       resources :rewards, :controller=>"businesses/programs/campaigns/engagements/rewards"
-	      end
-	      resources :rewards, :controller=>"businesses/programs/campaigns/rewards"
+        end
+        resources :places , :only=>[:issue_code] do 
+          get "issue_code" ,:on =>:member
+        end
+	      resources :rewards, :controller=>"businesses/programs/campaigns/rewards" do
+	        post "/crop_image",:action=>:crop_image    
+        end
      end
-   end
+    end
     resources :rewards
-    resources :campaigns,:controller => "businesses/campaigns"
+    resources :campaigns,:controller => "businesses/campaigns" do
+      post "/crop_image",:action=>:crop_image
+    end
   end
   
 	# resources :places

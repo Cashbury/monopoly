@@ -9,7 +9,6 @@ class Brand < ActiveRecord::Base
   private  
   def reprocess_photo  
     if !self.brand_image.nil? and self.brand_image.cropping?
-      puts "ERRORRRRRRRRRR"
       self.brand_image.photo.reprocess!
       self.brand_image.save
     end

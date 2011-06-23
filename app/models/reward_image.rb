@@ -7,6 +7,7 @@ class RewardImage < Image
                       :thumb  => "100x100>", #for fb share
                       :normal => Proc.new { |instance| instance.resize }
                     },
+                    :processors => [:cropper] ,
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",
                     :path => "rewards/:id/:style/:filename"
