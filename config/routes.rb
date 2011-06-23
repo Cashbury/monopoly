@@ -9,7 +9,7 @@ Kazdoor::Application.routes.draw do
 			resources :passwords, :only=>[:create]
 		end
 	end
-	
+	resources :images
 	namespace :users do
 		resources :users_snaps do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection
@@ -59,8 +59,10 @@ Kazdoor::Application.routes.draw do
   resources :templates
 
   resources :print_jobs
-
   resources :brands
+  resources :brands do 
+    get "crop" ,:on =>:member
+  end
   
   resources :qr_codes do
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"

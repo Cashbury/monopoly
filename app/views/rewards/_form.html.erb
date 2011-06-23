@@ -80,7 +80,14 @@ jQuery(function(){
     <div class="row">
       <input type="text" name="counter" maxlength="3" size="3" value="84" id="counter_field"> chars remaining
     </div>
-      
+    <div class="row">
+      <div class="basic_info_caption1">Facebook msg when user unlocks a reward</div>
+      <%= f.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Facebook msg when user enjoys a reward</div>
+      <%= f.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
     <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
       <div id="Enter_Num_Stamp">

@@ -13,6 +13,14 @@
   <%= @reward.heading2 %>
 </p>
 <p>
+  <strong>Facebook msg when user unlocks a reward:</strong>
+  <%= @reward.fb_unlock_msg %>
+</p>
+<p>
+  <strong>Facebook msg when user enjoys a reward:</strong>
+  <%= @reward.fb_enjoy_msg %>
+</p>
+<p>
   <strong>Program:</strong>
   <%= @reward.try(:campaign).try(:program).try(:program_type_name) %>
 </p>

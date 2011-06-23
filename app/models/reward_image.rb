@@ -1,10 +1,11 @@
+require "#{Rails.root}/lib/paperclip_processors/cropper.rb" # required to make cropping work.
 class RewardImage < Image
   belongs_to :reward
   
   has_attached_file :photo,
                     :styles => {
                       :thumb  => "100x100>", #for fb share
-                      :normal => "79x54>"
+                      :normal => Proc.new { |instance| instance.resize }
                     },
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",

@@ -31,6 +31,10 @@
     <%= f.text_area :description %>
   </p>
   <p>
+    <%= f.label "Facebook msg when user makes an engagement" %><br />
+    <%= f.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>100 %>
+  </p>
+  <p>
     <%= f.label :is_started %><br />
     <%= f.select :is_started, options_for_select([ ['started', 'true'],['stopped','false']],@engagement.is_started)%>
   </p>
