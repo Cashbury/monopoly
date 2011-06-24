@@ -26,7 +26,7 @@ class BrandsController < ApplicationController
   # GET /brands/new.xml
   def new
     @brand = Brand.new
-
+    @brand.build_brand_image
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @brand }
@@ -36,6 +36,7 @@ class BrandsController < ApplicationController
   # GET /brands/1/edit
   def edit
     @brand = Brand.find(params[:id])
+    @brand.build_brand_image if @brand.brand_image.nil?
   end
 
   # POST /brands
@@ -43,20 +44,9 @@ class BrandsController < ApplicationController
   def create
     @brand = Brand.new(params[:brand])
     @brand.user_id = current_user.id
-    params[:upload] ||= {}
-    unless params[:upload][:photo].nil?
-      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
-      image.upload_type = "BrandImage"
-      image.uploadable = @brand
-      image.photo = params[:upload][:photo]
-    end
-    Brand.transaction do
-      @brand.save!
-      image.save! if image
-    end
     respond_to do |format|
       format.html { 
-        if params[:upload][:photo].blank?
+        if @brand.save! && @brand.brand_image.nil?
           redirect_to(@brand, :notice => 'Brand was successfully created.') 
         else
           render :action => 'crop'  
@@ -76,20 +66,10 @@ class BrandsController < ApplicationController
   def update
     @brand = Brand.find(params[:id])
     @brand.user_id = current_user.id
-    params[:upload] ||= {}
-    unless params[:upload][:photo].nil?
-      @brand.brand_image.try(:destroy)
-      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
-      image.upload_type = "BrandImage"
-      image.uploadable = @brand
-      image.photo = params[:upload][:photo]
-      @brand.brand_image=image
-      @brand.save!
-    end
     respond_to do |format|
       if @brand.update_attributes!(params[:brand])
         format.html { 
-          if params[:upload][:photo].blank?
+          if params[:brand][:brand_image_attributes][:photo].blank?
             redirect_to(@brand, :notice => 'Brand was successfully updated.') 
           else 
             render :action=> 'crop'
@@ -100,6 +80,11 @@ class BrandsController < ApplicationController
         format.html { render :action => "edit" }
         format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
       end
+    end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "edit" }
+      format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
     end
   end
 
@@ -114,17 +99,8 @@ class BrandsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
   def crop
+    
   end
- #def resize_uploaded_image_for_cropping(image_field_params)
- #   @upload_io = image_field_params
- #   @filename = @upload_io.original_filename
- #   @filepath = Rails.root.join('public', 'images', @filename)
- #   File.open(@filepath) do |file|
- #     file.write(image_io.read)
- #   end
- #   @original = Magick::Image.read(@filepath)
- #   @thumbnail = @original.resize_to_fit 75 75
- #   @thumbnail.write(Rails.root.join('public', 'images', 'tmp_' + filename)
- # end
 end

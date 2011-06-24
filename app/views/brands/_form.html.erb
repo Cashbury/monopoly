@@ -20,10 +20,18 @@
     <%= f.text_area :description %>
   </div>
   <br />
+  <%unless @brand.brand_image.nil? || @brand.brand_image.new_record? %>
   <div class="field">
-    <input type="file" name="upload[photo]"/><br />
-    <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
-    <br /><br />
+    <%= f.label :image %>
+    <%= image_tag @brand.brand_image.photo.url(:normal) %>
+  </div>
+  <%end%>
+  <div class="field">
+    <%=f.fields_for :brand_image do |builder| %>
+      <%=builder.file_field :photo %><br/>
+      <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
+      <br /><br />
+    <%end%>
   </div>
   <div class="actions">
     <%= f.submit %>
