@@ -11,41 +11,43 @@
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
     geocoder = new google.maps.Geocoder();
     marker = new google.maps.Marker({map:map});
+    google.maps.event.addListener(marker,"dragend",function(){
+        map.panTo(marker.getPosition());
+        jQuery('input#lat').val(marker.getPosition().lat());
+        jQuery('input#long').val(marker.getPosition().lng());
+    });
   }
 
   var MonoV1 = {
     find_place_on_map:function(e){
-      var strAddress = "";
-      var stAddress = [];
-      var address = [];
+      var strAddress  = "";
+      var stAddress   = [];
+      var address     = [];
 
-      var $stAdd1 = jQuery('#place_address_attributes_street_address');
-      var $stAdd2 = jQuery('#street-address2');
-      var $crossStreet = jQuery('#cross-street');
+      var $stAdd1       = jQuery('#street_address');
+      var $crossStreet  = jQuery('#cross_street');
 
-      if($stAdd1.val()!="") stAddress.push($stAdd1.val());
-      if($stAdd2.val()!="") stAddress.push($stAdd2.val());
-      if(stAddress.length>0) {
-        strAddress += stAddress.join(" ,");
-        if($crossStreet.val()!=""){
+      if($stAdd1.val()!=""){
+        strAddress +=" "+$stAdd1.val();
+
+        if( $crossStreet.val()!=""){
           strAddress+=" at "+$crossStreet.val();
         }
       }
 
-      var $city = jQuery('#city_id');
-      var $neighborhood = jQuery('#place_address_attributes_neighborhood');
 
-      if($neighborhood.val()!="") address.push($neighborhood.val())
-      if($city.val()!="") address.push($city.val());
-      strAddress += address.join(" ,");
+      strAddress += " "+jQuery('#location').val();
 
+      console.log(strAddress );
       geocoder.geocode( { 'address': strAddress }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
           map.setZoom(16);
           map.setCenter(results[0].geometry.location);
           marker.setPosition(results[0].geometry.location);
-          jQuery('#place_lat').val(results[0].geometry.location.Ha);
-          jQuery('#place_long').val(results[0].geometry.location.Ia);
+          marker.setDraggable(true);
+
+          jQuery('input#lat').val(results[0].geometry.location.Ha);
+          jQuery('input#long').val(results[0].geometry.location.Ia);
         } else {
           //alert("Geocode was not successful for the following reason: " + status)
           //better error handling needed
@@ -62,7 +64,7 @@
       jQuery('input.title[type=text]').enablePlaceholder();
       jQuery('.tabs').tabs();
 
-      jQuery('#cross-street, #place_address_attributes_street_address,#city_id, #place_address_attributes_neighborhood').blur(MonoV1.find_place_on_map);
+      jQuery('#cross_street, #street_address,#location').blur(MonoV1.find_place_on_map);
 
       jQuery('form#step1').validate(MonoV1.add_registration_validation);
 

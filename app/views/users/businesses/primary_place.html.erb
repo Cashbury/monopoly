@@ -1,55 +1,46 @@
-
-
-<div id="step2" class="mono-business-register span-24">
-  <strong> Thank you for confirmation!</strong>
+<div id="step2" class="mono-business-register success span-22">
+  <h3> MSG: Your account is activated </h3>
 </div>
 
 <div id="step3" class="mono-business-register span-24" >
-  <b>Primary Branch</b>
+  <h1>Configure your digital receipt</h1>
 
-  <%= form_for(@place,:url=> primary_place_users_businesses_path) do |f| %>
-  <%= f.error_messages %>
+  <%= form_tag( primary_place_users_businesses_path) do %>
   <p>
-    <%= f.label :name, 'name' ,:class=>"hide" %>
-    <%= f.text_field :name ,:class=>"title double",:placeholder=>"Place name" %>
+    <%= label_tag :name, 'name' ,:class=>"hide" %>
+    <%= text_field_tag :name ,nil, :class=>"title double",:placeholder=>"Place name" %>
   </p>
 
-  <%= f.fields_for :address, f.object.address do |address_form| %>
-  <p class="clearfix" >
-    <%= address_form.label :street_address ,:class=>"hide"%>
-    <%= address_form.text_field :street_address , :class=>"title double", :placeholder=>"Street address" %>
-  </p>
   <p>
-    <%= address_form.label :country_id , :class=>"hide" %>
-    <%= address_form.hidden_field :country_id %>
-    <input type="text" name="country" placeholder="Country" value="" id="country_id" class="title double" />
+    <%= label_tag :street_address, 'street_address' ,:class=>"hide" %>
+    <%= text_field_tag :street_address ,nil, :class=>"title double", :placeholder=>"Enter your branch address" %>
   </p>
-  <p class="clearfix" >
-    <%= address_form.label :city_id ,:class=>"hide"%>
-    <%= address_form.hidden_field :city_id%>
-    <input type=text" name="city" value="" id="city_id" placeholder="City" class="title" />
-    <%= address_form.label :neighborhood ,:class=>"hide"%>
-    <%= address_form.text_field :neighborhood , :class=>"title", :placeholder=>"Neighborhood" %>
+
+  <p>
+    <%= label_tag :location, 'location' ,:class=>"hide" %>
+    <%= text_field_tag :location ,nil, :class=>"title double", :placeholder=>"Enter you city and country name" %>
+  </p>
+
+  <p>
+    <%= label_tag :cross_street , 'cross_street' ,:class=>"hide" %>
+    <%= text_field_tag :cross_street ,nil, :class=>"title double", :placeholder=>"cross street" %>
+  </p>
+  <div id="map_canvas" style="width:412px; height:400px"></div>
+
+  <p class="clearfix">
+    <%= label_tag :phone ,"phone", :class=>"hide"%>
+    <%= text_field :phone , nil,:class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
+  </p>
+
+  <p>
+    <%= label_tag :neighborhood ,"neighborhood", :class=>"hide"%>
+    <%= text_field :neighborhood , nil,:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
+  </p>
+
+  <%= hidden_field_tag :lat %>
+  <%= hidden_field_tag :long %>
+  <p>
+    <%= submit_tag "Save" %>
   </p>
   <% end %>
-
-  <div id="map_canvas" style="width:412px; height:400px"></div>
-  <p class="clearfix">
-    <%= f.label :phone ,:class=>"hide"%>
-    <%= f.text_field :phone , :class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
-
-    <%= f.hidden_field :lat %>
-    <%= f.hidden_field :long %>
-  </p>
-  <div class="hide">
-    <ul>
-    	<li>Import 4Square</li>
-    	<li>Add Hours of operation</li>
-    	<li>Add Place type</li>
-    </ul>
-  </div>
 </div>
-<p>
-  <%= f.submit "submit" %>
-</p>
-<% end %>

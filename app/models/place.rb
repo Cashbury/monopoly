@@ -48,7 +48,7 @@ class Place < ActiveRecord::Base
   validates_presence_of :name, :long, :lat
   validates :address, :presence=>true
   validates_numericality_of :long,:lat
-  validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+  #validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
 
   validates_associated :address
 
@@ -111,6 +111,34 @@ class Place < ActiveRecord::Base
       self.open_hours << open_hour
     end
   end
+
+
+  def self.save_place_by_geolocation(location,user)
+    address = Geokit::Geocoders::GoogleGeocoder.geocode(location[:location])
+    country = Country.find_or_create_by_name_and_abbr(:name=>address.country, :abbr=>address.country_code)
+    city = City.find_or_create_by_name_and_country_id(:name=>address.city, :country_id=>country.id)
+
+    a = Address.new
+    a.country_id = country.id
+    a.city_id = city.id
+    a.street_address=location[:street_address]
+    a.cross_street = location[:cross_street]
+
+    if a.save
+      place = Place.new
+      place.name = location[:name]
+      place.address_id = a.id
+      place.phone = location[:phone]
+      place.user_id = user.id
+      place.lat= location[:lat]
+      place.long= location[:long]
+      place.is_primary= true
+      place.neighborhood = location[:neighborhood]
+      place.save
+    end
+  end
+
+
   def get_hour(day_num, hour_type, second_record_for_same_day)
     if second_record_for_same_day
      open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num)[1]

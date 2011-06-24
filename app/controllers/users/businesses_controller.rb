@@ -10,18 +10,14 @@ class Users::BusinessesController < ApplicationController
   def primary_place
     #if current_user.sign_in_count <= 1
       if request.post?
-        @place = Place.new(params[:place].merge(:is_primary=>true))
-        @place.user_id = current_user.id
-        if @place.save
+        if Place.save_place_by_geolocation(params,current_user)
           redirect_to :action=>:set_rewards
+        else
+          redirect_to root_url
         end
-      else
-        @place = Place.new
-        @place.build_address
       end
     #else
-      # redirect_to root_url
+      #redirect to root
     #end
-
   end
 end
