@@ -5,38 +5,91 @@
     <%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
     <%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
     <%= stylesheet_link_tag "biz_application",
+                            'tipTip',
                             "redmond/jquery-ui-1.8.10.custom"  %>
     <%= javascript_include_tag  :defaults,
                                 "cufon-yui" ,
                                 "z_Arista_Light_300.font" ,
                                 "businessend",
+                                'jquery.tipTip',
                                 'jquery.enablePlaceholder.min',
                                 "http://maps.google.com/maps/api/js?sensor=true",
                                 "http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8.1/jquery.validate.min.js"
                               %>
     <%= csrf_meta_tag %>
     <%= yield(:head) %>
+    <script type="text/javascript" language="javascript" charset="utf-8">
+    //<![CDATA[
+      jQuery(document).ready(function(){
+        jQuery("a.show").tipTip({maxWidth: "auto", edgeOffset: 10});
+      });
+
+    //]]>
+    </script>
   </head>
   <body>
-    <div id="wrapper">
 
-    <div class="container">
-      <div id="payload" >
-        <div id="header">
-          <h2 class="logo">Cashbury</h2>
-          <% if user_signed_in? %>
-            <%= render :partial=>"profile" %>
-          <% end %>
+    <div id="header">
+      <div class="container">
+        <div class="brand_profile">
+          <div class="left span-2">
+            <a class="user-profile-image"><img style="wdith:64px; height:64px" src="/images/C-mybiz1.png"></a>
+          </div>
+          <div class="nav brand left span-5">
+            <h3 class="company_name left span-5"> Name</h3>
+              <ul>
+                <li><a "title"="testing ..." class="show" href="#">places</a></li>
+                <li><a "title"="hello" class="show" href="#">places</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="content">
+        <!--<h2 class="logo">Cashbury</h2>-->
+        <% if user_signed_in? %>
+          <%= render :partial=>"profile" ,:locals=>{:name=>current_user.brands.first.name} %>
+        <% end %>
+      </div>
+    </div>
+    <div id="gray_bg">
+      <div id="biztools_nav" class="container">
+        <ul>
+          <li class="box">
+            <a class="icon" href="/users/businesses/primary_place">
+              <div class="button"></div>
+            </a>
+            <a id="bcards" href="/users/businesses/primary_place">
+              <span>Digital reciept</span>
+            </a>
+          </li>
+          <li class="box">
+            <a class="icon" href="/users/businesses/open_sign">
+              <div class="button"></div>
+            </a>
+            <a id="bcards" href="/users/businesses/open_sign">
+              <span>Open sign</span>
+            </a>
+          </li>
+          <li class="box">
+            <a class="icon" href="/users/businesses/set_rewards">
+              <div class="button"></div>
+            </a>
+            <a id="bcards" href="/users/businesses/set_rewards">
+              <span>Cards</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div id="payload" >
+      <div class="container content">
+
           <%= yield %>
-
-
           <div class="clear"></div>
-        </div>
-        <!--footer would added here later -->
-      </div><!--endof payload-->
+      </div>
+    </div><!--endof payload-->
+    <div id="footer">
+      <div class="container">
+      </div>
     </div>
-    </div>
+    <!--footer would added here later -->
   </body>
 </html>

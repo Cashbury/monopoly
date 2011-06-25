@@ -1,0 +1,78 @@
+<%= javascript_include_tag 'prototype' %>
+<%= calendar_date_select_includes %>
+<% CalendarDateSelect.format=(:iso_date)%><script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+jQuery(document).ready(function(){
+  jQuery('#open_hour_apply_to_all').click(function(){
+
+    if( jQuery(this).is(':checked') ){
+      from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
+      to_hour   =  jQuery('#open_hour_0_to').val();  //  the selected value of the first day ( to hour)
+      from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
+      to2_hour   =  jQuery('#open_hour_0_to2').val();  //  the selected value of the first day -  if user splits the time ( to2 hour)
+
+      jQuery('.from_class').each(function(index, element){
+        jQuery(this).val(from_hour);
+        if(from2_hour){
+          if(index!=0){
+             Split_hour(index);
+             x =jQuery('#open_hour_'+index+'_from2').val(from2_hour);
+           }
+        }// if from2_hour end
+      }); // end of .each function
+
+      jQuery('.to_class').each(function(index, element){
+        jQuery(this).val(to_hour);
+        if(to2_hour){
+          if(index!=0){
+             x =jQuery('#open_hour_'+index+'_to2').val(to2_hour);
+           }
+        }// if from2_hour end
+      }); // end of .each function
+
+
+    } //end if
+  });
+
+})
+
+  function Split_hour(index){
+    from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
+    from_to_html = from_to_html.replace(/from/g, "from2");
+    from_to_html = from_to_html.replace(/to/g, "to2");
+    closed1_label ="<label> Closed? </label>";
+    closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
+    final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
+    jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
+  };
+//]]>
+</script>
+
+<h1 id="">Configure your open sign</h1>
+<%= form_tag(open_sign_users_businesses_path) do %>
+<fieldset>
+    <legend>Hours of operations?</legend>
+
+     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+      <p> <%=key%></p>
+      <div id="open_hour_div_<%=index%>">
+         <div >
+           <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours),:style => 'width:142px;',:class=>"from_class") %>
+           <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours),:style => 'width:142px;',:class=>"to_class") %>
+         </div>
+         <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
+         <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+         <%= label_tag "Closed?"%>
+         <%= check_box_tag "open_hour[#{index}][closed]" %>
+         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+         <% if index == 0 %>
+           <label> Apply To All</label>
+           <%= check_box_tag "open_hour[apply_to_all]" %>
+         <%end%>
+     </div>
+     <br />
+     <br />
+     <% end %>
+      <%= submit_tag "save" %>
+   </fieldset>
+<% end %>

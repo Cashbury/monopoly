@@ -1,6 +1,8 @@
 class Users::BusinessesController < ApplicationController
   layout "businessend"
 
+  before_filter :prepare_hours , :only=>:open_sign
+
   def index
   end
 
@@ -19,5 +21,16 @@ class Users::BusinessesController < ApplicationController
     #else
       #redirect to root
     #end
+  end
+
+
+  def open_sign
+    @place = Place.find_by_user_id(current_user.id)
+    if @place.is_primary? && request.post?
+      @place.add_open_hours(params[:open_hour])
+      if @place.save
+        redirect_to :action=>:set_rewards
+      end
+    end
   end
 end

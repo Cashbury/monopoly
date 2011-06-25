@@ -1,14 +1,15 @@
+<!--
 <div id="step2" class="mono-business-register success span-22">
   <h3> MSG: Your account is activated </h3>
 </div>
-
+-->
 <div id="step3" class="mono-business-register span-24" >
   <h1>Configure your digital receipt</h1>
 
   <%= form_tag( primary_place_users_businesses_path) do %>
   <p>
     <%= label_tag :name, 'name' ,:class=>"hide" %>
-    <%= text_field_tag :name ,nil, :class=>"title double",:placeholder=>"Place name" %>
+    <%= text_field_tag :name ,current_user.brands.first.name || "" , :class=>"title double",:placeholder=>"Branch name" %>
   </p>
 
   <p>

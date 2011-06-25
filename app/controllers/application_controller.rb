@@ -27,6 +27,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def prepare_hours
+    @hours = []
+    12.downto(1) do | i |
+       @hours << "#{i}:00 AM"
+       @hours << "#{i}:30 AM"
+    end
+    12.downto(1) do | i |
+       @hours << "#{i}:00 PM"
+       @hours << "#{i}:30 PM"
+    end
+    return @hours
+  end
+
 
   protected
 	def require_admin

@@ -1,34 +1,18 @@
-body{
-  background:url(/images/header.png) repeat-x;
-}
-#wrapper{
-  background:url("images/bg.png");
-}
-.container{
-  margin:30px auto;
-  padding:0 10px;
-  position:relative;
-  text-align:left;
-  width:70%;
-}
-
-#payload {
-}
 #header {
-  height:60px;
-  padding:10px;
+  padding:20px 0 5px 0;
+  background:url(/images/bg.png) ;
 }
 
 #header .logo{
   background:url("../images/business/header.png") no-repeat scroll 2px 6px transparent;
-display:block;
-float:left;
-height:60px;
-margin:0 10px 0 0;
-padding:0;
-position:relative;
-width:150px;
-text-indent:-999px;
+  display:block;
+  float:left;
+  height:60px;
+  margin:0 10px 0 100px;
+  padding:0;
+  position:relative;
+  width:150px;
+  text-indent:-999px;
 }
 
 
@@ -45,6 +29,18 @@ text-indent:-999px;
 }
 #account_nav{
   float:right;
+}
+
+#gray_bg{
+  height:100px;
+background: #606c88; /* Old browsers */
+background: -moz-linear-gradient(top, #606c88 0%, #3f4c6b 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#606c88), color-stop(100%,#3f4c6b)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #606c88 0%,#3f4c6b 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #606c88 0%,#3f4c6b 100%); /* Opera11.10+ */
+background: -ms-linear-gradient(top, #606c88 0%,#3f4c6b 100%); /* IE10+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#606c88', endColorstr='#3f4c6b',GradientType=0 ); /* IE6-9 */
+background: linear-gradient(top, #606c88 0%,#3f4c6b 100%); /* W3C */
 }
 
 .user-profile-image {
@@ -66,13 +62,13 @@ text-indent:-999px;
   float:right;
 }
 
-#account_nav ul li{
+.nav ul li{
   float:left;
   list-style:none;
   margin-left:10px;
 }
 
-#account_nav ul li a{
+.nav ul li a{
   display:block;
 }
 
@@ -90,7 +86,6 @@ h3.company_name{
 }
 
 .nav{
-  text-align:right;
 }
 
 .content{
@@ -133,4 +128,56 @@ input.title{
 
 .ui-widget-header{
     background:none;
+}
+
+
+#gray_bg ul{
+  margin:0;
+  padding:0;
+}
+
+ul li.box{
+  padding:0;
+  padding-left:30px;
+  list-style:none;
+  width: 170px;
+  height:100px;
+  border:1px solid red;
+  float:left;
+  display:block;
+  background:transparent;
+}
+
+#biztools_nav a.icon{
+  margin-top:15px;
+  height:50px;
+}
+#biztools_nav .button{
+   background:url(/images/receipt-icon-biztools.jpg) no-repeat;
+   height:60px;
+   text-align:center;
+}
+#biztools_nav li.box a{
+  display:block;
+}
+
+a span{
+  height:38px;
+  display:block;
+  font-weight:900;
+  font-size:16px;
+  color:#fff;
+}
+
+.nav.brand .company_name{
+  text-align:left;
+}
+.nav.brand ul{
+  margin:0;
+  padding:0;
+}
+.nav.brand ul li{
+  text-align :left;
+  margin-left:0;
+  margin-right:5px;
 }

@@ -89,6 +89,8 @@ class Place < ActiveRecord::Base
   def add_item(item_params)
     self.items.build(item_params)
   end
+
+
   def add_open_hours(open_hours_params)
     self.open_hours.delete_all
     OpenHour::DAYS.each_with_index do |(key,value),index|
