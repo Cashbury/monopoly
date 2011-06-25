@@ -41,7 +41,7 @@
       console.log(strAddress );
       geocoder.geocode( { 'address': strAddress }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-          map.setZoom(16);
+          map.setZoom(17);
           map.setCenter(results[0].geometry.location);
           marker.setPosition(results[0].geometry.location);
           marker.setDraggable(true);
@@ -84,5 +84,5 @@
           }
       });
 
-      initialize();
+      //initialize();
   });

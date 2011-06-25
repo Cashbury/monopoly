@@ -17,7 +17,11 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource_or_scope)
     if current_user.role? Role::AS[:principal]
-      businesses_url
+      if(current_user.sign_in_count <= 1)
+        primary_place_users_businesses_url
+      else
+        businesses_url
+      end
     elsif (current_user.role? Role::AS[:super_admin]) || (current_user.role? Role::AS[:admin])
       businesses_url
     elsif current_user.role? Role::AS[:mobi]

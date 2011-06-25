@@ -9,7 +9,7 @@
             <a class="user-profile-image"><img style="wdith:64px; height:64px" src="/images/icon.png"></a>
           </div>
           <div class="nav right span-5">
-            <h3 class="company_name profile right span-5"> <%= name %></h3>
+            <h3 class="company_name profile right span-5"> <%= current_user.username || current_user.email %></h3>
               <ul>
             	<li><a href="#">Settings</a></li>
             	<li><%= link_to "Help", "#" %> </li>

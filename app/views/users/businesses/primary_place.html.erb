@@ -3,6 +3,11 @@
   <h3> MSG: Your account is activated </h3>
 </div>
 -->
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+  jQuery(document).ready(initialize);
+//]]>
+</script>
 <div id="step3" class="mono-business-register span-24" >
   <h1>Configure your digital receipt</h1>
 
@@ -30,12 +35,12 @@
 
   <p class="clearfix">
     <%= label_tag :phone ,"phone", :class=>"hide"%>
-    <%= text_field :phone , nil,:class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
+    <%= text_field_tag :phone , nil,:class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
   </p>
 
   <p>
     <%= label_tag :neighborhood ,"neighborhood", :class=>"hide"%>
-    <%= text_field :neighborhood , nil,:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
+    <%= text_field_tag :neighborhood , nil,:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
   </p>
 
   <%= hidden_field_tag :lat %>

@@ -125,6 +125,7 @@ class Place < ActiveRecord::Base
     a.city_id = city.id
     a.street_address=location[:street_address]
     a.cross_street = location[:cross_street]
+    a.neighborhood = location[:neighborhood]
 
     if a.save
       place = Place.new
@@ -135,8 +136,7 @@ class Place < ActiveRecord::Base
       place.lat= location[:lat]
       place.long= location[:long]
       place.is_primary= true
-      place.neighborhood = location[:neighborhood]
-      place.save
+      place  if place.save
     end
   end
 

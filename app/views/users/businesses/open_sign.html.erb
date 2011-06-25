@@ -1,3 +1,6 @@
+<style type="text/css" media="screen">
+  label{display:inline}
+</style>
 <%= javascript_include_tag 'prototype' %>
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%><script type="text/javascript" language="javascript" charset="utf-8">
@@ -34,9 +37,11 @@ jQuery(document).ready(function(){
     } //end if
   });
 
+  sHours = ["12:00 AM","12:30 AM","11:00 AM","11:30 AM","10:00 AM","10:30 AM","9:00 AM","9:30 AM","8:00 AM","8:30 AM","7:00 AM","7:30 AM","6:00 AM","6:30 AM","5:00 AM","5:30 AM","4:00 AM","4:30 AM","3:00 AM","3:30 AM","2:00 AM","2:30 AM","1:00 AM","1:30 AM","12:00 PM","12:30 PM","11:00 PM","11:30 PM","10:00 PM","10:30 PM","9:00 PM","9:30 PM","8:00 PM","8:30 PM","7:00 PM","7:30 PM","6:00 PM","6:30 PM","5:00 PM","5:30 PM","4:00 PM","4:30 PM","3:00 PM","3:30 PM","2:00 PM","2:30 PM","1:00 PM","1:30 PM"];
+  jQuery('input.complete').autocomplete({source:sHours});
 })
 
-  function Split_hour(index){
+function Split_hour(index){
     from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
     from_to_html = from_to_html.replace(/from/g, "from2");
     from_to_html = from_to_html.replace(/to/g, "to2");
@@ -44,35 +49,64 @@ jQuery(document).ready(function(){
     closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
     final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
     jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
+    jQuery('input.complete').autocomplete({source:sHours});
   };
 //]]>
 </script>
 
 <h1 id="">Configure your open sign</h1>
+
 <%= form_tag(open_sign_users_businesses_path) do %>
-<fieldset>
-    <legend>Hours of operations?</legend>
+
+
 
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
-      <p> <%=key%></p>
-      <div id="open_hour_div_<%=index%>">
+
+<div class="slide_box">
+    <div class="slide_box_content">
+    <div class="slide_box_shadow">
+      <div class="box_content round shadow">
+
+       <h3 class="days left"><%=key%></h3>
+       <div id="open_hour_div_<%=index%>" class="times left">
          <div >
-           <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours),:style => 'width:142px;',:class=>"from_class") %>
-           <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours),:style => 'width:142px;',:class=>"to_class") %>
+           <label for="from">from:</label>
+           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete from_class" %>
+           <label for="id">to</label>
+           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete to_class" %>
          </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-         <%= label_tag "Closed?"%>
-         <%= check_box_tag "open_hour[#{index}][closed]" %>
-         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
-         <% if index == 0 %>
+             <% if index == 0 %>
            <label> Apply To All</label>
            <%= check_box_tag "open_hour[apply_to_all]" %>
          <%end%>
      </div>
-     <br />
-     <br />
+         <div class="clear"></div>
+      </div>
+    </div>
+    </div>
+    <div class="slide_box_slider">
+    <div class="slide_box_shadow">
+      <div class="box_slider round shadow">
+        <p class="hide" >
+          <%= label_tag "Closed?"%>
+         <%= check_box_tag "open_hour[#{index}][closed]" %>
+         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+        </p>
+   </div>
+    </div>
+    </div>
+    <div class="slide_box_eject">
+    		<div class="box_eject round"><a href="#"></a></div>
+    </div>
+</div>
+
+
+
      <% end %>
       <%= submit_tag "save" %>
-   </fieldset>
+
+
+
 <% end %>

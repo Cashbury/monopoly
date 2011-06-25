@@ -1,6 +1,6 @@
 #header {
   padding:20px 0 5px 0;
-  background:url(/images/bg.png) ;
+  xbackground:url(/images/bg.png) ;
 }
 
 #header .logo{
@@ -181,3 +181,149 @@ a span{
   margin-left:0;
   margin-right:5px;
 }
+
+
+
+.brand a.place{
+  background:url(/images/at.png) no-repeat;
+  text-indent:-999px;
+  width:15px;
+}
+
+.brand a.place:hover{
+  background:url(/images/at_active.png) no-repeat;
+}
+
+.brand .place.active{
+  background:url(/images/at_active.png) no-repeat;
+}
+
+.brand a.report{
+  background:url(/images/card-icon.png) no-repeat;
+  text-indent:-999px;
+  width:20px;
+}
+
+.brand a.report:hover{
+  background:url(/images/card-icon-touched.png) no-repeat;
+}
+
+.brand .show_con.second{
+  xmargin-left:-30px;
+}
+
+.show		{
+			padding: 2px 5px;
+      position:relative;
+			}
+
+
+
+.show_con	{
+      border:1px yellow groove;
+			min-height: 100px;
+			width: 150px;
+			background-color: #fff;
+			position: absolute;
+      padding:10px;
+      -moz-box-shadow: 3px 3px 3px #666;
+      -webkit-box-shadow: 3px 3px 3px #666;
+      box-shadow: 3px 3px 3px #666;
+}
+
+/* Slide Box */
+
+.round		{
+			border-radius: 			0 0 10px 10px; /* CSS3 */
+			-moz-border-radius: 	0 0 10px 10px; /* Firefox */
+			-webkit-border-radius: 	0 0 10px 10px; /* Safari and Chrome */
+			-khtml-border-radius: 	0 0 10px 10px; /* Linux Browsers */
+			}
+
+.shadow		{
+			box-shadow:			0 0 6px 2px #f1f1f1, 0 0 1px 1px #fefefe inset; /* CSS3 */
+			-moz-box-shadow:	0 0 6px 2px #f1f1f1, 0 0 1px 1px #fefefe inset; /* Firefox */
+			-webkit-box-shadow:	0 0 6px 2px #f1f1f1, 0 0 1px 1px #fefefe inset; /* Safari and Chrome */
+			-khtml-box-shadow:	0 0 6px 2px #f1f1f1, 0 0 1px 1px #fefefe inset; /* Linux Browsers */
+			}
+
+.slide_box	{
+			margin-bottom: 10px;
+			}
+
+.slide_box_shadow		{
+						padding-bottom: 20px;
+						background: url(/images/shadow_big_right.png) no-repeat right bottom;
+						}
+
+.slide_box_content		{
+						z-index: 999;
+						position: relative;
+						background: url(/images/shadow_big_left.png) no-repeat left bottom;
+						}
+
+						.box_content			{
+												min-height: 40px;
+												background-color: #fff;
+												border: 1px solid #999;
+                        padding:20px;
+												}
+
+.slide_box_slider		{
+						z-index: 99;
+						position: relative;
+						margin: 0 25px;
+						background: url(/images/shadow_big_left.png) no-repeat left bottom;
+						margin-top: -25px;
+						}
+
+						.box_slider				{
+												background-color: #fbfbfb;
+												border-left: 1px solid #ccc;
+												border-right: 1px solid #ccc;
+												border-bottom: 1px solid #ccc;
+                        padding:5px;
+												}
+              .box_slider p{
+                  margin:10px;
+
+              }
+
+.slide_box_eject		{
+						z-index: 99;
+						position: relative;
+						margin: -21px auto 0 auto;
+						width: 104px;
+						padding-bottom: 10px;
+						background: url(/images/shadow_small.png) no-repeat center bottom;
+						}
+
+						.box_eject				{
+												background-color: #fbfbfb;
+												border-left: 1px solid #ccc;
+												border-right: 1px solid #ccc;
+												border-bottom: 1px solid #ccc;
+												}
+
+						.box_eject a			{
+												display: block;
+												padding: 15px 43px;
+												background: url(/images/eject_idle.png) no-repeat center center;
+												}
+
+						.box_eject a:hover		{
+												background: url(/images/eject_hov.png) no-repeat center center;
+            }
+
+            .box_eject a.active{
+                background:url('/images/eject_hov.png') no-repeat center center;
+
+            }
+
+  .days{
+    width:110px;
+    margin-top:8px;
+  }
+  .times{
+    width:600px;
+  }

@@ -136,6 +136,7 @@ Kazdoor::Application.routes.draw do
   match '/foryou'             						=> "followers#index" ,:as =>:foryou
   match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
   match '/business_signup'                => "home#business_signup"
+  match "/get_opening_hours.:format"      =>"places#get_opening_hours"
 
   #devise_for :users
 

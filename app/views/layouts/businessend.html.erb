@@ -21,14 +21,29 @@
     <script type="text/javascript" language="javascript" charset="utf-8">
     //<![CDATA[
       jQuery(document).ready(function(){
-        jQuery("a.show").tipTip({maxWidth: "auto", edgeOffset: 10});
+          jQuery('a.show').click(function(e){
+            var $a = jQuery(this);
+            $a.toggleClass("active");
+            $a.next('div.show_con').toggle();
+            e.stopPropagation();
+            e.preventDefault();
+          });
+
+          jQuery(".box_eject a").click(function(e){
+            var $a = jQuery(this);
+            $a.toggleClass("active");
+            var $box =  $a.closest(".slide_box_eject").prev('.slide_box_slider').find('.box_slider p');
+            $box.slideToggle();
+            e.preventDefault();
+            e.stopPropagation();
+          });
+
       });
 
     //]]>
     </script>
   </head>
   <body>
-
     <div id="header">
       <div class="container">
         <div class="brand_profile">
@@ -36,16 +51,31 @@
             <a class="user-profile-image"><img style="wdith:64px; height:64px" src="/images/C-mybiz1.png"></a>
           </div>
           <div class="nav brand left span-5">
-            <h3 class="company_name left span-5"> Name</h3>
+            <h3 class="company_name left span-5"><%= current_user.brands.first.name || "CashBury" %></h3>
               <ul>
-                <li><a "title"="testing ..." class="show" href="#">places</a></li>
-                <li><a "title"="hello" class="show" href="#">places</a></li>
+                <li><a class="place show" href="#">Places</a>
+                  <div class="show_con hide">
+                    <% unless @places.blank? %>
+                      <% for place in @places %>
+                        <a ""><b><%= place.name %></b></a>
+                      <% end %>
+                    <% else %>
+                      <b>No branches listed</b>
+                    <% end %>
+                    <%= link_to "Add a new branch", "#" %>
+                  </div>
+    		</li>
+                <li><a class="report show" href="#">Places</a>
+                  <div class="show_con second hide">
+                    <%= link_to "Add a card", :action=>:set_rewards %>
+                  </div>
+                </li>
             </ul>
           </div>
         </div>
         <!--<h2 class="logo">Cashbury</h2>-->
         <% if user_signed_in? %>
-          <%= render :partial=>"profile" ,:locals=>{:name=>current_user.brands.first.name} %>
+          <%= render :partial=>"profile" %>
         <% end %>
       </div>
     </div>

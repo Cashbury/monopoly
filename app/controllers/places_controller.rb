@@ -1,6 +1,6 @@
 class PlacesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
-  before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
+  before_filter :prepare_hours , :only => [ :new , :create , :edit , :update, :get_opening_hours]
   def index
     @places = Place.all
 
@@ -64,6 +64,10 @@ class PlacesController < ApplicationController
     @place.destroy
     flash[:notice] = "Successfully destroyed place."
     redirect_to places_url
+  end
+
+  def get_opening_hours
+    render :json=>@hours
   end
 
   def for_businessid
