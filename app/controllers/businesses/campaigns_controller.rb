@@ -44,12 +44,12 @@ class Businesses::CampaignsController < ApplicationController
     end
     @campaign.name="#{reward_attrs[:name].capitalize} Campaign"
     respond_to do |format|
-      if @campaign.save    
+      if @campaign.save!    
         format.html { 
-          if reward_attrs[:reward_image_attributes].blank?
+          @reward=@campaign.rewards.first
+          if reward_attrs[:reward_image_attributes][:photo].blank? || !@reward.reward_image.need_cropping
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') 
           else
-            @reward=@campaign.rewards.first
             render :action => 'crop'  
           end
         }
@@ -59,6 +59,11 @@ class Businesses::CampaignsController < ApplicationController
         @reward.build_reward_image unless @reward.reward_image.present?
         format.html { render :action => "new" }
       end
+    end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "new" }
+      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
     end
   end
   def show
@@ -109,12 +114,12 @@ class Businesses::CampaignsController < ApplicationController
     params[:campaign][:engagements_attributes]["0"]["name"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]}"
     params[:campaign][:engagements_attributes]["0"]["description"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]} #{reward_attrs[:needed_amount]} times, Get a free #{reward_attrs[:name]}"
     respond_to do |format|
-      if @campaign.update_attributes(params[:campaign])
-        format.html { 
-          if reward_attrs[:reward_image_attributes].blank?
+      if @campaign.update_attributes!(params[:campaign])
+        format.html {
+          @reward=@campaign.rewards.first
+          if reward_attrs[:reward_image_attributes][:photo].blank? || !@reward.reward_image.needed_cropping?
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
           else
-            @reward=@campaign.rewards.first
             render :action => 'crop'  
           end
         }
@@ -125,6 +130,11 @@ class Businesses::CampaignsController < ApplicationController
         @item_name =@campaign.engagements.first.name.gsub(/Buy\s+/,'')
         format.html { render :action => "edit" }
       end
+    end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "edit" }
+      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
     end
   end
   def crop_image

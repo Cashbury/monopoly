@@ -32,7 +32,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.save
       @image.save! if @image
-      if params[:upload][:photo].blank?
+      if params[:upload][:photo].blank? || !@image.need_cropping
         flash[:notice] = "Successfully created reward."
         redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
       else
@@ -61,7 +61,7 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.update_attributes(params[:reward])
       @image.save! if @image
-      if params[:upload][:photo].blank?
+      if params[:upload][:photo].blank? || !@image.need_cropping
         flash[:notice] = "Successfully updated reward."
         redirect_to business_program_campaign_reward_url(@business, @program, @campaign,@reward)
       else

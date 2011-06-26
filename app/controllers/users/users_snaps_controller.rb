@@ -24,14 +24,16 @@ class Users::UsersSnapsController < Users::BaseController
   private
   def snap_hash(account,engagement,campaign,program,after_fees_amount)
     item=engagement.item
-    photo=item.try(:item_image).try(:photo)
+    item_photo=item.try(:item_image).photo
+    brand_photo= program.try(:business).try(:brand).try(:brand_image).photo
     s = {:snap => {}}
 		s[:snap].merge!({:business_id          => program.business.id})
 		s[:snap].merge!({:business_name        => program.business.name})
+		s[:snap].merge!({:brand_image_fb       => brand_photo.nil? ? "http://#{request.host_with_port}/images/icon.png" : brand_photo.url(:thumb)})
 		s[:snap].merge!({:campaign_id          => campaign.id})
 		s[:snap].merge!({:program_id           => program.id})
 		s[:snap].merge!({:item_name            => item.try(:name)})
-		s[:snap].merge!({:item_image           => photo.nil? ? "http://#{request.host_with_port}/images/icon.png" : photo.url(:thumb) })
+		s[:snap].merge!({:item_image           => item_photo.nil? ? "http://#{request.host_with_port}/images/icon.png" : item_photo.url(:thumb) })
 		s[:snap].merge!({:engagement_amount    => after_fees_amount})
 		s[:snap].merge!({:account_amount       => account.amount})
 		s[:snap].merge!({:fb_engagement_msg    => engagement.fb_engagement_msg})

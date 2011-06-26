@@ -40,11 +40,8 @@ class Campaign < ActiveRecord::Base
   
 	private
 	def create_campaign_business_account
-	  account_holder  = AccountHolder.where(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s).first 
-	  unless account_holder
-	    account_holder  = AccountHolder.create!(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s) 
-	  end
-	  account = Account.create!(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder => account_holder)
+    account_holder  = AccountHolder.find_or_create_by_model_id(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s) 
+	  account = Account.find_or_create_by_campaign_id_and_account_holder_id(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder_id => account_holder.id)
   end
   def update_places
     places.delete_all

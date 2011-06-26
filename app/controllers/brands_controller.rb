@@ -45,8 +45,8 @@ class BrandsController < ApplicationController
     @brand = Brand.new(params[:brand])
     @brand.user_id = current_user.id
     respond_to do |format|
-      format.html { 
-        if @brand.save! && @brand.brand_image.nil?
+      format.html {       
+        if @brand.save! && (@brand.brand_image.nil? || !@brand.brand_image.need_cropping)
           redirect_to(@brand, :notice => 'Brand was successfully created.') 
         else
           render :action => 'crop'  
@@ -69,7 +69,7 @@ class BrandsController < ApplicationController
     respond_to do |format|
       if @brand.update_attributes!(params[:brand])
         format.html { 
-          if params[:brand][:brand_image_attributes][:photo].blank?
+          if params[:brand][:brand_image_attributes][:photo].blank? || !@brand.brand_image.need_cropping
             redirect_to(@brand, :notice => 'Brand was successfully updated.') 
           else 
             render :action=> 'crop'
