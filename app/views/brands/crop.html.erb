@@ -1,6 +1,18 @@
 <% title "Crop Brand Image" %>  
 <% content_for (:head) do %>  
 <%= stylesheet_link_tag "jquery.Jcrop" %>  
+<style type="text/css">
+	.image-crop div.item{ float:left; margin-right:40px;}
+	.image-crop h3{ font-size:18px;}
+	.image-crop p{ font-size:13px;}
+	.image-crop .arrow{margin-top:70px;}
+	
+  /*--Clearfix--*/
+  .clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
+  .clearfix{display:block;}
+
+</style>
+
 <%= javascript_include_tag "jquery.Jcrop.min" %>  
 <script type="text/javascript">  
   jQuery(function() {  
@@ -27,16 +39,25 @@
     jQuery('#crop_h').val(coords.h);   
   }    
 </script>  
-<% end %>     
-<%= image_tag @brand.brand_image.photo.url(:normal), :id => "cropbox" %>  
-<h4>Preview</h4>  
-<div style="width: 79px; height: 54px; overflow: hidden;">  
-  <%= image_tag @brand.brand_image.photo.url(:normal), :id => "preview" %>  
-</div>  
+<% end %> 
+<div class="image-crop clearfix">
+	<div class="item">
+  	<h3>Original</h3>
+    <div><%= image_tag @brand.brand_image.photo.url(:normal), :id => "cropbox" %>  </div>
+    <p>Drag the selected area to adjust </p>
+  </div>
+  <div class="arrow item"><img src="/images/go-previous-rtl.png"  /></div>
+  <div class="item">
+  	<h3>Preview</h3>
+    <div style="width: 79px; height: 54px; overflow: hidden;">  
+    <%= image_tag @brand.brand_image.photo.url(:normal), :id => "preview" %>
+    </div>
+  </div>	
+</div>
 <%= form_for @brand do |f| %>  
   <%= f.fields_for :brand_image,f.object.brand_image do |builder| %>
     <% for attribute in [:crop_x, :crop_y, :crop_w, :crop_h] %>  
-      <p><%=attribute%>: <%= builder.text_field attribute, :id => attribute %></p>  
+      <p><%=attribute%>: <%= builder.text_field attribute, :id => attribute,:readonly => true %></p>  
     <% end %>  
   <%end%>
 <p><%= f.submit "Crop" %></p>  
