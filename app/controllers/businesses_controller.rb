@@ -1,7 +1,7 @@
 class BusinessesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
-  skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
+  skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries, ]
 
   def index
     @businesses = Business.all
@@ -107,6 +107,9 @@ class BusinessesController < ApplicationController
     respond_to do |format|
       format.js
     end
+    respond_to do |format|
+      format.js
+    end
   end
 
   def update_countries
@@ -123,6 +126,18 @@ class BusinessesController < ApplicationController
     end
   end
 
+
+  def get_users
+    @users = User.where(['username LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.username }}
+    render :json => @users
+  end
+
+  def update_users
+    @businesses = Business.where :brand_id=> Brand.all.map{|b| b.id }
+    respond_to do |format|
+      format.js
+    end
+  end
 
   private
   def set_tag_lists_for_business_places(business)

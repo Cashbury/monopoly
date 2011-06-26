@@ -28,7 +28,9 @@
     margin-bottom:10px;
   }
   .efilter{
-    width:150px;
+    width:140px;
+  }
+  #filters{
   }
 
 </style>
@@ -67,21 +69,18 @@ $(function(){
 })
 //]]>
 </script>
-<div id="test">
-  <%= link_to 'QrCodes Panel' , panel_qr_codes_path  %>
-</div>
+
 <div id="filters">
   <%= form_tag(:action=>:printable, :format=>:pdf) do %>
+    <!--
     <%= select_tag :template_id ,  options_from_collection_for_select(@templates,:id,:name) %>
     <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"filter" %>
-
-
-    <%=  select_tag :status , options_for_select( {"..Status.."=>"", "Inactive"=>0, "Active"=>1 },params[:status].to_s) ,:class=>"filter"%>
 
 
     <% print_options =   "<option value=''> ..ExportJob.. </option>".html_safe + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
     <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
     <br/>
+    -->
 
     <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, params[:brand_id]) , :class=>"efilter"%>
 
@@ -93,8 +92,10 @@ $(function(){
 
     <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id]) , :class=>"filter"  %>
 
-    <%= select_tag :layout , options_for_select({ "Single Use Layout"=>0,"Multi Use Layout "=>1 }),:class=>"efilter" %>
-    <%= submit_tag "Export to template" %>
+   <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"efilter filter" %>
+
+
+    <!--<%= submit_tag "Export to template" %>-->
   <% end %>
 
 </div>

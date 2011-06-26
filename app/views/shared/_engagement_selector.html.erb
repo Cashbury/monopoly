@@ -31,7 +31,7 @@ $(function(){
 //]]>
 </script>
 <div id="associate_box" class="row">
-  <strong>Associate to:</strong><br/>
+  <strong>Associate to/ Cancel:</strong><br/>
     <p class="row">
       <strong> Brands </strong> <br/>
       <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>

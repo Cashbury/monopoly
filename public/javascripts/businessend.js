@@ -38,7 +38,6 @@
 
       strAddress += " "+jQuery('#location').val();
 
-      console.log(strAddress );
       geocoder.geocode( { 'address': strAddress }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
           map.setZoom(17);

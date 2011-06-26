@@ -58,6 +58,7 @@ Kazdoor::Application.routes.draw do
 
   resources :businesses do
 	  get "update_cities/:id",:action=>:update_cities,    :on =>:collection, :as =>"update_cities"
+	  get "update_users/:id",:action=>:update_users,    :on =>:collection, :as =>"update_users"
 	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
 	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
 	end
@@ -83,6 +84,7 @@ Kazdoor::Application.routes.draw do
   resources :brands
 
   resources :qr_codes do
+
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
     get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
@@ -137,6 +139,8 @@ Kazdoor::Application.routes.draw do
   match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
+  match "/get_users.:format"              =>"businesses#get_users"
+  match "/show_code/:id"                  =>"qr_codes#show_code"
 
   #devise_for :users
 

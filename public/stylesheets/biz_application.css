@@ -208,6 +208,13 @@ a span{
   background:url(/images/card-icon-touched.png) no-repeat;
 }
 
+.brand a.user{
+  background:url(/images/users.png) no-repeat;
+  text-indent:-999px;
+  width:20px;
+  margin-top:2px;
+  margin-left:2px;
+}
 .brand .show_con.second{
   xmargin-left:-30px;
 }
