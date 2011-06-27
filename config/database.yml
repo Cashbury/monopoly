@@ -34,7 +34,7 @@ production:
 staging:
   adapter: mysql
   encoding: utf8
-  database: kazdoor
+  database: kazdoor_rajib
   username: kazdoor
   password: kazdoor
   socket: /var/run/mysqld/mysqld.sock
