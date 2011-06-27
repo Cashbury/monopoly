@@ -14,7 +14,7 @@
 #  associatable_type :string(255)
 #
 
-require 'uri'
+require 'open-uri'
 class QrCode < ActiveRecord::Base  
   #QrCode dependent on engagement type "stamp"
   belongs_to :associatable,:polymorphic => true #engagement, place, business

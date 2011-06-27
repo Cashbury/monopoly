@@ -1,6 +1,6 @@
 source :gemcutter
 source "http://gemcutter.org"
-source "http://rubygems.org/"
+
 gem 'rack', "=1.2.1"
 gem 'rails', '3.0.3'
 gem 'mysql', "=2.8.1"
@@ -8,6 +8,7 @@ gem 'mysql', "=2.8.1"
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 group :development do
   gem 'railroady'
+  #gem 'annotate-models','1.0.4'
   #gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
@@ -53,7 +54,6 @@ group :test do
 	gem 'rcov','=0.9.9'
 end
 
-gem 'annotate-models','=1.0.4'
 gem 'jquery-rails','=0.2.7'
 gem 'carmen','=0.2.5'
 gem 'wicked_pdf','=0.6.0'
