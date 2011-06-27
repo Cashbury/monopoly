@@ -1,5 +1,6 @@
 source :gemcutter
 source "http://gemcutter.org"
+source "http://rubygems.org/"
 gem 'rack', "=1.2.1"
 gem 'rails', '3.0.3'
 gem 'mysql', "=2.8.1"

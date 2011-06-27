@@ -26,8 +26,8 @@ test:
 
 production:
   adapter: mysql
-  host: mysql.devbury.dreamhosters.com
-  database: rdevdata
+  host: localhost
+  database: datastore1
   username: user961
   password: user961lb
 
