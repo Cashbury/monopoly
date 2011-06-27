@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
+    <%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
+    <%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
+    <%= stylesheet_link_tag "biz_application",
+                            'tipTip',
+                            "redmond/jquery-ui-1.8.10.custom"  %>
+    <%= javascript_include_tag  :defaults,
+                                "cufon-yui" ,
+                                "z_Arista_Light_300.font" ,
+                                "businessend",
+                                'jquery.tipTip',
+                                'jquery.enablePlaceholder.min',
+                                "http://maps.google.com/maps/api/js?sensor=true",
+                                "http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8.1/jquery.validate.min.js"
+                              %>
+    <%= csrf_meta_tag %>
+    <%= yield(:head) %>
+    <script type="text/javascript" language="javascript" charset="utf-8">
+    //<![CDATA[
+      jQuery(document).ready(function(){
+          jQuery('a.show').click(function(e){
+            var $a = jQuery(this);
+            $a.toggleClass("active");
+            $a.next('div.show_con').toggle();
+            e.stopPropagation();
+            e.preventDefault();
+          });
+
+          jQuery(".box_eject a").click(function(e){
+            var $a = jQuery(this);
+            $a.toggleClass("active");
+            var $box =  $a.closest(".slide_box_eject").prev('.slide_box_slider').find('.box_slider p');
+            $box.slideToggle();
+            e.preventDefault();
+            e.stopPropagation();
+          });
+
+      });
+
+    //]]>
+    </script>
+  </head>
+  <body>
+    <div id="header">
+      <div class="container">
+        <div class="brand_profile">
+          <div class="left span-2">
+            <a class="user-profile-image"><img style="wdith:64px; height:64px" src="/images/C-mybiz1.png"></a>
+          </div>
+          <div class="nav brand left span-5">
+            <h3 class="company_name left span-5"><%= current_user.brands.first.name || "CashBury" %></h3>
+              <ul>
+                <li><a class="place show" href="#">Places</a>
+                  <div class="show_con hide">
+                    <% unless @places.blank? %>
+                      <% for place in @places %>
+                        <a ""><b><%= place.name %></b></a>
+                      <% end %>
+                    <% else %>
+                      <b>No branches listed</b>
+                    <% end %>
+                    <%= link_to "Add a new branch", "#" %>
+                  </div>
+    		</li>
+                <li><a class="report show" href="#">Places</a>
+                  <div class="show_con second hide">
+                    <%= link_to "Add a card", :action=>:set_rewards %>
+                  </div>
+                </li>
+
+                <li><a class="user show" href="#">Places</a>
+                  <div class="show_con second hide">
+                  </div>
+                </li>
+            </ul>
+          </div>
+        </div>
+        <!--<h2 class="logo">Cashbury</h2>-->
+        <% if user_signed_in? %>
+          <%= render :partial=>"profile" %>
+        <% end %>
+      </div>
+    </div>
+    <div id="gray_bg">
+      <div id="biztools_nav" class="container">
+        <ul>
+          <li class="box">
+            <a class="icon" href="/users/businesses/primary_place">
+              <div class="button"></div>
+            </a>
+            <a id="bcards" href="/users/businesses/primary_place">
+              <span>Digital reciept</span>
+            </a>
+          </li>
+          <li class="box">
+            <a class="icon" href="/users/businesses/open_sign">
+              <div class="button"></div>
+            </a>
+            <a id="bcards" href="/users/businesses/open_sign">
+              <span>Open sign</span>
+            </a>
+          </li>
+          <li class="box">
+            <a class="icon" href="/users/businesses/set_rewards">
+              <div class="button"></div>
+            </a>
+            <a id="bcards" href="/users/businesses/set_rewards">
+              <span>Cards</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div id="payload" >
+      <div class="container content">
+
+          <%= yield %>
+          <div class="clear"></div>
+      </div>
+    </div><!--endof payload-->
+    <div id="footer">
+      <div class="container">
+      </div>
+    </div>
+    <!--footer would added here later -->
+  </body>
+</html>

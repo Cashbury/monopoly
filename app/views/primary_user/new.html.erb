@@ -1,0 +1,42 @@
+<style type="text/css" media="screen">
+  .small_select{
+    width:144px;
+  }
+</style>
+
+
+<h1>Business Information</h1>
+
+<div id="">
+  <h3 id="heading">Business payment would be associated with following Business</h3>
+
+  <%= form_tag("/primary_user/new") do %>
+    <strong>
+      Principal Information (repesentative of the business)
+    </strong>
+    <p>
+      <%= label_tag :first_name %>
+      <%= text_field_tag :first_name %>
+      <%= label_tag :last_name %>
+      <%= text_field_tag :last_name %>
+    </p>
+    <p>
+      <%= label_tag :date_of_birth %>
+      <%= date_select :user , :dob , { :start_year=>1950}, :class=>"small_select" %>
+    </p>
+    <p>
+      <%= label_tag :legal_id %>
+      <%= text_field_tag :legal_id %>
+      <%= label_tag :telephone %>
+      <%= text_field_tag :telephone %>
+    </p>
+
+    <p>
+      <%= check_box_tag :is_terms_agreed %> I have read and agree to Cashbury's <%= link_to "User Agreement", "#" %> and <%= link_to "ESign consent Agreement", "#" %>
+    </p>
+
+  <% end %>
+
+</div>
+
+

@@ -1,0 +1,31 @@
+<% title "Business Signup" %>
+<div id="step1" class="mono-business-register span-12 last">
+
+  <%= form_for(resource, resource.with_brand, :url => registration_path(resource_name)) do |f| %>
+    <%= devise_error_messages! %>
+    <% f.fields_for :brands do |brand_form| %>
+    <p>
+      <label class="hide" for="company-name" >Company Name</label>
+      <%= brand_form.text_field :name , :class=>"title double" , :placeholder=>"Company name"%>
+    </p>
+  <% end %>
+  <p>
+    <%= f.label :email , :class=>"hide" %>
+    <%= f.email_field :email,  :class=>"title double email" , :placeholder=>"Email address"  %>
+  </p>
+
+  <p>
+    <%= f.label :password , :class=>"hide" %>
+    <%= f.password_field :password, :class=>"title" ,:placeholder=>"Create password" %>
+  </p>
+
+  <p class="clearfix">
+    <%= f.label :password_confirmation , :class=>"hide" %>
+    <%= f.password_field :password_confirmation , :class=>"title" , :placeholder=>"Verify password"  %>
+  </p>
+
+  <p>
+    <%= f.submit "Signup" %>
+  </p>
+  <% end %>
+</div>

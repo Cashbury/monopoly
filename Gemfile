@@ -1,6 +1,6 @@
 source :gemcutter
 source "http://gemcutter.org"
-gem 'rack', "1.2.1"
+gem 'rack', "=1.2.1"
 gem 'rails', '3.0.3'
 gem 'mysql', "=2.8.1"
 # Bundle edge Rails instead:
@@ -35,7 +35,7 @@ end
 # end
 #
 
-gem 'rspec-rails', :group => :test
+gem 'rspec-rails',"=2.2.0", :group => :test
 gem 'devise', "~>1.1.5"
 #gem 'rails_admin' , :git => 'git://github.com/sferik/rails_admin.git'
 #:path=>'vendor/gems/rails_admin'
@@ -56,7 +56,6 @@ gem 'annotate-models','=1.0.4'
 gem 'jquery-rails','=0.2.7'
 gem 'carmen','=0.2.5'
 gem 'wicked_pdf','=0.6.0'
-gem 'simple_form','=1.3.1'
 gem 'geokit-rails3','=0.1.2'
 gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch =>'rails3test'
 gem 'wkhtmltopdf','=0.1.2'
@@ -67,3 +66,4 @@ gem 'rmagick','=2.13.1' #server has this
 gem 'aws-s3','=0.6.2'
 gem 'paperclip','=2.3.11'
 gem 'cancan' , "=1.6.5"
+gem "mongrel" , ">=1.2.0.pre2"

@@ -39,6 +39,11 @@
       }
     }
   });              
+
+  jQuery('#place_business_id').change(function(e){
+    var $pb =jQuery(this).val();
+    jQuery.getScript('/businesses/check_primary_place/'+ $pb +'.js');
+  });
   jQuery('select#place_address_attributes_country_id').bind('change',function(){
     var country_id = jQuery(":selected", this).val();
     jQuery.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
@@ -81,13 +86,14 @@
     <%= f.label :lat %><br />
     <%= f.text_field :lat %>
   </p>
-  <p>
-    <%= f.label :is_primary %>
-    <%= f.check_box :is_primary %>
-  </p>
+
   <p>
     <%= f.label "Business" %><br />
-    <%= f.select :business_id, "<option value=''>..Select Business..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name,f.try(:object).try(:business_id))%>
+    <%= f.select :business_id, "<option selected value=''>..Select Business..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name)%>
+  </p>
+  <p id="primary_place" style="display:none">
+    <%= f.label :is_primary %>
+    <%= f.check_box :is_primary %>
   </p>
   <p>
     <%= f.label :description %><br />

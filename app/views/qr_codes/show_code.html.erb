@@ -1,0 +1,11 @@
+<style type="text/css" media="screen">
+  #qr_code{
+    margin-top: 30px;
+    width:300px;
+    background:#fff;
+    border:40px red solid;
+  }
+</style>
+<div id="qr_code">
+  <%= image_tag @qr_code.qr_code_image.try(:photo).try(:url)  %>
+</div>

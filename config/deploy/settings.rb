@@ -3,14 +3,14 @@
 #############################################################
 
 set :application, 'kazdoor'
-set :deploy_to, "/home/kazdoor/spinninghats.com/"
+set :deploy_to, "/home/cashbury/cashbury.com/"
 
 #use trunk to deploy to production
   set :branch, "master"
   set :rails_env, "production"
 
 #production
-  set :domain, 'spinninghats.com'
+  set :domain, 'devbury.dreamhosters.com'
   role :app, domain
   role :web, domain
   role :db, domain, :primary => true
@@ -27,7 +27,7 @@ set :branch , "rajib"
 #	Servers
 #############################################################
 
-set :user, 'kazdoor'
+set :user, 'cashbury'
 
 #############################################################
 #	Includes

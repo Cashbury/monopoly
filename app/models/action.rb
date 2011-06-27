@@ -1,3 +1,15 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: actions
+#
+#  id                  :integer(4)      not null, primary key
+#  name                :string(255)
+#  transaction_type_id :integer(4)
+#  created_at          :datetime
+#  updated_at          :datetime
+#
+
 class Action < ActiveRecord::Base
   belongs_to :transaction_type
   has_many :logs

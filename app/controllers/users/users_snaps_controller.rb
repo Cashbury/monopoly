@@ -24,8 +24,8 @@ class Users::UsersSnapsController < Users::BaseController
   private
   def snap_hash(account,engagement,campaign,program,after_fees_amount)
     item=engagement.item
-    item_photo=item.try(:item_image).photo
-    brand_photo= program.try(:business).try(:brand).try(:brand_image).photo
+    item_photo=item.try(:item_image).try(:photo)
+    brand_photo= program.try(:business).try(:brand).try(:brand_image).try(:photo)
     s = {:snap => {}}
 		s[:snap].merge!({:business_id          => program.business.id})
 		s[:snap].merge!({:business_name        => program.business.name})

@@ -1,37 +1,37 @@
 <script type="text/javascript" language="javascript" charset="utf-8">
 //<![CDATA[
 $(function(){
-  
+
   $('select#brand_id').bind('change',function(){
       var brand_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_businesses/"+brand_id);
-    });        
-    
+    });
+
     $('select#business_id').bind('change',function(){
       var business_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_programs/"+business_id);
-    }); 
-    
+    });
+
     $('select#program_id').bind('change',function(){
       var program_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_campaigns/"+program_id);
-    }); 
-    
+    });
+
     $('select#campaign_id').bind('change',function(){
       var campaign_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_engagements/"+campaign_id);
-    });   
-    
+    });
+
     $("#associate_link").click(function(){
       $(this).html("hide");
-      $("#associate_box").slideDown(); 
-      
+      $("#associate_box").slideDown();
+
     })
 })
 //]]>
 </script>
 <div id="associate_box" class="row">
-  <strong>Associate with:</strong><br/>
+  <strong>Associate to/ Cancel:</strong><br/>
     <p class="row">
       <strong> Brands </strong> <br/>
       <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>

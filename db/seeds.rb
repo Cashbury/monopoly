@@ -35,5 +35,8 @@ MeasurementType.find_or_create_by_name(:name=>"Points")
 puts "Creatring system targets"
 Target.find_or_create_by_name(:name=>"new_comers")
 Target.find_or_create_by_name(:name=>"returning_comers")
-puts "Creating system address profiles"
-
+puts "Create Default user roles here"
+#check this is working or not
+%w( admin super_admin owner mobi).each do |name|
+  Role.find_or_create_by_name(:name => name )
+end

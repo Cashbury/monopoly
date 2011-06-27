@@ -1,4 +1,4 @@
-<% title "Listing qr_codes" %>
+<% title "Manage QrCodes" %>
 <style type="text/css" media="screen">
   table {
     margin-top:10px;
@@ -28,7 +28,9 @@
     margin-bottom:10px;
   }
   .efilter{
-    width:150px;
+    width:140px;
+  }
+  #filters{
   }
 
 </style>
@@ -41,62 +43,61 @@ $(function(){
     $('select.filter').bind('change',function(){
       var url = $(this).closest('form').serialize();
       window.location="/qr_codes?"+url;
-    })    
-    
+    })
+
     $('select#brand_id').bind('change',function(){
       var brand_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_businesses/"+brand_id);
-    });        
-    
+    });
+
     $('select#business_id').bind('change',function(){
       var business_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_programs/"+business_id);
-    }); 
-    
+    });
+
      $('select#program_id').bind('change',function(){
       var program_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_campaigns/"+program_id);
-    }); 
-    
+    });
+
     $('select#campaign_id').bind('change',function(){
       var campaign_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_engagements/"+campaign_id);
-    });   
+    });
 
 
 })
 //]]>
 </script>
-<div id="test">
-  <%= link_to 'Issue QrCodes' , panel_qr_codes_path  %>
-</div>
+
 <div id="filters">
   <%= form_tag(:action=>:printable, :format=>:pdf) do %>
+    <!--
     <%= select_tag :template_id ,  options_from_collection_for_select(@templates,:id,:name) %>
     <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"filter" %>
-    
-    
-    <%=  select_tag :status , options_for_select( {"..Status.."=>"", "Inactive"=>0, "Active"=>1 },params[:status].to_s) ,:class=>"filter"%>
-    
+
 
     <% print_options =   "<option value=''> ..ExportJob.. </option>".html_safe + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
     <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
     <br/>
+    -->
 
     <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, params[:brand_id]) , :class=>"efilter"%>
 
     <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe +  options_from_collection_for_select(@businesses,:id,:name,params[:business_id]), :class=>"efilter" %>
-   
+
     <%= select_tag :program_id , "<option value=''>..Program..</option>".html_safe +  options_from_collection_for_select(@programs,:id,:name,params[:program_id]), :class=>"efilter" %>
-  
+
     <%= select_tag :campaign_id , "<option value=''>..Campaign..</option>".html_safe +  options_from_collection_for_select(@campaigns,:id,:name,params[:campaign_id]), :class=>"efilter" %>
-   
+
     <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id]) , :class=>"filter"  %>
 
-    <%= select_tag :layout , options_for_select({ "Single Use Layout"=>0,"Multi Use Layout "=>1 }),:class=>"efilter" %>
-    <%= submit_tag "Export to template" %>
+   <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"efilter filter" %>
+
+
+    <!--<%= submit_tag "Export to template" %>-->
   <% end %>
-    
+
 </div>
 <table cellpadding="0" cellspacing="0">
 
@@ -134,7 +135,7 @@ $(function(){
       <% else %>
         <%= qr_code.engagement.engagement_type.name %>
       <% end %>
-    </td>   
+    </td>
     <td><%= qr_code.hash_code %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>

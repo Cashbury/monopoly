@@ -1,4 +1,21 @@
 # == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: engagements
+#
+#  id                 :integer(4)      not null, primary key
+#  is_started         :boolean(1)      default(TRUE)
+#  description        :string(255)
+#  created_at         :datetime
+#  updated_at         :datetime
+#  name               :string(255)
+#  amount             :decimal(20, 3)
+#  campaign_id        :integer(4)
+#  engagement_type_id :integer(4)
+#  item_id            :integer(4)
+#
+
+# == Schema Information
 # Schema version: 20101218032208
 #
 # Table name: engagements

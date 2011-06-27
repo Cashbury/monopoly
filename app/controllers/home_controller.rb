@@ -5,7 +5,7 @@ class HomeController < ApplicationController
   end
 
   def welcome
-    @follower = Follower.new 
+    @follower = Follower.new
     logger.info(@follower.inspect)
   end
 
@@ -17,6 +17,12 @@ class HomeController < ApplicationController
     else
       render :action =>'welcome'
     end
+  end
+
+
+  def business_signup
+    y action_name
+    render :layout=>"businessend"
   end
 
 end

@@ -1,6 +1,9 @@
 <script type="text/javascript">
  $(document).ready(function(){
-   
+
+
+
+/*
   $("#add_item_button").click(function () {
    $('#add_item_div').show();
   });
@@ -16,16 +19,16 @@
     var country_id = $(":selected", this).val();
     $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_places_attributes_2_address_attributes_city_id");
   });
-  
+
   $('select#business_mailing_address_attributes_country_id').bind('change',function(){
     var country_id = $(":selected", this).val();
     $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_mailing_address_attributes_city_id");
   });
-  
+
   $('select#business_billing_address_attributes_country_id').bind('change',function(){
     var country_id = $(":selected", this).val();
     $.getScript("/businesses/update_cities/"+country_id+"?selector_id=business_billing_address_attributes_city_id");
-  });
+  });*/
 });
 </script>
 
@@ -41,7 +44,7 @@
       to_hour   =  jQuery('#open_hour_'+i+'_'+'0_to').val();  //  the selected value of the first day ( to hour)
       from2_hour = jQuery('#open_hour_'+i+'_'+'0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
       to2_hour   =  jQuery('#open_hour_'+i+'_'+'0_to2').val();  //  the selected value of the first day -  if user splits the time ( to2 hour)
-      
+
       jQuery('.from_class_'+i).each(function(index, element){
         jQuery(this).val(from_hour);
         if(from2_hour){
@@ -49,24 +52,24 @@
              Split_hour(index,i);
              x =jQuery('#open_hour_'+i+'_'+index+'_from2').val(from2_hour);
            }
-        }// if from2_hour end 
+        }// if from2_hour end
       }); // end of .each function
-      
+
       jQuery('.to_class_'+i).each(function(index, element){
         jQuery(this).val(to_hour);
         if(to2_hour){
           if(index!=0){
              x =jQuery('#open_hour_'+i+'_'+index+'_to2').val(to2_hour);
            }
-        }// if from2_hour end 
-      }); // end of .each function  
+        }// if from2_hour end
+      }); // end of .each function
     } //end if
   });
 });
 
   function Split_hour(index,i){
     from_to_html = jQuery('#open_hour_'+i+'_'+index+'_from').parent().html();
-    
+
     from_to_html = from_to_html.replace(/from/g, "from2");
     from_to_html = from_to_html.replace(/to/g, "to2");
     closed1_label ="<label> Closed? </label>";
@@ -74,6 +77,22 @@
     final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
     jQuery('#open_hour_div_'+i+'_'+index).append("<p>"+final_html_part+"</p>");
   };
+
+jQuery(function(){
+
+     $('select#business_country_id').change(function(e){
+       $bselect = $(this).attr('selected',true).val();
+       $('#business_billing_address_attributes_country_id').val($bselect);
+       $('#business_mailing_address_attributes_country_id').val($bselect);
+        jQuery('#mcity_id,#bcity_id').autocomplete({
+            source: "/businesses/update_cities/"+ $bselect +".js",
+            dataType:"jsonp",
+            select:function(e,ui){
+              jQuery(this).prev('input').val(ui.item.id);
+            }
+        });
+      });
+    })
 </script>
 
 

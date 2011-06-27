@@ -1,3 +1,15 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: cities
+#
+#  id         :integer(4)      not null, primary key
+#  country_id :integer(4)
+#  name       :string(255)
+#  lat        :decimal(15, 10)
+#  lng        :decimal(15, 10)
+#
+
 class City < ActiveRecord::Base
   belongs_to :country
   has_many :addresses

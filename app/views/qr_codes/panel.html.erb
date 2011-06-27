@@ -1,39 +1,66 @@
-<%title 'Issue QrCode'%>
+<%title 'Issue QrCodes'%>
 <script type="text/javascript" language="javascript" charset="utf-8">
 //<![CDATA[
-$(function(){
-  $('select#brand_id').bind('change',function(){
-    var brand_id = $(":selected", this).val();
-    $.getScript("/qr_codes/update_businesses/"+brand_id);
-  });        
-  
-  $('select#business_id').bind('change',function(){
-    var business_id = $(":selected", this).val();
-    $.getScript("/qr_codes/update_programs/"+business_id);
-  }); 
-  
-  $('select#program_id').bind('change',function(){
-    var program_id = $(":selected", this).val();
-    $.getScript("/qr_codes/update_campaigns/"+program_id);
-  }); 
-  
-  $('select#campaign_id').bind('change',function(){
-    var campaign_id = $(":selected", this).val();
-    $.getScript("/qr_codes/update_engagements/"+campaign_id);
-  });   
+jQuery(function(){
 
 
-  $("#associate_link").click(function(){
-    if ($(this).html()=="Show")
-      $(this).html("Hide");
-    else 
-      $(this).html("Show");
-    $("#associate_box").slideToggle(); 
-    
+  jQuery('select#brand_id').bind('change',function(){
+    var brand_id = jQuery(":selected", this).val();
+    jQuery.getScript("/qr_codes/update_businesses/"+brand_id);
+  });
+
+  jQuery('select#business_id').bind('change',function(){
+    var business_id = jQuery(":selected", this).val();
+    jQuery.getScript("/qr_codes/update_programs/"+business_id);
+  });
+
+  jQuery('select#program_id').bind('change',function(){
+    var program_id = jQuery(":selected", this).val();
+    jQuery.getScript("/qr_codes/update_campaigns/"+program_id);
+  });
+
+  jQuery('select#campaign_id').bind('change',function(){
+    var campaign_id = jQuery(":selected", this).val();
+    jQuery.getScript("/qr_codes/update_engagements/"+campaign_id);
+  });
+
+
+  jQuery("#associate_link").click(function(){
+    if (jQuery(this).html()=="Associate now")
+      jQuery(this).html("Cancel");
+    else
+      jQuery(this).html("Associate now");
+      jQuery("#associate_box").slideToggle();
+
+    });
+
+  jQuery("#user_id").autocomplete({
+      source:"/get_users.json",
+      select:function(e,ui){
+        //jQuery('input#place_address_attributes_country_id').val(ui.item.id);
+        jQuery.getScript("/businesses/update_users/"+ui.item.id+".js");
+      }
+  });
+
+  jQuery("input[name=btype]").click(function(e){
+      jQuery(".row.users").toggle();
+      jQuery(".row.brands").toggle();
+      })
+
+  jQuery(".tabs").tabs({
+    select:function(e,ui){
+    var data = $(ui.tab).attr("data-c");
+    $("#associatable_type").val(data);
+    }
   });
 })
 //]]>
 </script>
+<style type="text/css" media="screen">
+  .hide{
+    display:none;
+  }
+</style>
 
 <%= form_tag do |form| %>
   <p class="row">
@@ -49,11 +76,33 @@ $(function(){
     <%=  text_field_tag :quantity , 1 , :class => "basic_info_input"%> *(max 100)
   </p>
   <p class="row">
-    <a id="associate_link" href="javascript:void(0)">Show</a>
+    <a id="associate_link" href="javascript:void(0)">Associate now</a>
   </p>
   <div id="associate_box" class="row" style="display:none">
-    <strong>Associate with:</strong><br/>
+
+
+    <div class="tabs">
+    	<ul>
+    		<li>
+                  <a href="#users" data-c="User">Users</a>
+    		</li>
+    		<li>
+    			<a href="#brands" data-c="Engagement">brands</a>
+    		</li>
+              </ul>
+
+              <div id="users">
+    <p class="row users">
+      <strong>Users</strong> <br/>
+      <%= text_field_tag :user_id , "" , :class=>"complete"%>
     <p class="row">
+      <%= submit_tag "Submit" %>
+    </p>
+    </p>
+            </div>
+            <div id="brands">
+
+    <p class="row brands ">
       <strong>Brand</strong> <br/>
       <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>
     </p>
@@ -75,8 +124,15 @@ $(function(){
       <%= select_tag :associatable_id , engagement_options %>
     </p>
     <%= hidden_field_tag :associatable_type, "Engagement"%>
-  </div>
   <p class="row">
     <%= submit_tag "Submit" %>
   </p>
+</div>
+  <div style="clear:both">
+
+  </div>
+  </div>
+    </div>
+
+
   <% end %>

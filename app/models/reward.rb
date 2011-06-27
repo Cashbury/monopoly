@@ -1,17 +1,27 @@
 # == Schema Information
-# Schema version: 20101219014735
+# Schema version: 20110615133925
 #
 # Table name: rewards
 #
-#  id            :integer         primary key
-#  name          :string(255)
-#  engagement_id :integer
-#  created_at    :timestamp
-#  updated_at    :timestamp
-#  campaign_id   :integer
-#  place_id      :integer
-#  description   :text
-#  points        :integer
+#  id                 :integer(4)      not null, primary key
+#  name               :string(255)
+#  created_at         :datetime
+#  updated_at         :datetime
+#  needed_amount      :integer(10)
+#  max_claim          :integer(4)      default(0)
+#  expiry_date        :datetime
+#  legal_term         :text
+#  campaign_id        :integer(4)
+#  max_claim_per_user :integer(4)      default(0)
+#  is_active          :boolean(1)
+#  product_id         :integer(4)
+#  heading1           :text
+#  heading2           :text
+#  sales_price        :decimal(20, 3)
+#  offer_price        :decimal(20, 3)  default(0.0)
+#  cost               :decimal(20, 3)
+#  foreign_identifier :string(255)
+#  start_date         :datetime
 #
 
 class Reward < ActiveRecord::Base

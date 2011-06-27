@@ -1,23 +1,37 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: open_hours
+#
+#  id         :integer(4)      not null, primary key
+#  day_no     :integer(4)
+#  from       :datetime
+#  to         :datetime
+#  place_id   :integer(4)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class OpenHour < ActiveRecord::Base
 	belongs_to :place
 	DAYS={
-		"Sunday"=>0,
-		"Monday"=>1,
-		"Tuesday"=>2,
-		"Wednesday"=>3,
-		"Thursday"=>4,
-		"Friday"=>5,
-		"Saturday"=>6
+		"Monday"=>0,
+		"Tuesday"=>1,
+		"Wednesday"=>2,
+		"Thursday"=>3,
+		"Friday"=>4,
+		"Saturday"=>5,
+		"Sunday"=>6
 	}
-	
+
 	DISPLAY_DAYS={
-    0=>"Sunday",
-    1=>"Monday",
-    2=>"Tuesday",
-    3=>"Wednesday",
-    4=>"Thursday",
-    5=>"Friday",
-    6=>"Saturday"
+    0=>"Monday",
+    1=>"Tuesday",
+    2=>"Wednesday",
+    3=>"Thursday",
+    4=>"Friday",
+    5=>"Saturday",
+    6=>"Sunday"
   }
   validates_presence_of :day_no,:from,:to
 	validates_uniqueness_of :place_id,:scope=>[:day_no,:from,:to]

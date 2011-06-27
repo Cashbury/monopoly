@@ -1,0 +1,52 @@
+<!--
+<div id="step2" class="mono-business-register success span-22">
+  <h3> MSG: Your account is activated </h3>
+</div>
+-->
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+  jQuery(document).ready(initialize);
+//]]>
+</script>
+<div id="step3" class="mono-business-register span-24" >
+  <h1>Configure your digital receipt</h1>
+
+  <%= form_tag( primary_place_users_businesses_path) do %>
+  <p>
+    <%= label_tag :name, 'name' ,:class=>"hide" %>
+    <%= text_field_tag :name ,current_user.brands.first.name || "" , :class=>"title double",:placeholder=>"Branch name" %>
+  </p>
+
+  <p>
+    <%= label_tag :street_address, 'street_address' ,:class=>"hide" %>
+    <%= text_field_tag :street_address ,nil, :class=>"title double", :placeholder=>"Enter your branch address" %>
+  </p>
+
+  <p>
+    <%= label_tag :location, 'location' ,:class=>"hide" %>
+    <%= text_field_tag :location ,nil, :class=>"title double", :placeholder=>"Enter you city and country name" %>
+  </p>
+
+  <p>
+    <%= label_tag :cross_street , 'cross_street' ,:class=>"hide" %>
+    <%= text_field_tag :cross_street ,nil, :class=>"title double", :placeholder=>"cross street" %>
+  </p>
+  <div id="map_canvas" style="width:412px; height:400px"></div>
+
+  <p class="clearfix">
+    <%= label_tag :phone ,"phone", :class=>"hide"%>
+    <%= text_field_tag :phone , nil,:class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
+  </p>
+
+  <p>
+    <%= label_tag :neighborhood ,"neighborhood", :class=>"hide"%>
+    <%= text_field_tag :neighborhood , nil,:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
+  </p>
+
+  <%= hidden_field_tag :lat %>
+  <%= hidden_field_tag :long %>
+  <p>
+    <%= submit_tag "Save" %>
+  </p>
+  <% end %>
+</div>

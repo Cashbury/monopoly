@@ -1,3 +1,30 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: logs
+#
+#  id             :integer(4)      not null, primary key
+#  user_id        :integer(4)
+#  reward_id      :integer(4)
+#  action_id      :string(255)
+#  is_processed   :boolean(1)
+#  place_id       :integer(4)
+#  engagement_id  :integer(4)
+#  business_id    :integer(4)
+#  lat            :decimal(15, 10)
+#  lng            :decimal(15, 10)
+#  currency       :string(255)
+#  gained_amount  :decimal(20, 3)
+#  frequency      :decimal(20, 3)
+#  amount_type    :string(255)
+#  created_on     :date
+#  log_group_id   :integer(4)
+#  created_at     :datetime
+#  updated_at     :datetime
+#  transaction_id :integer(4)
+#  campaign_id    :integer(4)
+#
+
 class Log < ActiveRecord::Base
 	belongs_to :user
 	belongs_to :place

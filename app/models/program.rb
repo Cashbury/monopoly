@@ -1,3 +1,17 @@
+# == Schema Information
+# Schema version: 20110615133925
+#
+# Table name: programs
+#
+#  id              :integer(4)      not null, primary key
+#  program_type_id :integer(4)
+#  business_id     :integer(4)
+#  created_at      :datetime
+#  updated_at      :datetime
+#  name            :string(255)
+#  is_started      :boolean(1)
+#
+
 class Program < ActiveRecord::Base
   belongs_to :program_type
   belongs_to :business

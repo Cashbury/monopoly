@@ -4,13 +4,11 @@
     <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
     <%= stylesheet_link_tag "rewards-1", "global" , "redmond/jquery-ui-1.8.10.custom","scaffold" %>
     <%= javascript_include_tag "https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" %>
-    <%= javascript_include_tag :defaults ,'jquery-ui'%>
+    <%= javascript_include_tag :defaults %>
     <%= csrf_meta_tag %>
     <%= yield(:head) %>
     <script type="text/javascript" language="javascript" charset="utf-8">
     //<![CDATA[
-        $(function(){});
-    //]]>
       jQuery(document).ready(function(){
         jQuery(".sub_menu").hide();
         jQuery(".main_header").click(function(){
@@ -26,6 +24,7 @@
           selected_link.next(".sub_menu").slideToggle(300);
         });
       });
+    //]]>
     </script>
   </head>
   <body>
@@ -48,7 +47,7 @@
       </div><!-- end of header -->
 	    <div id="main">
 	      <div id="side">
-	        <% if current_user.try(:admin?)%>
+	        <% if  true #current_user.try(:admin?)%>
             <h2>PANEL</h2>
             <ul>
               <li><%= link_to "Brands", brands_path %></li>

@@ -29,19 +29,14 @@
           <%= mailing_address_form.label :street_address %>
           <%= mailing_address_form.text_field :street_address %>
         </p>
-        <!--
+
         <p>
-          <%= mailing_address_form.label :neighborhood %>
-          <%= mailing_address_form.text_field :neighborhood %>
-        </p>
-        -->
-        <p>
-          <%= mailing_address_form.label :country %>
-          <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.country_id)%>
+          <%= mailing_address_form.hidden_field :country_id %>
         </p>
         <p>
           <%= mailing_address_form.label :city %>
-          <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.city_id)%>
+          <%= mailing_address_form.hidden_field :city_id , :value=>"" %>
+          <input type="text" name="city" value="" id="mcity_id"/>
         </p>
         <p>
           <%= mailing_address_form.label :zipcode %>
@@ -66,12 +61,12 @@
         </p>
         -->
         <p>
-          <%= billing_address_form.label :country %>
-          <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.country_id)%>
+          <%= billing_address_form.hidden_field :country_id %>
         </p>
         <p>
           <%= billing_address_form.label :city %>
-          <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.city_id)%>
+          <%= billing_address_form.hidden_field :city_id , :value=>""%>
+          <input type="text" name="" value="" id="bcity_id"/>
         </p>
         <p>
           <%= billing_address_form.label :zipcode %>

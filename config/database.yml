@@ -7,7 +7,7 @@ development:
   username: root
   password:  
   socket: /var/run/mysqld/mysqld.sock
-  
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -26,15 +26,15 @@ test:
 
 production:
   adapter: mysql
-  host: localhost
-  database: datastore1
+  host: mysql.devbury.dreamhosters.com
+  database: rdevdata
   username: user961
   password: user961lb
-  
+
 staging:
   adapter: mysql
   encoding: utf8
   database: kazdoor
   username: kazdoor
   password: kazdoor
-  socket: /var/run/mysqld/mysqld.sock  
+  socket: /var/run/mysqld/mysqld.sock

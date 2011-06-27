@@ -1,0 +1,6 @@
+<% y @business %>
+if(<%=raw @business.is_any_primary? %>){
+  jQuery('#primary_place').remove();
+}else{
+  jQuery('#primary_place').show();
+}

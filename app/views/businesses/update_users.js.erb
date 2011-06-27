@@ -1,0 +1,6 @@
+<% if @businesses %>
+
+var options = "<%= escape_javascript("<option value=''>Select....</option>".html_safe + options_from_collection_for_select( @businesses , :id ,:name ))%>"
+jQuery('select#business_id').html(options)
+
+<% end %>
