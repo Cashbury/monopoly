@@ -8,7 +8,7 @@ gem 'mysql', "=2.8.1"
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 group :development do
   gem 'railroady'
-  #gem 'annotate-models','1.0.4'
+  gem 'annotated_models'
   #gem 'sqlite3-ruby', :require => 'sqlite3'
 end
 
