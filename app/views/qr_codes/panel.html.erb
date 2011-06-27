@@ -3,6 +3,10 @@
 //<![CDATA[
 jQuery(function(){
 
+  jQuery("select#engagement_id").bind('change',function(e){
+    var $e = jQuery(this);
+    jQuery("#associatable_id").val($e.val());
+  });
 
   jQuery('select#brand_id').bind('change',function(){
     var brand_id = jQuery(":selected", this).val();
@@ -37,8 +41,7 @@ jQuery(function(){
   jQuery("#user_id").autocomplete({
       source:"/get_users.json",
       select:function(e,ui){
-        //jQuery('input#place_address_attributes_country_id').val(ui.item.id);
-        jQuery.getScript("/businesses/update_users/"+ui.item.id+".js");
+        jQuery("#associatable_id.associate").val(ui.item.id);
       }
   });
 
@@ -50,7 +53,7 @@ jQuery(function(){
   jQuery(".tabs").tabs({
     select:function(e,ui){
     var data = $(ui.tab).attr("data-c");
-    $("#associatable_type").val(data);
+      $("#associatable_type").val(data);
     }
   });
 })
@@ -83,11 +86,12 @@ jQuery(function(){
 
     <div class="tabs">
     	<ul>
-    		<li>
-                  <a href="#users" data-c="User">Users</a>
-    		</li>
+
     		<li>
     			<a href="#brands" data-c="Engagement">brands</a>
+                </li>
+    		<li>
+                  <a href="#users" data-c="User">Users</a>
     		</li>
               </ul>
 
@@ -121,9 +125,10 @@ jQuery(function(){
     <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe %>
     <p class="row">
      <strong>Engagement</strong> <br/>
-      <%= select_tag :associatable_id , engagement_options %>
+     <%= select_tag :engagement_id, engagement_options ,:class=>"associate" %>
     </p>
     <%= hidden_field_tag :associatable_type, "Engagement"%>
+    <%= hidden_field_tag :associatable_id , nil , :class=>"associate" %>
   <p class="row">
     <%= submit_tag "Submit" %>
   </p>
