@@ -40,7 +40,7 @@
             <a class="user-profile-image"><img style="wdith:64px; height:64px" src="/images/C-mybiz1.png"></a>
           </div>
           <div class="nav brand left span-5">
-            <h3 class="company_name left span-5"><%= current_user.brands.first.name || "CashBury" %></h3>
+            <h3 class="company_name left span-5"><%= current_user.try(:brands).try(:first).try(:name) || "CashBury" %></h3>
               <ul>
                 <li><a class="place show" href="#">Places</a>
                   <div class="show_con hide">
@@ -56,7 +56,7 @@
     		</li>
                 <li><a class="report show" href="#">Places</a>
                   <div class="show_con second hide">
-                    <%= link_to "Add a card", :action=>:set_rewards %>
+                    <%= link_to "Add a card", "#" %>
                   </div>
                 </li>
 

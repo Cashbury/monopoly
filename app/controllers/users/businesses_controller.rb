@@ -35,6 +35,9 @@ class Users::BusinessesController < ApplicationController
     end
   end
 
+  def set_rewards
+
+  end
 
   def get_places
     @places ||= Place.where(:user_id=>current_user.id)
