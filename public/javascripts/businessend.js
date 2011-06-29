@@ -143,4 +143,7 @@ function initialize() {
     marker = new google.maps.Marker();
     marker2 = new google.maps.Marker();
     initialize();
+
+
+
   });
