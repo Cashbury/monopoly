@@ -1,5 +1,10 @@
 <% title "Places" %>
-
+<div class="search_box ">
+  <%= form_tag("/places") do %>
+    <%= label_tag :city_id,"City",:class=>"hide", %><%= text_field_tag :city_id, nil, :placeholder=>"City name"%>
+    <%= label_tag :country_id, "Country",:class=>"hide" %><%= text_field_tag :country_id, nil, :placeholder=>"Country" %>
+  <% end %>
+</div>
 <table>
   <tr>
     <th>Image</th>

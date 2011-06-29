@@ -1,7 +1,7 @@
 <%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
 <%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
 
-<%= javascript_include_tag 'prototype', "http://maps.google.com/maps/api/js?sensor=true" %>
+<%= javascript_include_tag 'prototype'%>
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 <style type="text/css">
@@ -92,36 +92,26 @@
   }
 
   div#map_canvas{
-    border: 0 none;
-    font-family: "Arial";
-    font-size: 12px;
-    font-style: inherit;
-    font-weight: inherit;
-    margin: 0;
-    padding: 0;
-    vertical-align: top;
+    border:none;
   }
+.ui-tabs .ui-tabs-hide {
+    position: absolute;
+    left: -10000px;
+}
+
+
 </style>
 
-<%
-    if(@place)
-      @address = @place.address
-      @street_address = @address.street_address
-      @location = "#{@address.city.try(:name)}, #{@address.country.try(:name) }"
-      @cross_street = @address.cross_street
-      @phone = @place.phone
-      @neighborhood = @address.neighborhood
-    end
-%>
+<% set_variables(@place) %>
 
 
 <div class="tabs">
   <ul>
       <li>
-        <a href="#admin_view">Admin View</a>
+	<a href="#admin_view">Admin View</a>
       </li>
       <li>
-	<a href="#owner_view">Owner View</a>
+        <a href="#owner_view">Owner View</a>
       </li>
     </ul>
     <div id="admin_view">
@@ -138,10 +128,7 @@
       <%= f.label :name , :class=>"hide" %><br />
       <%= f.text_field :name , :class=>"title double" , :placeholder=>"Branch name"  %>
     </p>
-    <p class="clearfix">
-      <%= f.label :long, :class=>"hide" %> <%= f.text_field :long, :class=>"title",:placeholder=>"Longitude" %>
-      <%= f.label :lat,  :class=>"hide"  %> <%= f.text_field :lat, :class=>"title",:placeholder=>"Latitude" %>
-    </p>
+
 
     <p id="primary_place" style="display:none">
       <%= f.label :is_primary %>
@@ -152,28 +139,13 @@
       <%= f.label :description, :class=>"hide" %>
       <%= f.text_area :description, :class=>"title double" ,:placeholder=>"Describe the branch" %>
     </p>
-    <p>
-      <%= f.label :phone ,:class=>"hide" %>
-      <%= f.text_field :phone, :class=>"title double", :placeholder=>"Phone" %>
-    </p>
+
 
 
     <fieldset>
       <legend>Place Address</legend>
-      <p>
+
         <%= f.fields_for :address, f.object.address do |address_form| %>
-          <p>
-            <%= address_form.label :street_address, :class=>"hide" %>
-            <%= address_form.text_field :street_address, :class=>"title double", :placeholder=>"Street address" %>
-          </p>
-          <p>
-            <%= address_form.label :cross_street ,:class=>"hide" %>
-            <%= address_form.text_field :cross_street , :class=>"title double", :placeholder=>"Cross street" %>
-          </p>
-          <p>
-            <%= address_form.label :neighborhood ,:class=>"hide" %>
-            <%= address_form.text_field :neighborhood, :class=>"title double", :placeholder=>"Neighborhood" %>
-          </p>
           <p>
             <%= address_form.label :country %>
             <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id), {},:class=>"title double"%>
@@ -185,70 +157,112 @@
            <p>
              <%= address_form.label :zipcode , :class=>"hide" %>
              <%= address_form.text_field :zipcode, :class=>"title double", :placeholder=>"Zipcode"%>
-          </p>
-        <%end%>
+           </p>
+
+    </fieldset>
+
+
+    <fieldset>
+      <legend>
+        Location
+      </legend>
+
+      <div id="my_map2" style="width:400px;height:200px;">
+
+      </div>
+      <p>
+        <%= address_form.label :street_address, :class=>"hide" %>
+        <%= address_form.text_field :street_address, :class=>"title double", :placeholder=>"Street address" %>
+      </p>
+
+
+      <!-- Extended object form -->
+        <p>
+          <%= address_form.label :cross_street ,:class=>"hide" %>
+          <%= address_form.text_field :cross_street , :class=>"title double", :placeholder=>"Cross street" %>
+        </p>
+        <p>
+          <%= address_form.label :neighborhood ,:class=>"hide" %>
+          <%= address_form.text_field :neighborhood, :class=>"title double", :placeholder=>"Neighborhood" %>
+        </p>
+
+      <%end%>
+
+
+      <p class="clearfix">
+        <%= f.label :long, :class=>"hide" %> <%= f.text_field :long, :class=>"title",:placeholder=>"Longitude" %>
+        <%= f.label :lat,  :class=>"hide"  %> <%= f.text_field :lat, :class=>"title",:placeholder=>"Latitude" %>
       </p>
     </fieldset>
+
+    <fieldset>
+      <legend>
+        Contacts
+      </legend>
+
+      <p>
+        <%= f.label :phone ,:class=>"hide" %>
+        <%= f.text_field :phone, :class=>"title double", :placeholder=>"Phone" %>
+      </p>
+      <p>
+        <%= f.label :time_zone %><br />
+        <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
+      </p>
+      <p>
+        <%= f.label 'Keywords', :class=>"hide" %><br />
+        <%= f.text_field :tag_list, :class=>"title double" ,:placeholder=>"Keywords" %>
+      </p>
+    </fieldset>
+
     <br />
     <% if @place.new_record?%>
-    <fieldset>
-      <legend>Hours of operations?</legend>
+      <fieldset>
 
-       <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
-        <p> <%=key%></p>
-        <div id="open_hour_div_<%=index%>">
-          <span id="open_hour_span_<%=index%>">
-             <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@open_hours[index.to_s].nil? || @open_hours[index.to_s]["from"]=="" ? "7:00 AM": @open_hours[index.to_s]["from"]),:style => 'width:142px;',:class=>"from_class") %>
-             <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@open_hours[index.to_s].nil? || @open_hours[index.to_s]["to"]=="" ? "9:00 PM" : @open_hours[index.to_s]["to"]),:style => 'width:142px;',:class=>"to_class") %>
-          </span>
-          <%= check_box_tag "open_hour[#{index}][closed]","",@open_hours[index.to_s].present? && @open_hours[index.to_s]["closed"].present?, {:class=>"close_box"} %><%= label_tag "Closed"%>
-          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
-          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-          <% if index == 0 %>
-            <%= check_box_tag "open_hour[apply_to_all]" %>
-            <label> Apply To All</label>
-          <%end%>
-          <% if @open_hours[index.to_s].present? and @open_hours[index.to_s]["from2"].present?%>
-           <p id="open_hour_p_<%=index%>">
-            <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@open_hours[index.to_s]["from2"] ) ,:style => 'width:142px;',:class=>"from2_class") %>
-            <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@open_hours[index.to_s]["to2"] ) ,:style => 'width:142px;',:class=>"to2_class") %>
-           </p>
-        <%end%>
-        </div>
-       <% end %>
-       <p><label>Are your hours split during a single day, such as 9-11am and 7-10pm? </label></p>
-       <p><%= check_box_tag "split_hours","",@open_hours["0"].present? && @open_hours["0"]["from2"].present? %><label>I'd like to enter two sets of hours for a single day.</label></p>
-    </fieldset>
-    <%else%>
-    <fieldset>
-      <legend>Hours of operations?</legend>
-       <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
-        <p> <%=key%></p>
-        <div id="open_hour_div_<%=index%>">
-         <span id="open_hour_span_<%=index%>">
-          <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@place.get_hour(index,:from,false) ) ,:style => "width:142px;",:class=>"from_class", :disabled=>@place.is_closed(index) ) %>
-          <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@place.get_hour(index,:to,false) ) ,:style => "width:142px;" ,:class=>"to_class", :disabled=>@place.is_closed(index)) %>
-         </span>
-         <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index),{:class=>"close_box"} %><%= label_tag "Closed"%>
+     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+
+<div class="slide_box">
+    <div class="slide_box_content">
+    <div class="slide_box_shadow">
+      <div class="box_content round shadow">
+
+       <h3 class="days left"><%=key%></h3>
+       <div id="open_hour_div_<%=index%>" class="times left">
+         <div >
+           <label for="from">from:</label>
+           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete from_class" %>
+           <label for="id">to</label>
+           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete to_class" %>
+         </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-         <% if index == 0 %>
-           <%= check_box_tag "open_hour[apply_to_all]" %>
+             <% if index == 0 %>
            <label> Apply To All</label>
+           <%= check_box_tag "open_hour[apply_to_all]" %>
          <%end%>
-         <% if OpenHour.has_two_hour_for_same_day(@place,index)%>
-           <p id="open_hour_p_<%=index%>">
-            <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@place.get_hour(index,:from, true) ) ,:style => 'width:142px;',:class=>"from2_class") %>
-            <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@place.get_hour(index,:to,true) ) ,:style => 'width:142px;',:class=>"to2_class") %>
-           </p>
-         <%elsif @place.is_closed(index) && OpenHour.has_two_hour_at_any_day(@place)%>
-           <p id="open_hour_p_<%=index%>">
-            <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@place.get_hour(index,:from, true) ) ,:style => 'width:142px;',:class=>"from2_class",:disabled=>true) %>
-            <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@place.get_hour(index,:to,true) ) ,:style => 'width:142px;',:class=>"to2_class", :disabled=>true) %>
-           </p>
-        <% end %>
-        </div>
-       <%end%>
+     </div>
+         <div class="clear"></div>
+      </div>
+    </div>
+    </div>
+    <div class="slide_box_slider">
+    <div class="slide_box_shadow">
+      <div class="box_slider round shadow">
+        <p class="hide" >
+          <%= label_tag "Closed?"%>
+         <%= check_box_tag "open_hour[#{index}][closed]" %>
+         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+        </p>
+   </div>
+    </div>
+    </div>
+    <div class="slide_box_eject">
+    		<div class="box_eject round"><a href="#"></a></div>
+    </div>
+</div>
+
+
+
+     <% end %>
        <p><label>Are your hours split during a single day, such as 9-11am and 7-10pm? </label></p>
        <p><%= check_box_tag "split_hours","",OpenHour.has_two_hour_for_same_day(@place,"0")%><label>I'd like to enter two sets of hours for a single day.</label></p>
     </fieldset>
@@ -256,14 +270,7 @@
 
 
     <br />
-    <p>
-      <%= f.label :time_zone %><br />
-      <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
-    </p>
-    <p>
-      <%= f.label 'Keywords', :class=>"hide" %><br />
-      <%= f.text_field :tag_list, :class=>"title double" ,:placeholder=>"Keywords" %>
-    </p>
+
     <fieldset>
       <legend>Place Images</legend>
       <p>

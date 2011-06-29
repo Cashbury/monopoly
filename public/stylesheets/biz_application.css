@@ -334,3 +334,19 @@ a span{
   .times{
     width:600px;
   }
+
+/*******************************************/
+/*************** seach form ****************/
+.search_box label,.search_box input, .slide_box label{display:inline}
+.hide{display:none}
+
+
+/*******************************************/
+/*************** ui tabs ****************/
+.ui-tabs{ border:0 none}
+.ui-tabs .ui-widget-header{border:0 none}
+.ui-tabs .ui-widget-content {border:0 none}
+.ui-tabs .ui-state-default{border:0 none ; background:none}
+.ui-tabs .ui-state-default a{border:0 none ; background:none; color:#CCC}
+.ui-tabs .ui-tabs-selected a{border:0 none ; background:none; color:#E6820E}
+
