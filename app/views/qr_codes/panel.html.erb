@@ -27,7 +27,11 @@ jQuery(function(){
     var campaign_id = jQuery(":selected", this).val();
     jQuery.getScript("/qr_codes/update_engagements/"+campaign_id);
   });
-
+  
+  jQuery('#code_type').bind('change',function(){
+    var code_type_value = jQuery(":selected", this).val();
+    if (code_type_value=="1"){jQuery(".code_size").hide();}else{jQuery(".code_size").show();}
+  });
 
   jQuery("#associate_link").click(function(){
     if (jQuery(this).html()=="Associate now")
@@ -68,7 +72,11 @@ jQuery(function(){
 <%= form_tag do |form| %>
   <p class="row">
     <strong>QrCode Type</strong> <br/>
-    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },1) %>
+    <%=  select_tag :code_type , options_for_select( {"OneTime Use"=>0, "MultipleTimes Use"=>1 },1),:id=>"code_type" %>
+  </p>
+  <p class="row code_size" style="display:none">
+    <strong>Select Code Size</strong> <br/>
+    <%=  select_tag :size , options_for_select( {"For Pre-Printed Card (100x100)"=>0, "For Web (300x300)"=>1 },1) %>
   </p>
   <p class="row">
     <strong>QrCode Status</strong> <br/>
@@ -82,59 +90,50 @@ jQuery(function(){
     <a id="associate_link" href="javascript:void(0)">Associate now</a>
   </p>
   <div id="associate_box" class="row" style="display:none">
-
-
     <div class="tabs">
-    	<ul>
+      <ul>
+        <li><a href="#brands" data-c="Engagement">brands</a></li>
+        <li><a href="#users" data-c="User">Users</a></li>
+      </ul>
 
-    		<li>
-    			<a href="#brands" data-c="Engagement">brands</a>
-                </li>
-    		<li>
-                  <a href="#users" data-c="User">Users</a>
-    		</li>
-              </ul>
-
-              <div id="users">
-    <p class="row users">
-      <strong>Users</strong> <br/>
-      <%= text_field_tag :user_id , "" , :class=>"complete"%>
-    <p class="row">
-      <%= submit_tag "Submit" %>
-    </p>
-    </p>
-            </div>
-            <div id="brands">
-
-    <p class="row brands ">
-      <strong>Brand</strong> <br/>
-      <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>
-    </p>
-    <p class="row">
-      <strong>Business</strong> <br/>
-      <%= select_tag :business_id , ""%>
-    </p>
-    <p class="row">
-      <strong>Program</strong> <br/>
-      <%= select_tag :program_id , ""%>
-    </p>
-    <p class="row">
-      <strong>Campaign</strong> <br/>
-      <%= select_tag :campaign_id , ""%>
-    </p>
-    <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe %>
-    <p class="row">
-     <strong>Engagement</strong> <br/>
-     <%= select_tag :engagement_id, engagement_options ,:class=>"associate" %>
-    </p>
-    <%= hidden_field_tag :associatable_type, "Engagement"%>
-    <%= hidden_field_tag :associatable_id , nil , :class=>"associate" %>
-  <p class="row">
-    <%= submit_tag "Submit" %>
-  </p>
-</div>
+      <div id="users">
+        <p class="row users">
+          <strong>Users</strong> <br/>
+          <%= text_field_tag :user_id , "" , :class=>"complete"%>
+          <p class="row">
+            <%= submit_tag "Submit" %>
+          </p>
+        </p>
+      </div>
+      <div id="brands">
+        <p class="row brands ">
+          <strong>Brand</strong> <br/>
+          <%= select_tag :brand_id ,"<option value=''>Select One...</option>".html_safe + options_from_collection_for_select(@brands , :id, :name) %>
+        </p>
+        <p class="row">
+          <strong>Business</strong> <br/>
+          <%= select_tag :business_id , ""%>
+        </p>
+        <p class="row">
+          <strong>Program</strong> <br/>
+          <%= select_tag :program_id , ""%>
+        </p>
+        <p class="row">
+          <strong>Campaign</strong> <br/>
+          <%= select_tag :campaign_id , ""%>
+        </p>
+        <% engagement_options = "<option value=''>..Engagements ..</option>".html_safe %>
+        <p class="row">
+          <strong>Engagement</strong> <br/>
+          <%= select_tag :engagement_id, engagement_options ,:class=>"associate" %>
+        </p>
+        <%= hidden_field_tag :associatable_type, "Engagement"%>
+        <%= hidden_field_tag :associatable_id , nil , :class=>"associate" %>
+        <p class="row">
+          <%= submit_tag "Submit" %>
+        </p>
+  </div>
   <div style="clear:both">
-
   </div>
   </div>
     </div>

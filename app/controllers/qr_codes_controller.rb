@@ -1,11 +1,11 @@
 class QrCodesController < ApplicationController
-  before_filter :authenticate_user!, :require_admin
+  before_filter :authenticate_user!, :require_admin, :except=>[:show]
   skip_before_filter :authenticate_user! , [:show_public]
+  #layout :false, :only=>[:show]
   # GET /qr_codes
   # GET /qr_codes.xml
   #
   #
-
   def index
     @qr_codes = search_qrs
     @templates = Template.all
@@ -19,13 +19,15 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1
   # GET /qr_codes/1.xml
   def show
-    @qr_code = QrCode.where(:hash_code =>params[:id]).first
-
+    @qr_code = QrCode.find(params[:id])
+    @engagement=@qr_code.try(:engagement)
+    @engagement_type=@engagement.engagement_type
+    @brand=@engagement.try(:campaign).try(:program).try(:business).try(:brand)
     respond_to do |format|
       format.pdf do
         render  :pdf => "qrcode"
       end
-      format.html # show.html.erb
+      format.html {render :layout=>false}# show.html.erb
       format.xml  { render :xml => @qr_code }
     end
   end
@@ -104,7 +106,7 @@ class QrCodesController < ApplicationController
       codes = []
       if engagement.blank?
         quantity.times{
-          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i}
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:size=>params[:size].to_i}
         }
         if QrCode.create(codes)
           redirect_to :action=>:index
@@ -112,7 +114,7 @@ class QrCodesController < ApplicationController
       else
         #when everything is ok
         quantity.times{
-          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:associatable_id].to_i,:associatable_type=>params[:associatable_type]}
+          codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:associatable_id].to_i,:associatable_type=>params[:associatable_type],:size=>params[:size].to_i}
         }
         if QrCode.create(codes)
           redirect_to :action=>:index , :engagement_id=>params[:associatable_id]
