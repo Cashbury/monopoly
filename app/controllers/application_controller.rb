@@ -11,6 +11,12 @@ class ApplicationController < ActionController::Base
     redirect_to root_url
   end
 
+  rescue_from Exception, :with => :render_error if Rails.env.production?
+
+  def render_error(exception)
+    render :text => "#{e.message} -- #{e.class}<br/>#{e.backtrace.join("<br/>")}"
+  end
+
 
   #def add_sign_up_path_for(resource_or_scope)
   #end
