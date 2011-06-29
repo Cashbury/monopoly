@@ -52,7 +52,7 @@ gem 'factory_girl_rails','=1.0.1'
 gem 'rcov','=0.9.9'
 end
 
-gem 'annotated_models','=1.0.4'
+gem 'annotated_models'
 gem 'jquery-rails','=0.2.7'
 gem 'carmen','=0.2.5'
 gem 'wicked_pdf','=0.6.0'
