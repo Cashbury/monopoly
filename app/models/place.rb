@@ -48,7 +48,7 @@ class Place < ActiveRecord::Base
   validates_presence_of :name, :long, :lat
   validates :address, :presence=>true
   validates_numericality_of :long,:lat
-  #validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+  validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
 
   validates_associated :address
 
@@ -98,14 +98,14 @@ class Place < ActiveRecord::Base
       if !open_hours_params.nil? && open_hours_params[i].present?
         add_one_open_hour_to_place(open_hours_params[i],"from","to","closed")
         if open_hours_params[i]["from2"].present? and open_hours_params[i]["to2"].present?
-          add_one_open_hour_to_place(open_hours_params[i],"from2","to2","closed2")
+          add_one_open_hour_to_place(open_hours_params[i],"from2","to2","closed")
         end
       end # End of ( if open_hours_params[i].present?)
     end
   end
   def add_one_open_hour_to_place(open_hours_params,from,to,closed)
     open_hour = OpenHour.new
-    if !open_hours_params.nil? && open_hours_params[closed].blank?
+    if !open_hours_params.nil? && open_hours_params[closed].nil?
       open_hour.from = create_date_time(open_hours_params[from])
       open_hour.to   = create_date_time(open_hours_params[to])
       open_hour.day_no = open_hours_params[:day_no]
@@ -156,12 +156,12 @@ class Place < ActiveRecord::Base
     return return_hour
   end
   def is_closed(day_num)
-     open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num).first
-     if open_hour
-       return false
-     else
-       return true
-     end
+    open_hour =OpenHour.where(:place_id => self.id , :day_no => day_num).first
+    if open_hour
+      return false
+    else
+      return true
+    end
   end
 
   private

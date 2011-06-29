@@ -3,11 +3,7 @@
   <h3> MSG: Your account is activated </h3>
 </div>
 -->
-<script type="text/javascript" language="javascript" charset="utf-8">
-//<![CDATA[
-  jQuery(document).ready(initialize);
-//]]>
-</script>
+
 <div id="step3" class="mono-business-register span-24" >
   <h1>Configure your digital receipt</h1>
 
@@ -19,29 +15,30 @@
 
   <p>
     <%= label_tag :street_address, 'street_address' ,:class=>"hide" %>
-    <%= text_field_tag :street_address ,nil, :class=>"title double", :placeholder=>"Enter your branch address" %>
+    <%= text_field_tag :street_address ,@street_address || "", :class=>"title double", :placeholder=>"Enter your branch address" %>
   </p>
 
   <p>
     <%= label_tag :location, 'location' ,:class=>"hide" %>
-    <%= text_field_tag :location ,nil, :class=>"title double", :placeholder=>"Enter you city and country name" %>
+    <%= text_field_tag :location ,@location || "", :class=>"title double", :placeholder=>"Enter you city and country name" %>
   </p>
 
   <p>
     <%= label_tag :cross_street , 'cross_street' ,:class=>"hide" %>
-    <%= text_field_tag :cross_street ,nil, :class=>"title double", :placeholder=>"cross street" %>
+    <%= text_field_tag :cross_street ,@cross_street || "", :class=>"title double", :placeholder=>"cross street" %>
   </p>
-  <div id="map_canvas" style="width:412px; height:400px"></div>
-
+  <div id="map_canvas" style="width:412px; height:400px" class="google_map"></div>
   <p class="clearfix">
-    <%= label_tag :phone ,"phone", :class=>"hide"%>
-    <%= text_field_tag :phone , nil,:class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
+    <%= label_tag :neighborhood ,"neighborhood", :class=>"hide"%>
+    <%= text_field_tag :neighborhood , @neighborhood || "",:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
   </p>
 
-  <p>
-    <%= label_tag :neighborhood ,"neighborhood", :class=>"hide"%>
-    <%= text_field_tag :neighborhood , nil,:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
+  <p >
+    <%= label_tag :phone ,"phone", :class=>"hide"%>
+    <%= text_field_tag :phone , @phone || "" ,:class=>"title", :placeholder=>"Phone" , :class=>"title double" %>
   </p>
+
+
 
   <%= hidden_field_tag :lat %>
   <%= hidden_field_tag :long %>

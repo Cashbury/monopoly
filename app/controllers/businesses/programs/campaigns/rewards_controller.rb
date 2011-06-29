@@ -32,8 +32,12 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.save
       @image.save! if @image
-      flash[:notice] = "Successfully created reward."
-      redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
+      if params[:upload][:photo].blank? || !@image.need_cropping
+        flash[:notice] = "Successfully created reward."
+        redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
+      else
+        render :action=>"crop"
+      end
     else
       @items= Reward.get_available_items(@campaign.id)
       render :action => 'new'
@@ -57,14 +61,26 @@ class Businesses::Programs::Campaigns::RewardsController < ApplicationController
     params[:item_id].present? ? @reward.items.replace([Item.find(params[:item_id])]) : @reward.items.delete_all  # supporting one item for now for each reward
     if @reward.update_attributes(params[:reward])
       @image.save! if @image
-      flash[:notice] = "Successfully updated reward."
-      redirect_to business_program_campaign_reward_url(@business, @program, @campaign,@reward)
+      if params[:upload][:photo].blank? || !@image.need_cropping
+        flash[:notice] = "Successfully updated reward."
+        redirect_to business_program_campaign_reward_url(@business, @program, @campaign,@reward)
+      else
+        render :action=>"crop"
+      end        
     else
       @items= Reward.get_available_items(@campaign.id)
       render :action => 'edit'
     end
   end
-  
+  def crop_image
+    @reward=Reward.find(params[:reward_id])
+    if @reward.update_attributes!(params[:reward])
+      flash[:notice] = "Successfully updated reward."
+      redirect_to business_program_campaign_reward_url(@business,@program,@campaign,@reward)
+    else    
+      render :action=>"crop"
+    end    
+  end
   def destroy
     @reward = Reward.find(params[:id])
     @reward.destroy

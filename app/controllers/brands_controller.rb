@@ -26,7 +26,7 @@ class BrandsController < ApplicationController
   # GET /brands/new.xml
   def new
     @brand = Brand.new
-
+    @brand.build_brand_image
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @brand }
@@ -36,6 +36,7 @@ class BrandsController < ApplicationController
   # GET /brands/1/edit
   def edit
     @brand = Brand.find(params[:id])
+    @brand.build_brand_image if @brand.brand_image.nil?
   end
 
   # POST /brands
@@ -43,19 +44,14 @@ class BrandsController < ApplicationController
   def create
     @brand = Brand.new(params[:brand])
     @brand.user_id = current_user.id
-    params[:upload] ||= {}
-    unless params[:upload][:photo].blank?
-      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
-      image.upload_type = "BrandImage"
-      image.uploadable = @brand
-      image.photo = params[:upload][:photo]
-    end
-    Brand.transaction do
-      @brand.save!
-      image.save! if image
-    end
     respond_to do |format|
-      format.html { redirect_to(@brand, :notice => 'Brand was successfully created.') }
+      format.html {       
+        if @brand.save! && (@brand.brand_image.nil? || !@brand.brand_image.need_cropping)
+          redirect_to(@brand, :notice => 'Brand was successfully created.') 
+        else
+          render :action => 'crop'  
+        end
+      }
       format.xml  { render :xml => @brand, :status => :created, :location => @brand }
     end
   rescue
@@ -70,23 +66,25 @@ class BrandsController < ApplicationController
   def update
     @brand = Brand.find(params[:id])
     @brand.user_id = current_user.id
-    params[:upload] ||= {}
-    unless params[:upload][:photo].blank?
-      @brand.brand_image.try(:destroy)
-      image =  ENABLE_DELAYED_UPLOADS ? TmpImage.new() : BrandImage.new()
-      image.upload_type = "BrandImage"
-      image.uploadable = @brand
-      image.photo = params[:upload][:photo]
-    end
     respond_to do |format|
-      if @brand.update_attributes(params[:brand])
-        image.save! if image
-        format.html { redirect_to(@brand, :notice => 'Brand was successfully updated.') }
+      if @brand.update_attributes!(params[:brand])
+        format.html { 
+          if params[:brand][:brand_image_attributes][:photo].blank? || !@brand.brand_image.need_cropping
+            redirect_to(@brand, :notice => 'Brand was successfully updated.') 
+          else 
+            render :action=> 'crop'
+          end
+        }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
       end
+    end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "edit" }
+      format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
     end
   end
 
@@ -100,5 +98,9 @@ class BrandsController < ApplicationController
       format.html { redirect_to(brands_url) }
       format.xml  { head :ok }
     end
+  end
+  
+  def crop
+    
   end
 end

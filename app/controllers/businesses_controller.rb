@@ -33,8 +33,6 @@ class BusinessesController < ApplicationController
     end
     @business.build_mailing_address
     @business.build_billing_address
-    #need to disable business images
-    ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
   end
 
   def create
@@ -56,8 +54,7 @@ class BusinessesController < ApplicationController
         3.times {place.place_images.build}
       end
       @business.build_mailing_address(params[:business][:mailing_address_attributes])
-      @business.build_billing_address(params[:business][:billing_address_attributes])
-      ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
+      @business.build_billing_address(params[:business][:billing_address_attributes])     
       render :action => 'new'
     end
   end
@@ -72,8 +69,7 @@ class BusinessesController < ApplicationController
       3.times {place.place_images.build}
     end
     @business.build_mailing_address if @business.mailing_address.nil?
-    @business.build_billing_address if @business.billing_address.nil?
-    ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
+    @business.build_billing_address if @business.billing_address.nil?   
    end
 
   def update
@@ -85,8 +81,7 @@ class BusinessesController < ApplicationController
       @brands  = Brand.all
       @categories = Category.all
       @business.build_mailing_address if @business.mailing_address.nil?
-      @business.build_billing_address if @business.billing_address.nil?
-      ENABLE_DELAYED_UPLOADS ? 3.times { @business.tmp_images.build} : 3.times { @business.business_images.build}
+      @business.build_billing_address if @business.billing_address.nil?      
       render :action => 'edit'
     end
    end

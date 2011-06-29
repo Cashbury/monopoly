@@ -23,6 +23,7 @@ class PlacesController < ApplicationController
   def new
     @place=Place.new
     @place.build_address
+    @open_hours={}
     ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
 
@@ -30,12 +31,12 @@ class PlacesController < ApplicationController
     @place = Place.new(params[:place])
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.add_open_hours(params[:open_hour])
-    @place.valid?
     if @place.save
       flash[:notice] = "Successfully created place."
       redirect_to place_url(@place)
     else
       @place.build_address(params[:place][:address_attributes])
+      @open_hours=params[:open_hour]
       ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
       render :action => 'new'
     end
@@ -76,7 +77,21 @@ class PlacesController < ApplicationController
 			format.json  { render :json => @places }
 		end
 	end
-
-
-
+	
+	def prepare_hours
+    @hours = []
+    7.upto(11) do | i |
+      @hours << "#{i}:00 AM"
+      @hours << "#{i}:30 AM"
+    end
+    @hours << "12:00 PM"
+    @hours << "12:30 PM"
+    1.upto(11) do | i |
+      @hours << "#{i}:00 PM"
+      @hours << "#{i}:30 PM"
+    end
+    @hours << "12:00 AM"
+    @hours << "12:30 AM"
+    return @hours
+  end
 end

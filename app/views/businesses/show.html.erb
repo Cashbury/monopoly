@@ -33,14 +33,6 @@
   <strong>Country:</strong>
   <%= @business.country.try(:name) %>
 </p>
-<%unless @business.business_images.empty?%>
-<p>
-  <strong>Images</strong>
-  <%for image in @business.business_images%>
-    <%= image_tag image.photo.url(:thumb) %>
-  <%end%>
-</p>
-<%end%>
 <%unless @business.mailing_address.blank? %>
 <h3>Mailing Address</h3>
 <ul>

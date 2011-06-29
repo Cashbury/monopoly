@@ -86,7 +86,7 @@ $(function(){
 
     <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe +  options_from_collection_for_select(@businesses,:id,:name,params[:business_id]), :class=>"efilter" %>
 
-    <%= select_tag :program_id , "<option value=''>..Program..</option>".html_safe +  options_from_collection_for_select(@programs,:id,:name,params[:program_id]), :class=>"efilter" %>
+    <%= select_tag :program_id , "<option value=''>..Program..</option>".html_safe +  options_from_collection_for_select(@programs,:id,:program_type_name,params[:program_id]), :class=>"efilter" %>
 
     <%= select_tag :campaign_id , "<option value=''>..Campaign..</option>".html_safe +  options_from_collection_for_select(@campaigns,:id,:name,params[:campaign_id]), :class=>"efilter" %>
 
@@ -171,7 +171,7 @@ $(function(){
       <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
-    <td><%= link_to 'Show', qr_code.qr_code_image.try(:photo).try(:url) %></td>
+    <td><%= link_to 'Show', qr_code_path(qr_code) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>

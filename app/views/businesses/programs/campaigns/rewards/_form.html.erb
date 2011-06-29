@@ -62,6 +62,14 @@ jQuery(function(){
       <input type="text" name="counter" maxlength="3" size="3" value="84" id="counter_field"> chars remaining
     </div>
     <div class="row">
+      <div class="basic_info_caption1">Facebook msg when user unlocks a reward</div>
+      <%= f.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
+    <div class="row">
+      <div class="basic_info_caption1">Facebook msg when user enjoys a reward</div>
+      <%= f.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
+    <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>
       <div id="Enter_Num_Stamp">
         <div class="basic_info_caption1">
@@ -116,7 +124,7 @@ jQuery(function(){
   </fieldset>
       <div class="row">
         <input type="submit" value="" name="commit" id="save_cont_btn" class="save">
-        <%= link_to "Cancel", rewards_path, :class => "cancel right" %>
+        <%= link_to "Cancel", business_program_campaign_rewards_path(@business,@program,@campaign), :class => "cancel right" %>
       </div>
     </div>
 </div>

@@ -6,9 +6,10 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 puts 'Create an admin account'
-User.create(:username => "admin", :name => "Admin", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true)
+User.create(:username => "admin", :name => "Admin", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
+puts "Create transaction types and actions"
 transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect", :fee_amount=>0.0, :fee_percentage=>0.0)
-Action.find_or_create_by_name([{:name=>"Engagement", :transaction_type_id=>transaction_type.id},{:name=>"Redeem",:transaction_type_id=>transaction_type.id}])
+Action.find_or_create_by_name([{:name=>"Engagement", :transaction_type_id=>transaction_type.try(:id)},{:name=>"Redeem",:transaction_type_id=>transaction_type.try(:id)}])
 
 puts 'Creating countries and cities from contries_cities,txt ...'
 open(Rails.root.join('db').join('countries_cities.txt')) do |records|
@@ -35,9 +36,8 @@ MeasurementType.find_or_create_by_name(:name=>"Points")
 puts "Creatring system targets"
 Target.find_or_create_by_name(:name=>"new_comers")
 Target.find_or_create_by_name(:name=>"returning_comers")
-
 puts "Create Default user roles here"
-# check this is working or not
-#%w( admin super_admin owner mobi).each do |name|
-  #Role.find_or_create_by_name(:name => name )
-#end
+#check this is working or not
+%w( admin super_admin owner mobi).each do |name|
+  Role.find_or_create_by_name(:name => name )
+end

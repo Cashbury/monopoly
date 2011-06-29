@@ -14,7 +14,7 @@
 #  associatable_type :string(255)
 #
 
-require 'uri'
+require 'open-uri'
 class QrCode < ActiveRecord::Base  
   #QrCode dependent on engagement type "stamp"
   belongs_to :associatable,:polymorphic => true #engagement, place, business
@@ -28,14 +28,15 @@ class QrCode < ActiveRecord::Base
   #                   :storage => :s3,
   #                   :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
   #                   :path => "qrcodes/:id/:filename"
+  PRE_PRINTED_SIZE= 1
+  WEB_SIZE=2
   
-  attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type
-
+  attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type, :size
   before_create :encrypt_code
   before_destroy :destroy_image
   after_create :upload_image
   scope :associated_with_engagements , where(:associatable_type=>"Engagement")
-  
+
   def destroy_image
     self.qr_code_image.destroy
   end
@@ -65,10 +66,10 @@ class QrCode < ActiveRecord::Base
     self.hash_code
   end
 
-  def qr_image 
-    qr_dimension = "100x100"
-    qr_dimension = "300x300" if code_type #true means multiUse
-   "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code
+  def qr_image
+    qr_dimension = "100x100" if !size && !code_type
+    qr_dimension = "300x300" if size || code_type #true means multiUse  
+   "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code   
   end
 
   def qr_image_url

@@ -28,18 +28,7 @@
             e.stopPropagation();
             e.preventDefault();
           });
-
-          jQuery(".box_eject a").click(function(e){
-            var $a = jQuery(this);
-            $a.toggleClass("active");
-            var $box =  $a.closest(".slide_box_eject").prev('.slide_box_slider').find('.box_slider p');
-            $box.slideToggle();
-            e.preventDefault();
-            e.stopPropagation();
-          });
-
       });
-
     //]]>
     </script>
   </head>

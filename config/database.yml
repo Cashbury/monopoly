@@ -21,13 +21,13 @@ test:
   encoding: utf8
   database: kazdoor_test
   username: root
-  password: toor
+  password:
   socket: /var/run/mysqld/mysqld.sock
 
 production:
   adapter: mysql
-  host: mysql.devbury.dreamhosters.com
-  database: rdevdata
+  host: localhost
+  database: datastore1
   username: user961
   password: user961lb
 

@@ -23,6 +23,6 @@ class Program < ActiveRecord::Base
   scope :running_campaigns, where("#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date")
   
   def program_type_name
-    return program_type.name
+    return self.program_type.name
   end
 end

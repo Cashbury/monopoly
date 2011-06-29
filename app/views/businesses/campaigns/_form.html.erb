@@ -39,6 +39,21 @@
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
     <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
+  </fieldset><br/><br
+  <fieldset >
+    <legend class="section_title">Setting Facebook Messages</legend>
+    <div class="row">
+      <%= reward.label "When user unlocks a reward" %><br />
+      <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
+    <div class="row">
+      <%= reward.label "When user enjoys a reward" %><br />
+      <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
+    <div class="row">
+      <%= engagement.label "When user makes an engagement" %><br />
+      <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>100 %>
+    </div>
   </fieldset>
   <p><a id="add_details_link" href="javascript:void(0)"><%=@campaign.new_record? ? "Add More Details" : "Edit Details"%></a></p>
   <br /><br />

@@ -1,215 +1,317 @@
-<%= javascript_include_tag 'prototype' %>
+<%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
+<%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
+
+<%= javascript_include_tag 'prototype'%>
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
-
+<style type="text/css">
+  select[disabled] { background-color: #E6E6FA; }
+</style>
 <script type="text/javascript">
   jQuery(document).ready(function(){
 
-      jQuery('#place_business_id').change(function(e){
-      var $pb =jQuery(this).val();
-      jQuery.getScript('/businesses/check_primary_place/'+ $pb +'.js');
-    });
+  jQuery('#owner_view h1').hide();
+  jQuery('#owner_view input[type=submit]').remove();
 
-   jQuery('select#place_address_attributes_country_id').bind('change',function(){
+  jQuery('#place_update').click(function(e){
+    jQuery('form.new_place,form.edit_place').submit();
+  });
+
+
+  jQuery('#split_hours').click(function(){
+   if(jQuery('#split_hours').is(':checked')){
+    for(index=0;index < 7;index++){
+      from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
+      from_to_html = from_to_html.replace(/from/g, "from2");
+      from_to_html = from_to_html.replace(/to/g, "to2");
+      jQuery('#open_hour_div_'+index).append("<p id=open_hour_p_"+index+">"+from_to_html+"</p>");
+    }
+   }else{
+    for(index=0;index < 7;index++)
+     jQuery('#open_hour_p_'+index).remove();
+   }
+  });
+  jQuery('.close_box').click(function(){
+    var ele=jQuery(this)
+    if(ele.is(':checked')){
+      var i=ele.parent()[0].id.split(/_/)[3];
+      jQuery('#open_hour_'+i+'_from').attr('disabled',true);
+      jQuery('#open_hour_'+i+'_to').attr('disabled',true);
+      if (jQuery('#open_hour_'+i+'_from2')!=null && jQuery('#open_hour_'+i+'_to2')!=null){
+        jQuery('#open_hour_'+i+'_from2').attr('disabled',true);
+        jQuery('#open_hour_'+i+'_to2').attr('disabled',true);
+      }
+    }else{
+      var i=ele.parent()[0].id.split(/_/)[3];
+      jQuery('#open_hour_'+i+'_from').attr('disabled',false);
+      jQuery('#open_hour_'+i+'_to').attr('disabled',false);
+      if (jQuery('#open_hour_'+i+'_from2')!=null && jQuery('#open_hour_'+i+'_to2')!=null){
+        jQuery('#open_hour_'+i+'_from2').attr('disabled',false);
+        jQuery('#open_hour_'+i+'_to2').attr('disabled',false);
+      }
+    }
+  });
+
+  jQuery('#place_business_id').change(function(e){
+    var $pb =jQuery(this).val();
+    jQuery.getScript('/businesses/check_primary_place/'+ $pb +'.js');
+  });
+  jQuery('select#place_address_attributes_country_id').bind('change',function(){
     var country_id = jQuery(":selected", this).val();
     jQuery.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
   });
   jQuery('#open_hour_apply_to_all').click(function(){
-    if( jQuery(this).is(':checked') ){
+  if( jQuery(this).is(':checked') ){
       from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
-      to_hour   =  jQuery('#open_hour_0_to').val();  //  the selected value of the first day ( to hour)
+      to_hour = jQuery('#open_hour_0_to').val(); // the selected value of the first day ( to hour)
       from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
-      to2_hour   =  jQuery('#open_hour_0_to2').val();  //  the selected value of the first day -  if user splits the time ( to2 hour)
-
+      to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)
       jQuery('.from_class').each(function(index, element){
         jQuery(this).val(from_hour);
         if(from2_hour){
-          if(index!=0){
-             Split_hour(index);
-             x =jQuery('#open_hour_'+index+'_from2').val(from2_hour);
-           }
+         jQuery('#open_hour_'+index+'_from2').val(from2_hour)
         }// if from2_hour end
       }); // end of .each function
 
       jQuery('.to_class').each(function(index, element){
         jQuery(this).val(to_hour);
         if(to2_hour){
-          if(index!=0){
-             x =jQuery('#open_hour_'+index+'_to2').val(to2_hour);
-           }
+          jQuery('#open_hour_'+index+'_to2').val(to2_hour);
         }// if from2_hour end
       }); // end of .each function
-
-
     } //end if
+    });
   });
-});
-
-  function Split_hour(index){
-    from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
-    from_to_html = from_to_html.replace(/from/g, "from2");
-    from_to_html = from_to_html.replace(/to/g, "to2");
-    closed1_label ="<label> Closed? </label>";
-    closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
-    final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
-    jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
-  };
 </script>
+<style type="text/css" media="screen">
+  .tabs .title{
+    width:193px;
+  }
+  .tabs .double{
+    width:400px;
+  }
 
-<%= form_for(@place,:html => { :multipart => true }) do |f| %>
-  <%= f.error_messages %>
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :long %><br />
-    <%= f.text_field :long %>
-  </p>
-  <p>
-    <%= f.label :lat %><br />
-    <%= f.text_field :lat %>
-  </p>
+  div#map_canvas{
+    border:none;
+  }
+.ui-tabs .ui-tabs-hide {
+    position: absolute;
+    left: -10000px;
+}
 
-  <p>
-    <%= f.label "Business" %><br />
-    <%= f.select :business_id, "<option selected value=''>..Select Business..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name)%>
-  </p>
-  <p id="primary_place" style="display:none">
-    <%= f.label :is_primary %>
-    <%= f.check_box :is_primary %>
-  </p>
-  <p>
-    <%= f.label :description %><br />
-    <%= f.text_area :description %>
-  </p>
-  <p>
-    <%= f.label :phone %>
-    <%= f.text_field :phone %>
-  </p>
-  <p>
-    <%= f.label :time_zone %><br />
-    <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
-  </p>
-  <p>
-    <%= f.label 'Keywords' %><br />
-    <%= f.text_field :tag_list %>
-  </p>
-  <fieldset>
-    <legend>Place Images</legend>
+
+</style>
+
+<% set_variables(@place) %>
+
+
+<div class="tabs">
+  <ul>
+      <li>
+	<a href="#admin_view">Admin View</a>
+      </li>
+      <li>
+        <a href="#owner_view">Owner View</a>
+      </li>
+    </ul>
+    <div id="admin_view">
+
+  <div id="step3" class="mono-business-register span-20" >
+
+  <%= form_for(@place,:html => { :multipart => true }) do |f| %>
+    <%= f.error_messages %>
     <p>
-      <%if ENABLE_DELAYED_UPLOADS%>
-        <% f.fields_for :place_images do |pimage| %>
-            <%= pimage.label(:delete_photo, 'Delete photo') %>
-            <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
-            <%= pimage.check_box(:delete_photo) %><br />
-        <%end%>
-        <% f.fields_for :tmp_images do |pimage| %>
-          <%= pimage.label(:photo, 'Upload photo') %>
-          <%= pimage.file_field(:photo) %><br />
-        <%end%>
-      <%else%>
-        <%= f.fields_for :place_images do |pimage| %>
-          <%- unless pimage.object.new_record?-%>
-            <%= pimage.label(:delete_photo, 'Delete photo') %>
-            <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
-            <%= pimage.check_box(:delete_photo) %><br />
-          <%- else -%>
-            <br />
-            <%= pimage.label(:photo, 'Upload photo') %>
-            <%= pimage.file_field(:photo) %><br />
-          <%- end -%>
-        <%end%>
-      <%end%>
+      <%= f.label "Business" %><br />
+      <%= f.select :business_id, "<option selected value=''>..Select Business..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name), {} , :class=>"title double"%>
     </p>
-  </fieldset>
-   <br />
-  <fieldset>
-    <legend>Place Address</legend>
     <p>
-      <%= f.fields_for :address, f.object.address do |address_form| %>
-        <p>
-          <%= address_form.label :street_address %>
-          <%= address_form.text_field :street_address %>
-        </p>
-        <p>
-          <%= address_form.label :neighborhood %>
-          <%= address_form.text_field :neighborhood %>
-        </p>
-        <p>
-          <%= address_form.label :country %>
-          <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id)%>
-        </p>
-        <p>
-          <%= address_form.label :city %>
-          <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id)%>
-        </p>
-         <p>
-          <%= address_form.label :zipcode %>
-          <%= address_form.text_field :zipcode %>
-        </p>
-      <%end%>
+      <%= f.label :name , :class=>"hide" %><br />
+      <%= f.text_field :name , :class=>"title double" , :placeholder=>"Branch name"  %>
     </p>
-  </fieldset>
-  <br />
-  <% if @place.new_record?%>
-  <fieldset>
-    <legend>Hours of operations?</legend>
+
+
+    <p id="primary_place" style="display:none">
+      <%= f.label :is_primary %>
+      <%= f.check_box :is_primary %>
+    </p>
+
+    <p>
+      <%= f.label :description, :class=>"hide" %>
+      <%= f.text_area :description, :class=>"title double" ,:placeholder=>"Describe the branch" %>
+    </p>
+
+
+
+    <fieldset>
+      <legend>Place Address</legend>
+
+        <%= f.fields_for :address, f.object.address do |address_form| %>
+          <p>
+            <%= address_form.label :country %>
+            <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id), {},:class=>"title double"%>
+          </p>
+          <p>
+            <%= address_form.label :city %>
+            <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id),{},:class=>"title double"%>
+          </p>
+           <p>
+             <%= address_form.label :zipcode , :class=>"hide" %>
+             <%= address_form.text_field :zipcode, :class=>"title double", :placeholder=>"Zipcode"%>
+           </p>
+
+    </fieldset>
+
+
+    <fieldset>
+      <legend>
+        Location
+      </legend>
+
+      <div id="my_map2" style="width:400px;height:200px;">
+
+      </div>
+      <p>
+        <%= address_form.label :street_address, :class=>"hide" %>
+        <%= address_form.text_field :street_address, :class=>"title double", :placeholder=>"Street address" %>
+      </p>
+
+
+      <!-- Extended object form -->
+        <p>
+          <%= address_form.label :cross_street ,:class=>"hide" %>
+          <%= address_form.text_field :cross_street , :class=>"title double", :placeholder=>"Cross street" %>
+        </p>
+        <p>
+          <%= address_form.label :neighborhood ,:class=>"hide" %>
+          <%= address_form.text_field :neighborhood, :class=>"title double", :placeholder=>"Neighborhood" %>
+        </p>
+
+      <%end%>
+
+
+      <p class="clearfix">
+        <%= f.label :long, :class=>"hide" %> <%= f.text_field :long, :class=>"title",:placeholder=>"Longitude" %>
+        <%= f.label :lat,  :class=>"hide"  %> <%= f.text_field :lat, :class=>"title",:placeholder=>"Latitude" %>
+      </p>
+    </fieldset>
+
+    <fieldset>
+      <legend>
+        Contacts
+      </legend>
+
+      <p>
+        <%= f.label :phone ,:class=>"hide" %>
+        <%= f.text_field :phone, :class=>"title double", :placeholder=>"Phone" %>
+      </p>
+      <p>
+        <%= f.label :time_zone %><br />
+        <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
+      </p>
+      <p>
+        <%= f.label 'Keywords', :class=>"hide" %><br />
+        <%= f.text_field :tag_list, :class=>"title double" ,:placeholder=>"Keywords" %>
+      </p>
+    </fieldset>
+
+    <br />
+    <% if @place.new_record?%>
+      <fieldset>
 
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
-      <p> <%=key%></p>
-      <div id="open_hour_div_<%=index%>">
+
+<div class="slide_box">
+    <div class="slide_box_content">
+    <div class="slide_box_shadow">
+      <div class="box_content round shadow">
+
+       <h3 class="days left"><%=key%></h3>
+       <div id="open_hour_div_<%=index%>" class="times left">
          <div >
-           <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours),:style => 'width:142px;',:class=>"from_class") %>
-           <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours),:style => 'width:142px;',:class=>"to_class") %>
+           <label for="from">from:</label>
+           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete from_class" %>
+           <label for="id">to</label>
+           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete to_class" %>
          </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-         <%= label_tag "Closed?"%>
-         <%= check_box_tag "open_hour[#{index}][closed]" %>
-         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
-         <% if index == 0 %>
+             <% if index == 0 %>
            <label> Apply To All</label>
            <%= check_box_tag "open_hour[apply_to_all]" %>
          <%end%>
      </div>
-     <br />
-     <br />
-     <% end %>
-  </fieldset>
-  <%else%>
-  <fieldset>
-    <legend>Hours of operations?</legend>
-     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
-      <p> <%=key%></p>
-      <div id="open_hour_div_<%=index%>">
-       <div >
-        <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours,@place.get_hour(index,:from,false) ) ,:style => 'width:142px;',:class=>"from_class") %>
-        <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours,@place.get_hour(index,:to,false) ) ,:style => 'width:142px;',:class=>"to_class") %>
-       </div>
-       <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
-       <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-       <%= label_tag "Closed?"%>
-       <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index) %>
-       <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
-         <% if index == 0 %>
-           <label> Apply To All</label>
-           <%= check_box_tag "open_hour[apply_to_all]" %>
-         <%end%>
-       <% if OpenHour.has_two_hour_for_same_day(@place,index)%>
-       <p>
-        <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours,@place.get_hour(index,:from, true) ) ,:style => 'width:142px;',:class=>"from2_class") %>
-        <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours,@place.get_hour(index,:to,true) ) ,:style => 'width:142px;',:class=>"to2_class") %>
-        <%= label_tag "Closed?"%>
-        <input type='checkbox' value='1'  name="open_hour[<%=index%>]["closed2"]"  />
-       </p>
-      <%end%>
+         <div class="clear"></div>
       </div>
-      <br />
-      <br />
-     <%end%>
-  </fieldset>
-  <%end%>
-  <br />
-  <p><%= f.submit %></p>
+    </div>
+    </div>
+    <div class="slide_box_slider">
+    <div class="slide_box_shadow">
+      <div class="box_slider round shadow">
+        <p class="hide" >
+          <%= label_tag "Closed?"%>
+         <%= check_box_tag "open_hour[#{index}][closed]" %>
+         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+        </p>
+   </div>
+    </div>
+    </div>
+    <div class="slide_box_eject">
+    		<div class="box_eject round"><a href="#"></a></div>
+    </div>
+</div>
+
+
+
+     <% end %>
+       <p><label>Are your hours split during a single day, such as 9-11am and 7-10pm? </label></p>
+       <p><%= check_box_tag "split_hours","",OpenHour.has_two_hour_for_same_day(@place,"0")%><label>I'd like to enter two sets of hours for a single day.</label></p>
+    </fieldset>
+    <%end%>
+
+
+    <br />
+
+    <fieldset>
+      <legend>Place Images</legend>
+      <p>
+        <%if ENABLE_DELAYED_UPLOADS%>
+          <% f.fields_for :place_images do |pimage| %>
+              <%= pimage.label(:delete_photo, 'Delete photo') %>
+              <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+              <%= pimage.check_box(:delete_photo) %><br />
+          <%end%>
+          <% f.fields_for :tmp_images do |pimage| %>
+            <%= pimage.label(:photo, 'Upload photo') %>
+            <%= pimage.file_field(:photo) %><br />
+          <%end%>
+        <%else%>
+          <%= f.fields_for :place_images do |pimage| %>
+            <%- unless pimage.object.new_record?-%>
+              <%= pimage.label(:delete_photo, 'Delete photo') %>
+              <%= image_tag(pimage.object.photo.url(:thumb), :alt => 'Photo', :title => 'Current photo') %>
+              <%= pimage.check_box(:delete_photo) %><br />
+            <%- else -%>
+              <br />
+              <%= pimage.label(:photo, 'Upload photo') %>
+              <%= pimage.file_field(:photo) %><br />
+            <%- end -%>
+          <%end%>
+        <%end%>
+      </p>
+    </fieldset>
+     <br />
+
+
+    <p><% f.submit %></p>
 <% end %>
+</div>
+<div class="clear"></div>
+    </div>
+
+    <div id="owner_view">
+      <%= render :template=>"users/businesses/primary_place" %>
+      <div class="clear"></div>
+    </div>
+</div>
+
+<input type="button" name="new_place" value="Save" id="place_update"/>

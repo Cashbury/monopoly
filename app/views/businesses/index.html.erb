@@ -13,13 +13,15 @@
   <% for business in @businesses %>
     <tr>
       <td><%= link_to business.name, business %></td>
-      <td><%= business.brand.brand_image.to_s %></td>
+      <td><%= image_tag business.try(:brand).try(:brand_image).try(:photo).url(:normal) unless business.try(:brand).try(:brand_image).nil? %></td>
       <td>
         <% maddress = business.mailing_address %>
-        <%= maddress.street_address + "," + maddress.zipcode + ", "+ maddress.country.name %>
+        <% unless maddress.nil? %>
+        <%= "#{maddress.try(:street_address)} , #{maddress.try(:zipcode)} , #{maddress.try(:country).try(:name)}" %>
+        <%end%>
       </td>
       <td>Rajib Ahmed</td>
-      <td><%= link_to "#{business.places.length}", business_places_path(business) %></td>
+      <td><%= link_to "#{business.name} branches (#{business.places.size})", business_places_path(business) %></td>
       <td>&nbsp</td>
       <td><%= link_to "Edit", edit_business_path(business) %></td>
       <td><%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete %></td>

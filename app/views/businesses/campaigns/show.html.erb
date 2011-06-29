@@ -22,6 +22,19 @@
     Everyone
   <%end%>
 </p>
+
+<p>
+  <b>Fb msg when user unlocks a reward:</b>
+  <%=@reward.fb_unlock_msg%>
+</p>
+<p>
+  <b>Fb msg when user enjoys a reward:</b>
+  <%=@reward.fb_enjoy_msg%>
+</p>
+<p>
+  <b>Fb msg when user makes an engement:</b>
+  <%=@engagement.fb_engagement_msg%>
+</p>
   
 <p>
   <b>Launch Date:</b>
@@ -73,7 +86,7 @@
 <%unless @reward.try(:reward_image).blank?%>
 <p>
   <b>Reward Image:</b>
-  <%=image_tag @reward.reward_image.photo.url(:thumb)%>
+  <%=image_tag @reward.reward_image.photo.url(:normal)%>
 </p>
 <%end%>
 <p><%= link_to 'Edit Offer', edit_business_campaign_path(@business) %></p>

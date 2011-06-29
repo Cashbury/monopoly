@@ -3,7 +3,7 @@ class Businesses::CampaignsController < ApplicationController
   before_filter :prepare_business
   
   def index
-    program_type=ProgramType.find_or_create_by_name(:name=>"Marketing")
+    program_type=ProgramType.find_or_create_by_name("Marketing")
     program=Program.where(:business_id=>@business.id,:program_type_id=>program_type.id).first
     @campaigns=program.nil? ? [] : program.campaigns.select {|c| c.engagements.size==1 && c.rewards.size==1}
     
@@ -44,14 +44,26 @@ class Businesses::CampaignsController < ApplicationController
     end
     @campaign.name="#{reward_attrs[:name].capitalize} Campaign"
     respond_to do |format|
-      if @campaign.save    
-        format.html { redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') }
+      if @campaign.save!    
+        format.html { 
+          @reward=@campaign.rewards.first
+          if reward_attrs[:reward_image_attributes][:photo].blank? || !@reward.reward_image.need_cropping
+            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') 
+          else
+            render :action => 'crop'  
+          end
+        }
       else
         @campaign.errors.add(:item_name,"can't be blank") if params[:item_name]==""
         @reward=@campaign.rewards.first
         @reward.build_reward_image unless @reward.reward_image.present?
         format.html { render :action => "new" }
       end
+    end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "new" }
+      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
     end
   end
   def show
@@ -72,7 +84,7 @@ class Businesses::CampaignsController < ApplicationController
   end
   
   def update
-    @campaign             = Campaign.find(params[:id])
+    @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
@@ -102,8 +114,15 @@ class Businesses::CampaignsController < ApplicationController
     params[:campaign][:engagements_attributes]["0"]["name"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]}"
     params[:campaign][:engagements_attributes]["0"]["description"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]} #{reward_attrs[:needed_amount]} times, Get a free #{reward_attrs[:name]}"
     respond_to do |format|
-      if @campaign.update_attributes(params[:campaign])
-        format.html { redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') }
+      if @campaign.update_attributes!(params[:campaign])
+        format.html {
+          @reward=@campaign.rewards.first
+          if reward_attrs[:reward_image_attributes][:photo].blank? || !@reward.reward_image.needed_cropping?
+            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
+          else
+            render :action => 'crop'  
+          end
+        }
       else
         @campaign.errors.add(:item_name,"can't be blank") if params[:item_name]==""
         @reward=@campaign.rewards.first
@@ -112,8 +131,21 @@ class Businesses::CampaignsController < ApplicationController
         format.html { render :action => "edit" }
       end
     end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "edit" }
+      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
+    end
   end
-  
+  def crop_image
+    @campaign=Campaign.find(params[:campaign_id])
+    @reward=Reward.find(params[:reward_id])
+    if @reward.update_attributes!(params[:reward])
+      redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
+    else    
+      render :action=>"crop"
+    end    
+  end
   def destroy
     @campaign = Campaign.find(params[:id])
     @campaign.destroy
