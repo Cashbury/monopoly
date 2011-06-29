@@ -40,13 +40,17 @@
 
       geocoder.geocode( { 'address': strAddress }, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
+          place = results[0];
           map.setZoom(17);
           map.setCenter(results[0].geometry.location);
           marker.setPosition(results[0].geometry.location);
           marker.setDraggable(true);
-
-          jQuery('input#lat').val(results[0].geometry.location.Ha);
-          jQuery('input#long').val(results[0].geometry.location.Ia);
+          R = ["",""];
+          R = results[0].formatted_address.split(',');
+          //R=results[0].address_components[0].long_name + results[0].address_components[1].long_name;
+          jQuery('input#lat, input#place_lat').val(results[0].geometry.location.lat());
+          jQuery('input#long,input#place_long').val(results[0].geometry.location.lng());
+          jQuery('input#place_address_attributes_street_address').val(R[0]+R[1]);
         } else {
           //alert("Geocode was not successful for the following reason: " + status)
           //better error handling needed

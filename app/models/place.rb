@@ -48,7 +48,7 @@ class Place < ActiveRecord::Base
   validates_presence_of :name, :long, :lat
   validates :address, :presence=>true
   validates_numericality_of :long,:lat
-  #validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+  validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
 
   validates_associated :address
 
@@ -157,7 +157,7 @@ class Place < ActiveRecord::Base
   end
   def is_closed(day_num)
     open_hour =OpenHour.where(:place_id => self.id , :day_no => day_num).first
-    if open_hour 
+    if open_hour
       return false
     else
       return true
