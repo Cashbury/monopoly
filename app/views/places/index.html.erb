@@ -10,11 +10,11 @@
 
 <% title "Places" %>
 <div class="search_box ">
-  <%= form_tag("/places") do %>
+  <%= form_tag("/places",:method=>"get") do %>
    <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name),:class=>"title double"%>
 
    <%= select_tag :country_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(Country.all, :id, :name),:class=>"title double"%>
-
+   <%= submit_tag "Search" %>
   <% end %>
 </div>
 <table>
