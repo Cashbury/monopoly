@@ -9,7 +9,10 @@ puts 'Create an admin account'
 User.create(:username => "admin", :name => "Admin", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
 puts "Create transaction types and actions"
 transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect", :fee_amount=>0.0, :fee_percentage=>0.0)
-Action.find_or_create_by_name([{:name=>"Engagement", :transaction_type_id=>transaction_type.try(:id)},{:name=>"Redeem",:transaction_type_id=>transaction_type.try(:id)}])
+%w( Engagement Redeem ).each do |name|
+  Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
+end
+
 
 puts 'Creating countries and cities from contries_cities,txt ...'
 open(Rails.root.join('db').join('countries_cities.txt')) do |records|

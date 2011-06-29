@@ -86,13 +86,12 @@ Kazdoor::Application.routes.draw do
   end
   
   resources :qr_codes do
-
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
     get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
     get "update_campaigns/:id"     ,:action=>:update_campaigns, :on =>:collection, :as =>"update_campaigns"
     post "panel" , :on =>:collection
-    get "panel"  , :on =>:collection
+    get  "panel"  , :on =>:collection
     post "printable", :on=>:collection
   end
 
@@ -146,7 +145,8 @@ Kazdoor::Application.routes.draw do
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
   match "/show_code/:id"                  =>"qr_codes#show_code"
-
+  match "/check_status/:id"               =>"qr_codes#check_code_status"
+  match "/code/:hash_code"                =>"qr_codes#show"   
   #devise_for :users
 
   # The priority is based upon order of creation:

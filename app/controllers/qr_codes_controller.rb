@@ -7,9 +7,9 @@ class QrCodesController < ApplicationController
   #
   #
   def index
-    @qr_codes = search_qrs
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @qr_codes = search_qrs(@page)
     @templates = Template.all
-
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @qr_codes }
@@ -19,7 +19,8 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1
   # GET /qr_codes/1.xml
   def show
-    @qr_code = QrCode.find(params[:id])
+    @qr_code = QrCode.find(params[:id]) if params[:id].present?
+    @qr_code = QrCode.where(:hash_code=>params[:hash_code]).first if params[:hash_code].present?    
     @engagement=@qr_code.try(:engagement)
     @engagement_type=@engagement.engagement_type
     @brand=@engagement.try(:campaign).try(:program).try(:business).try(:brand)
@@ -197,7 +198,7 @@ class QrCodesController < ApplicationController
     end
   end
 
-  def search_qrs
+  def search_qrs(page)
     @print_jobs   ||= PrintJob.all
     @brands       ||= Brand.all
     @businesses   ||= Business.all
@@ -215,7 +216,28 @@ class QrCodesController < ApplicationController
     end
     search = search.merge({:status=>params[:status]})             unless params[:status].blank?
     search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
-    QrCode.where search
+    QrCode.where(search).paginate(:page => page,:per_page => QrCode::per_page )
   end
-
+  def check_code_status
+    logs=Log.select("user_id,created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")
+    logs=logs[params[:index].to_i,logs.size]
+    response_text=""
+    result={}
+    #logs.collect{|log| response_text+="<p>Code was scanned by #{User.find(log.user_id).try(:full_name)} @ #{log.created_at} GMT</p>"}
+    logs.collect{ |log| 
+      user=User.find(log.user_id)
+      user_uid=user.email.split("@").first
+      engagement=Engagement.where(:id=>log.engagement_id).first
+      location_name=Place.where(:id=>log.place_id).first.try(:name).try(:capitalize)
+      location_name=engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) if location_name.nil?
+      engagement_text= engagement.engagement_type.is_visit ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}"
+      response_text+="<div class=\"record_feeds\"><img src=\"https://graph.facebook.com/#{user_uid}/picture\"/><div class=\"feed_text\"><p> was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}</p><p>#{user.try(:full_name)} #{engagement_text} and scored  +#{engagement.amount} points on his/her tab @ #{location_name}</p></div></div>"
+      #735570560 my uid
+    }
+    result[:index]=params[:index].to_i+logs.size
+    result[:response_text]=response_text
+    if request.xhr?
+      render :json=>result.to_json
+    end
+  end
 end

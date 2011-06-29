@@ -99,12 +99,15 @@ $(function(){
   <% end %>
 
 </div>
+<br />
+  <%= will_paginate @results %>
+<br/>
 <table cellpadding="0" cellspacing="0">
 
   <tr>
     <th>Code</th>
-    <th>Engagment</th>
-    <th>Eng. Type</th>
+    <th>Associated to</th>
+<!--    <th>Eng. Type</th>-->
     <th>Hash code</th>
     <th>Status</th>
     <th>QrType</th>
@@ -114,7 +117,7 @@ $(function(){
     <th>Brand</th>
     <th>Exported</th>
     <th>Issue Date</th>
-     <th></th>
+    <th></th>
     <th></th>
     <th></th>
   </tr>
@@ -129,13 +132,13 @@ $(function(){
         <%= qr_code.engagement.name %>
       <% end %>
     </td>
-     <td>
+<!--     <td>
       <% if qr_code.engagement.blank? %>
         "not"
       <% else %>
         <%= qr_code.engagement.engagement_type.name %>
       <% end %>
-    </td>
+    </td>-->
     <td><%= qr_code.hash_code %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>
@@ -171,14 +174,15 @@ $(function(){
       <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
-    <td><%= link_to 'Show', qr_code_path(qr_code) %></td>
+    <td><%= link_to 'View', qr_code_path(qr_code) %></td>
     <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
     <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
-
 <br />
+  <%= will_paginate @results %>
+<br/>
 <div>
   <strong style="color:red">
     NB: QrCodes which are not associated with an engagement automatically will be ignored for printing
