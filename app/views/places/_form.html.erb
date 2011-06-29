@@ -17,6 +17,7 @@
     jQuery('form.new_place,form.edit_place').submit();
   });
 
+  jQuery(".complete").autocomplete({source:"/update_places"})
 
   jQuery('#split_hours').click(function(){
    if(jQuery('#split_hours').is(':checked')){
@@ -126,7 +127,7 @@
     </p>
     <p>
       <%= f.label :name , :class=>"hide" %><br />
-      <%= f.text_field :name , :class=>"title double" , :placeholder=>"Branch name"  %>
+      <%= f.text_field :name , :class=>"title double complete" , :placeholder=>"Branch name"  %>
     </p>
 
 

@@ -78,6 +78,11 @@ class PlacesController < ApplicationController
 		end
 	end
 
+  def update_places
+    @users = Place.where(['name LIKE ?', "#{params[:term]}%"]).map(&:name)
+    render :json => @users
+  end
+
   def prepare_hours
     @hours = []
     7.upto(11) do | i |

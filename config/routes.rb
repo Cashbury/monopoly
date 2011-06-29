@@ -81,10 +81,10 @@ Kazdoor::Application.routes.draw do
 
   resources :print_jobs
   resources :brands
-  resources :brands do 
+  resources :brands do
     get "crop" ,:on =>:member
   end
-  
+
   resources :qr_codes do
 
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
@@ -123,11 +123,11 @@ Kazdoor::Application.routes.draw do
           post "change_status"   ,:on =>:member
 	        get "stamps", :on => :collection
         end
-        resources :places , :only=>[:issue_code] do 
+        resources :places , :only=>[:issue_code] do
           get "issue_code" ,:on =>:member
         end
 	      resources :rewards, :controller=>"businesses/programs/campaigns/rewards" do
-	        post "/crop_image",:action=>:crop_image    
+	        post "/crop_image",:action=>:crop_image
         end
      end
     end
@@ -146,7 +146,7 @@ Kazdoor::Application.routes.draw do
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
   match "/show_code/:id"                  =>"qr_codes#show_code"
-
+  match "/update_places"                 =>"places#update_places"
   #devise_for :users
 
   # The priority is based upon order of creation:
