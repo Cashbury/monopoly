@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
     redirect_to root_url
   end
 
-  rescue_from Exception, :with => :render_error if Rails.env.production?
+  rescue_from Exception, :with => :render_error if Rails.env.staging?
 
   def render_error(exception)
     render :text => "#{e.message} -- #{e.class}<br/>#{e.backtrace.join("<br/>")}"
