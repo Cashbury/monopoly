@@ -37,7 +37,6 @@ GEM
       activesupport (= 3.0.3)
     activesupport (3.0.3)
     acts-as-taggable-on (2.0.6)
-    annotate-models (1.0.4)
     arel (2.0.10)
     aws-s3 (0.6.2)
       builder
@@ -139,7 +138,6 @@ PLATFORMS
 
 DEPENDENCIES
   acts-as-taggable-on (= 2.0.6)
-  annotate-models (= 1.0.4)
   aws-s3 (= 0.6.2)
   calendar_date_select!
   cancan (= 1.6.5)
