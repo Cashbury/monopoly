@@ -123,8 +123,9 @@ class BusinessesController < ApplicationController
 
 
   def get_users
-    @users = User.where(['username LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.username }}
-    render :json => @users
+    @users1 = User.where(['username LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.username }}
+    @users2 = User.where(['first_name LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.first_name }}
+    render :json => @users1 | @users2
   end
 
   def update_users

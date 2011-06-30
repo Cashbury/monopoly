@@ -1,5 +1,6 @@
 class QrCodesController < ApplicationController
   before_filter :authenticate_user!, :require_admin, :except=>[:show]
+  before_filter :prepare_filters_data, :only=>[:index]
   skip_before_filter :authenticate_user! , [:show_public]
   #layout :false, :only=>[:show]
   # GET /qr_codes
@@ -8,7 +9,17 @@ class QrCodesController < ApplicationController
   #
   def index
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @qr_codes = search_qrs(@page)
+    if params[:all_engs]=="1"
+      @qr_codes=QrCode.where(:associatable_type=>"Engagement").paginate(:page => @page,:per_page => QrCode::per_page )
+    elsif params[:all_users]=="1"
+      @users_listing=true
+      @qr_codes=QrCode.where(:associatable_type=>"User").paginate(:page => @page,:per_page => QrCode::per_page )
+    elsif !params[:user_id].blank?
+      @users_listing=true
+      @qr_codes=search_user_qrs(@page)
+    else
+      @qr_codes=search_qrs(@page)
+    end
     @templates = Template.all
     respond_to do |format|
       format.html # index.html.erb
@@ -72,9 +83,19 @@ class QrCodesController < ApplicationController
   # PUT /qr_codes/1.xml
   def update
     @qr_code = QrCode.find(params[:id])
-    respond_to do |format|
+    respond_to do |format|    
       if @qr_code.update_attributes(params[:qr_code])
-        format.html { redirect_to(qr_codes_path, :notice => 'Qr code was successfully updated.') }
+        format.html { 
+          flash[:notice]='Qr code was successfully updated.'
+          if @qr_code.associatable_type=="Engagement"
+            redirect_to :action=>:index , :engagement_id=>@qr_code.associatable_id
+          elsif @qr_code.associatable_type=="User"
+            @users_listing=true
+            redirect_to :action=>:index , :user_id=>@qr_code.associatable_id
+          else
+            redirect_to :action=>:index
+          end
+        }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -105,7 +126,7 @@ class QrCodesController < ApplicationController
       quantity =  params[:quantity].to_i
       engagement = Engagement.where(:id=>params[:associatable_id]).first
       codes = []
-      if engagement.blank?
+      if params[:associatable_id].blank?
         quantity.times{
           codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:size=>params[:size].to_i}
         }
@@ -118,7 +139,14 @@ class QrCodesController < ApplicationController
           codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:associatable_id].to_i,:associatable_type=>params[:associatable_type],:size=>params[:size].to_i}
         }
         if QrCode.create(codes)
-          redirect_to :action=>:index , :engagement_id=>params[:associatable_id]
+          if params[:associatable_type]=="Engagement"
+            redirect_to :action=>:index , :engagement_id=>params[:associatable_id]
+          elsif params[:associatable_type]=="User"
+            @users_listing=true
+            redirect_to :action=>:index , :user_id=>params[:associatable_id]
+          else
+            redirect_to :action=>:index
+          end
         else
           render :action => :panel
         end
@@ -199,12 +227,6 @@ class QrCodesController < ApplicationController
   end
 
   def search_qrs(page)
-    @print_jobs   ||= PrintJob.all
-    @brands       ||= Brand.all
-    @businesses   ||= Business.all
-    @engagements  ||= Engagement.all
-    @programs     ||= Program.all
-    @campaigns    ||= Campaign.all
     search = {}
 
     search = {:associatable_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
@@ -218,6 +240,13 @@ class QrCodesController < ApplicationController
     search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
     QrCode.where(search).paginate(:page => page,:per_page => QrCode::per_page )
   end
+  
+  def search_user_qrs(page)
+    search = {}
+    search = {:associatable_id =>params[:user_id]}
+    QrCode.where(search).paginate(:page => page,:per_page => QrCode::per_page )
+  end
+  
   def check_code_status
     logs=Log.select("user_id,created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")
     logs=logs[params[:index].to_i,logs.size]
@@ -231,7 +260,7 @@ class QrCodesController < ApplicationController
       location_name=Place.where(:id=>log.place_id).first.try(:name).try(:capitalize)
       location_name=engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) if location_name.nil?
       engagement_text= engagement.engagement_type.is_visit ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}"
-      response_text+="<div class=\"record_feeds\"><img src=\"https://graph.facebook.com/#{user_uid}/picture\"/><div class=\"feed_text\"><p> was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}</p><p>#{user.try(:full_name)} #{engagement_text} and scored  +#{engagement.amount} points on his/her tab @ #{location_name}</p></div></div>"
+      response_text+="<div class=\"record_feeds\"><img src=\"https://graph.facebook.com/#{user_uid}/picture\"/><div class=\"feed_text\"><p> #{user.try(:full_name)} was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}. #{user.try(:full_name).split(' ').first} #{engagement_text} and scored  +#{engagement.amount} points on their tab @ #{location_name} by going out with Cashbury</p></div></div>"
       #735570560 my uid
     }
     result[:index]=params[:index].to_i+logs.size
@@ -239,5 +268,14 @@ class QrCodesController < ApplicationController
     if request.xhr?
       render :json=>result.to_json
     end
+  end
+  
+  def prepare_filters_data
+    @print_jobs   ||= PrintJob.all
+    @brands       ||= Brand.all
+    @businesses   ||= Business.all
+    @engagements  ||= Engagement.all
+    @programs     ||= Program.all
+    @campaigns    ||= Campaign.all
   end
 end

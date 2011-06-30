@@ -12,7 +12,6 @@
     border:40px red solid;
   }
   .qr_code_view_container {
-    width: 380px;
     margin: 0 auto;
     font-family: Arial;
     font-size: 12px;
@@ -30,19 +29,19 @@
 
   }
   .qr_code_hash b{margin: 0 auto;   font-size: 16px;font-family: Arial;}
-  .details {padding-left:14px;float:left;width:100%;clear:both;}
-  .details img {float:left;width:27px;margin:0 10px}
+  .details {width:400px;margin:0 auto; height: 27px;}
+  .details img {float:left;width:27px;margin-right:10px}
   .details p{margin:0px;font-family: Arial;color:#666;}
   .record_feeds img {float:left;width:50px;margin-top: 5px;}
-  .record_feeds {border:1px grey solid;clear:both;overflow:auto; padding:9px; margin-bottom:10px; }
-  .feed_text {float:left;width:300px;margin-left:10px}
-  .feed_text p{padding:0;margin-top:0;margin-bottom:5px;}
-  .font1 {font-family: Play;font-size: 12px;}
+  .record_feeds {clear:both;overflow:auto;margin-bottom:10px; }
+  .feed_text {float:left;width:340px;margin-left:10px}
+  .feed_text p{padding:0;margin-top:0;margin-bottom:0px;}
+  .font1 {font-family: Play;font-size: 13px;}
   .font2 {font-family: Anonymous Pro;font-size: 16px;}
   .toggle_link{display:none;clear:both;  text-align: right;}
   .toggle_link a{font-family:Helvetica; font-size:16px;color:#CDCDCD;text-decoration:none;}
   .toggle_link #toggle_p{margin-right:15px}
-  #scan_response {margin-top:10px;}
+  #scan_response {margin-top:10px;width:400px;margin:0 auto; margin-top: 5px;}
   .font_selected_state {color:red;}
 </style>
 <%= javascript_include_tag :defaults %>
@@ -54,7 +53,7 @@
     timer = setInterval(function(){
       send_check_request();
     }, delay);
-    jQuery('#toggle_a').click(function(){
+    /*jQuery('#toggle_a').click(function(){
       jQuery('#scan_response').removeClass('font1');
       jQuery('#scan_response').addClass('font2');
       jQuery(this).css('color','red');
@@ -65,7 +64,7 @@
       jQuery('#scan_response').addClass('font1');
       jQuery(this).css('color','red');
       jQuery('#toggle_a').css('color','#CDCDCD');
-    });
+    });*/
     function send_check_request(){
       jQuery.ajax({
         type: 'GET',
@@ -75,7 +74,7 @@
           if(data!=null){
             if(data.response_text!="" && index!=data.index){jQuery('#scan_response').append(data.response_text);}
             index=data.index;
-            if(data.response_text!="") {jQuery('.toggle_link').show();}
+            //if(data.response_text!="") {jQuery('.toggle_link').show();}
           }
         }
       });
@@ -86,20 +85,20 @@
 <body style="background-color:yellow">
 <div class="qr_code_view_container">
   <div class="c_crowned_logo"><%= image_tag "/images/C-Crowned.png"  %></div>
-  <div id="qr_code"><%= image_tag @qr_code.qr_code_image.try(:photo).try(:url)  %></div>
+  <div id="qr_code"><%= image_tag @qr_code.try(:qr_code_image).try(:photo).try(:url)  %></div>
   <div class="qr_code_hash"><b>Reference Number: <%=@qr_code.hash_code%></b></div>
-  <div class="toggle_link"><a id="toggle_p" style="color:red" href="javascript:void(0)">Play</a> <a id="toggle_a" href="javascript:void(0)">Anonymous Pro</a></div>
-  <div id="scan_response" class="font1"></div>
   <p style="color:#666; width:100%; text-align:center;clear:both">
-  <% unless @engagement_type.nil? %>
-  <% unless @engagement_type.is_visit %>
-    <b>Details: Get a stamp for ordering <%=@engagement.name.gsub("Buy ","")%> @ <%=@brand.name%></b>
-  <%else%>
-    <b>Details: Get a stamp for visiting <%=@brand.name%></b>
-  <% end %>
-  <%end%>
+    <% unless @engagement_type.nil? %>
+      <% unless @engagement_type.is_visit %>
+        <b>Details: Earn +<%=@engagement.amount%> points by ordering <%=@engagement.name.gsub("Buy ","")%> @ <%=@brand.name%></b>
+      <%else%>
+        <b>Details: Earn +<%=@engagement.amount%> stamps by visiting <%=@brand.name%></b>
+      <% end %>
+    <%end%>
   </p>
-  <div class="details"><%= image_tag "/images/Snapit.png"  %><p><b>Snap code using your cashbury app.</b></p><p><b>To download the app follow me</b></p></div>
+  <div class="details"><%= image_tag "/images/Snapit.png"  %><p><b>Snap code using your Cashbury App. To get the app <a href="http://<%=request.host_with_port%>/foryou">follow me</a>.</b></p></div>
+  <!--<div class="toggle_link"><a id="toggle_p" style="color:red" href="javascript:void(0)">Play</a> <a id="toggle_a" href="javascript:void(0)">Anonymous Pro</a></div>-->
+  <div id="scan_response" class="font1"></div> 
 </div>
 </body>
 

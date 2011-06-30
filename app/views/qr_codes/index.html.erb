@@ -43,8 +43,14 @@ $(function(){
     $('select.filter').bind('change',function(){
       var url = $(this).closest('form').serialize();
       window.location="/qr_codes?"+url;
-    })
+    });
 
+    $("input.complete").keyup(function(event){
+      if(event.keyCode == 13){
+        var url = $(this).closest('form').serialize();
+        window.location="/qr_codes?user_id="+jQuery('.associate').val();
+      }
+    });
     $('select#brand_id').bind('change',function(){
       var brand_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_businesses/"+brand_id);
@@ -64,24 +70,60 @@ $(function(){
       var campaign_id = $(":selected", this).val();
       $.getScript("/qr_codes/update_engagements/"+campaign_id);
     });
-
+    $('#filter_users').bind('change',function(){
+     if ($(this).is(":checked")){
+      $('#engegement_details').hide();
+      $('#user_details').show();
+     } 
+    });
+    $('#filter_engagements').bind('change',function(){
+     if ($(this).is(":checked")){
+      $('#user_details').hide();
+      $('#engegement_details').show();
+     } 
+    });
+    jQuery("#user_id").autocomplete({
+      source:"/get_users.json",
+      select:function(e,ui){
+        jQuery("#associatable_user_id.associate").val(ui.item.id);
+      }
+    });
+    jQuery("#list_all_users").bind('change',function(){
+      if ($(this).is(":checked")){
+        window.location="/qr_codes?all_users=1";
+      } 
+    });
+    jQuery("#list_all_engagements").bind('change',function(){
+      if ($(this).is(":checked")){
+        window.location="/qr_codes?all_engs=1";
+      } 
+    });
 
 })
 //]]>
 </script>
 
 <div id="filters">
-  <%= form_tag(:action=>:printable, :format=>:pdf) do %>
-    <!--
-    <%= select_tag :template_id ,  options_from_collection_for_select(@templates,:id,:name) %>
-    <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"filter" %>
-
-
-    <% print_options =   "<option value=''> ..ExportJob.. </option>".html_safe + options_from_collection_for_select(@print_jobs,:id,:name,params[:print_job_id].to_s) %>
-    <%= select_tag :print_job_id ,print_options,:class=>"filter"  %>
-    <br/>
-    -->
-
+<fieldset>
+<legend>Select Filters</legend>
+ <%= form_tag(:action=>:printable, :format=>:pdf) do %>
+  <p><%=radio_button_tag 'filter', 'users', @users_listing %> <%=label_tag 'Associated to users'%></p>
+  <%if @users_listing%>
+    <div id="user_details">
+  <%else%>
+    <div id="user_details" style="display:none">
+  <%end%>
+    <%=label_tag "Username / First Name" %><br/>
+    <%= text_field_tag :user_id , "" , :class=>"complete"%>
+    <%= hidden_field_tag :associatable_user_id , nil , :class=>"associate" %>
+    Or <%= check_box_tag :list_all_users%><%=label_tag "List all" %>
+   </div>
+  <p><%=radio_button_tag 'filter', 'engagements', !@users_listing %><%=label_tag 'Associated to engagements'%></p>
+  <%if !@users_listing%>
+    <div id="engegement_details">
+  <%else%>
+    <div id="engegement_details" style="display:none">
+  <%end%>
     <%= select_tag :brand_id ,"<option value=''>..Brands..</option>".html_safe + options_from_collection_for_select(@brands , :id, :name, params[:brand_id]) , :class=>"efilter"%>
 
     <%= select_tag :business_id , "<option value=''>..Business..</option>".html_safe +  options_from_collection_for_select(@businesses,:id,:name,params[:business_id]), :class=>"efilter" %>
@@ -93,21 +135,21 @@ $(function(){
     <%= select_tag :engagement_id , "<option value=''>..Engagements..</option>".html_safe +  options_from_collection_for_select(@engagements,:id,:name,params[:engagement_id]) , :class=>"filter"  %>
 
    <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"efilter filter" %>
-
-
-    <!--<%= submit_tag "Export to template" %>-->
+    Or <%= check_box_tag :list_all_engagements%><%=label_tag "List all" %>
+   </div>    
+ <!--<%= submit_tag "Export to template" %>-->
   <% end %>
-
+</fieldset>
 </div>
+<p><h2><b>Total: <%=@qr_codes.size%></b></h2></p>
 <br />
-  <%= will_paginate @results %>
+  <%= will_paginate @qr_codes %>
 <br/>
+<% unless @users_listing %>
 <table cellpadding="0" cellspacing="0">
-
   <tr>
     <th>Code</th>
     <th>Associated to</th>
-<!--    <th>Eng. Type</th>-->
     <th>Hash code</th>
     <th>Status</th>
     <th>QrType</th>
@@ -115,7 +157,6 @@ $(function(){
     <th>Program</th>
     <th>Business</th>
     <th>Brand</th>
-    <th>Exported</th>
     <th>Issue Date</th>
     <th></th>
     <th></th>
@@ -124,7 +165,7 @@ $(function(){
 
 <% @qr_codes.each do |qr_code| %>
   <tr>
-    <td><%= image_tag qr_code.qr_image, :width=>"50%"  %></td>
+    <td><%= image_tag qr_code.qr_image, :width=>"75%"  %></td>
     <td>
       <% if qr_code.engagement.blank? %>
         not associated
@@ -132,13 +173,6 @@ $(function(){
         <%= qr_code.engagement.name %>
       <% end %>
     </td>
-<!--     <td>
-      <% if qr_code.engagement.blank? %>
-        "not"
-      <% else %>
-        <%= qr_code.engagement.engagement_type.name %>
-      <% end %>
-    </td>-->
     <td><%= qr_code.hash_code %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>
@@ -165,13 +199,6 @@ $(function(){
       <% end %>
       </td>
       <td>
-       <% unless qr_code.exported? %>
-         not printed
-       <% else %>
-         printed
-        <% end %>
-      </td>
-      <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
     <td><%= link_to 'View', qr_code_path(qr_code) %></td>
@@ -180,8 +207,42 @@ $(function(){
   </tr>
 <% end %>
 </table>
+<%else%>
+<table cellpadding="0" cellspacing="0">
+  <tr>
+    <th>Code</th>
+    <th>Associated to</th>
+    <th>Hash code</th>
+    <th>Status</th>
+    <th>QrType</th>
+    <th>Issue Date</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+<% @qr_codes.each do |qr_code| %>
+  <tr>
+    <td><%= image_tag qr_code.qr_image, :width=>"20%"  %></td>
+    <td><a href="#"> <%= User.find(qr_code.associatable_id).full_name %></a></td>
+    <td><%= qr_code.hash_code %></td>
+    <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
+    <td>
+      <% if (qr_code.code_type) %>
+        <strong style="color:blue">Multi Use</strong>
+      <% else %>
+        <strong> Single Use</strong>
+      <% end %>
+    </td>
+    <td><%= qr_code.created_at.to_formatted_s(:long) %></td>
+    <td><%= link_to 'View', qr_code_path(qr_code) %></td>
+    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
+    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<%end%>
 <br />
-  <%= will_paginate @results %>
+  <%= will_paginate @qr_codes %>
 <br/>
 <div>
   <strong style="color:red">
