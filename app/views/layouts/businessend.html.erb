@@ -21,14 +21,6 @@
     <script type="text/javascript" language="javascript" charset="utf-8">
     //<![CDATA[
       jQuery(document).ready(function(){
-          jQuery('a.show').click(function(e){
-            var $a = jQuery(this);
-            $a.toggleClass("active");
-            $a.next('div.show_con').toggle();
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
       });
     //]]>
     </script>
@@ -55,7 +47,7 @@
                     <% else %>
                       <b>No branches listed</b>
                     <% end %>
-                    <%= link_to "Add a new branch", "#" %>
+                    <%= link_to "Add a new branch", "/users/businesses/primary_place" %>
                   </div>
     		</li>
                 <li><a class="report show" href="#">Places</a>
@@ -70,7 +62,9 @@
                 </li>
             </ul>
           </div>
-          <% end %>
+        <% end %>
+
+
         </div>
         <!--<h2 class="logo">Cashbury</h2>-->
         <% if user_signed_in? %>
@@ -92,10 +86,10 @@
             </a>
           </li>
           <li class="box">
-            <a class="icon" href="#">
+            <a class="icon" href="<%= "/users/businesses/open_sign/#{@place.try(:id)}" %>">
               <div class="button"></div>
             </a>
-            <a id="bcards" href="#">
+            <a id="bcards" href="<%= "/users/businesses/open_sign/#{@place.try(:id)}" %>">
               <span>Open sign</span>
             </a>
           </li>
@@ -163,7 +157,17 @@
 
   }})
 
-    jQuery(".box_slider:first p").show();
+  jQuery(".box_slider:first p").show();
+
+          jQuery('a.show').click(function(e){
+            var $a = jQuery(this);
+            $a.toggleClass("active");
+            $a.next('div.show_con').toggle();
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+
     </script>
   </body>
 </html>
