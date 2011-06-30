@@ -28,7 +28,7 @@
   </tr>
   <% for place in @places %>
     <tr>
-      <td>&nbsp</td>
+     <td><%= image_tag place.try(:place_images).try(:first).try(:photo).try(:url,:thumb) unless place.try(:place_images).try(:first).try(:photo).try(:url,:thumb).nil? %>&nbsp</td>
       <td><%= link_to place.name , place %></td>
       <td><%= place.address.try(:city).try(:name) %></td>
       <td><%= place.address.try(:country).try(:name) %></td>
