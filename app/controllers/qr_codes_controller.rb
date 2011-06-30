@@ -22,7 +22,7 @@ class QrCodesController < ApplicationController
     @qr_code = QrCode.find(params[:id]) if params[:id].present?
     @qr_code = QrCode.where(:hash_code=>params[:hash_code]).first if params[:hash_code].present?    
     @engagement=@qr_code.try(:engagement)
-    @engagement_type=@engagement.engagement_type
+    @engagement_type=@engagement.try(:engagement_type)
     @brand=@engagement.try(:campaign).try(:program).try(:business).try(:brand)
     respond_to do |format|
       format.pdf do

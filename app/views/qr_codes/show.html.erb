@@ -39,7 +39,7 @@
   .feed_text p{padding:0;margin-top:0;margin-bottom:5px;}
   .font1 {font-family: Play;font-size: 12px;}
   .font2 {font-family: Anonymous Pro;font-size: 16px;}
-  .toggle_link{display:none; clear:both;  text-align: right;}
+  .toggle_link{display:none;clear:both;  text-align: right;}
   .toggle_link a{font-family:Helvetica; font-size:16px;color:#CDCDCD;text-decoration:none;}
   .toggle_link #toggle_p{margin-right:15px}
   #scan_response {margin-top:10px;}
@@ -57,17 +57,13 @@
     jQuery('#toggle_a').click(function(){
       jQuery('#scan_response').removeClass('font1');
       jQuery('#scan_response').addClass('font2');
-      //jQuery(this).addClass('font_selected_state');
       jQuery(this).css('color','red');
       jQuery('#toggle_p').css('color','#CDCDCD');
-      //jQuery('#toggle_p').removeClass('font_selected_state');
     });
     jQuery('#toggle_p').click(function(){
       jQuery('#scan_response').removeClass('font2');
       jQuery('#scan_response').addClass('font1');
-      //jQuery(this).addClass('font_selected_state');
       jQuery(this).css('color','red');
-      //jQuery('#toggle_a').removeClass('font_selected_state');
       jQuery('#toggle_a').css('color','#CDCDCD');
     });
     function send_check_request(){
@@ -79,7 +75,7 @@
           if(data!=null){
             if(data.response_text!="" && index!=data.index){jQuery('#scan_response').append(data.response_text);}
             index=data.index;
-            jQuery('.toggle_link').show();
+            if(data.response_text!="") {jQuery('.toggle_link').show();}
           }
         }
       });
@@ -95,11 +91,13 @@
   <div class="toggle_link"><a id="toggle_p" style="color:red" href="javascript:void(0)">Play</a> <a id="toggle_a" href="javascript:void(0)">Anonymous Pro</a></div>
   <div id="scan_response" class="font1"></div>
   <p style="color:#666; width:100%; text-align:center;clear:both">
+  <% unless @engagement_type.nil? %>
   <% unless @engagement_type.is_visit %>
     <b>Details: Get a stamp for ordering <%=@engagement.name.gsub("Buy ","")%> @ <%=@brand.name%></b>
   <%else%>
     <b>Details: Get a stamp for visiting <%=@brand.name%></b>
   <% end %>
+  <%end%>
   </p>
   <div class="details"><%= image_tag "/images/Snapit.png"  %><p><b>Snap code using your cashbury app.</b></p><p><b>To download the app follow me</b></p></div>
 </div>
