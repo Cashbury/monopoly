@@ -6,6 +6,7 @@
 <% CalendarDateSelect.format=(:iso_date)%>
 <style type="text/css">
   select[disabled] { background-color: #E6E6FA; }
+  .times{width:auto}
 </style>
 <script type="text/javascript">
   jQuery(document).ready(function(){
@@ -17,7 +18,7 @@
     jQuery('form.new_place,form.edit_place').submit();
   });
 
-  jQuery(".complete").autocomplete({source:"/update_places"})
+  jQuery(".bcomplete").autocomplete({source:"/update_places"})
 
   jQuery('#split_hours').click(function(){
    if(jQuery('#split_hours').is(':checked')){
@@ -127,7 +128,7 @@
     </p>
     <p>
       <%= f.label :name , :class=>"hide" %><br />
-      <%= f.text_field :name , :class=>"title double complete" , :placeholder=>"Branch name"  %>
+      <%= f.text_field :name , :class=>"title double bcomplete" , :placeholder=>"Branch name"  %>
     </p>
 
 
@@ -135,30 +136,30 @@
       <%= f.label :is_primary %>
       <%= f.check_box :is_primary %>
     </p>
-
-    <p>
-      <%= f.label :description, :class=>"hide" %>
-      <%= f.text_area :description, :class=>"title double" ,:placeholder=>"Describe the branch" %>
-    </p>
-
-
-
     <fieldset>
-      <legend>Place Address</legend>
+      <legend>Address</legend>
 
         <%= f.fields_for :address, f.object.address do |address_form| %>
           <p>
             <%= address_form.label :country %>
-            <%= address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,address_form.object.country_id), {},:class=>"title double"%>
+            <%= address_form.text_field   :country ,  :id=>"country_id",:class=>"title double"%>
+            <%= address_form.hidden_field :country_id,:id=>"country",   :class=>"title double"%>
           </p>
           <p>
-            <%= address_form.label :city %>
-            <%= address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,address_form.object.city_id),{},:class=>"title double"%>
+            <%= address_form.text_field :city_id, :id=>"city_id", :class=>"title double"%>
+            <%= address_form.hidden_field :city_id,:id=>"city",   :class=>"title double"%>
           </p>
            <p>
              <%= address_form.label :zipcode , :class=>"hide" %>
              <%= address_form.text_field :zipcode, :class=>"title double", :placeholder=>"Zipcode"%>
            </p>
+          <p>
+            <%= address_form.label :street_address, :class=>"hide" %>
+            <%= address_form.text_field :street_address, :class=>"title double", :placeholder=>"Street address" %>
+          </p>
+      <div id="my_map2" style="width:400px;height:200px;">
+
+      </div>
 
     </fieldset>
 
@@ -168,13 +169,6 @@
         Location
       </legend>
 
-      <div id="my_map2" style="width:400px;height:200px;">
-
-      </div>
-      <p>
-        <%= address_form.label :street_address, :class=>"hide" %>
-        <%= address_form.text_field :street_address, :class=>"title double", :placeholder=>"Street address" %>
-      </p>
 
 
       <!-- Extended object form -->
@@ -200,25 +194,36 @@
       <legend>
         Contacts
       </legend>
-
       <p>
         <%= f.label :phone ,:class=>"hide" %>
         <%= f.text_field :phone, :class=>"title double", :placeholder=>"Phone" %>
+      </p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Misc.</legend>
+      <p>
+        <%= f.label 'Keywords', :class=>"hide" %><br />
+        <%= f.text_field :tag_list, :class=>"title double" ,:placeholder=>"Keywords" %>
       </p>
       <p>
         <%= f.label :time_zone %><br />
         <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
       </p>
-      <p>
-        <%= f.label 'Keywords', :class=>"hide" %><br />
-        <%= f.text_field :tag_list, :class=>"title double" ,:placeholder=>"Keywords" %>
-      </p>
-    </fieldset>
+
+    <p>
+      <%= f.label :description, :class=>"hide" %>
+      <%= f.text_area :description, :class=>"title double" ,:placeholder=>"Describe the branch" %>
+    </p>
+
+   </fieldset>
 
     <br />
     <% if @place.new_record?%>
       <fieldset>
-
+      <legend>
+        Open Signs
+      </legend>
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
 
 <div class="slide_box">
@@ -236,9 +241,11 @@
          </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-             <% if index == 0 %>
-           <label> Apply To All</label>
-           <%= check_box_tag "open_hour[apply_to_all]" %>
+           <% if index == 0 %>
+             <div style="display:none">
+                <label> Apply To All</label>
+                <%= check_box_tag "open_hour[apply_to_all]" %>
+             </div>
          <%end%>
      </div>
          <div class="clear"></div>

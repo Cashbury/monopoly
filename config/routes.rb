@@ -147,6 +147,7 @@ Kazdoor::Application.routes.draw do
   match "/get_users.:format"              =>"businesses#get_users"
   match "/show_code/:id"                  =>"qr_codes#show_code"
   match "/update_places"                 =>"places#update_places"
+  match "/auto_business"                 =>"businesses#auto_business"
   #devise_for :users
 
   # The priority is based upon order of creation:

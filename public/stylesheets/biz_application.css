@@ -349,4 +349,7 @@ a span{
 .ui-tabs .ui-state-default{border:0 none ; background:none}
 .ui-tabs .ui-state-default a{border:0 none ; background:none; color:#CCC}
 .ui-tabs .ui-tabs-selected a{border:0 none ; background:none; color:#E6820E}
-
+.ui-tabs.ui-widget-content{ background:none}
+#main_header h1{
+  margin:10px;
+}

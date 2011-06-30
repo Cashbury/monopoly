@@ -1,3 +1,21 @@
+function Split_hour(index){
+    from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
+    from_to_html = from_to_html.replace(/from/g, "from2");
+    from_to_html = from_to_html.replace(/to/g, "to2");
+    closed1_label ="<label> Closed? </label>";
+    closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
+    final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
+    jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
+    jQuery('input.complete').autocomplete({source:sHours});
+    jQuery('input.complete:first').autocomplete({
+      source:sHours,
+      select:function(e,ui){
+          jQuery("#open_hour_apply_to_all").attr("checked",true);
+          console.log("test");
+      }
+  });
+
+}
 
 function initialize() {
     var latlng = new google.maps.LatLng(-34.397, 150.644);
@@ -114,19 +132,27 @@ function initialize() {
           source: "/businesses/update_countries.js",
           dataType:"jsonp",
           select:function(e,ui){
-            jQuery('input#place_address_attributes_country_id').val(ui.item.id);
+            jQuery('input#country').val(ui.item.id);
           }
       });
-      jQuery('#city_id').autocomplete({
-          source: "/businesses/update_cities/"+jQuery('#country_id').val() +".js",
+      jQuery('#city_id').focus(function(){
+          var country = jQuery("input#country").val();
+          console.log(country);
+          jQuery(this).autocomplete({
+          source: "/businesses/update_cities/"+ country +".js",
           dataType:"jsonp",
           select:function(e,ui){
-            jQuery('input#place_address_attributes_city_id').val(ui.item.id);
+            jQuery('input#city').val(ui.item.id);
           }
+          })
       });
    sHours = ["12:00 AM","12:30 AM","11:00 AM","11:30 AM","10:00 AM","10:30 AM","9:00 AM","9:30 AM","8:00 AM","8:30 AM","7:00 AM","7:30 AM","6:00 AM","6:30 AM","5:00 AM","5:30 AM","4:00 AM","4:30 AM","3:00 AM","3:30 AM","2:00 AM","2:30 AM","1:00 AM","1:30 AM","12:00 PM","12:30 PM","11:00 PM","11:30 PM","10:00 PM","10:30 PM","9:00 PM","9:30 PM","8:00 PM","8:30 PM","7:00 PM","7:30 PM","6:00 PM","6:30 PM","5:00 PM","5:30 PM","4:00 PM","4:30 PM","3:00 PM","3:30 PM","2:00 PM","2:30 PM","1:00 PM","1:30 PM"];
     jQuery('input.complete').autocomplete({source:sHours});
 
+
+    jQuery(".business.complete").autocomplete({source:"/auto_business", select:function(e,ui){
+      jQuery(".branch.title").val(ui.item.value);
+    }});
 
     jQuery(".box_eject a").click(function(e){
       var $a = jQuery(this);
@@ -144,6 +170,35 @@ function initialize() {
     marker2 = new google.maps.Marker();
     initialize();
 
+    jQuery('input.complete:eq(0)').autocomplete({
+      source:sHours,
+      select:function(e,ui){
+     from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
+      from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
+      from_hour = ui.item.value;
+      jQuery('.from_class').each(function(index, element){
+        jQuery(this).val(from_hour);
+        if(from2_hour){
+         jQuery('#open_hour_'+index+'_from2').val(from2_hour)
+        }// if from2_hour end
+      }); // end of .each function
 
+
+      }
+    });
+
+    jQuery("input.complete:eq(1)").autocomplete({source:sHours,select:function(e,ui){
+      to_hour = ui.item.value;
+      jQuery('.to_class').each(function(index, element){
+        to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)
+
+        jQuery(this).val(to_hour);
+        if(to2_hour){
+          jQuery('#open_hour_'+index+'_to2').val(to2_hour);
+        }// if from2_hour end
+      });
+
+
+    }})
 
   });

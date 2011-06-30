@@ -8,14 +8,15 @@
   <h1>Configure your digital receipt</h1>
 
   <%= form_tag( primary_place_users_businesses_path) do %>
-  <p>
-    <%= label_tag :name, 'name' ,:class=>"hide" %>
-    <%= text_field_tag :name ,current_user.brands.first.name || "" , :class=>"title double",:placeholder=>"Branch name" %>
+   <p>
+    <%= label_tag :business_name, 'name' ,:class=>"hide" %>
+    <%= text_field_tag :business_name , "" , :class=>"title business complete double",:placeholder=>"Company name" %>
   </p>
 
   <p>
-    <%= label_tag :street_address, 'street_address' ,:class=>"hide" %>
-    <%= text_field_tag :street_address ,@street_address || "", :class=>"title double", :placeholder=>"Enter your branch address" %>
+    <%= label_tag :name, 'name' ,:class=>"hide" %>
+    <% text_field_tag :name ,current_user.brands.first.name || "" , :class=>"title double",:placeholder=>"Branch name" %>
+    <%= text_field_tag :name , "" , :class=>"title branch double",:placeholder=>"Branch name" %>
   </p>
 
   <p>
@@ -23,11 +24,18 @@
     <%= text_field_tag :location ,@location || "", :class=>"title double", :placeholder=>"Enter you city and country name" %>
   </p>
 
+
+  <p>
+    <%= label_tag :street_address, 'street_address' ,:class=>"hide" %>
+    <%= text_field_tag :street_address ,@street_address || "", :class=>"title double", :placeholder=>"Enter your branch address" %>
+  </p>
+
+  <div id="map_canvas" style="width:412px; height:400px" class="google_map"></div>
+
   <p>
     <%= label_tag :cross_street , 'cross_street' ,:class=>"hide" %>
     <%= text_field_tag :cross_street ,@cross_street || "", :class=>"title double", :placeholder=>"cross street" %>
   </p>
-  <div id="map_canvas" style="width:412px; height:400px" class="google_map"></div>
   <p class="clearfix">
     <%= label_tag :neighborhood ,"neighborhood", :class=>"hide"%>
     <%= text_field_tag :neighborhood , @neighborhood || "",:class=>"title", :placeholder=>"neighborhood" , :class=>"title double" %>
