@@ -1,1 +1,2 @@
-updated the last list
+authenticate user on /users/business
+hide authenticated users elements from view

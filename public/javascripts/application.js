@@ -54,7 +54,6 @@ jQuery(function () {
 
       }});
 
-    console.log(jQuery(".complete"));
 })
 
 function change_engagement_status(biz_id,prog_id,c_id,eng_id)

@@ -7,22 +7,22 @@
     <% f.fields_for :brands do |brand_form| %>
     <p>
       <label class="hide" for="company-name" >Company Name</label>
-      <%= brand_form.text_field :name , :class=>"title double" , :placeholder=>"Company name"%>
+      <%= brand_form.text_field :name , :class=>"title double required" , :placeholder=>"Company name"%>
     </p>
   <% end %>
   <p>
     <%= f.label :email , :class=>"hide" %>
-    <%= f.email_field :email,  :class=>"title double email" , :placeholder=>"Email address"  %>
+    <%= f.email_field :email,  :class=>"title double email required" , :placeholder=>"Email address"  %>
   </p>
 
   <p>
     <%= f.label :password , :class=>"hide" %>
-    <%= f.password_field :password, :class=>"title" ,:placeholder=>"Create password" %>
+    <%= f.password_field :password, :class=>"title required" ,:placeholder=>"Create password" %>
   </p>
 
   <p class="clearfix">
     <%= f.label :password_confirmation , :class=>"hide" %>
-    <%= f.password_field :password_confirmation , :class=>"title" , :placeholder=>"Verify password"  %>
+    <%= f.password_field :password_confirmation , :class=>"title required" , :placeholder=>"Verify password"  %>
   </p>
 
   <p>

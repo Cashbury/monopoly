@@ -135,7 +135,7 @@ class Place < ActiveRecord::Base
       place.user_id = user.id
       place.lat= location[:lat]
       place.long= location[:long]
-      place.is_primary= true
+      place.is_primary= location[:is_primary] unless location[:is_primary].blank?
       place  if place.save
     end
   end

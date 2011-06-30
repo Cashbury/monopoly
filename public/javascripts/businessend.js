@@ -1,3 +1,4 @@
+jQuery.noConflict();
 function Split_hour(index){
     from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
     from_to_html = from_to_html.replace(/from/g, "from2");
@@ -156,7 +157,6 @@ function initialize() {
       e.stopPropagation();
     });
 
-    jQuery('.box_slider:first').show();
 
     geocoder = new google.maps.Geocoder();
     marker = new google.maps.Marker();

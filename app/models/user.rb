@@ -81,10 +81,13 @@ class User < ActiveRecord::Base
 
 
   def set_default_role
+    current_roles = roles
+    mobi =  Role.where(:name=>Role::AS[:mobi]).limit(1).first
+    principal_user =  Role.where(:name=>Role::AS[:principal]).limit(1).first
     unless brands.blank?
-      roles << Role.where(:name=>Role::AS[:principal]).limit(1).first
+      roles << principal_user unless current_roles.include? mobi
     else
-      roles << Role.where(:name=>Role::AS[:mobi]).limit(1).first
+      roles << mobi unless current_roles.include? mobi
     end
   end
 
@@ -99,7 +102,7 @@ class User < ActiveRecord::Base
 
   #for business signup
   def with_brand
-    self.brands.build
+    self.brands.build if self.brands.blank?
     self
   end
 

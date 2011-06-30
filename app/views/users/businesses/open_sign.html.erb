@@ -1,72 +1,13 @@
 <style type="text/css" media="screen">
   label{display:inline}
 </style>
-<%= javascript_include_tag 'prototype' %>
-<%= calendar_date_select_includes %>
-<% CalendarDateSelect.format=(:iso_date)%><script type="text/javascript" language="javascript" charset="utf-8">
-//<![CDATA[
-jQuery(document).ready(function(){
-  jQuery('#open_hour_apply_to_all').click(function(){
-
-    if( jQuery(this).is(':checked') ){
-      from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
-      to_hour   =  jQuery('#open_hour_0_to').val();  //  the selected value of the first day ( to hour)
-      from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
-      to2_hour   =  jQuery('#open_hour_0_to2').val();  //  the selected value of the first day -  if user splits the time ( to2 hour)
-
-      jQuery('.from_class').each(function(index, element){
-        jQuery(this).val(from_hour);
-        if(from2_hour){
-          if(index!=0){
-             Split_hour(index);
-             x =jQuery('#open_hour_'+index+'_from2').val(from2_hour);
-           }
-        }// if from2_hour end
-      }); // end of .each function
-
-      jQuery('.to_class').each(function(index, element){
-        jQuery(this).val(to_hour);
-        if(to2_hour){
-          if(index!=0){
-             x =jQuery('#open_hour_'+index+'_to2').val(to2_hour);
-           }
-        }// if from2_hour end
-      }); // end of .each function
-
-
-    } //end if
-  });
-
-    jQuery('input.complete:eq(0)').autocomplete({
-      source:sHours,
-      select:function(e,ui){
-        console.log(ui);
-     from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
-      from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
-      from_hour = ui.item.value;
-      jQuery('.from_class').each(function(index, element){
-        jQuery(this).val(from_hour);
-        if(from2_hour){
-         jQuery('#open_hour_'+index+'_from2').val(from2_hour)
-        }// if from2_hour end
-      }); // end of .each function
-
-
-      }
-    });
-
-})
-
-//]]>
-</script>
 
 <h1 id="">Configure your open sign</h1>
 
 <%= form_tag(open_sign_users_businesses_path) do %>
 
 
-
-     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+<% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
 
 <div class="slide_box">
     <div class="slide_box_content">
@@ -113,6 +54,7 @@ jQuery(document).ready(function(){
      <% end %>
       <%= submit_tag "save" %>
 
+    <% end %>
 
 
-<% end %>
+

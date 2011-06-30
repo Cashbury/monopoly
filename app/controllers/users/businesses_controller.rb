@@ -13,6 +13,7 @@ class Users::BusinessesController < ApplicationController
   def primary_place
     #if current_user.sign_in_count <= 1
       if request.post?
+        params[:is_primary]=true if current_user.sign_in_count <=1
         @place = Place.save_place_by_geolocation(params,current_user)
         if @place
           redirect_to :action=>:open_sign, :params=>{:id=>@place.id}
