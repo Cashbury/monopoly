@@ -1,7 +1,6 @@
 class QrCodesController < ApplicationController
-  before_filter :authenticate_user!, :require_admin, :except=>[:show]
+  before_filter :authenticate_user!, :require_admin, :except=>[:show,:check_code_status]
   before_filter :prepare_filters_data, :only=>[:index]
-  skip_before_filter :authenticate_user! , [:show_public]
   #layout :false, :only=>[:show]
   # GET /qr_codes
   # GET /qr_codes.xml
