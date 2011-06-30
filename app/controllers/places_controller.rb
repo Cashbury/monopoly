@@ -79,7 +79,10 @@ class PlacesController < ApplicationController
 	end
 
   def update_places
-    @users = Place.where(['name LIKE ?', "#{params[:term]}%"]).map(&:name)
+    brands = current_user.brands.map(&:id)
+    biz = Business.where(:brand_id=>brands).map(&:id)
+
+    @users = Place.where(:business_id=>biz).where(['name LIKE ?', "#{params[:term]}%"]).map(&:name)
     render :json => @users
   end
 

@@ -198,7 +198,7 @@ function initialize() {
     }});
 
     jQuery(".title.business.bcomplete").autocomplete({
-      source:"/update_places",
+      source:"/auto_business",
       select:function(e,ui){
         var $b =jQuery(".title.branch");
         if($b.val()==""){

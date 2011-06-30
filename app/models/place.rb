@@ -131,11 +131,11 @@ class Place < ActiveRecord::Base
     a.neighborhood = location[:neighborhood]
     logger.error "Invalid Address #{a.inspect}" unless a.save!
 
-      business = Business.find_or_create_by_name(location[:business_name])
-      business.billing_address_id = a.id
-      business.mailing_address_id = a.id
-      business.brand_id = user.brands.first.id
-      business.save!
+    business = Business.find_or_create_by_name(location[:business_name])
+    business.billing_address_id = a.id
+    business.mailing_address_id = a.id
+    business.brand_id = user.brands.first.id
+    business.save!
 
     place = Place.new
     place.name = location[:name]
@@ -145,6 +145,7 @@ class Place < ActiveRecord::Base
     place.long= location[:long]
     place.is_primary= location[:is_primary] unless location[:is_primary].blank?
     place.address_id = a.id
+    place.business_id = business.id
     place
   end
 

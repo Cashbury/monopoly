@@ -133,10 +133,17 @@ class BusinessesController < ApplicationController
 
 
   def auto_business
-    brands = current_user.brands.map(&:id)
-    @biz = Business.where(:brand_id=>brands).where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }} unless brands.blank?
+    if current_user.role? Role::AS[:owner] || true
+      brands = current_user.brands.map(&:id)
+      @biz = Business.where(:brand_id=>brands).where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }} unless brands.blank?
+
+    else
+      @biz=Business.where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id,:label=>con.label }}
+    end
+
     render :json => @biz
   end
+
 
   private
   def set_tag_lists_for_business_places(business)
