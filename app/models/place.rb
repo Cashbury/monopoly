@@ -132,6 +132,11 @@ class Place < ActiveRecord::Base
     logger.error "Invalid Address #{a.inspect}" unless a.save!
 
 
+    #business = Business.new
+    #business.name = location[:company_name]
+    #business.billing_address_id = a.id
+    #business.mailing_address_id = a.id
+
     place = Place.new
     place.name = location[:name]
     place.phone = location[:phone]
