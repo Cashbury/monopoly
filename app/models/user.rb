@@ -85,7 +85,7 @@ class User < ActiveRecord::Base
     mobi =  Role.where(:name=>Role::AS[:mobi]).limit(1).first
     principal_user =  Role.where(:name=>Role::AS[:principal]).limit(1).first
     unless brands.blank?
-      roles << principal_user unless current_roles.include? mobi
+      roles << principal_user unless current_roles.include? principal_user
     else
       roles << mobi unless current_roles.include? mobi
     end

@@ -1,10 +1,13 @@
-<!--
-<div id="step2" class="mono-business-register success span-22">
-  <h3> MSG: Your account is activated </h3>
-</div>
--->
-
-<div id="step3" class="mono-business-register span-24" >
+  <% if @place.try(:errors).try(:any?) %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@place.errors.count, "error") %> occured while saving:</h2>
+      <ul>
+      <% @place.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %><div id="step3" class="mono-business-register span-24" >
   <h1>Configure your digital receipt</h1>
 
   <%= form_tag( primary_place_users_businesses_path) do %>

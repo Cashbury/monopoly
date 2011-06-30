@@ -4,7 +4,7 @@
 
 <h1 id="">Configure your open sign</h1>
 
-<%= form_tag(open_sign_users_businesses_path) do %>
+<%= form_tag( "/users/businesses/open_sign/#{@place.id}") do %>
 
 
 <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
@@ -24,10 +24,6 @@
          </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-             <% if index == 0 %>
-           <label> Apply To All</label>
-           <%= check_box_tag "open_hour[apply_to_all]" %>
-         <%end%>
      </div>
          <div class="clear"></div>
       </div>

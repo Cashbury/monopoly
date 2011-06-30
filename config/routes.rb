@@ -32,8 +32,8 @@ Kazdoor::Application.routes.draw do
 			get '/primary_place', :action=>:primary_place,  :on =>:collection
 			post '/primary_place',:action=>:primary_place,  :on =>:collection
 			get '/set_rewards',   :action=>:set_rewards ,   :on =>:collection
-			get '/open_sign',     :action=>:open_sign ,     :on =>:collection
-			post '/open_sign',    :action=>:open_sign ,     :on =>:collection
+			get '/open_sign/:id',     :action=>:open_sign ,     :on =>:collection
+			post '/open_sign/:id',    :action=>:open_sign ,     :on =>:collection
     end
     get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places
 	end

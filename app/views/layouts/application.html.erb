@@ -86,7 +86,7 @@
           <div id="leftContainer">
         <%end%>
   	      <div id="main_header">
-  		      <% flash.each do |name, msg| %>
+  		<% flash.each do |name, msg| %>
   	          <%= content_tag :div, msg, :id => "flash_#{name}", :style=>"padding:15px 0 0 0" %>
   	        <% end %>
   	        <%= content_tag :h1, yield(:title) if show_title? %>

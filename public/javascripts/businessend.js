@@ -24,6 +24,7 @@ function initialize() {
     google.maps.event.addListener(marker,"dragend",function(){
         myMap.panTo(marker.getPosition());
         myMap2.panTo(marker.getPosition());
+        console.log("test");
         jQuery('input#lat,input#place_lat').val(marker.getPosition().lat());
         jQuery('input#long,input#place_long').val(marker.getPosition().lng());
     });
@@ -50,17 +51,19 @@ function initialize() {
 
           marker.setMap(myMap);
 
-          myMap2.setZoom(17);
-          marker2.setDraggable(true);
-          marker2.setPosition(place.geometry.location);
-          myMap2.setCenter(place.geometry.location);
-          marker2.setMap(myMap2);
-
+          if(typeof myMap2 !="undefined"){
+            myMap2.setZoom(17);
+            marker2.setDraggable(true);
+            marker2.setPosition(place.geometry.location);
+            myMap2.setCenter(place.geometry.location);
+            marker2.setMap(myMap2);
+          }
+          console.log(strAddress);
           R = [""];
-          R = results[0].formatted_address.split(',');
+          //R = results[0].formatted_address.split(',');
           //R=results[0].address_components[0].long_name + results[0].address_components[1].long_name;
-          jQuery('input#lat, input#place_lat').val(results[0].geometry.location.lat());
-          jQuery('input#long,input#place_long').val(results[0].geometry.location.lng());
+          jQuery('input#lat, input#place_lat').val(place.geometry.location.lat());
+          jQuery('input#long,input#place_long').val(place.geometry.location.lng());
           jQuery('input#place_address_attributes_street_address').val(R[0]);
         } else {
           //alert("Geocode was not successful for the following reason: " + status)
@@ -166,7 +169,6 @@ function initialize() {
     jQuery('input.complete:eq(0)').autocomplete({
       source:sHours,
       select:function(e,ui){
-        console.log(ui);
      from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
       from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
       from_hour = ui.item.value;
@@ -182,7 +184,6 @@ function initialize() {
     });
 
     jQuery("input.complete:eq(1)").autocomplete({source:sHours,select:function(e,ui){
-      console.log(ui);
       to_hour = ui.item.value;
       jQuery('.to_class').each(function(index, element){
         to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)

@@ -115,7 +115,9 @@
 
     <div id="payload" >
       <div class="container content">
-
+          <% flash.each do |name, msg| %>
+  	    <%= content_tag :div, msg, :id => "flash_#{name}", :style=>"padding:15px 0 0 0" %>
+  	  <% end %>
           <%= yield %>
           <div class="clear"></div>
       </div>
@@ -159,7 +161,9 @@
       });
 
 
-    }})
+  }})
+
+    jQuery(".box_slider:first p").show();
     </script>
   </body>
 </html>

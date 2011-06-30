@@ -45,9 +45,11 @@ class Place < ActiveRecord::Base
 
   attr_accessible :name, :long, :lat, :description, :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance , :is_primary
   attr_accessor :items_list
-  validates_presence_of :name, :long, :lat
-  validates :address, :presence=>true
-  validates_numericality_of :long,:lat
+  validates :name , :presence=>{:message=> "Branch name can not be blank"}
+  validates :long, :lat , :presence=>{:message=>"Co-ordinates is can not be located"}
+  validates :address, :presence=>{:message=>"Address is can not be determined"}
+
+  validates :long,:lat , :numericality=>{:message=>"Not proper co-ordinate format" }
   validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
 
   validates_associated :address
@@ -117,6 +119,7 @@ class Place < ActiveRecord::Base
 
   def self.save_place_by_geolocation(location,user)
     address = Geokit::Geocoders::GoogleGeocoder.geocode(location[:location])
+
     country = Country.find_or_create_by_name_and_abbr(:name=>address.country, :abbr=>address.country_code)
     city = City.find_or_create_by_name_and_country_id(:name=>address.city, :country_id=>country.id)
 
@@ -126,18 +129,18 @@ class Place < ActiveRecord::Base
     a.street_address=location[:street_address]
     a.cross_street = location[:cross_street]
     a.neighborhood = location[:neighborhood]
+    logger.error "Invalid Address #{a.inspect}" unless a.save!
 
-    if a.save
-      place = Place.new
-      place.name = location[:name]
-      place.address_id = a.id
-      place.phone = location[:phone]
-      place.user_id = user.id
-      place.lat= location[:lat]
-      place.long= location[:long]
-      place.is_primary= location[:is_primary] unless location[:is_primary].blank?
-      place  if place.save
-    end
+
+    place = Place.new
+    place.name = location[:name]
+    place.phone = location[:phone]
+    place.user_id = user.id
+    place.lat= location[:lat]
+    place.long= location[:long]
+    place.is_primary= location[:is_primary] unless location[:is_primary].blank?
+    place.address_id = a.id
+    place
   end
 
 
