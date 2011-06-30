@@ -39,20 +39,6 @@ jQuery(function () {
 	});
 
 
-    jQuery("input.complete:eq(1)").autocomplete({source:sHours,select:function(e,ui){
-      console.log(ui);
-      to_hour = ui.item.value;
-      jQuery('.to_class').each(function(index, element){
-        to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)
-
-        jQuery(this).val(to_hour);
-        if(to2_hour){
-          jQuery('#open_hour_'+index+'_to2').val(to2_hour);
-        }// if from2_hour end
-      });
-
-
-      }});
 
 })
 

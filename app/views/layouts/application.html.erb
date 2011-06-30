@@ -2,14 +2,9 @@
 <html>
   <head>
     <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
-    <%= stylesheet_link_tag "rewards-1", "global" , "redmond/jquery-ui-1.8.10.custom","scaffold" , "biz_application"%>
+    <%= stylesheet_link_tag "rewards-1", "global" , "redmond/jquery-ui-1.8.10.custom","scaffold" %>
     <%= javascript_include_tag "https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" %>
-    <%= javascript_include_tag :defaults,
-                                'businessend',
-                                'jquery.enablePlaceholder.min',
-                                "http://maps.google.com/maps/api/js?sensor=true" ,
-                                "http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8.1/jquery.validate.min.js"
-                              %>
+    <%= javascript_include_tag :defaults%>
     <%= csrf_meta_tag %>
     <%= yield(:head) %>
     <script type="text/javascript" language="javascript" charset="utf-8">

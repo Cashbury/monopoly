@@ -1,19 +1,13 @@
-<script type="text/javascript" language="javascript" >
-//<![CDATA[
-  jQuery(function(){
-      jQuery("select").bind("change",function(e){
-      window.location="/places?"+jQuery("form").serialize();
-    })
-  })
-//]]>
-</script>
-
+<style type="text/css" media="screen">
+  select{width:200px;}
+</style>
 <% title "Places" %>
 <div class="search_box ">
   <%= form_tag("/places",:method=>"get") do %>
-   <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name),:class=>"title double"%>
+   <%= select_tag :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all, :id, :name),:class=>"title"%>
 
-   <%= select_tag :country_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(Country.all, :id, :name),:class=>"title double"%>
+   <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name),:class=>"title"%>
+
    <%= submit_tag "Search" %>
   <% end %>
 </div>

@@ -13,13 +13,12 @@
   <%= form_tag( primary_place_users_businesses_path) do %>
    <p>
     <%= label_tag :business_name, 'name' ,:class=>"hide" %>
-    <%= text_field_tag :business_name , "" , :class=>"title business complete double",:placeholder=>"Company name" %>
+    <%= text_field_tag :business_name , @cname || "" , :class=>"title business bcomplete double",:placeholder=>"Company name" %>
   </p>
 
   <p>
     <%= label_tag :name, 'name' ,:class=>"hide" %>
-    <% text_field_tag :name ,current_user.brands.first.name || "" , :class=>"title double",:placeholder=>"Branch name" %>
-    <%= text_field_tag :name , "" , :class=>"title branch double",:placeholder=>"Branch name" %>
+    <%= text_field_tag :name , @place.try(:name) || "" , :class=>"title branch double",:placeholder=>"Branch name" %>
   </p>
 
   <p>
@@ -58,3 +57,4 @@
   </p>
   <% end %>
 </div>
+
