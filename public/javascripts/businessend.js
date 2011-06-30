@@ -7,13 +7,6 @@ function Split_hour(index){
     final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
     jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
     jQuery('input.complete').autocomplete({source:sHours});
-    jQuery('input.complete:first').autocomplete({
-      source:sHours,
-      select:function(e,ui){
-          jQuery("#open_hour_apply_to_all").attr("checked",true);
-          console.log("test");
-      }
-  });
 
 }
 
@@ -147,8 +140,8 @@ function initialize() {
           })
       });
    sHours = ["12:00 AM","12:30 AM","11:00 AM","11:30 AM","10:00 AM","10:30 AM","9:00 AM","9:30 AM","8:00 AM","8:30 AM","7:00 AM","7:30 AM","6:00 AM","6:30 AM","5:00 AM","5:30 AM","4:00 AM","4:30 AM","3:00 AM","3:30 AM","2:00 AM","2:30 AM","1:00 AM","1:30 AM","12:00 PM","12:30 PM","11:00 PM","11:30 PM","10:00 PM","10:30 PM","9:00 PM","9:30 PM","8:00 PM","8:30 PM","7:00 PM","7:30 PM","6:00 PM","6:30 PM","5:00 PM","5:30 PM","4:00 PM","4:30 PM","3:00 PM","3:30 PM","2:00 PM","2:30 PM","1:00 PM","1:30 PM"];
-    jQuery('input.complete').autocomplete({source:sHours});
 
+   jQuery('input.complete').autocomplete({source:sHours});
 
     jQuery(".business.complete").autocomplete({source:"/auto_business", select:function(e,ui){
       jQuery(".branch.title").val(ui.item.value);
@@ -173,6 +166,7 @@ function initialize() {
     jQuery('input.complete:eq(0)').autocomplete({
       source:sHours,
       select:function(e,ui){
+        console.log(ui);
      from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
       from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
       from_hour = ui.item.value;
@@ -188,6 +182,7 @@ function initialize() {
     });
 
     jQuery("input.complete:eq(1)").autocomplete({source:sHours,select:function(e,ui){
+      console.log(ui);
       to_hour = ui.item.value;
       jQuery('.to_class').each(function(index, element){
         to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)

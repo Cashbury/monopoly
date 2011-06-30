@@ -39,6 +39,9 @@
           <div class="left span-2">
             <a class="user-profile-image"><img style="wdith:64px; height:64px" src="/images/C-mybiz1.png"></a>
           </div>
+
+          <% if user_signed_in? %>
+
           <div class="nav brand left span-5">
             <h3 class="company_name left span-5"><%= current_user.try(:brands).try(:first).try(:name) || "CashBury" %></h3>
               <ul>
@@ -66,6 +69,7 @@
                 </li>
             </ul>
           </div>
+          <% end %>
         </div>
         <!--<h2 class="logo">Cashbury</h2>-->
         <% if user_signed_in? %>

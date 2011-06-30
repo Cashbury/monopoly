@@ -77,7 +77,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :brands,
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
 
-  before_save :set_default_role
+  before_save :set_default_role , :on =>:create
 
 
   def set_default_role

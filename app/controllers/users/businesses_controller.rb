@@ -1,5 +1,6 @@
 class Users::BusinessesController < ApplicationController
   layout "businessend"
+  before_filter :authenticate_user!
   before_filter :get_places
   before_filter :prepare_hours , :only=>:open_sign
 

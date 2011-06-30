@@ -1,22 +1,22 @@
 jQuery.noConflict();
-jQuery(function () {  
-  jQuery('#reports th a').live('click', function () {  
-    jQuery.getScript(this.href);  
-    return false;  
-  });  
+jQuery(function () {
+  jQuery('#reports th a').live('click', function () {
+    jQuery.getScript(this.href);
+    return false;
+  });
 
   jQuery('a#CB-qrcode-multiple').click(function(e){
-    alert("test"); 
+    alert("test");
     return false;
   })
   jQuery("select#filters_business_id").change(function(){
 		var id_value_string = jQuery(this).val();
-		if (id_value_string == "") { 
+		if (id_value_string == "") {
 			jQuery("select#filters_place_id option").remove();
 			var row = "<option value=\"" + "" + "\">" + "-- Place --" + "</option>";
      	jQuery(row).appendTo("select#filters_place_id");
 		}
-		else { 
+		else {
 			jQuery.ajax({
 				dataType: "json",
         cache: false,
@@ -25,18 +25,36 @@ jQuery(function () {
 				error: function(XMLHttpRequest, errorTextStatus, error){
 					alert("Failed to submit : "+ errorTextStatus+" ;"+error);
 				},
-				success: function(data){                     
+				success: function(data){
 					jQuery("select#filters_place_id option").remove();
 					var row = "<option value=\"" + "" + "\">" + "-- Place --" + "</option>";
-          jQuery(row).appendTo("select#filters_place_id");                         
+          jQuery(row).appendTo("select#filters_place_id");
         	jQuery.each(data, function(i, j){
-						row = "<option value=\"" + j.place.id + "\">" + j.place.name + "</option>";   
-		      	jQuery(row).appendTo("select#filters_place_id");                     
-					});             
+						row = "<option value=\"" + j.place.id + "\">" + j.place.name + "</option>";
+		      	jQuery(row).appendTo("select#filters_place_id");
+					});
 				}
 			});
 		};
 	});
+
+
+    jQuery("input.complete:eq(1)").autocomplete({source:sHours,select:function(e,ui){
+      console.log(ui);
+      to_hour = ui.item.value;
+      jQuery('.to_class').each(function(index, element){
+        to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)
+
+        jQuery(this).val(to_hour);
+        if(to2_hour){
+          jQuery('#open_hour_'+index+'_to2').val(to2_hour);
+        }// if from2_hour end
+      });
+
+
+      }});
+
+    console.log(jQuery(".complete"));
 })
 
 function change_engagement_status(biz_id,prog_id,c_id,eng_id)
