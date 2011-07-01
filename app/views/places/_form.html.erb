@@ -8,6 +8,12 @@
 <style type="text/css">
   select[disabled] { background-color: #E6E6FA; }
   .times{width:auto}
+  .slide_input{width:180px;}
+  .slide_input input{width:170px;}
+  .slide_input.ma{ margin-left:15px;}
+  .slide_box h3{display:block ; width:378px}
+  .box_slider p{width:80%}
+  .box_slider .button{width:100px ; padding:5px}
 </style>
 <script type="text/javascript">
   jQuery(document).ready(function(){
@@ -24,9 +30,10 @@
   jQuery('#split_hours').click(function(){
    if(jQuery('#split_hours').is(':checked')){
     for(index=0;index < 7;index++){
-      from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
+      from_to_html = jQuery('#open_hour_'+index+'_from').closest(".times").html();
       from_to_html = from_to_html.replace(/from/g, "from2");
       from_to_html = from_to_html.replace(/to/g, "to2");
+      console.log(from_to_html);
       jQuery('#open_hour_div_'+index).append("<p id=open_hour_p_"+index+">"+from_to_html+"</p>");
     }
    }else{
@@ -237,11 +244,15 @@
 
        <h3 class="days left"><%=key%></h3>
        <div id="open_hour_div_<%=index%>" class="times left">
-         <div >
+         <div class="input_set">
+         <div class="slide_input left">
            <label for="from">from:</label>
-           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete from_class" %>
+           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete title from_class" %>
+           </div>
+        <div class="slide_input left ma">
            <label for="id">to</label>
-           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete to_class" %>
+           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete title to_class" %>
+         </div>
          </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
@@ -262,7 +273,7 @@
         <p class="hide" >
           <%= label_tag "Closed?"%>
          <%= check_box_tag "open_hour[#{index}][closed]" %>
-         <input type="button" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour(<%=index%>)" />
+         <input type="button" class="button positive" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour_admin(<%=index%>)" />
         </p>
    </div>
     </div>

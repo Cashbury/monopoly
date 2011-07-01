@@ -4,6 +4,7 @@
     <title><%= content_for?(:title) ? yield(:title) : "Untitled" %></title>
     <%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
     <%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
+    <%= stylesheet_link_tag "blueprint/plugins/buttons/screen"  %>
     <%= stylesheet_link_tag "biz_application",
                             'tipTip',
                             "redmond/jquery-ui-1.8.10.custom"  %>

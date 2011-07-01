@@ -10,7 +10,19 @@ function Split_hour(index){
     jQuery('input.complete').autocomplete({source:sHours});
 
 }
+function Split_hour_admin(index){
+    from_to_html="";
+    from_to_html = jQuery('#open_hour_'+index+'_from').closest("div.input_set").html();
+    console.log(from_to_html);
+    from_to_html = from_to_html.replace(/from/g, "from2");
+    from_to_html = from_to_html.replace(/to/g, "to2");
+    closed1_label ="<label> Closed? </label>";
+    closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' /><br/>" ;
+    final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
+    jQuery('#open_hour_div_'+index).append(final_html_part);
+    jQuery('input.complete').autocomplete({source:sHours});
 
+}
 function initialize() {
     var latlng = new google.maps.LatLng(-34.397, 150.644);
     var myOptions = {
