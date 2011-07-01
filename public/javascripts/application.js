@@ -39,6 +39,8 @@ jQuery(function () {
 	});
 
 
+      jQuery.EnablePlaceholder.defaults.withPlaceholderClass = 'title';
+      jQuery('input[type=text]').enablePlaceholder();
 
 })
 

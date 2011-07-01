@@ -15,4 +15,10 @@ module PlacesHelper
       @cname = place.try(:business).try(:name)
     end
   end
+
+  def get_maker_position_script(place)
+    unless place.blank?
+    "pos = new google.maps.LatLng("+ @place.lat.to_s + "," + @place.long.to_s + ");  myMap2.setZoom(17);myMap.setZoom(17);marker.setPosition(pos);marker2.setPosition(pos);marker2.setMap(myMap);myMap.setCenter(pos);myMap2.setCenter(pos);marker.setMap(myMap2);"
+    end
+  end
 end

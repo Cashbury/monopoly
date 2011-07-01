@@ -74,8 +74,6 @@ function initialize() {
   }
 
   jQuery(function(){
-      jQuery.EnablePlaceholder.defaults.withPlaceholderClass = 'title';
-      jQuery('input[type=text]').enablePlaceholder();
       jQuery('.tabs').tabs({show:function(e,ui){
         if(ui.tab.hash=="#owner_view"){
          google.maps.event.trigger(myMap, 'resize');
@@ -134,7 +132,6 @@ function initialize() {
       });
       jQuery('#city_id').focus(function(){
           var country = jQuery("input#country").val();
-          console.log(country);
           jQuery(this).autocomplete({
           source: "/businesses/update_cities/"+ country +".js",
           dataType:"jsonp",

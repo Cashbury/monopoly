@@ -131,11 +131,6 @@ class Place < ActiveRecord::Base
     a.neighborhood = location[:neighborhood]
     logger.error "Invalid Address #{a.inspect}" unless a.save!
 
-    business = Business.find_or_create_by_name(location[:business_name])
-    business.billing_address_id = a.id
-    business.mailing_address_id = a.id
-    business.brand_id = user.brands.first.id
-    business.save!
 
     place = Place.new
     place.name = location[:name]
@@ -145,7 +140,9 @@ class Place < ActiveRecord::Base
     place.long= location[:long]
     place.is_primary= location[:is_primary] unless location[:is_primary].blank?
     place.address_id = a.id
-    place.business_id = business.id
+
+    business = save_a_business_only_on_first_login(user,place)
+    place.business_id = business.id unless business.blank?
     place
   end
 
@@ -164,6 +161,9 @@ class Place < ActiveRecord::Base
     end
     return return_hour
   end
+
+
+
   def is_closed(day_num)
     open_hour =OpenHour.where(:place_id => self.id , :day_no => day_num).first
     if open_hour
@@ -173,6 +173,16 @@ class Place < ActiveRecord::Base
     end
   end
 
+  def self.save_a_business_only_on_first_login(user,place)
+    if user.sign_in_count <=1
+      address_id = place.try(:address).try(:id) || ""
+      Business.create!( :billing_address_id=> address_id ,
+                       :mailing_address_id=>address_id,
+                       :name=>place.name ,
+                       :brand_id=>user.brands.first.id
+                      )
+    end
+  end
   private
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
@@ -216,5 +226,6 @@ class Place < ActiveRecord::Base
     hour, min = parse_date(hour_txt)
     datetime = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, hour.to_i , min.to_i)
   end
+
 
 end

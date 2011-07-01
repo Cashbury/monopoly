@@ -36,18 +36,15 @@
         <p>
           <%= mailing_address_form.label :city %>
           <%= mailing_address_form.hidden_field :city_id , :value=>"" %>
-          <input type="text" name="city" value="" id="mcity_id"/>
+          <input type="text" name="city" value=""  class="title" id="mcity_id"/>
         </p>
         <p>
           <%= mailing_address_form.label :zipcode %>
-          <%= mailing_address_form.text_field :zipcode %>
+          <%= mailing_address_form.text_field :zipcode , :class=>"title" %>
         </p>
       <%end%>
     </fieldset>
-    <br/>
-
-    <br/>
-      <fieldset>
+    <fieldset>
       <legend>Business Billing Address</legend>
       <%= f.fields_for :billing_address,f.object.billing_address do |billing_address_form| %>
         <p>

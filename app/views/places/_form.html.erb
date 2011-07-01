@@ -86,17 +86,11 @@
     } //end if
     });
 
+    <%= get_maker_position_script(@place) %>
 
-    <% unless @place.blank? %>
-        pos = new google.maps.LatLng( <%= @place.lat.to_s %>, <%= @place.long.to_s%>);
-        marker.setPosition(pos);
-        marker2.setPosition(pos);
-        myMap.setCenter(pos);
-        myMap2.setCenter(pos);
-    <% end %>
   });
 </script>
-<%= @place.inspect %>
+
 <style type="text/css" media="screen">
   div#map_canvas{
     border:none;
@@ -195,10 +189,10 @@
       <%end%>
 
       <p>
-        <%= f.label :long%> <%= f.text_field :long, :class=>"title" %>
+        <%= f.label :long%> <%= f.text_field :long, :class=>"title double" %>
       <p>
       </p>
-        <%= f.label :lat  %> <%= f.text_field :lat, :class=>"title" %>
+        <%= f.label :lat  %> <%= f.text_field :lat, :class=>"title double" %>
       </p>
     </fieldset>
 
