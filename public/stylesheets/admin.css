@@ -26,3 +26,5 @@ background: linear-gradient(top, #eeeeee 0%,#cccccc 67%); /* W3C */}
 
 #main_header h1{ margin:20px 0 15px 0; font-size:1.8em;}
 #leftContainer { padding:30px;}
+
+tbody tr:nth-child(2n) td, tbody tr.even td { background: none repeat scroll 0 0 #F6F6F6; }

@@ -44,6 +44,8 @@ jQuery(function () {
 			 jQuery(d).find('th:last').css({borderRight:'1px solid #ccc'});
 	});
 
+  jQuery('table.mono-table tr:last td').css({borderBottom:'1px solid #e2dfdf'});
+
       jQuery.EnablePlaceholder.defaults.withPlaceholderClass = 'title';
       jQuery('input[type=text]').enablePlaceholder();
 
