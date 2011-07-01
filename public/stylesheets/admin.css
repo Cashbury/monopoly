@@ -1,0 +1,18 @@
+/** monopoly forms **/
+.mono-form label{ display:block;margin:0;padding:5px 0 0 0;line-height:1.4em;font-size:1em;}
+.mono-form input, .mono-form label, .mono-form textarea { width: 400px;}
+.mono-form input.half{width:193px; display:inline}
+.mono-form .hide{display:none}
+.mono-form select {width:412px}
+.tabs .ui-tabs-panel{padding:5px 0 }
+.mono-form fieldset{-moz-border-radius: 3px;border-radius: 3px; border-color:orange; width:410px;  }
+
+/** monopoly tables **/
+th, td {border:0 none}
+.mono-table th{ text-transform:capitalize; }
+.mono-table tr.even{ }
+.mono-table td,.mono-table th{ min-width:100px;padding:10px; border-left: 1px solid #ccc; border-top:1px solid #ccc;}
+
+
+#main_header h1{ margin:20px 0 15px 0; font-size:1.8em;}
+#leftContainer { padding:30px;}

@@ -1,16 +1,11 @@
-<%= stylesheet_link_tag "blueprint/screen" ,  :media => "screen, projection" %>
-<%= stylesheet_link_tag "blueprint/print",    :media => "print" %>
 <%= stylesheet_link_tag "biz_application" %>
 
-<%= javascript_include_tag 'prototype',
-                                 "businessend",
+<%= javascript_include_tag      "businessend",
                                 'jquery.tipTip',
                                 'jquery.enablePlaceholder.min',
                                 "http://maps.google.com/maps/api/js?sensor=true",
 %>
 
-<%= calendar_date_select_includes %>
-<% CalendarDateSelect.format=(:iso_date)%>
 <style type="text/css">
   select[disabled] { background-color: #E6E6FA; }
   .times{width:auto}
@@ -22,7 +17,7 @@
   jQuery('#owner_view input[type=submit]').remove();
 
   jQuery('#place_update').click(function(e){
-    jQuery('form.new_place,form.edit_place').submit();
+    jQuery('form.mono-form').submit();
   });
 
 
@@ -90,16 +85,19 @@
       }); // end of .each function
     } //end if
     });
+
+
+    <% unless @place.blank? %>
+        pos = new google.maps.LatLng( <%= @place.lat.to_s %>, <%= @place.long.to_s%>);
+        marker.setPosition(pos);
+        marker2.setPosition(pos);
+        myMap.setCenter(pos);
+        myMap2.setCenter(pos);
+    <% end %>
   });
 </script>
+<%= @place.inspect %>
 <style type="text/css" media="screen">
-  .tabs .title{
-    width:193px;
-  }
-  .tabs .double{
-    width:400px;
-  }
-
   div#map_canvas{
     border:none;
   }
@@ -124,24 +122,31 @@
     </ul>
     <div id="admin_view">
 
-  <div id="step3" class="mono-business-register span-20" >
+    <div id="step3" class="mono-business-register span-20" >
 
-  <%= form_for(@place,:html => { :multipart => true }) do |f| %>
+
+
+    <%= form_for(@place,:html => { :multipart => true ,:class=>"mono-form"}) do |f| %>
     <%= f.error_messages %>
+    <fieldset>
+    <legend>
+      Info
+    </legend>
     <p>
-      <%= f.label "Business" %><br />
-      <%= f.select :business_id, "<option selected value=''>..Select Business..</option>".html_safe + options_from_collection_for_select(Business.all , :id, :name, @place.try(:business)), {} , :class=>"title double"%>
+      <%= f.label "Business" %>
+      <%= f.collection_select :business_id, Business.all,  :id, :name,:include_blank=> "..Select Business.." %>
     </p>
     <p>
-      <%= f.label :name , :class=>"hide" %><br />
-      <%= f.text_field :name , :class=>"title double branch bcomplete" , :placeholder=>"Branch name"  %>
+      <%= f.label :name  %>
+      <%= f.text_field :name , :class=>"title double branch bcomplete"  %>
     </p>
-
-
     <p id="primary_place" style="display:none">
       <%= f.label :is_primary %>
       <%= f.check_box :is_primary %>
     </p>
+
+  </fieldset>
+
     <fieldset>
       <legend>Address</legend>
 
@@ -156,14 +161,14 @@
             <%= address_form.hidden_field :city_id,:id=>"city",   :class=>"title double"%>
           </p>
            <p>
-             <%= address_form.label :zipcode , :class=>"hide" %>
-             <%= address_form.text_field :zipcode, :class=>"title double", :placeholder=>"Zipcode"%>
+             <%= address_form.label :zipcode , :class=>"" %>
+             <%= address_form.text_field :zipcode, :class=>"title double"%>
            </p>
           <p>
-            <%= address_form.label :street_address, :class=>"hide" %>
-            <%= address_form.text_field :street_address, :class=>"title double", :placeholder=>"Street address" %>
+            <%= address_form.label :street_address, :class=>"" %>
+            <%= address_form.text_field :street_address, :class=>"title double"%>
           </p>
-      <div id="my_map2" style="width:400px;height:200px;">
+          <div id="my_map2" style="margin-top:20;width:410px;height:200px;">
 
       </div>
 
@@ -179,20 +184,21 @@
 
       <!-- Extended object form -->
         <p>
-          <%= address_form.label :cross_street ,:class=>"hide" %>
-          <%= address_form.text_field :cross_street , :class=>"title double", :placeholder=>"Cross street" %>
+          <%= address_form.label :cross_street ,:class=>"" %>
+          <%= address_form.text_field :cross_street , :class=>"title double"%>
         </p>
         <p>
-          <%= address_form.label :neighborhood ,:class=>"hide" %>
-          <%= address_form.text_field :neighborhood, :class=>"title double", :placeholder=>"Neighborhood" %>
+          <%= address_form.label :neighborhood ,:class=>"" %>
+          <%= address_form.text_field :neighborhood, :class=>"title double"%>
         </p>
 
       <%end%>
 
-
-      <p class="clearfix">
-        <%= f.label :long, :class=>"hide" %> <%= f.text_field :long, :class=>"title",:placeholder=>"Longitude" %>
-        <%= f.label :lat,  :class=>"hide"  %> <%= f.text_field :lat, :class=>"title",:placeholder=>"Latitude" %>
+      <p>
+        <%= f.label :long%> <%= f.text_field :long, :class=>"title" %>
+      <p>
+      </p>
+        <%= f.label :lat  %> <%= f.text_field :lat, :class=>"title" %>
       </p>
     </fieldset>
 
@@ -201,30 +207,29 @@
         Contacts
       </legend>
       <p>
-        <%= f.label :phone ,:class=>"hide" %>
-        <%= f.text_field :phone, :class=>"title double", :placeholder=>"Phone" %>
+        <%= f.label :phone ,:class=>"" %>
+        <%= f.text_field :phone, :class=>"title double"%>
       </p>
     </fieldset>
 
     <fieldset>
       <legend>Misc.</legend>
       <p>
-        <%= f.label 'Keywords', :class=>"hide" %><br />
-        <%= f.text_field :tag_list, :class=>"title double" ,:placeholder=>"Keywords" %>
+        <%= f.label 'Keywords', :class=>"" %>
+        <%= f.text_field :tag_list, :class=>"title double" %>
       </p>
       <p>
-        <%= f.label :time_zone %><br />
+        <%= f.label :time_zone %>
         <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
       </p>
 
     <p>
-      <%= f.label :description, :class=>"hide" %>
-      <%= f.text_area :description, :class=>"title double" ,:placeholder=>"Describe the branch" %>
+      <%= f.label :description, :class=>"" %>
+      <%= f.text_area :description, :class=>"title double" %>
     </p>
 
    </fieldset>
 
-    <br />
     <% if @place.new_record?%>
       <fieldset>
       <legend>
@@ -283,7 +288,6 @@
     <%end%>
 
 
-    <br />
 
     <fieldset>
       <legend>Place Images</legend>
@@ -313,10 +317,8 @@
         <%end%>
       </p>
     </fieldset>
-     <br />
 
-
-    <p><% f.submit %></p>
+    <p class="hide"><% f.submit %></p>
 <% end %>
 </div>
 <div class="clear"></div>
@@ -328,4 +330,4 @@
     </div>
 </div>
 
-<input type="button" name="new_place" value="Save" id="place_update"/>
+<input type="button" class="button positive" name="new_place" value="Save" id="place_update"/>
