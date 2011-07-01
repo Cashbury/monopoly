@@ -1,12 +1,12 @@
 jQuery.noConflict();
 function Split_hour(index){
     from_to_html = jQuery('#open_hour_'+index+'_from').parent().html();
-    from_to_html = from_to_html.replace(/from/g, "from2");
-    from_to_html = from_to_html.replace(/to/g, "to2");
-    closed1_label ="<label> Closed? </label>";
-    closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
+    //from_to_html = from_to_html.replace(/from/g, "from2");
+    //from_to_html = from_to_html.replace(/to/g, "to2");
+    closed1_label ="<label class='hf closed '> Closed? </label>";
+    closed2_checkbox_html = "<input class='hf closed ' type='checkbox' value='1' name='open_hour["+index+"][closed2]' />" ;
     final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
-    jQuery('#open_hour_div_'+index).append("<p>"+final_html_part+"</p>");
+    jQuery('#open_hour_div_'+index).append("<div>"+final_html_part+"</div><div class='clear'></div>");
     jQuery('input.complete').autocomplete({source:sHours});
 
 }

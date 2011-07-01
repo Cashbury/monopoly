@@ -160,14 +160,18 @@
   jQuery(".box_slider:first p").show();
 
     jQuery('a.show').click(function(e){
-        if(typeof $prev =="undefined")  $prev = jQuery(this);
+        $b= jQuery(this);
         var $a = jQuery(this);
         $a.toggleClass("active");
-        if($a.equals($prev)) {
-          jQuery("div.show_con:visible").toggle();
-          $prev = null;
+        jQuery("div.show_con:visible").toggle();
+        if($b.hasClass("active")) {
+          $a.next('div.show_con').hide();
         }
-        $a.next('div.show_con').toggle();
+        if($a.hasClass("active")) {
+          $a.next('div.show_con').show();
+          jQuery("a.active").removeClass("active");
+          $a.toggleClass("active");
+        }
         e.stopPropagation();
         e.preventDefault();
     });

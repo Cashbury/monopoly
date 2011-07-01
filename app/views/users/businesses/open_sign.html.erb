@@ -1,11 +1,12 @@
 <style type="text/css" media="screen">
-  label{display:inline}
+  .hf{width:30px; text-align:right}
+  .fr{ margin-right:5px }
+  .hf.closed{ margin-top: 17px ; margin-left:3px}
 </style>
 
-<h1 id="">Configure your open sign</h1>
-
+<h1 id="">Configure your branch open sign</h1>
+<div class="span-19">
 <%= form_tag( "/users/businesses/open_sign/#{@place.id}") do %>
-
 
 <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
 
@@ -14,18 +15,19 @@
     <div class="slide_box_shadow">
       <div class="box_content round shadow">
 
-       <h3 class="days left"><%=key%></h3>
+       <h3 class="left days"><%=key%></h3>
        <div id="open_hour_div_<%=index%>" class="times left">
          <div >
-           <label for="from">from:</label>
-           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete from_class" %>
-           <label for="id">to</label>
-           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete to_class" %>
+           <h3 class="hf fr left">from</h3>
+           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete title left from_class" %>
+           <h3 class="hf left">to</h3>
+           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete title left to_class" %>
          </div>
          <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
          <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+       <div class="clear"></div>
      </div>
-         <div class="clear"></div>
+       <div class="clear"></div>
       </div>
     </div>
     </div>
@@ -41,16 +43,12 @@
     </div>
     </div>
     <div class="slide_box_eject">
-    		<div class="box_eject round"><a href="#"></a></div>
+      <div class="box_eject round"><a href="#"></a></div>
     </div>
 </div>
-
-
-
      <% end %>
       <%= submit_tag "save" %>
 
     <% end %>
 
-
-
+</div>

@@ -1,10 +1,5 @@
 <% title "Place | #{@place.name}" %>
 
-<%= javascript_include_tag      "businessend",
-                                'jquery.tipTip',
-                                "http://maps.google.com/maps/api/js?sensor=true",
-%>
-
 
 <p>
   <strong>Name:</strong>
@@ -52,6 +47,13 @@
   <%= link_to "View All", places_path %>
 </p>
 
+<%= javascript_include_tag      "businessend",
+                                'jquery.tipTip',
+                                "http://maps.google.com/maps/api/js?sensor=true",
+%>
 <script type="text/javascript" language="javascript" >
-    <% get_maker_position_script(@place) %>
+  jQuery(function(){
+
+    <%= get_maker_position_script(@place) %>
+  })
 </script>
