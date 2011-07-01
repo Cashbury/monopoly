@@ -103,17 +103,20 @@ a.cushbury_logo:hover{;background:url("../images/admin/logo.png") no-repeat;}
 #side{float:left;width:170px;padding-left:20px;}
 	#side h2{width:100%;font-size:2em;text-align:left;color:#dddee0;}
 	#side ul{margin:0;padding:0;}
-	#side li{list-style:none;margin:5px 20px 15px 0;float:left;display:block;width:100%}
+	#side li{list-style:none;margin:5px 20px 6px 0;float:left;display:block;width:100%}
 	#side li a{color:#979ba4;text-decoration:none;font-size:1.2em;font-weight:bold;float:left;display:block;width:100%}
 	#side li a.menu_item{color:#fcea00}
 	#side li ul.sub_menu a{color:#979ba4;text-decoration:none;font-size:0.9em;font-weight:bold;float:left;display:block;width:100%}
 	#side h2.settings{color:#fcea00;font-size:1.8em;}
+
+#side ul.sub_menu{ margin-left:15px;}
 #canvas {
 margin: 0 auto;
 padding: 0 20px 20px;
 width:100%;
+min-width:600px;
 }
-#leftContainer{float:left;width:990px;position:relative;padding:20px;border: 1px solid #eee;min-height:555px}
+#leftContainer{min-width:600px;float:left;width:990px;position:relative;padding:20px;border: 1px solid #eee;min-height:555px}
 
 #left_main {
 float: left;

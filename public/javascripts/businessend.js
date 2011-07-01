@@ -64,7 +64,7 @@ function initialize() {
           //R=results[0].address_components[0].long_name + results[0].address_components[1].long_name;
           jQuery('input#lat, input#place_lat').val(place.geometry.location.lat());
           jQuery('input#long,input#place_long').val(place.geometry.location.lng());
-          jQuery('input#place_address_attributes_street_address').val(R[0]);
+          //jQuery('input#place_address_attributes_street_address').val(R[0]);
         } else {
           //alert("Geocode was not successful for the following reason: " + status)
           //better error handling needed

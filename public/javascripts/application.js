@@ -39,6 +39,11 @@ jQuery(function () {
 	});
 
 
+	jQuery('table.mono-table tr').each(function(i,d){
+			 jQuery(d).find('td:last').css({borderRight:'1px solid #ccc'});
+			 jQuery(d).find('th:last').css({borderRight:'1px solid #ccc'});
+	});
+
       jQuery.EnablePlaceholder.defaults.withPlaceholderClass = 'title';
       jQuery('input[type=text]').enablePlaceholder();
 
