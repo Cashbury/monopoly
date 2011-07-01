@@ -18,12 +18,7 @@
                               %>
     <%= csrf_meta_tag %>
     <%= yield(:head) %>
-    <script type="text/javascript" language="javascript" charset="utf-8">
-    //<![CDATA[
-      jQuery(document).ready(function(){
-      });
-    //]]>
-    </script>
+
   </head>
   <body>
     <div id="header">
@@ -86,19 +81,11 @@
             </a>
           </li>
           <li class="box">
-            <a class="icon" href="<%= "/users/businesses/open_sign/#{@place.try(:id)}" %>">
+            <a class="icon open_sign" href="#">
               <div class="button"></div>
             </a>
-            <a id="bcards" href="<%= "/users/businesses/open_sign/#{@place.try(:id)}" %>">
+            <a class="open_sign" href="#">
               <span>Open sign</span>
-            </a>
-          </li>
-          <li class="box">
-            <a class="icon" href="/users/businesses/set_rewards">
-              <div class="button"></div>
-            </a>
-            <a id="bcards" href="/users/businesses/set_rewards">
-              <span>Cards</span>
             </a>
           </li>
         </ul>
@@ -143,6 +130,18 @@
       }
     });
 
+  jQuery.fn.equals = function(compareTo) {
+    if (!compareTo || this.length != compareTo.length) {
+      return false;
+    }
+    for (var i = 0; i < this.length; ++i) {
+      if (this[i] !== compareTo[i]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
     jQuery("input.complete:eq(1)").autocomplete({source:sHours,select:function(e,ui){
       to_hour = ui.item.value;
       jQuery('.to_class').each(function(index, element){
@@ -159,13 +158,18 @@
 
   jQuery(".box_slider:first p").show();
 
-          jQuery('a.show').click(function(e){
-            var $a = jQuery(this);
-            $a.toggleClass("active");
-            $a.next('div.show_con').toggle();
-            e.stopPropagation();
-            e.preventDefault();
-        });
+    jQuery('a.show').click(function(e){
+        if(typeof $prev =="undefined")  $prev = jQuery(this);
+        var $a = jQuery(this);
+        $a.toggleClass("active");
+        if($a.equals($prev)) {
+          jQuery("div.show_con:visible").toggle();
+          $prev = null;
+        }
+        $a.next('div.show_con').toggle();
+        e.stopPropagation();
+        e.preventDefault();
+    });
 
     jQuery(".title.business.bcomplete").autocomplete({
       source:"/auto_business",
