@@ -19,10 +19,20 @@ jQuery(function(){
       jQuery('#counter_field').val(84 - desc_text.length);
     }
   });
+  
+  jQuery('#reward_name_field_id').blur(function(){
+    var reward_name=jQuery("#reward_name_field_id").val();
+    var brand_name=jQuery("#brand_name_id").val();
+    if (reward_name!="" ){
+      jQuery("#fb_enjoy_msg").val("enjoyed a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
+      jQuery("#fb_unlock_msg").val("unlocked a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");      
+    }
+  });
 })
 //]]>
 </script>
 <%= f.error_messages %>
+<%=hidden_field_tag :brand_name,@business.brand.name, :id=>"brand_name_id"%>
 <p class="subcap">
 	Rewards are items that your customers can redeem after earning enough points or stamps.
 </p>
@@ -48,7 +58,7 @@ jQuery(function(){
     </div> 
     <div class="row">
       <div class="basic_info_caption1">What is the Reward?</div>
-      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>16  %>
+      <%= f.text_field :name, :class =>"basic_info_input",:maxlength=>16, :id=>"reward_name_field_id"  %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Add a Short Description</div>
@@ -63,11 +73,11 @@ jQuery(function(){
     </div>
     <div class="row">
       <div class="basic_info_caption1">Facebook msg when user unlocks a reward</div>
-      <%= f.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100 %>
+      <%= f.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_unlock_msg" %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Facebook msg when user enjoys a reward</div>
-      <%= f.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100 %>
+      <%= f.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_enjoy_msg" %>
     </div>
     <div class="row">
       <div class="basic_info_caption1">Set the goal required to unlock this reward</div>

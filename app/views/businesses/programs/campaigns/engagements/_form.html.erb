@@ -8,10 +8,22 @@
         $('#item_div').hide();
       }
   });
+  $('#engagement_type_selection_list,#item_selection_list').blur(function(){
+    var offer_type=$("#engagement_type_selection_list :selected").text();
+    var item_name=$("#item_selection_list :selected").text();
+    var no_of_times=($("#needed_amount_id")[0]==null) ? 1 : $("#needed_amount_id")[0].val();
+    var brand_name=$("#brand_name_id").val();
+    if (item_name!="" && offer_type.match(/Buy/)!=null){
+      $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
+    }else{
+      $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
+    } 
+  });
 });
 </script>
 <%= form_for [@business,@program ,@campaign, @engagement] do |f| %>
   <%= f.error_messages %>
+  <%=hidden_field_tag :brand_name,@business.brand.name, :id=>"brand_name_id"%>
   <p>
     <%= f.label :name %><br />
     <%= f.text_field :name  %>
@@ -23,25 +35,25 @@
   </p>
   <p id="item_div">
     <%= f.label :item %><br />
-    <%= select_tag "engagement[item_id]", "<option value=''>...Select...</option>".html_safe+options_from_collection_for_select(@items,"id","name",@engagement.try(:item).try(:id)) %>
+    <%= select_tag "engagement[item_id]", "<option value=''>...Select...</option>".html_safe+options_from_collection_for_select(@items,"id","name",@engagement.try(:item).try(:id)),{:id=>"item_selection_list"} %>
   </p>
   <p>
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
+  <%unless @campaign.measurement_type.business%>
+    <p>
+      <%= f.label :amount %><br />
+      <%= f.text_field :amount,"1",:id=>"needed_amount_id" %>
+    </p>
+  <%end%> 
   <p>
     <%= f.label :fb_engagement_msg, "Facebook msg when user makes an engagement" %><br />
-    <%= f.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>100, :style=>"float:none;" %>
+    <%= f.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :style=>"float:none;width: 540px;",:id=>"fb_engagement_msg"%>
   </p>
   <p>
     <%= f.label :is_started %><br />
     <%= f.select :is_started, options_for_select([ ['started', 'true'],['stopped','false']],@engagement.is_started)%>
   </p>
-  <%unless @campaign.measurement_type.business%>
-    <p>
-      <%= f.label :amount %><br />
-      <%= f.text_field :amount %>
-    </p>
-  <%end%> 
   <p><%= f.submit %></p>
 <% end %>
