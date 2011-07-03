@@ -244,24 +244,14 @@ class QrCodesController < ApplicationController
   def check_code_status
     all_logs=Log.select("user_id,created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")
     users_count=Log.select("count(DISTINCT user_id) as no_of_users").where("qr_code_id=#{params[:id]}").first
-    logs=all_logs[params[:index].to_i,all_logs.size]
-    response_text=""
+    @logs=all_logs[params[:index].to_i,all_logs.size]
     result={}  
-    logs.collect{ |log| 
-      user=User.find(log.user_id)
-      user_uid=user.email.split("@").first
-      engagement=Engagement.where(:id=>log.engagement_id).first
-      location_name=Place.where(:id=>log.place_id).first.try(:name).try(:capitalize)
-      location_name=engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) if location_name.nil?
-      engagement_text= engagement.engagement_type.is_visit ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}"
-      response_text+="<div class=\"usr_com\"><div class=\"toggle_link\"><a class=\"toggle_p selected\" style=\"color:red\" href=\"javascript:void(0)\">Feed View</a><a class=\"toggle_a\" href=\"javascript:void(0)\">Transaction View</a></div><div class=\"feed_entry\"><img src=\"https://graph.facebook.com/#{user_uid}/picture\"/><p> #{user.try(:full_name)} was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}. #{user.try(:full_name).split(' ').first} #{engagement_text} and scored  +#{engagement.amount} points on their tab @ #{location_name} by going out with Cashbury</p></div><div class=\"transaction_details\" style=\"display:none\">Hello</div></div>"
-      #735570560 my uid
-      #520370946 ahmed uid
-    }
+    #735570560 my uid
+    #520370946 ahmed uid
     result[:no_of_scanning]=all_logs.size.to_s
     result[:no_of_users]=users_count.no_of_users
-    result[:index]=params[:index].to_i+logs.size
-    result[:response_text]=response_text
+    result[:index]=params[:index].to_i+@logs.size
+    result[:response_text]=render_to_string :partial=> "feeds_partial"
     if request.xhr?
       render :json=>result.to_json
     end
