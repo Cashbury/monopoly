@@ -2,6 +2,7 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 <%= form_for([@business ,@campaign],:html => { :multipart => true }) do |f| %>
+  <%=hidden_field_tag :brand_name,@business.brand.name, :id=>"brand_name_id"%>
   <% if @campaign.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
@@ -20,8 +21,8 @@
       <%= engagement.hidden_field :amount, :value=>1%>
       <input type="text" class="basic_info_caption1 inst" style="width:135px" name="item_name" id="item_text_field" title="Coffee Drink" value="<%=@item_name%>" />
       <%= f.fields_for :rewards do |reward|%>
-        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0",:title=>"10"} %><label> times, Get a free </label>
-        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:330px;margin:0 0 0",:title=>"Coffee"}%>
+        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %><label> times, Get a free </label>
+        <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:330px;margin:0 0 0",:title=>"Coffee",:id=>"reward_name_field_id"}%>
     </div>
   </fieldset>
   <br /><br />
@@ -39,20 +40,20 @@
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
     <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
-  </fieldset><br/><br
+  </fieldset><br/><br/>
   <fieldset >
     <legend class="section_title">Setting Facebook Messages</legend>
     <div class="row">
       <%= reward.label "When user unlocks a reward" %><br />
-      <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100 %>
+      <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 540px;" %>
     </div>
     <div class="row">
       <%= reward.label "When user enjoys a reward" %><br />
-      <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100 %>
+      <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_enjoy_msg", :style=>"width: 540px;" %>
     </div>
     <div class="row">
       <%= engagement.label "When user makes an engagement" %><br />
-      <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>100 %>
+      <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 540px;" %>
     </div>
   </fieldset>
   <p><a id="add_details_link" href="javascript:void(0)"><%=@campaign.new_record? ? "Add More Details" : "Edit Details"%></a></p>
@@ -146,9 +147,25 @@ jQuery(document).ready(function(){
       jQuery('#counter_field').val(84 - desc_text.length);
     }
   });
+  jQuery('#reward_name_field_id,#needed_amount_id,#engagement_type_selection_list,#item_text_field').blur(function(){
+    var offer_type=jQuery("#engagement_type_selection_list :selected").text();
+    var item_name=jQuery("#item_text_field").val();
+    var no_of_times=jQuery("#needed_amount_id").val();
+    var reward_name=jQuery("#reward_name_field_id").val();
+    var brand_name=jQuery("#brand_name_id").val();
+    if (no_of_times!="" && reward_name!="" ){
+      if (item_name!="" && offer_type.match(/Buy/)!=null){
+        jQuery("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
+      }else{
+        jQuery("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
+      }
+      jQuery("#fb_enjoy_msg").val("enjoyed a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
+      jQuery("#fb_unlock_msg").val("unlocked a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");      
+    }
+  });
   function update_select_item_list_display(object){
     buy_item_option = jQuery(":selected", object).text();
-    if(buy_item_option == "Buy a product/service"){
+    if(buy_item_option.match(/Buy/)!=null){
       jQuery('#item_div').show();
       jQuery('#item_text_field').show();
     }else{

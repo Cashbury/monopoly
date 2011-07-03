@@ -47,7 +47,7 @@ class Businesses::CampaignsController < ApplicationController
       if @campaign.save!    
         format.html { 
           @reward=@campaign.rewards.first
-          if reward_attrs[:reward_image_attributes][:photo].blank? || !@reward.reward_image.need_cropping
+          if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.need_cropping
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') 
           else
             render :action => 'crop'  
@@ -117,7 +117,7 @@ class Businesses::CampaignsController < ApplicationController
       if @campaign.update_attributes!(params[:campaign])
         format.html {
           @reward=@campaign.rewards.first
-          if reward_attrs[:reward_image_attributes][:photo].blank? || !@reward.reward_image.needed_cropping?
+          if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.needed_cropping?
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
           else
             render :action => 'crop'  
