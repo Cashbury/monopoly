@@ -254,7 +254,7 @@ class QrCodesController < ApplicationController
       location_name=Place.where(:id=>log.place_id).first.try(:name).try(:capitalize)
       location_name=engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) if location_name.nil?
       engagement_text= engagement.engagement_type.is_visit ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}"
-      response_text+="<div class=\"usr_com\"><img src=\"https://graph.facebook.com/#{user_uid}/picture\"/><p> #{user.try(:full_name)} was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}. #{user.try(:full_name).split(' ').first} #{engagement_text} and scored  +#{engagement.amount} points on their tab @ #{location_name} by going out with Cashbury</p></div>"
+      response_text+="<div class=\"usr_com\"><div class=\"toggle_link\"><a class=\"toggle_p selected\" style=\"color:red\" href=\"javascript:void(0)\">Feed View</a><a class=\"toggle_a\" href=\"javascript:void(0)\">Transaction View</a></div><div class=\"feed_entry\"><img src=\"https://graph.facebook.com/#{user_uid}/picture\"/><p> #{user.try(:full_name)} was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}. #{user.try(:full_name).split(' ').first} #{engagement_text} and scored  +#{engagement.amount} points on their tab @ #{location_name} by going out with Cashbury</p></div><div class=\"transaction_details\" style=\"display:none\">Hello</div></div>"
       #735570560 my uid
       #520370946 ahmed uid
     }

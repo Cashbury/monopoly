@@ -34,3 +34,8 @@ p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; pa
 .usr_com { margin: 5px auto; width: 500px; padding: 10px; background: url(../images/trans.png) repeat; }
 .usr_com p { font: bold 11px/16px Arial; color: #111; }
 .usr_com img { float: left; margin-right: 10px; }
+
+.toggle_link{clear:both;  text-align: right;margin-right: 3px;}
+.toggle_link a{font-family:Helvetica; font-size:12px;color:#CDCDCD;text-decoration:none;}
+.toggle_link :selected{font-family:Helvetica; font-size:12px;color:red;text-decoration:none;}
+.toggle_link .toggle_p{margin-right:15px}
