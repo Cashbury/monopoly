@@ -36,7 +36,8 @@ class QrCode < ActiveRecord::Base
   before_destroy :destroy_image
   after_create :upload_image
   scope :associated_with_engagements , where(:associatable_type=>"Engagement")
-
+  cattr_reader :per_page
+  @@per_page = 20
   def destroy_image
     self.qr_code_image.destroy
   end

@@ -21,7 +21,7 @@
         <%end%>
       </td>
       <td>Rajib Ahmed</td>
-      <td><%= link_to "#{business.name} branches (#{business.places.size})", business_places_path(business) %></td>
+      <td><%= link_to "(#{business.places.size})", business_places_path(business) %></td>
       <td>&nbsp</td>
       <td><%= link_to "Edit", edit_business_path(business) %></td>
       <td><%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete %></td>

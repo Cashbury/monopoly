@@ -160,10 +160,11 @@ class User < ActiveRecord::Base
         self.business_customers.create(:business_id=>campaign.program.business)
       end
       if user_account.nil?
-        accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) unless self.account_holder
+        accholder=AccountHolder.find_or_create_by_model_id_and_model_type(:model_id=>self.id,:model_type=>self.class.to_s)
         account=Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
         accholder.accounts << account
         accholder.save!
+        user_account=account
       end
 
       #debit business account and credit user account
@@ -200,6 +201,7 @@ class User < ActiveRecord::Base
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,
                   :engagement_id  =>engagement.id,
+                  :qr_code_id     =>qr_code.id,
                   :campaign_id    =>campaign.id,
                   :business_id    =>campaign.program.business.id,
                   :transaction_id =>transaction.id,
@@ -231,6 +233,7 @@ class User < ActiveRecord::Base
       return target.name=="new_comers" ? !self.engaged_with_business?(campaign.program.business) : self.engaged_with_business?(campaign.program.business)
     end
   end
+  
   def is_engaged_with_campaign?(campaign)
     !self.logs.where(:campaign_id=>campaign.id).limit(1).empty?
   end

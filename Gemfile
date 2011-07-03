@@ -52,11 +52,11 @@ gem 'factory_girl_rails','=1.0.1'
 gem 'rcov','=0.9.9'
 end
 
-#gem 'annotate-models','=1.0.4'
+gem 'jquery-rails','=0.2.7'
+gem 'carmen','=0.2.5'
 gem 'jquery-rails','=0.2.7'
 gem 'carmen','=0.2.5'
 gem 'wicked_pdf','=0.6.0'
-gem 'simple_form','=1.3.1'
 gem 'geokit-rails3','=0.1.2'
 gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch =>'rails3test'
 gem 'wkhtmltopdf','=0.1.2'

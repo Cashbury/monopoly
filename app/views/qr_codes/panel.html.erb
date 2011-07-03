@@ -46,13 +46,14 @@ jQuery(function(){
       source:"/get_users.json",
       select:function(e,ui){
         jQuery("#associatable_id.associate").val(ui.item.id);
+        jQuery("#associatable_type").val("User");
       }
   });
 
   jQuery("input[name=btype]").click(function(e){
       jQuery(".row.users").toggle();
       jQuery(".row.brands").toggle();
-      })
+  });
 
   jQuery(".tabs").tabs({
     select:function(e,ui){

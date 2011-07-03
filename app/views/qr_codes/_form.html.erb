@@ -1,4 +1,14 @@
-
+<script type="text/javascript" language="javascript" charset="utf-8">
+jQuery(function(){
+  jQuery("#user_id").autocomplete({
+      source:"/get_users.json",
+      select:function(e,ui){
+        jQuery(".associate").val(ui.item.id);
+        jQuery("#associatable_type").val("User");
+      }
+  });
+});
+</script>
 <%= form_for(@qr_code) do |f| %>
   <% if @qr_code.errors.any? %>
     <div id="error_explanation">
@@ -11,13 +21,21 @@
       </ul>
     </div>
   <% end %>
-  <%= render "shared/engagement_selector" %>
-
-  <p class="row">
-    <%= f.label :associatable_id %><br />
-    <%= f.collection_select :associatable_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
-  </p>
+  <% if @qr_code.associatable_type =="Engagement" %>
+    <%= render "shared/engagement_selector" %>
+    <p class="row">
+      <%= f.label :associatable_id %><br />
+      <%= f.collection_select :associatable_id , @engagements ,:id , :name, :include_blank=>"No engagement" %>
+    </p>
     <%= f.hidden_field :associatable_type, :value=>"Engagement"%>
+  <%else%>
+    <p class="row users">
+      <strong>Users</strong> <br/>
+      <%= text_field_tag :user_id , User.find(@qr_code.associatable_id).full_name , {:class=>"complete"}%>    
+      <%= f.hidden_field :associatable_type%>
+      <%= f.hidden_field :associatable_id,:class=>"associate" %>
+    </p>
+  <%end%>
   <p class="row">
     <%= f.label :status , "Active" %>
     <%= f.check_box :status %>
