@@ -194,6 +194,11 @@ class User < ActiveRecord::Base
 
       #save this engagement action to logs
       log_group=LogGroup.create!(:created_on=>date)
+      if place_id.blank?
+        unless lat.blank? || lng.blank?
+          place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
+        end
+      end
       Log.create!(:user_id =>self.id,
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,

@@ -68,6 +68,11 @@ class Place < ActiveRecord::Base
       image.destroy if image.delete_photo? && !image.photo.dirty?
     end
   end
+  
+  def self.closest(options = {})
+    geo_scope(options).order("#{distance_column_name} asc").limit(1)
+  end
+
   def is_open?
     current_datetime=DateTime.now.in_time_zone(self.time_zone)
     !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?

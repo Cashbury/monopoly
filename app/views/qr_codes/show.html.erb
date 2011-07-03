@@ -76,7 +76,7 @@
           if(data!=null){
             if(data.response_text!="" && index!=data.index){
               jQuery('.container').append(data.response_text);
-              jQuery('#scan_aggregation').html("Scanned: "+ data.no_of_scanning+" times by "+data.no_of_users+" number of people");
+              jQuery('#scanning_summary').html("Scanned: "+ data.no_of_scanning+" times by "+data.no_of_users+" number of people");
             }
             index=data.index;
             //if(data.response_text!="") {jQuery('.toggle_link').show();}
@@ -137,7 +137,7 @@
     </div><!--Page-->  
     <p class="ref_num">Issue Date: <%=@qr_code.created_at.to_formatted_s(:long)%> </p>  
 	  <p class="ref_num">Reference Number: <%=@qr_code.hash_code%></p>
-	  <p class="ref_num" id="scan_aggregation"></p>
+	  <p class="ref_num" id="scanning_summary"></p>
 </div><!--Container-->
 </body>
 

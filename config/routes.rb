@@ -144,7 +144,6 @@ Kazdoor::Application.routes.draw do
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
-  match "/show_code/:id"                  =>"qr_codes#show_code"
   match "/check_status/:id"               =>"qr_codes#check_code_status"
   match "/code/:hash_code"                =>"qr_codes#show"   
   #devise_for :users

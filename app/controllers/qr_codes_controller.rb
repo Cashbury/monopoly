@@ -115,11 +115,6 @@ class QrCodesController < ApplicationController
     end
   end
 
-  def show_code
-    @qr_code = QrCode.where(:id =>params[:id]).first
-    render :layout=>"showcodes"
-  end
-
   def panel
     if request.post?
       quantity =  params[:quantity].to_i
@@ -251,8 +246,7 @@ class QrCodesController < ApplicationController
     users_count=Log.select("count(DISTINCT user_id) as no_of_users").where("qr_code_id=#{params[:id]}").first
     logs=all_logs[params[:index].to_i,all_logs.size]
     response_text=""
-    result={}
-    #logs.collect{|log| response_text+="<p>Code was scanned by #{User.find(log.user_id).try(:full_name)} @ #{log.created_at} GMT</p>"}
+    result={}  
     logs.collect{ |log| 
       user=User.find(log.user_id)
       user_uid=user.email.split("@").first
