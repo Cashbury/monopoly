@@ -32,7 +32,7 @@ jQuery(function(){
 //]]>
 </script>
 <%= f.error_messages %>
-<%=hidden_field_tag :brand_name,@business.brand.name, :id=>"brand_name_id"%>
+<%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
 <p class="subcap">
 	Rewards are items that your customers can redeem after earning enough points or stamps.
 </p>

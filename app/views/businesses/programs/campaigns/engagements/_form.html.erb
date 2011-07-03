@@ -23,7 +23,7 @@
 </script>
 <%= form_for [@business,@program ,@campaign, @engagement] do |f| %>
   <%= f.error_messages %>
-  <%=hidden_field_tag :brand_name,@business.brand.name, :id=>"brand_name_id"%>
+  <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <p>
     <%= f.label :name %><br />
     <%= f.text_field :name  %>

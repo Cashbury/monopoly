@@ -1,0 +1,36 @@
+/* For All */
+
+* { margin: 0; padding: 0; }
+a { text-decoration: underline; color: #555; }
+img { border: none; }
+ul { margin: 0; padding: 0; }	
+li { list-style: none; }
+.clear { clear: both; }	
+body { font: normal 11px Verdana; color: #777; background-color: #fdf800; }
+		
+/* Divs */
+		
+.container { width: 887px; margin: 0 auto; padding: 75px 0; }
+
+.page { margin-bottom: 10px; }
+.page_top { height: 15px; background: url(../images/page_top.png) no-repeat; }
+.page_con { padding: 20px; background: url(../images/page_con.png) repeat-y; }
+.page_bot { height: 25px; background: url(../images/page_bot.png) no-repeat; }
+
+.logo { text-align: center; padding-bottom: 25px; }
+.name { text-align: center; padding-bottom: 25px; }
+
+.qr_hold { padding-left: 250px; margin-bottom: 25px; }
+.qr_outer { float: left; width: 273px; background-color: #e93a22; padding: 35px; }
+.qr_code { width: 203px; background-color: #fff; padding: 35px; }
+.follow { float: left; width: 250px; height: 225px; background: url(../images/arrow.png) no-repeat left center; text-align: center; padding-top: 118px; }
+.follow p { font: normal 14px 'Cuprum'; padding: 20px 20px 10px 15px; }
+
+p.bottom_text { font: bold 13px/20px Arial; padding: 15px 15px 0 15px; border-top: 1px solid #ccc; }
+p.bottom_text span { color: #bbb; }
+
+p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; padding: 5px 10px; color: #111; background: url(../images/trans.png) repeat; text-align: center; }
+
+.usr_com { margin: 5px auto; width: 500px; padding: 10px; background: url(../images/trans.png) repeat; }
+.usr_com p { font: bold 11px/16px Arial; color: #111; }
+.usr_com img { float: left; margin-right: 10px; }

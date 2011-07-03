@@ -2,7 +2,7 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 <%= form_for([@business ,@campaign],:html => { :multipart => true }) do |f| %>
-  <%=hidden_field_tag :brand_name,@business.brand.name, :id=>"brand_name_id"%>
+  <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <% if @campaign.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
