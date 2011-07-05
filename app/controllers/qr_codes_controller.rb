@@ -242,7 +242,7 @@ class QrCodesController < ApplicationController
   end
   
   def check_code_status
-    all_logs=Log.select("user_id,created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")
+    all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")
     users_count=Log.select("count(DISTINCT user_id) as no_of_users").where("qr_code_id=#{params[:id]}").first
     @logs=all_logs[params[:index].to_i,all_logs.size]
     result={}  

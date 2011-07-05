@@ -14,6 +14,28 @@
       <img src="https://graph.facebook.com/<%=user_uid%>/picture"/>
       <p> <%="#{user.try(:full_name)} was @ #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}. #{user.try(:full_name).split(' ').first} #{engagement_text} and scored  +#{engagement.amount} points on their tab @ #{location_name} by going out with Cashbury"%></p>
     </div>
-    <div class="transaction_details" style="display:none">Hello</div>
+    <div class="transaction_details" style="display:none">
+      <table border="0" class="details_table">
+        <% from_account=Account.find(log.from_account)%>
+        <% to_account=Account.find(log.to_account)%>
+        <% from_account_holder=from_account.account_holder%>
+        <% to_account_holder=to_account.account_holder%>
+        <% from_account_holder_name=from_account_holder.model_type=="User" ? User.find(from_account_holder.model_id).full_name : Business.find(from_account_holder.model_id).name  %>
+        <% to_account_holder_name=to_account_holder.model_type=="User" ? User.find(to_account_holder.model_id).full_name : Business.find(to_account_holder.model_id).name  %>      
+        <tr><td>From:</td><td>Account Holder Name: <%=from_account_holder_name%></td><td>To:</td><td>Account Holder Name: <%=to_account_holder_name%></td></tr>
+        <tr><td></td><td>Account Number: <%=from_account.id%></td><td></td><td>Account Number: <%=to_account.id%></td></tr>
+        <tr><td></td><td>Account Type: <%=from_account.payment_gateway.nil? ? "Loyalty" : from_account.payment_gateway.name%></td><td></td><td>Account Type: <%=to_account.payment_gateway.nil? ? "Loyalty" : to_account.payment_gateway.name%></td></tr>
+        <tr><td></td><td>Debit</td><td></td><td>Credit</td></tr>
+        <tr><td></td><td>-<%=log.after_fees_amount%> Points</td><td></td><td>+<%=log.after_fees_amount%> Points</td></tr>
+        <tr><td></td><td>Balance Before Tx: <%=log.from_account_balance_before%></td><td></td><td>Balance Before Tx: <%=log.to_account_balance_before%></td></tr>
+        <tr><td></td><td>Balance After Tx: <%=log.from_account_balance_after%></td><td></td><td>Balance After Tx: <%=log.to_account_balance_after%></td></tr>
+        <tr><td>Type: </td><td><%=log.name%></td></tr>
+        <tr><td>Fee Amount: </td><td><%=log.fee_amount%></td></tr>        
+        <tr><td>Fee %: </td><td><%=log.fee_percentage%></td></tr>
+        <tr><td>Time: </td><td><%="#{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}"%></td></tr>
+        <tr><td>Location: </td><td><%=location_name%></td></tr>
+        <tr><td>Notes: </td><td><%=log.note%></td></tr>                                                                
+      </table>
+    </div>
   </div>
 <%end%>
