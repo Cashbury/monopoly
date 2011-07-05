@@ -7,7 +7,7 @@
 .mono-form .hide{display:none}
 .mono-form select {width:412px}
 .tabs .ui-tabs-panel{padding:5px 0 }
-.mono-form fieldset{-moz-border-radius: 3px;border-radius: 3px; border-color:orange; width:410px;  }
+.mono-form fieldset{-moz-border-radius: 3px;border-radius: 3px; border-color:#d2d2d2; width:410px;  }
 
 /** monopoly tables **/
 th, td {border:0 none}
