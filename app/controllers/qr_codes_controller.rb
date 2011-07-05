@@ -245,9 +245,7 @@ class QrCodesController < ApplicationController
     all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")
     users_count=Log.select("count(DISTINCT user_id) as no_of_users").where("qr_code_id=#{params[:id]}").first
     @logs=all_logs[params[:index].to_i,all_logs.size]
-    result={}  
-    #735570560 my uid
-    #520370946 ahmed uid
+    result={}
     result[:no_of_scanning]=all_logs.size.to_s
     result[:no_of_users]=users_count.no_of_users
     result[:index]=params[:index].to_i+@logs.size
@@ -255,6 +253,10 @@ class QrCodesController < ApplicationController
     if request.xhr?
       render :json=>result.to_json
     end
+  end
+  
+  def list_all_associatable_qrcodes
+    @engagement=Engagement.find(params[:id])
   end
   
   def prepare_filters_data

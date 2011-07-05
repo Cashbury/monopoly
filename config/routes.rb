@@ -145,7 +145,8 @@ Kazdoor::Application.routes.draw do
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
   match "/check_status/:id"               =>"qr_codes#check_code_status"
-  match "/code/:hash_code"                =>"qr_codes#show"   
+  match "/code/:hash_code"                =>"qr_codes#show" 
+  match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"  
   #devise_for :users
 
   # The priority is based upon order of creation:
