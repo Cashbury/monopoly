@@ -1,5 +1,7 @@
 <% title @engagement.present? ? @engagement.name : "#{@user.full_name}'s Code"%>
-
+<% if @total_scans.present? and @total_people.present? %>
+<p>Total scans <%=@total_scans%> times by <%=@total_people%> <%=@total_people==1 ? "person" : "people"%></p>
+<%end%>
 <table width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Code</th>
@@ -10,10 +12,9 @@
     <th>Number of scans</th>
     <th>Scanned by # of people</th>
   </tr>
-
 <% @qrcodes.each do |qr_code| %>
   <tr>
-    <td><%= image_tag qr_code.qr_image, :width=>"75%"  %></td>
+    <td><%= link_to (image_tag qr_code.qr_image, :width=>"50px", :height=>"50px"), qr_code_path(qr_code)  %></td>
     <td><%= qr_code.hash_code %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>

@@ -59,13 +59,13 @@
 </script>
 </head>
 <body style="background-color:yellow">
-<!--<div class="user_menu">
+<div class="user_menu">
   <%if @engagement.nil?%>
     <p><%= link_to "#{User.where(:id=>@qr_code.associatable_id).first.try(:full_name)}'s Code", "/associatable/#{@qr_code.associatable_id}/qrcodes?type=1" %></p>         
   <%else%>
     <p><%= link_to @engagement.name, "/associatable/#{@engagement.id}/qrcodes?type=2" %></p>
   <%end%>
-</div>-->
+</div>
 <div class="container"> 
   <div class="page">
     <div class="page_top"></div>

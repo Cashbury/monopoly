@@ -222,7 +222,6 @@ class QrCodesController < ApplicationController
 
   def search_qrs(page)
     search = {}
-
     search = {:associatable_id =>params[:engagement_id],:associatable_type=>QrCode::ENGAGEMENT_TYPE} unless params[:engagement_id].blank?
     unless params[:print_job_id].blank?
       pj = PrintJob.where(:id=>params[:print_job_id]).first
@@ -259,9 +258,12 @@ class QrCodesController < ApplicationController
   
   def list_all_associatable_qrcodes
     if params[:type]=="1"
+      #calculating total number of scanning user qrcode
       @user=User.find(params[:id])
       @qrcodes=QrCode.select("qr_codes.*, (SELECT COUNT(DISTINCT logs.user_id) from logs where logs.qr_code_id=qr_codes.id) as number_of_people,(SELECT COUNT(*) from logs where logs.qr_code_id=qr_codes.id) as number_of_scans").associated_with_users.where(:associatable_id=>params[:id])
     else
+      @total_scans =Log.where("engagement_id=#{params[:id]} and qr_code_id IS NOT NULL").count
+      @total_people=Log.where("engagement_id=#{params[:id]} and qr_code_id IS NOT NULL").select("COUNT(DISTINCT user_id) as total").first.total
       @engagement=Engagement.find(params[:id])
       @qrcodes=QrCode.select("qr_codes.*, (SELECT COUNT(DISTINCT logs.user_id) from logs where logs.qr_code_id=qr_codes.id) as number_of_people,(SELECT COUNT(*) from logs where logs.qr_code_id=qr_codes.id) as number_of_scans").associated_with_engagements.where(:associatable_id=>params[:id])
     end
