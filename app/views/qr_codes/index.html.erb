@@ -113,7 +113,7 @@ $(function(){
   <%else%>
     <div id="user_details" style="display:none">
   <%end%>
-    <%=label_tag "Username / First Name" %><br/>
+    <%=label_tag "Username" %><br/>
     <%= text_field_tag :user_id , "" , :class=>"complete"%>
     <%= hidden_field_tag :associatable_user_id , nil , :class=>"associate" %>
     Or <%= check_box_tag :list_all_users%><%=label_tag "List all" %>
@@ -165,7 +165,7 @@ $(function(){
 
 <% @qr_codes.each do |qr_code| %>
   <tr>
-    <td><%= image_tag qr_code.qr_image, :width=>"75%"  %></td>
+    <td><%= image_tag qr_code.qr_image, :width=>"50px", :height=>"50px"  %></td>
     <td>
       <% if qr_code.engagement.blank? %>
         not associated
@@ -222,7 +222,7 @@ $(function(){
   </tr>
 <% @qr_codes.each do |qr_code| %>
   <tr>
-    <td><%= image_tag qr_code.qr_image, :width=>"20%"  %></td>
+    <td><%= image_tag qr_code.qr_image, :width=>"50px", :height=>"50px" %></td>
     <td><a href="#"> <%= User.find(qr_code.associatable_id).full_name %></a></td>
     <td><%= qr_code.hash_code %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
