@@ -1,5 +1,5 @@
 class QrCodesController < ApplicationController
-  before_filter :authenticate_user!, :require_admin, :except=>[:show,:check_code_status]
+  before_filter :authenticate_user!, :require_admin, :except=>[:show,:check_code_status,:list_all_associatable_qrcodes]
   before_filter :prepare_filters_data, :only=>[:index]
   #layout :false, :only=>[:show]
   # GET /qr_codes
@@ -9,10 +9,10 @@ class QrCodesController < ApplicationController
   def index
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
     if params[:all_engs]=="1"
-      @qr_codes=QrCode.where(:associatable_type=>"Engagement").paginate(:page => @page,:per_page => QrCode::per_page )
+      @qr_codes=QrCode.associated_with_engagements.paginate(:page => @page,:per_page => QrCode::per_page )
     elsif params[:all_users]=="1"
       @users_listing=true
-      @qr_codes=QrCode.where(:associatable_type=>"User").paginate(:page => @page,:per_page => QrCode::per_page )
+      @qr_codes=QrCode.associated_with_users.paginate(:page => @page,:per_page => QrCode::per_page )
     elsif !params[:user_id].blank?
       @users_listing=true
       @qr_codes=search_user_qrs(@page)
@@ -133,7 +133,7 @@ class QrCodesController < ApplicationController
           codes << {:code_type => params[:code_type].to_i,:status=>params[:status].to_i,:associatable_id=>params[:associatable_id].to_i,:associatable_type=>params[:associatable_type],:size=>params[:size].to_i}
         }
         if QrCode.create(codes)
-          if params[:associatable_type]=="Engagement"
+          if params[:associatable_type]==QrCode::ENGAGEMENT_TYPE
             redirect_to :action=>:index , :engagement_id=>params[:associatable_id]
           elsif params[:associatable_type]=="User"
             @users_listing=true
@@ -223,7 +223,7 @@ class QrCodesController < ApplicationController
   def search_qrs(page)
     search = {}
 
-    search = {:associatable_id =>params[:engagement_id]}            unless params[:engagement_id].blank?
+    search = {:associatable_id =>params[:engagement_id],:associatable_type=>QrCode::ENGAGEMENT_TYPE} unless params[:engagement_id].blank?
     unless params[:print_job_id].blank?
       pj = PrintJob.where(:id=>params[:print_job_id]).first
       qr_code_ids = YAML.load(pj.log)               if pj.respond_to? :log
@@ -237,7 +237,7 @@ class QrCodesController < ApplicationController
   
   def search_user_qrs(page)
     search = {}
-    search = {:associatable_id =>params[:user_id]}
+    search = {:associatable_id =>params[:user_id],:associatable_type=>QrCode::USER_TYPE}
     QrCode.where(search).paginate(:page => page,:per_page => QrCode::per_page )
   end
   
@@ -249,6 +249,8 @@ class QrCodesController < ApplicationController
     result[:no_of_scanning]=all_logs.size.to_s
     result[:no_of_users]=users_count.no_of_users
     result[:index]=params[:index].to_i+@logs.size
+    @qr_code=QrCode.find(params[:id])
+    result[:status]=@qr_code.status? ? "Active" : "Inactive"
     result[:response_text]=render_to_string :partial=> "feeds_partial"
     if request.xhr?
       render :json=>result.to_json
@@ -256,7 +258,13 @@ class QrCodesController < ApplicationController
   end
   
   def list_all_associatable_qrcodes
-    @engagement=Engagement.find(params[:id])
+    if params[:type]=="1"
+      @user=User.find(params[:id])
+      @qrcodes=QrCode.select("qr_codes.*, (SELECT COUNT(DISTINCT logs.user_id) from logs where logs.qr_code_id=qr_codes.id) as number_of_people,(SELECT COUNT(*) from logs where logs.qr_code_id=qr_codes.id) as number_of_scans").associated_with_users.where(:associatable_id=>params[:id])
+    else
+      @engagement=Engagement.find(params[:id])
+      @qrcodes=QrCode.select("qr_codes.*, (SELECT COUNT(DISTINCT logs.user_id) from logs where logs.qr_code_id=qr_codes.id) as number_of_people,(SELECT COUNT(*) from logs where logs.qr_code_id=qr_codes.id) as number_of_scans").associated_with_engagements.where(:associatable_id=>params[:id])
+    end
   end
   
   def prepare_filters_data

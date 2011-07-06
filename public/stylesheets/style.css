@@ -29,10 +29,10 @@ body { font: normal 11px Verdana; color: #777; background-color: #fdf800; }
 p.bottom_text { font: bold 13px/20px Arial; padding: 15px 15px 0 15px; border-top: 1px solid #ccc; }
 p.bottom_text span { color: #bbb; }
 
-p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; padding: 5px 10px; color: #111; background: url(../images/trans.png) repeat; text-align: center; }
+p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; padding: 5px 10px; color: #111; background: url(../images/trans.png) repeat; text-align: left; }
 
-.usr_com { margin: 5px auto; width: 500px; padding: 10px; background: url(../images/trans.png) repeat; }
-.usr_com p { font: bold 11px/16px Play; color: #111; }
+.usr_com { margin: 5px auto; width: 600px; padding:10px; background: url(../images/trans.png) repeat; }
+.usr_com p { font: 14px Play; color: #111;}
 .usr_com img { float: left; margin-right: 10px; }
 
 .toggle_link{clear:both;  text-align: right;margin-right: 3px;}
@@ -40,7 +40,7 @@ p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; pa
 .toggle_link :selected{font-family:Helvetica; font-size:12px;color:red;text-decoration:none;}
 .toggle_link .toggle_p{margin-right:15px}
 
-.details_table {color: #111111;font-family:Play;font-size:11px;font-weight: bold;}
+.details_table {color: #111111;font-family:Play;font-size:14px;}
 .user_menu a{
   color: #999999;
   float: right;
@@ -52,3 +52,4 @@ p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; pa
   text-decoration:none;
   font-size: 140%;
 }
+.feed_entry{margin-top: 5px;}

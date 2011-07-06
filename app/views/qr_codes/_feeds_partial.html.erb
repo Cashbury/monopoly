@@ -2,12 +2,13 @@
   <% user=User.find(log.user_id) %> 
   <% user_uid=user.email.split("@").first %>
   <% engagement=Engagement.where(:id=>log.engagement_id).first %>
-  <% location_name=Place.where(:id=>log.place_id).first.try(:name).try(:capitalize) %>
+  <% place= Place.where(:id=>log.place_id).first %>
+  <% location_name=place.try(:name).try(:capitalize) %>
   <% location_name=engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) if location_name.nil? %>
   <% engagement_text= engagement.engagement_type.is_visit ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}" %>
   <div class="usr_com">
     <div class="toggle_link">
-      <a class="toggle_p selected" style="color:red" href="javascript:void(0)">Feed View</a>
+      <a class="toggle_p selected" style="color:white" href="javascript:void(0)">Feed View</a>
       <a class="toggle_a" href="javascript:void(0)">Transaction View</a>
     </div>
     <div class="feed_entry">
@@ -34,6 +35,8 @@
         <tr><td>Fee %: </td><td><%=log.fee_percentage%></td></tr>
         <tr><td>Time: </td><td><%="#{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}"%></td></tr>
         <tr><td>Location: </td><td><%=location_name%></td></tr>
+        <tr><td>Geo Location: </td><td><%=place.present? ? "(#{place.lat}, #{place.long})" : "" %></td></tr>
+        <tr><td>Scanned by: </td><td><%=user.username%></td></tr>
         <tr><td>Notes: </td><td><%=log.note%></td></tr>                                                                
       </table>
     </div>

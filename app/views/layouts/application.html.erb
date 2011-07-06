@@ -47,7 +47,7 @@
       </div><!-- end of header -->
 	    <div id="main">
 	      <div id="side">
-	        <% if  true #current_user.try(:admin?)%>
+	        <% if current_user.try(:admin?)%>
             <h2>PANEL</h2>
             <ul>
               <li><%= link_to "Brands", brands_path %></li>
@@ -75,8 +75,8 @@
               </ul>
             <%end%>
         </div><!-- side Ends -->
-        <%if current_user.blank?%>
-          <div style="margin:0 0 0 30px" id="leftContainer" >
+        <%if current_user.blank? || !current_user.try(:admin?)%>
+          <div style="margin:0 0 0 30px;" id="leftContainer" >
         <%else%>
           <div id="leftContainer">
         <%end%>

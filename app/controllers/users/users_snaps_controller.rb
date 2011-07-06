@@ -1,7 +1,7 @@
 class Users::UsersSnapsController < Users::BaseController
 	def snap
 		begin		
-		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash],:associatable_type=>"Engagement").first
+		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash],:associatable_type=>QrCode::ENGAGEMENT_TYPE).first
 		  engagement=qr_code.try(:engagement)       
 		  if qr_code.nil?
 		    respond_with_error("QR Code no longer exists in the system!")

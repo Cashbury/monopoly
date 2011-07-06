@@ -12,6 +12,7 @@ class Users::SessionsController < Devise::SessionsController
                              :password_confirmation =>params[:password],
                              :first_name=>params[:first_name],
                              :last_name=>params[:last_name],
+                             :username=>params[:username],
                              :is_fb_account=>true)
 						if @user.confirm!
 							@user.ensure_authentication_token!
@@ -59,6 +60,6 @@ class Users::SessionsController < Devise::SessionsController
   end
   
   def render_success_with_user(user)
-    render :xml => user.to_xml(:only=>[:id,:email,:first_name,:last_name,:authentication_token] ),:status=>200
+    render :xml => user.to_xml(:only=>[:id,:email,:first_name,:last_name,:authentication_token,:username] ),:status=>200
   end
 end

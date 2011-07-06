@@ -30,12 +30,17 @@ class QrCode < ActiveRecord::Base
   #                   :path => "qrcodes/:id/:filename"
   PRE_PRINTED_SIZE= 1
   WEB_SIZE=2
+  USER_TYPE="User"
+  ENGAGEMENT_TYPE="Engagement"
   
   attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type, :size
   before_create :encrypt_code
   before_destroy :destroy_image
   after_create :upload_image
-  scope :associated_with_engagements , where(:associatable_type=>"Engagement")
+  
+  scope :associated_with_engagements , where(:associatable_type=>QrCode::ENGAGEMENT_TYPE)
+  scope :associated_with_users , where(:associatable_type=>QrCode::USER_TYPE)
+  
   cattr_reader :per_page
   @@per_page = 20
   def destroy_image
@@ -96,7 +101,10 @@ class QrCode < ActiveRecord::Base
       engagement.try(:program).try(:business).try(:name) 
     end
   end
-
+  
+  def created_by
+    (self.issued_by==0) ? "System" :  User.find(self.issued_by).full_name.capitalize
+  end
   #def save_image_server_path
 	#	if !File.exists?(File.join("#{Rails.public_path}","images","qrcodes"))
 	#		Dir.mkdir(File.join("#{Rails.public_path}","images","qrcodes"))
