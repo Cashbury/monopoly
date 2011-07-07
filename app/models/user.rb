@@ -77,14 +77,17 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :brands,
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
 
-  before_save :set_default_role
+  before_save :set_default_role , :on =>:create
 
 
   def set_default_role
+    current_roles = roles
+    mobi =  Role.where(:name=>Role::AS[:mobi]).limit(1).first
+    principal_user =  Role.where(:name=>Role::AS[:principal]).limit(1).first
     unless brands.blank?
-      roles << Role.where(:name=>Role::AS[:principal]).limit(1).first
+      roles << principal_user unless current_roles.include? principal_user
     else
-      roles << Role.where(:name=>Role::AS[:mobi]).limit(1).first
+      roles << mobi unless current_roles.include? mobi
     end
   end
 
@@ -99,7 +102,7 @@ class User < ActiveRecord::Base
 
   #for business signup
   def with_brand
-    self.brands.build
+    self.brands.build if self.brands.blank?
     self
   end
 

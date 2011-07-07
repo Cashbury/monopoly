@@ -2,7 +2,7 @@ class PlacesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update, :get_opening_hours]
   def index
-    @places = Place.all
+    @places = search_places
 
     respond_to do |format|
       format.html
@@ -77,8 +77,16 @@ class PlacesController < ApplicationController
 			format.json  { render :json => @places }
 		end
 	end
-	
-	def prepare_hours
+
+  def update_places
+    brands = current_user.brands.map(&:id)
+    biz = Business.where(:brand_id=>brands).map(&:id)
+
+    @users = Place.where(:business_id=>biz).where(['name LIKE ?', "#{params[:term]}%"]).map(&:name)
+    render :json => @users
+  end
+
+  def prepare_hours
     @hours = []
     7.upto(11) do | i |
       @hours << "#{i}:00 AM"
@@ -93,5 +101,18 @@ class PlacesController < ApplicationController
     @hours << "12:00 AM"
     @hours << "12:30 AM"
     return @hours
+  end
+
+  private
+
+  def search_places
+    search_params ={}
+    valid_keys = ["country_id", "city_id"]
+    #params = params.select{|key,value| valid_keys.include? key } unless params.blank?
+    search_params.merge!({:country_id=> params[:country_id]}) unless params[:country_id].blank?
+    search_params.merge!({:city_id=>params[:city_id]}) unless params[:city_id].blank?
+    address = Address.where search_params
+    places = Place.where :address_id=> address.map(&:id)
+    #Place.all if places.blank?
   end
 end

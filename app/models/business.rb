@@ -30,7 +30,7 @@ class Business < ActiveRecord::Base
   has_many :logs
   has_many :legal_ids , :as=>:associatable
   has_many :items,:dependent => :destroy
-  has_many :business_images,:as => :uploadable, :dependent => :destroy
+  #has_many :business_images,:as => :uploadable, :dependent => :destroy
   has_many :tmp_images,:as => :uploadable, :dependent => :destroy
 
 
@@ -41,7 +41,7 @@ class Business < ActiveRecord::Base
   belongs_to :country
   has_and_belongs_to_many :categories
   accepts_nested_attributes_for :places, :allow_destroy => true, :reject_if => proc { |attributes| attributes['name'].blank? }
-  accepts_nested_attributes_for :business_images,:allow_destroy => true
+  #accepts_nested_attributes_for :business_images,:allow_destroy => true
   accepts_nested_attributes_for :tmp_images
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
@@ -49,7 +49,7 @@ class Business < ActiveRecord::Base
 
   after_save :update_categories
 
-	validates :tag_list, :presence=>true
+	#validates :tag_list, :presence=>true
 	validates :brand_id, :presence=>true , :numericality => true
 	validates_presence_of :name
 	validates_associated :places
@@ -60,9 +60,9 @@ class Business < ActiveRecord::Base
     self.tmp_images.each do |tmp_image|
       tmp_image.upload_type="BusinessImage"
     end
-    self.business_images.each do |image|
-      image.destroy if image.delete_photo? && !image.photo.dirty?
-    end
+    #self.business_images.each do |image|
+    #  image.destroy if image.delete_photo? && !image.photo.dirty?
+    #end
   end
 
 

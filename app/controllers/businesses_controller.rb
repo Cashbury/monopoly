@@ -54,7 +54,7 @@ class BusinessesController < ApplicationController
         3.times {place.place_images.build}
       end
       @business.build_mailing_address(params[:business][:mailing_address_attributes])
-      @business.build_billing_address(params[:business][:billing_address_attributes])     
+      @business.build_billing_address(params[:business][:billing_address_attributes])
       render :action => 'new'
     end
   end
@@ -69,7 +69,7 @@ class BusinessesController < ApplicationController
       3.times {place.place_images.build}
     end
     @business.build_mailing_address if @business.mailing_address.nil?
-    @business.build_billing_address if @business.billing_address.nil?   
+    @business.build_billing_address if @business.billing_address.nil?
    end
 
   def update
@@ -81,7 +81,7 @@ class BusinessesController < ApplicationController
       @brands  = Brand.all
       @categories = Category.all
       @business.build_mailing_address if @business.mailing_address.nil?
-      @business.build_billing_address if @business.billing_address.nil?      
+      @business.build_billing_address if @business.billing_address.nil?
       render :action => 'edit'
     end
    end
@@ -99,9 +99,6 @@ class BusinessesController < ApplicationController
                   .map{|city| {:id=>city.id, :label=>city.name }}
 
     @selector_id=params[:selector_id]
-    respond_to do |format|
-      format.js
-    end
     respond_to do |format|
       format.js
     end
@@ -134,6 +131,20 @@ class BusinessesController < ApplicationController
       format.js
     end
   end
+
+
+  def auto_business
+    if current_user.role? Role::AS[:owner] || true
+      brands = current_user.brands.map(&:id)
+      @biz = Business.where(:brand_id=>brands).where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }} unless brands.blank?
+
+    else
+      @biz=Business.where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id,:label=>con.label }}
+    end
+
+    render :json => @biz
+  end
+
 
   private
   def set_tag_lists_for_business_places(business)

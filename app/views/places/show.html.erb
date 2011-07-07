@@ -1,17 +1,14 @@
 <% title "Place | #{@place.name}" %>
 
+
 <p>
   <strong>Name:</strong>
   <%= @place.name %>
 </p>
 <p>
-  <strong>Long:</strong>
-  <%= @place.long %>
-</p>
-<p>
-  <strong>Lat:</strong>
-  <%= @place.lat %>
-</p>
+  <div id="map_canvas" style="width:412px; height:400px" class="google_map"></div>
+
+
 <p>
   <strong>Description:</strong>
   <%= @place.description %>
@@ -39,7 +36,7 @@
 <%unless @place.place_images.empty?%>
 <p>
   <strong>Images</strong>
-  <%for image in @place.place_images%> 
+  <%for image in @place.place_images%>
     <%= image_tag image.photo.url(:thumb) %>
   <%end%>
 </p>
@@ -49,3 +46,14 @@
   <%= link_to "Destroy", place_path(@place), :confirm => 'Are you sure?', :method => :delete %> |
   <%= link_to "View All", places_path %>
 </p>
+
+<%= javascript_include_tag      "businessend",
+                                'jquery.tipTip',
+                                "http://maps.google.com/maps/api/js?sensor=true",
+%>
+<script type="text/javascript" language="javascript" >
+  jQuery(function(){
+
+    <%= get_maker_position_script(@place) %>
+  })
+</script>

@@ -32,8 +32,8 @@ Kazdoor::Application.routes.draw do
 			get '/primary_place', :action=>:primary_place,  :on =>:collection
 			post '/primary_place',:action=>:primary_place,  :on =>:collection
 			get '/set_rewards',   :action=>:set_rewards ,   :on =>:collection
-			get '/open_sign',     :action=>:open_sign ,     :on =>:collection
-			post '/open_sign',    :action=>:open_sign ,     :on =>:collection
+			get '/open_sign/:id',     :action=>:open_sign ,     :on =>:collection
+			post '/open_sign/:id',    :action=>:open_sign ,     :on =>:collection
     end
     get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places
 	end
@@ -81,10 +81,10 @@ Kazdoor::Application.routes.draw do
 
   resources :print_jobs
   resources :brands
-  resources :brands do 
+  resources :brands do
     get "crop" ,:on =>:member
   end
-  
+
   resources :qr_codes do
     get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
     get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
@@ -122,11 +122,11 @@ Kazdoor::Application.routes.draw do
           post "change_status"   ,:on =>:member
 	        get "stamps", :on => :collection
         end
-        resources :places , :only=>[:issue_code] do 
+        resources :places , :only=>[:issue_code] do
           get "issue_code" ,:on =>:member
         end
 	      resources :rewards, :controller=>"businesses/programs/campaigns/rewards" do
-	        post "/crop_image",:action=>:crop_image    
+	        post "/crop_image",:action=>:crop_image
         end
      end
     end
@@ -144,9 +144,14 @@ Kazdoor::Application.routes.draw do
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
-  match "/check_status/:id"               =>"qr_codes#check_code_status"
-  match "/code/:hash_code"                =>"qr_codes#show" 
   match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"  
+
+  match "/show_code/:id"                  =>"qr_codes#show_code"
+  match "/update_places"                 =>"places#update_places"
+  match "/auto_business"                 =>"businesses#auto_business"
+  match "/check_status/:id"               =>"qr_codes#check_code_status"
+  match "/code/:hash_code"                =>"qr_codes#show"
+
   #devise_for :users
 
   # The priority is based upon order of creation:
@@ -206,4 +211,5 @@ Kazdoor::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
+
 end

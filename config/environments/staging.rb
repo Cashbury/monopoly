@@ -50,7 +50,7 @@ Kazdoor::Application.configure do
   config.action_mailer.default_url_options = { :host => 'demo.espace.com.eg:9900' }
   config.action_mailer.delivery_method = :smtp
 
-	config.action_mailer.smtp_settings = {
+  config.action_mailer.smtp_settings = {
     :enable_starttls_auto => true,
     :address => "smtp.gmail.com",
     :port => 587,

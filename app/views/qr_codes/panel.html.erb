@@ -27,7 +27,7 @@ jQuery(function(){
     var campaign_id = jQuery(":selected", this).val();
     jQuery.getScript("/qr_codes/update_engagements/"+campaign_id);
   });
-  
+
   jQuery('#code_type').bind('change',function(){
     var code_type_value = jQuery(":selected", this).val();
     if (code_type_value=="1"){jQuery(".code_size").hide();}else{jQuery(".code_size").show();}
@@ -57,8 +57,8 @@ jQuery(function(){
 
   jQuery(".tabs").tabs({
     select:function(e,ui){
-    var data = $(ui.tab).attr("data-c");
-      $("#associatable_type").val(data);
+    var data = jQuery(ui.tab).attr("data-c");
+      jQuery("#associatable_type").val(data);
     }
   });
 })

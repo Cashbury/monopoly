@@ -1,25 +1,36 @@
-<% title "Places" %>
+<style type="text/css" media="screen">
+  select{width:200px;}
 
-<table>
+</style>
+<% title "Places" %>
+<div class="search_box ">
+  <%= form_tag("/places",:method=>"get") do %>
+   <%= select_tag :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all, :id, :name),:class=>"title"%>
+
+   <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name),:class=>"title"%>
+
+   <%= submit_tag "Search" %>
+  <% end %>
+</div>
+<table class="mono-table" border="0" cellpadding="0" cellspacing="0">
   <tr>
+    <th>Image</th>
     <th>Name</th>
-    <th>Long</th>
-    <th>Lat</th>
-    <th>Description</th>
-    <th>Business</th>
+    <th>City</th>
+    <th>Country</th>
+    <th>Associated to</th>
     <th>Phone Number</th>
+    <th>&nbsp</th>
   </tr>
   <% for place in @places %>
     <tr>
-      <td><%= place.name %></td>
-      <td><%= place.long %></td>
-      <td><%= place.lat %></td>
-      <td><%= place.description %></td>
+     <td><%= image_tag place.try(:place_images).try(:first).try(:photo).try(:url,:thumb) unless place.try(:place_images).try(:first).try(:photo).try(:url,:thumb).nil? %>&nbsp</td>
+      <td><%= link_to place.name , place %></td>
+      <td><%= place.address.try(:city).try(:name) %></td>
+      <td><%= place.address.try(:country).try(:name) %></td>
       <td><%= place.business.try(:name) %></td>
       <td><%= place.phone %></td>
-      <td><%= link_to "Show", place %></td>
       <td><%= link_to "Edit", edit_place_path(place) %></td>
-      <td><%= link_to "Destroy", place, :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
