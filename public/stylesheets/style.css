@@ -29,7 +29,7 @@ body { font: normal 11px Verdana; color: #777; background-color: #fdf800; }
 p.bottom_text { font: bold 13px/20px Arial; padding: 15px 15px 0 15px; border-top: 1px solid #ccc; }
 p.bottom_text span { color: #bbb; }
 
-p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; padding: 5px 10px; color: #111; background: url(../images/trans.png) repeat; text-align: left; }
+p.ref_num { margin: 10px auto 15px auto; width: 325px; font: bold 15px Arial; padding: 5px 10px; color: #111; background: url(../images/trans.png) repeat; text-align: center; }
 
 .usr_com { margin: 5px auto; width: 600px; padding:10px; background: url(../images/trans.png) repeat; }
 .usr_com p { font: 14px Play; color: #111;}

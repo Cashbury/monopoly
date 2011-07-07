@@ -33,11 +33,10 @@
         <tr><td>Type: </td><td><%=log.name%></td></tr>
         <tr><td>Fee Amount: </td><td><%=log.fee_amount%></td></tr>        
         <tr><td>Fee %: </td><td><%=log.fee_percentage%></td></tr>
-        <tr><td>Time: </td><td><%="#{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}"%></td></tr>
-        <tr><td>Location: </td><td><%=location_name%></td></tr>
-        <tr><td>Geo Location: </td><td><%=place.present? ? "(#{place.lat}, #{place.long})" : "" %></td></tr>
-        <tr><td>Scanned by: </td><td><%=user.username%></td></tr>
-        <tr><td>Notes: </td><td><%=log.note%></td></tr>                                                                
+        <tr><td>Time: </td><td><%="#{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")}"%></td></tr>        
+        <tr><td>Scanned by: </td><td><%=user.full_name%></td></tr>
+        <tr><td>Notes: </td><td><%=log.note%></td></tr>
+        <tr><td>Location: </td><td><%= place.present? ? "#{location_name} - #{place.address.common_address} - (#{place.lat}, #{place.long})": location_name%></td></tr>
       </table>
     </div>
   </div>
