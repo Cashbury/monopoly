@@ -47,8 +47,8 @@ jQuery(function () {
   jQuery('table.mono-table tr:last td').css({borderBottom:'1px solid #e2dfdf'});
 
   jQuery(".open_sign").click(function(){return false});
-      jQuery.EnablePlaceholder.defaults.withPlaceholderClass = 'title';
-      jQuery('input[type=text]').enablePlaceholder();
+      //jQuery.EnablePlaceholder.defaults.withPlaceholderClass = 'title';
+      //jQuery('input[type=text]').enablePlaceholder();
 
 })
 

@@ -16,7 +16,7 @@ class Users::PlacesController < Users::BaseController
     elsif !params[:lat].blank? && !params[:long].blank?
       #Get Nearest City
       city    = City.closest(:origin=>[params[:lat].to_f,params[:long].to_f]).first
-      @places = Place.with_address.within(DISTANCE,:units=>:km,:origin=>[params[:lat].to_f,params[:long].to_f]).order("distance ASC") #List nearby places
+      @places = Place.with_address.within(DISTANCE,:units=>Place::DISTANCE_UNIT.to_sym,:origin=>[params[:lat].to_f,params[:long].to_f]).order("distance ASC") #List nearby places
       #List all city places order by distance ASC if no nearby places
       @places = Place.with_address.geo_scope(:origin=>[params[:lat].to_f,params[:long].to_f])
                                   .where("cities.id=#{city.id}")
@@ -56,7 +56,8 @@ class Users::PlacesController < Users::BaseController
     end
     @result["places"]=[]
     places.each_with_index do |place,index|
-      @result["places"][index] = place.attributes.reject{|k,v| k=="address_id" || k=="distance"}
+      @result["places"][index] = place.attributes.reject{|k,v| k=="address_id"}
+      @result["places"][index]["distance-unit"] =Place::DISTANCE_UNIT
       business=place.business
       unless business.nil?
         programs=business.programs
@@ -65,6 +66,10 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["brand-image-fb"]=business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:thumb))
         @result["places"][index]["is_open"]       =place.is_open?
         @result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
+        @result["places"][index]["images"]        =[]
+        place.place_images.each_with_index do |p_image,i|
+          @result["places"][index]["images"][i]={"image-thumb-url"=>URI.escape(p_image.photo.url(:thumb)),"image-url"=>URI.escape(p_image.photo.url(:normal))}          
+        end
         @result["places"][index]["accounts"]      =[]
         @result["places"][index]["rewards"]       =[]
         unless targeted_campaigns.empty?

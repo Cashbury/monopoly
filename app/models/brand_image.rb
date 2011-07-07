@@ -1,4 +1,3 @@
-require "#{Rails.root}/lib/paperclip_processors/cropper.rb" # required to make cropping work.
 # == Schema Information
 # Schema version: 20110615133925
 #

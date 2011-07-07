@@ -19,11 +19,41 @@ class PlaceImage < Image
   
   has_attached_file :photo,
                     :styles => {
-                      :thumb  => "100x100>",
+                      :thumb  => Proc.new { |instance| instance.resize_and_crop},
+                      :normal => "460x320>"
                     },
+                    :processors => [:cropper],
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",
                     :path => "places/:id/:style/:filename"
                     
-  validates :photo_content_type, :inclusion => { :in => IMAGES_CONTENT_TYPE }
+  validates :photo_content_type, :inclusion => { :in => IMAGES_CONTENT_TYPE }  
+  def resize_and_crop
+    geo = Paperclip::Geometry.from_file(photo.to_file(:original))
+    min_width  = 79
+    min_height = 79
+    original_ratio = geo.width.fdiv(geo.height)
+    desired_ratio = min_width.fdiv(min_height)
+    if original_ratio < desired_ratio
+      # Vertical Image
+      final_width  = min_width
+      final_height = final_width.fdiv(geo.width) * geo.height
+      self.crop_x=0
+      self.crop_y= (final_height-79).fdiv(2)
+      self.crop_w=79
+      self.crop_h=79
+    elsif original_ratio > desired_ratio
+      # Horizontal Image
+      final_height = min_height
+      final_width  = final_height.fdiv(geo.height) * geo.width
+      self.crop_x=(final_width-79).fdiv(2)
+      self.crop_y= 0
+      self.crop_w=79
+      self.crop_h=79
+    elsif original_ratio == desired_ratio
+      final_height = min_height
+      final_width  = final_height.fdiv(geo.height) * geo.width      
+    end
+    "#{final_width.round}x#{final_height.round}!"
+  end 
 end

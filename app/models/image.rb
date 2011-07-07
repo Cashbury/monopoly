@@ -1,3 +1,4 @@
+require "#{Rails.root}/lib/paperclip_processors/cropper.rb" # required to make cropping work.
 # == Schema Information
 # Schema version: 20110615133925
 #
@@ -19,7 +20,8 @@ class Image < ActiveRecord::Base
   
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h,:need_cropping
   
-  def cropping?  
+  def cropping? 
+    puts "crop_x: #{crop_x}, crop_y: #{crop_y}, crop_w: #{crop_w}, crop_h: #{crop_h}" 
     !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?  
   end 
    
@@ -47,7 +49,7 @@ class Image < ActiveRecord::Base
     original_ratio < desired_ratio || original_ratio > desired_ratio
   end
   
-  def resize     
+  def resize
     geo = Paperclip::Geometry.from_file(photo.to_file(:original))
     min_width  = 79
     min_height = 54

@@ -37,49 +37,49 @@
 
 <script type="text/javascript" language="javascript" charset="utf-8">
 //<![CDATA[
-$(function(){
-    //$('form input[name=utf8]').remove();
-    //$('form input[name=authenticity_token]').remove();
-    $('select.filter').bind('change',function(){
-      var url = $(this).closest('form').serialize();
+jQuery(function(){
+    //jQuery('form input[name=utf8]').remove();
+    //jQuery('form input[name=authenticity_token]').remove();
+    jQuery('select.filter').bind('change',function(){
+      var url = jQuery(this).closest('form').serialize();
       window.location="/qr_codes?"+url;
     });
 
-    $("input.complete").keyup(function(event){
+    jQuery("input.complete").keyup(function(event){
       if(event.keyCode == 13){
-        var url = $(this).closest('form').serialize();
+        var url = jQuery(this).closest('form').serialize();
         window.location="/qr_codes?user_id="+jQuery('.associate').val();
       }
     });
-    $('select#brand_id').bind('change',function(){
-      var brand_id = $(":selected", this).val();
-      $.getScript("/qr_codes/update_businesses/"+brand_id);
+    jQuery('select#brand_id').bind('change',function(){
+      var brand_id = jQuery(":selected", this).val();
+      jQuery.getScript("/qr_codes/update_businesses/"+brand_id);
     });
 
-    $('select#business_id').bind('change',function(){
-      var business_id = $(":selected", this).val();
-      $.getScript("/qr_codes/update_programs/"+business_id);
+    jQuery('select#business_id').bind('change',function(){
+      var business_id = jQuery(":selected", this).val();
+      jQuery.getScript("/qr_codes/update_programs/"+business_id);
     });
 
-     $('select#program_id').bind('change',function(){
-      var program_id = $(":selected", this).val();
-      $.getScript("/qr_codes/update_campaigns/"+program_id);
+     jQuery('select#program_id').bind('change',function(){
+      var program_id = jQuery(":selected", this).val();
+      jQuery.getScript("/qr_codes/update_campaigns/"+program_id);
     });
 
-    $('select#campaign_id').bind('change',function(){
-      var campaign_id = $(":selected", this).val();
-      $.getScript("/qr_codes/update_engagements/"+campaign_id);
+    jQuery('select#campaign_id').bind('change',function(){
+      var campaign_id = jQuery(":selected", this).val();
+      jQuery.getScript("/qr_codes/update_engagements/"+campaign_id);
     });
-    $('#filter_users').bind('change',function(){
-     if ($(this).is(":checked")){
-      $('#engegement_details').hide();
-      $('#user_details').show();
+    jQuery('#filter_users').bind('change',function(){
+     if (jQuery(this).is(":checked")){
+      jQuery('#engegement_details').hide();
+      jQuery('#user_details').show();
      } 
     });
-    $('#filter_engagements').bind('change',function(){
-     if ($(this).is(":checked")){
-      $('#user_details').hide();
-      $('#engegement_details').show();
+    jQuery('#filter_engagements').bind('change',function(){
+     if (jQuery(this).is(":checked")){
+      jQuery('#user_details').hide();
+      jQuery('#engegement_details').show();
      } 
     });
     jQuery("#user_id").autocomplete({
@@ -89,12 +89,12 @@ $(function(){
       }
     });
     jQuery("#list_all_users").bind('change',function(){
-      if ($(this).is(":checked")){
+      if (jQuery(this).is(":checked")){
         window.location="/qr_codes?all_users=1";
       } 
     });
     jQuery("#list_all_engagements").bind('change',function(){
-      if ($(this).is(":checked")){
+      if (jQuery(this).is(":checked")){
         window.location="/qr_codes?all_engs=1";
       } 
     });

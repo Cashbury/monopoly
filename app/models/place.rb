@@ -56,12 +56,14 @@ class Place < ActiveRecord::Base
 
   scope :with_address,joins(:address=>[:city,:country])
                       .select("places.id,places.name,places.long,places.lat,places.description,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
-                               addresses.zipcode,addresses.neighborhood,addresses.street_address as address1,
+                               addresses.zipcode,addresses.cross_street,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")
-  before_save :add_amenities_name_and_place_name_to_place_tag_lists
+  before_save :add_amenities_name_and_place_name_to_place_tag_lists  
   after_save :update_items
   before_validation :clear_photos
-
+  
+  DISTANCE_UNIT="km"
+  
   def clear_photos
     self.tmp_images.each do |tmp_image|
       tmp_image.upload_type="PlaceImage"
@@ -231,6 +233,4 @@ class Place < ActiveRecord::Base
     hour, min = parse_date(hour_txt)
     datetime = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, hour.to_i , min.to_i)
   end
-
-
 end
