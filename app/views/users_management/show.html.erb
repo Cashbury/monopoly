@@ -1,1 +1,19 @@
+<head>
+<%= javascript_include_tag 'users_management_scripts'%>
+</head>
 <% title "User | #{@user.full_name}" %>
+<table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
+  <tr><td style="width:70px"><b>Username: </b></td><td><%= @user.username %></td>
+  <tr><td style="width:70px"><b>First Name: </b></td><td><%= @user.first_name %></td>
+  <tr><td style="width:70px"><b>Last Name: </b></td><td><%= @user.last_name %></td>
+  <tr><td style="width:70px"><b>Password:  </b></td>
+  <td>    
+    <%= form_tag "/users_management/resend_password" do %>
+      <div style="display:none;">
+        <%= email_field_tag "user[email]", @user.email%>
+      </div>
+      <%= link_to "Resend reset password instructions","javascript:void(0)", {:id=>"resend_password_link"} %>
+    <% end %>
+  </td>
+</table>
+

@@ -16,7 +16,7 @@
 <br />
   <%= will_paginate @users %>
 <br/>
-<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="mono-table" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <th>Photo</th>    
     <th>Full Name</th>
@@ -49,7 +49,6 @@
     <td><%= link_to 'Show', users_management_path(user) %></td>
     <td><%= link_to 'Edit', edit_users_management_path(user) %></td>
     <td><%= button_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
-    
   </tr>
 <% end %>
 </table>

@@ -38,7 +38,7 @@ class UsersManagementController < ApplicationController
 
   def update
   end
-
+  
   def show
     @user = User.find(params[:id])
 
@@ -77,7 +77,20 @@ class UsersManagementController < ApplicationController
       format.js
     end
   end
-  
+  def resend_password
+    user = User.find_by_email(params[:user][:email])
+    user.send_reset_password_instructions if user && user.persisted?
+    #user=User.send_reset_password_instructions(params[:user])
+    respond_to do |format|
+      format.html { 
+       if user.errors.empty?
+    			redirect_to(users_management_path(user), :notice=>"Reset password instructions have been reset")
+    		else    		  
+      		redirect_to(users_management_path(user),:error=>user.full_messages.join(','))
+    		end 
+      }
+    end
+  end
   def check_attribute_availability
     if User.exists?(["LOWER(#{params[:attribute_name]}) = ?", params[:attribute_value].mb_chars.downcase])
       respond_to do |format|

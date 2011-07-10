@@ -22,6 +22,10 @@ jQuery(document).ready(function(){
     jQuery.getScript("/users_management/update_places/"+business_id);
   });
   
+   jQuery('#resend_password_link').click(function(){
+    jQuery(this).closest('form').submit();
+  });
+  
   jQuery('.U_email, .U_username').bind('change',function(){
     var field=jQuery(this);
     if(field.val() !=null){
