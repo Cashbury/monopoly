@@ -46,7 +46,7 @@
       <%= f.text_field :username , :class=>"title U_username" %>
       <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
-        <%= @user.errors.on(:email).to_a.first %>
+        <%= @user.errors.on(:username) %>
       </span>
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
@@ -55,13 +55,16 @@
       <%= f.text_field :email , :class=>"title U_email" %>
       <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
-        <%= @user.errors.on(:email).to_a.first %>
+        <%= @user.errors.on(:email) %>
       </span>
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
     <p>
       <%= f.label :password %><br />
       <%= f.password_field :password , :class=>"title" %>
+      <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
+        <%= @user.errors.on(:password) %>
+      </span>
     </p>
   </fieldset>
   <fieldset>
@@ -70,6 +73,10 @@
         <p>
           <%= mailing_address_form.label :street_address %>
           <%= mailing_address_form.text_field :street_address, :class=>"title" %>
+        </p>
+        <p>
+          <%= mailing_address_form.label :cross_street %>
+          <%= mailing_address_form.text_field :cross_street, :class=>"title" %>
         </p>
         <p>
           <%= mailing_address_form.label :neighborhood %>
@@ -95,6 +102,10 @@
         <p>
           <%= billing_address_form.label :street_address %>
           <%= billing_address_form.text_field :street_address, :class=>"title" %>
+        </p>
+        <p>
+          <%= billing_address_form.label :cross_street %>
+          <%= billing_address_form.text_field :cross_street, :class=>"title" %>
         </p>
         <p> 
           <%= billing_address_form.label :neighborhood %>

@@ -1,2 +1,56 @@
-<h1>UsersManagement#index</h1>
-<p>Find me in app/views/users_management/index.html.erb</p>
+<% if params[:title].present? %>
+ <% title_txt= "Users- Search - #{params[:title]}"%>
+<%else%>
+ <% title_txt= "Users"%>
+<%end%>
+<% title title_txt %>
+<% form_tag(users_management_index_path, {:method => :get}) do %>
+  <p style="margin-bottom:0.1em">
+    <label>Search</label>
+    <%=text_field_tag('title', "#{params[:title]}", :class => "input_text large") %>
+    <input type="submit" value="List" />
+  </p>
+  <p><small style="color:grey; font-size:11px">Keywords could be Name, Email, Telephone Number, User ID (QrCode) </small></p>
+<% end %> 
+<br />
+  <%= will_paginate @users %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Full Name</th>
+    <th>Email</th>
+    <th>Telephone Number</th>
+    <th>Created On</th>
+    <th>Email Confirmed</th>
+    <th>Admin?</th>
+    <th>Login Count</th>
+    <th>Sign In IP</th>
+    <th>Available Balance Amount</th>  
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= user.full_name%></td>
+    <td><%= user.email %></td>
+    <td><%= user.telephone_number %></td>
+    <td><%= user.created_at.to_formatted_s(:long)%></td>
+    <td><%= user.confirmed_at.nil? ? "false" : "true" %></td>
+    <td><%= user.admin?%></td>
+    <td><%= user.sign_in_count %></td>
+    <td><%= user.current_sign_in_ip%></td>
+    <td><%= 0 || user.amount%></td>
+    <td><%= link_to 'Show', "#" %></td>
+    <td><%= link_to 'Edit', "#" %></td>
+    <td><%= button_to 'Destroy', user, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @users %>
+<br/>
+
+
+<%= link_to 'Add new user', new_users_management_path %>

@@ -17,6 +17,7 @@
 
 class Business < ActiveRecord::Base
 	acts_as_taggable
+	
 	has_many :targets
   has_many :places, :dependent => :destroy
   has_many :programs,:dependent => :destroy

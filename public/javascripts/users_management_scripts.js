@@ -23,7 +23,8 @@ jQuery(document).ready(function(){
   });
   
   jQuery('.U_email, .U_username').bind('change',function(){
-      var field=jQuery(this);
+    var field=jQuery(this);
+    if(field.val() !=null){
       var fieldName=field[0].name;
       var loadingImage = field.nextAll('img');
       var successContainer = field.nextAll('.L-success');
@@ -51,7 +52,8 @@ jQuery(document).ready(function(){
           errorContainer.html(response.responseText);
           errorContainer.show();
         }
-    });
+      });
+    }
   });
   
   jQuery('select#user_mailing_address_attributes_country_id').bind('change',function(){

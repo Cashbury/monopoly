@@ -84,8 +84,22 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   before_save :set_default_role , :on =>:create
-
-
+  scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
+  scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code")
+  
+  validates_format_of :telephone_number, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+  cattr_reader :per_page
+  @@per_page = 20
+  
+  def self.terms(terms)
+    return scoped if terms.blank?
+    composed_scope = scoped
+    terms.split(/[^A-Za-z0-9_\-]+/).map { |term| "%#{term}%" }.each do |term|
+      composed_scope = composed_scope.with_code.where('qr_codes.hash_code LIKE :term OR email LIKE :term OR first_name LIKE :term OR last_name LIKE :term OR telephone_number LIKE :term', { :term => term })
+    end
+    composed_scope
+  end
+  
   def set_default_role
     current_roles = roles
     mobi =  Role.where(:name=>Role::AS[:mobi]).limit(1).first

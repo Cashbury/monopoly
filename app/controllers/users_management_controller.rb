@@ -1,15 +1,16 @@
 class UsersManagementController < ApplicationController
   before_filter :authenticate_user!, :require_admin
+  before_filter :list_places_and_bizs, :only=>[:new,:create,:edit,:update]
   
   def index
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @users=User.with_account_at_large.with_code.terms(params[:title]).paginate(:page => @page,:per_page => User::per_page )
   end
 
   def new
     @user=User.new
     @user.build_mailing_address
     @user.build_billing_address
-    @businesses=Business.all
-    @places=Place.all
   end
   
   def create
@@ -24,6 +25,8 @@ class UsersManagementController < ApplicationController
         format.html { redirect_to(users_management_index_path, :notice => 'User was successfully created.') }
         format.xml  { head :ok }
       else
+        @user.build_mailing_address unless @user.mailing_address.present?
+        @user.build_billing_address unless @user.billing_address.present?
         format.html { render :action => "new" }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
@@ -73,6 +76,10 @@ class UsersManagementController < ApplicationController
       end
     end
   end
-
-
+  
+  def list_places_and_bizs
+    @businesses=Business.all
+    @places=Place.all
+  end
+    
 end
