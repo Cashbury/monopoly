@@ -12,6 +12,7 @@
   </p>
   <p><small style="color:grey; font-size:11px">Keywords could be Name, Email, Telephone Number, User ID (QrCode) </small></p>
 <% end %> 
+<p><h2><b>Total: <%=@users.size%></b></h2></p>
 <br />
   <%= will_paginate @users %>
 <br/>
@@ -42,9 +43,9 @@
     <td><%= user.sign_in_count %></td>
     <td><%= user.current_sign_in_ip%></td>
     <td><%= 0 || user.amount%></td>
-    <td><%= link_to 'Show', "#" %></td>
-    <td><%= link_to 'Edit', "#" %></td>
-    <td><%= button_to 'Destroy', user, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Show', users_management_path(user) %></td>
+    <td><%= link_to 'Edit', edit_users_management_path(user) %></td>
+    <td><%= button_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 <% end %>
 </table>
