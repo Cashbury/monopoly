@@ -12,8 +12,9 @@
 #
 
 class Employee < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :employee_type
+  set_table_name "roles_users"
   
-  has_one :account_holder, :as=>:model
+  belongs_to :user
+  belongs_to :business
+  belongs_to :role
 end

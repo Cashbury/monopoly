@@ -1,9 +1,6 @@
 Kazdoor::Application.routes.draw do
-
-
   get "primary_user/new"
   get "primary_user/show"
-
   resources :transaction_types
 	devise_for :users, :controllers => {
     :sessions => "users/sessions",
@@ -134,8 +131,12 @@ Kazdoor::Application.routes.draw do
     resources :campaigns,:controller => "businesses/campaigns" do
       post "/crop_image",:action=>:crop_image
     end
+  
   end
-
+  resources :users_management do
+    get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
+    post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
+  end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
 	#   match "/places"             						=> "places#index"
@@ -147,11 +148,12 @@ Kazdoor::Application.routes.draw do
   match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"  
 
   match "/show_code/:id"                  =>"qr_codes#show_code"
-  match "/update_places"                 =>"places#update_places"
-  match "/auto_business"                 =>"businesses#auto_business"
+  match "/update_places"                  =>"places#update_places"
+  match "/auto_business"                  =>"businesses#auto_business"
   match "/check_status/:id"               =>"qr_codes#check_code_status"
   match "/code/:hash_code"                =>"qr_codes#show"
-
+  match "check_role/:role_id"             =>"users_management#check_role"
+  match "/users_management/update_places/:id" =>"users_management#update_places"
   #devise_for :users
 
   # The priority is based upon order of creation:

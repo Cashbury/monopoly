@@ -49,8 +49,9 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes
-
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :role_id
+                  
+  attr_accessor :role_id
   has_many :templates
   has_many :brands
   has_many :legal_ids, :as=>:associatable
@@ -59,24 +60,29 @@ class User < ActiveRecord::Base
   has_many :invitations, :foreign_key=>"from_user_id"
 
   has_many :employees #same user with different positions
+  has_many :roles, :through=>:employees
   has_many :logs
   has_many :followers, :as=>:followed
   has_many :business_customers
   has_many :businesses, :through=>:business_customers
+  has_many :login_methods_users
+  has_many :login_methods, :through=>"login_methods_users"
   has_one  :qr_code, :as=>:associatable
-  has_one :account_holder, :as=>:model
-  has_one :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
-  has_one :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
+  has_one :account_holder, :as=>:model  
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
-  has_and_belongs_to_many :roles
-
+  has_and_belongs_to_many :places
+  #has_and_belongs_to_many :roles
+  #has_and_belongs_to_many :login_methods
+  belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
+  belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
 
 
   #nested attributes
   accepts_nested_attributes_for :brands,
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
-
+  accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
+  accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   before_save :set_default_role , :on =>:create
 
 

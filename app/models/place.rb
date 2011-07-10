@@ -31,6 +31,7 @@ class Place < ActiveRecord::Base
   has_many :items , :through => :item_places
   has_and_belongs_to_many :amenities
   has_and_belongs_to_many :campaigns
+  has_and_belongs_to_many :users
   has_many :qr_codes,:as=>:associatable, :dependent => :destroy
   has_many :open_hours, :dependent => :destroy
   has_many :followers, :as=>:followed
