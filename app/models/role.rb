@@ -6,7 +6,7 @@ class Role < ActiveRecord::Base
     :admin      =>"admin",
     :mobi       => "mobi",
     :operator   =>"operator",
-    :principal  =>"principal at business",
+    :principal  =>"principal",
     :accountant =>"accountant at business",
     :manager    =>"manager at business",
     :branch_manager =>"branch manager at business",
