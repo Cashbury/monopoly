@@ -4,7 +4,7 @@ class UsersManagementController < ApplicationController
   
   def index
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @users=User.with_account_at_large.with_code.terms(params[:title]).paginate(:page => @page,:per_page => User::per_page )
+    @users=User.with_account_at_large.with_code.terms(params[:title]).order("created_at DESC").paginate(:page => @page,:per_page => User::per_page )
   end
 
   def new
