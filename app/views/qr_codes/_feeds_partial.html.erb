@@ -1,6 +1,6 @@
 <%@logs.each do |log|%>
   <% user=User.find(log.user_id) %> 
-  <% user_uid=user.email.split("@").first %>
+  <% user_uid=user.email.split("@facebook").first %>
   <% engagement=Engagement.where(:id=>log.engagement_id).first %>
   <% place= Place.where(:id=>log.place_id).first %>
   <% location_name=place.try(:name).try(:capitalize) %>

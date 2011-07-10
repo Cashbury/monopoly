@@ -18,6 +18,7 @@
 <br/>
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
+    <th>Photo</th>    
     <th>Full Name</th>
     <th>Email</th>
     <th>Telephone Number</th>
@@ -34,6 +35,8 @@
 
 <% @users.each do |user| %>
   <tr>
+    <% user_uid=user.email.split("@facebook").first %>
+    <td><%=image_tag "https://graph.facebook.com/#{user_uid}/picture" %></td>
     <td><%= user.full_name%></td>
     <td><%= user.email %></td>
     <td><%= user.telephone_number %></td>
@@ -46,6 +49,7 @@
     <td><%= link_to 'Show', users_management_path(user) %></td>
     <td><%= link_to 'Edit', edit_users_management_path(user) %></td>
     <td><%= button_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
+    
   </tr>
 <% end %>
 </table>
