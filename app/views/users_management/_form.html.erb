@@ -1,9 +1,15 @@
 <head>
 <%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
+<script type="text/javascript">
+var total_legals=<%=@total%>;
+</script>
 <style type="text/css">
 .birthday-picker select{width:auto;margin-right: 5px;}         
 #datepicker fieldset {border:none;padding:0;}
-
+.legals_div select{width:auto;margin:0 10px 0 0;}
+.legals_div input {width:150px;padding-top:2px;}
+.legals_div {position:relative;}
+.legals_div a {position:absolute;right:55px;top:10px}
 </style>
 
 </head>
@@ -48,6 +54,14 @@
       <%= f.label :telephone_number %>
       <%= f.text_field :telephone_number , :class=>"title" %>
     </p>
+    <div class="legal_type_class">
+      <%= label_tag "Legal IDs" %>
+      <div class="legals_div">
+        <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), {:id=>"legal_types_0"}%><%=text_field_tag "legal_ids[]","",{:class=>"title",:id=>"legal_ids_0"}%>
+        <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+      </div>
+      
+    </div>
     
   </fieldset>
   <fieldset>

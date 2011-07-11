@@ -11,4 +11,13 @@
 
 class LegalType < ActiveRecord::Base
 	has_many :legal_ids
+	
+	AS = {
+    :social_number   =>"Social Number",
+    :passport_number =>"Passport Number"
+  }
+  
+  def displayed_type
+    AS[self.name.to_sym]
+  end
 end

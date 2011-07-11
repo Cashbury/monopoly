@@ -11,6 +11,7 @@ class UsersManagementController < ApplicationController
     @user=User.new
     @user.build_mailing_address
     @user.build_billing_address
+    @total=LegalType.count
   end
   
   def create
@@ -30,6 +31,11 @@ class UsersManagementController < ApplicationController
     respond_to do |format|
       if @user.save
         @user.send_confirmation_instructions if @user.persisted? 
+        unless params[:legal_ids].empty? and params[:legal_types].empty?
+          params[:legal_types].each_with_index do |legal_type_id, index|
+            LegalId.create(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
+          end
+        end
         if params[:place_id].present?
           @user.places << Place.find(params[:place_id]) 
           @user.save!

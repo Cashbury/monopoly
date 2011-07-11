@@ -44,7 +44,11 @@ puts "Create Default user roles here"
 %w( admin super_admin owner mobi operator principal accountant manager branch_manager cashier consumer).each do |name|
   Role.find_or_create_by_name(:name => name )
 end
-puts "creating system login methods"
+puts "Creating system login methods"
 %w(facebook email_and_password phone_and_password qrcode ).each do |name|
   LoginMethod.find_or_create_by_name(:name => name )
+end
+puts "Creating system legal ids types"
+%w(social_number passport_number).each do |name|
+  LegalType.find_or_create_by_name(:name => name )
 end

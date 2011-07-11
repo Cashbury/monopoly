@@ -1,4 +1,5 @@
 jQuery(document).ready(function(){
+ var legal_index=0;
  jQuery("select#user_role_id").bind('change',function(){
     var role_id = jQuery(this).val();
     jQuery.ajax({
@@ -26,6 +27,31 @@ jQuery(document).ready(function(){
     jQuery(this).closest('form').submit();
   });
   
+  jQuery('.add_link').click(function(){
+    legal_index=legal_index+1;
+    if (legal_index < total_legals){
+    //var select_legal_type=jQuery('.legal_type_class').children()[1];
+    //var input_legal_id=jQuery('.legal_type_class').children()[2];
+    //select_legal_type.id="legal_types_"+legal_index;
+    //input_legal_id.id="legal_ids_"+legal_index;
+    //var select_legal_type=jQuery('.legal_type_class select');
+    //var input_legal_id=jQuery('.legal_type_class input');
+    //var select_legal_type_new=select_legal_type.replace(/legal_types_0/,"legal_types_"+legal_index);
+    //var input_legal_id_new=input_legal_id.replace(/legal_ids_0/,"legal_ids_"+legal_index);
+    //jQuery('.legal_type_class').append(select_legal_type);
+    //jQuery('.legal_type_class').append(input_legal_id);
+    var old_html=jQuery('.legals_div').html();
+    var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
+    new_html2=new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
+    new_html3=new_html2.replace(/add.png/,"remove.png");
+    new_html4=new_html3.replace(/add_link/,"remove_link");
+    jQuery('.legal_type_class').append("<div class=\"legals_div\">"+new_html4+"</div>");
+    }
+  });
+  jQuery('.remove_link').live('click',function(){
+    jQuery(this).parent('.legals_div').remove();
+    legal_index=legal_index-1;
+  });
   jQuery("#datepicker").birthdaypicker({
     dateFormat: "bigEndian",
     monthFormat: "long",

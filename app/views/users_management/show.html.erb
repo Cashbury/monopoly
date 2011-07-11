@@ -49,5 +49,12 @@
   <% end %>
   <tr><td style="width:70px"><b>DOB:  </b></td><td><%= @user.dob %></td></tr>
   <tr><td style="width:70px"><b>Note:  </b></td><td><%= @user.note %></td></tr>
+  <tr><td style="width:70px"><b>Legal Ids:  </b></td>
+    <td>
+    <%@user.legal_ids.each do |legal_id| %>
+    <%=LegalType.find(legal_id.legal_type_id).displayed_type%> : <%= legal_id.id_number %><br/>
+    <%end%>
+    </td>
+  </tr>
 </table>
 

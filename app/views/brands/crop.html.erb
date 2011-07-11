@@ -5,7 +5,7 @@
 	.image-crop div.item{ float:left; margin-right:40px;}
 	.image-crop h3{ font-size:18px;}
 	.image-crop p{ font-size:13px;}
-	.image-crop .arrow{margin-top:70px;}
+	.image-crop .arrow{margin-top:40px;}
 	
   /*--Clearfix--*/
   .clearfix:after, .container:after {content:"\0020";display:block;height:0;clear:both;visibility:hidden;overflow:hidden;}
@@ -19,14 +19,14 @@
     jQuery('#cropbox').Jcrop({  
       onChange: update_crop,  
       onSelect: update_crop,  
-      setSelect: [0, 0, 79, 54],
+      setSelect: [0, 0, 81, 52],
       allowResize: false,
       allowSelect: false 
     });  
   });  
   function update_crop(coords) {  
-    var rx = 79/coords.w;  
-    var ry = 54/coords.h;  
+    var rx = 81/coords.w;  
+    var ry = 52/coords.h;  
     jQuery('#preview').css({  
       width: Math.round(rx * <%= @brand.brand_image.photo_geometry(:normal).width %>) + 'px',  
       height: Math.round(ry * <%= @brand.brand_image.photo_geometry(:normal).height %>) + 'px',  
@@ -49,7 +49,7 @@
   <div class="arrow item"><img src="/images/go-previous-rtl.png"  /></div>
   <div class="item">
   	<h3>Preview</h3>
-    <div style="width: 79px; height: 54px; overflow: hidden;">  
+    <div style="width: 81px; height: 52px; overflow: hidden;">  
     <%= image_tag @brand.brand_image.photo.url(:normal), :id => "preview" %>
     </div>
   </div>	

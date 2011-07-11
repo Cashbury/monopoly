@@ -36,7 +36,7 @@
 <% @users.each do |user| %>
   <tr>
     <% user_uid=user.email.split("@facebook").first %>
-    <td><%=image_tag "https://graph.facebook.com/#{user_uid}/picture" %></td>
+    <td><%=image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg" %></td>
     <td><%= user.full_name%></td>
     <td><%= user.email %></td>
     <td><%= user.telephone_number %></td>

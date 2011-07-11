@@ -42,8 +42,8 @@ class Image < ActiveRecord::Base
   
   def needed_cropping?
     geo = Paperclip::Geometry.from_file(photo.to_file(:original))
-    min_width  = 79
-    min_height = 54
+    min_width  = 81
+    min_height = 52
     original_ratio = geo.width.fdiv(geo.height)
     desired_ratio  = min_width.fdiv(min_height)
     original_ratio < desired_ratio || original_ratio > desired_ratio
@@ -51,8 +51,8 @@ class Image < ActiveRecord::Base
   
   def resize
     geo = Paperclip::Geometry.from_file(photo.to_file(:original))
-    min_width  = 79
-    min_height = 54
+    min_width  = 81
+    min_height = 52
     original_ratio = geo.width.fdiv(geo.height)
     desired_ratio = min_width.fdiv(min_height)
     if original_ratio < desired_ratio
