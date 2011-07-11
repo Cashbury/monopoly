@@ -47,7 +47,7 @@ Kazdoor::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
   # Devise related setting
-  config.action_mailer.default_url_options = { :host => 'demo.espace.com.eg:9900' }
+  config.action_mailer.default_url_options = { :host => 'staging.cashbury.com' }
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {

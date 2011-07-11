@@ -1,5 +1,5 @@
 <head>
-<%= javascript_include_tag 'users_management_scripts'%>
+<%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 </head>
 <% title "User | #{@user.full_name}" %>
 <table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
@@ -57,4 +57,14 @@
     </td>
   </tr>
 </table>
-
+<br/>
+<table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
+  <%=hidden_field_tag :user_id, @user.id %>
+  <caption><h4>System Info</h4></caption>
+  <tr><td style="width:92px"><b>User Type: </b></td><td><%=@user.roles.collect{|r| r.name}.join(' , ')%></td></tr>
+  <tr><td style="width:92px"><b>Home Town: </b></td><td><%=@user.try(:country).try(:name)%></td></tr>
+  <tr><td style="width:92px"><b>Account Status: </b></td>
+    <td><span id="status"><%=@user.active ? "Active" : "Inactive"%></span> | <%=link_to "Suspend", "javascript:void(0)", {:id=>"suspend_link"}%> | <%=link_to "Reactivate", "javascript:void(0)", {:id=>"reactivate_link"}%>
+    <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>     
+  </tr>
+</table>

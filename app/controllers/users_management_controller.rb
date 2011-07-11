@@ -4,7 +4,7 @@ class UsersManagementController < ApplicationController
   
   def index
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @users=User.with_account_at_large.with_code.terms(params[:title]).order("created_at DESC").paginate(:page => @page,:per_page => User::per_page )
+    @users=User.with_account_at_large.with_code.terms(params[:title]).order("users.created_at DESC").paginate(:page => @page,:per_page => User::per_page )
   end
 
   def new
@@ -21,12 +21,12 @@ class UsersManagementController < ApplicationController
       address=Address.create(params[:user][:mailing_address_attributes])
       @user.mailing_address_id=address.id
     end
-    if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
-      @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
-    end  
     if params[:user][:billing_address_attributes].present?
       address=Address.create(params[:user][:billing_address_attributes])
       @user.billing_address_id=address.id
+    end
+    if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
+      @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
     end
     respond_to do |format|
       if @user.save
@@ -132,6 +132,18 @@ class UsersManagementController < ApplicationController
         format.js { render :text => "Congratulaions, it's available!", :status => 200 }
       end
     end
+  end
+  
+  def suspend_user
+    user=User.find(params[:id])
+    user.suspend
+    render :text=>user.active ? "Active" : "Inactive"
+  end
+  
+  def reactivate_user
+    user=User.find(params[:id])
+    user.activate
+    render :text=>user.active ? "Active" : "Inactive"
   end
   
   def list_places_and_bizs

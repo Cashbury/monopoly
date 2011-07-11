@@ -10,8 +10,8 @@ var total_legals=<%=@total%>;
 .legals_div input {width:150px;padding-top:2px;}
 .legals_div {position:relative;}
 .legals_div a {position:absolute;right:55px;top:10px}
+.ui-tabs {width:442px;margin-bottom:20px;}
 </style>
-
 </head>
 <%= form_for @user, :url=>:users_management_index, :html=>{:class=>"mono-form"} do |f| %>
   <% if @user.errors.any? %>
@@ -24,7 +24,7 @@ var total_legals=<%=@total%>;
       </ul>
     </div>
   <% end %>
-  <fieldset>
+  <fieldset >
     <legend>User Information</legend>
     <p>
       <%= f.label "Select User Type" %>
@@ -50,6 +50,11 @@ var total_legals=<%=@total%>;
       <%= f.label "Date of birth" %>
       <div class="picker" id="datepicker"></div>
     </p>
+    
+    <p>
+      <%= f.label :home_town %>
+      <%= f.select :home_town, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,f.object.try(:home_town))%>
+    </p>
     <p>
       <%= f.label :telephone_number %>
       <%= f.text_field :telephone_number , :class=>"title" %>
@@ -62,7 +67,6 @@ var total_legals=<%=@total%>;
       </div>
       
     </div>
-    
   </fieldset>
   <fieldset>
     <legend>User Account</legend>
@@ -92,49 +96,56 @@ var total_legals=<%=@total%>;
       </span>
     </p>
   </fieldset>
-  <fieldset>
-    <legend>User Mailing Address</legend>
-      <%= f.fields_for :mailing_address,f.object.try(:mailing_address) do |mailing_address_form| %>
-        <p>
-          <%= mailing_address_form.label :country %>
-          <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.try(:country_id))%>
-        </p>
-        <p>
-          <%= mailing_address_form.label :city %>
-          <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.try(:city_id))%>
-        </p>
-        <p>
-          <%= mailing_address_form.label :street_address %>
-          <%= mailing_address_form.text_field :street_address, :class=>"title" %>
-        </p>
-        <p>
-          <%= mailing_address_form.label :zipcode %>
-          <%= mailing_address_form.text_field :zipcode, :class=>"title" %>
-        </p>
-      <%end%>
-    </fieldset>
-    <fieldset>
-      <legend>User Billing Address</legend>
-      <%= f.fields_for :billing_address,f.object.try(:billing_address) do |billing_address_form| %>
-        <p>
-          <%= billing_address_form.label :country %>
-          <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.try(:country_id))%>
-        </p>
-        <p>
-          <%= billing_address_form.label :city %>
-          <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.try(:city_id))%>
-        </p>
-        <p>
-          <%= billing_address_form.label :street_address %>
-          <%= billing_address_form.text_field :street_address, :class=>"title" %>
-        </p> 
-        <p>
-          <%= billing_address_form.label :zipcode %>
-          <%= billing_address_form.text_field :zipcode, :class=>"title" %>
-        </p>
-      <%end%>
-    </fieldset>
-  
+  <div class="tabs">
+    <ul>
+      <li><a href="#mailing" data-c="Mailing">Mailing Address</a></li>
+      <li><a href="#billing" data-c="Billing">Billing Address</a></li>
+    </ul>
+    <div id="mailing">
+      <fieldset style="border:none">
+        <%= f.fields_for :mailing_address,f.object.try(:mailing_address) do |mailing_address_form| %>
+          <p>
+            <%= mailing_address_form.label :country %>
+            <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.try(:country_id))%>
+          </p>
+          <p>
+            <%= mailing_address_form.label :city %>
+            <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.try(:city_id))%>
+          </p>
+          <p>
+            <%= mailing_address_form.label :street_address %>
+            <%= mailing_address_form.text_field :street_address, :class=>"title" %>
+          </p>
+          <p>
+            <%= mailing_address_form.label :zipcode %>
+            <%= mailing_address_form.text_field :zipcode, :class=>"title" %>
+          </p>
+        <%end%>
+      </fieldset>
+    </div>
+    <div id="billing">
+      <fieldset style="border:none">
+        <%= f.fields_for :billing_address,f.object.try(:billing_address) do |billing_address_form| %>
+          <p>
+            <%= billing_address_form.label :country %>
+            <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.try(:country_id))%>
+          </p>
+          <p>
+            <%= billing_address_form.label :city %>
+            <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.try(:city_id))%>
+          </p>
+          <p>
+            <%= billing_address_form.label :street_address %>
+            <%= billing_address_form.text_field :street_address, :class=>"title" %>
+          </p> 
+          <p>
+            <%= billing_address_form.label :zipcode %>
+            <%= billing_address_form.text_field :zipcode, :class=>"title" %>
+          </p>
+        <%end%>
+      </fieldset>
+    </div>
+  </div>
   <div class="actions">
     <%= f.submit "Add" %>
   </div>

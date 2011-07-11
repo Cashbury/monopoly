@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :role_id
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :role_id, :home_town, :mailing_address_id, :billing_address_id
                   
   attr_accessor :role_id
   has_many :templates
@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
   #has_and_belongs_to_many :login_methods
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
-
+  belongs_to :country, :foreign_key=>"home_town"
 
   #nested attributes
   accepts_nested_attributes_for :brands,
@@ -102,12 +102,12 @@ class User < ActiveRecord::Base
   
   def set_default_role
     current_roles = roles
-    mobi =  Role.where(:name=>Role::AS[:mobi]).limit(1).first
+    consumer =  Role.where(:name=>Role::AS[:consumer]).limit(1).first
     principal_user =  Role.where(:name=>Role::AS[:principal]).limit(1).first
     unless brands.blank?
       roles << principal_user unless current_roles.include? principal_user
     else
-      roles << mobi unless current_roles.include? mobi
+      roles << consumer unless current_roles.include? consumer
     end
   end
 
@@ -130,7 +130,16 @@ class User < ActiveRecord::Base
   def role?(role)
     return !!self.roles.find_by_name(role.to_s.camelize)
   end
-
+   
+  def activate
+    self.active=true
+    save!
+  end
+  
+  def suspend
+    self.active=false
+    save!
+  end
 
 	def has_account_with_campaign?(acch,campaign_id)
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?

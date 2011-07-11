@@ -137,7 +137,7 @@ Kazdoor::Application.routes.draw do
     get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
-    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"
+    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"    
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -155,6 +155,8 @@ Kazdoor::Application.routes.draw do
   match "/check_status/:id"               =>"qr_codes#check_code_status"
   match "/code/:hash_code"                =>"qr_codes#show"
   match "check_role/:role_id"             =>"users_management#check_role"
+  match "suspend_user/:id"                =>"users_management#suspend_user"
+  match "reactivate_user/:id"             =>"users_management#reactivate_user"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   #devise_for :users
 

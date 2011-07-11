@@ -35,9 +35,9 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource_or_scope)
     if current_user.role? Role::AS[:principal]
         primary_place_users_businesses_url
-    elsif (current_user.role? Role::AS[:super_admin]) || (current_user.role? Role::AS[:admin])
+    elsif (current_user.role? Role::AS[:admin]) #(current_user.role? Role::AS[:super_admin]) || 
       businesses_url
-    elsif current_user.role? Role::AS[:mobi]
+    elsif current_user.role? Role::AS[:consumer]
       "http://google.com"
     else
       "http://google.com"

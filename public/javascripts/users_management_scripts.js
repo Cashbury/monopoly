@@ -14,10 +14,13 @@ jQuery(document).ready(function(){
             jQuery('.places_list').hide();
           }
         }
-      });
-     
+      });   
   });
-
+  jQuery(".tabs").tabs({
+    select:function(e,ui){
+    var data = jQuery(ui.tab).attr("data-c");
+    }
+  });
  jQuery('select#business_id').bind('change',function(){
     var business_id = jQuery(":selected", this).val();
     jQuery.getScript("/users_management/update_places/"+business_id);
@@ -27,25 +30,20 @@ jQuery(document).ready(function(){
     jQuery(this).closest('form').submit();
   });
   
+  jQuery("input[name=btype]").click(function(e){
+      jQuery(".row.mailing").toggle();
+      jQuery(".row.billing").toggle();
+  });
+  
   jQuery('.add_link').click(function(){
     legal_index=legal_index+1;
     if (legal_index < total_legals){
-    //var select_legal_type=jQuery('.legal_type_class').children()[1];
-    //var input_legal_id=jQuery('.legal_type_class').children()[2];
-    //select_legal_type.id="legal_types_"+legal_index;
-    //input_legal_id.id="legal_ids_"+legal_index;
-    //var select_legal_type=jQuery('.legal_type_class select');
-    //var input_legal_id=jQuery('.legal_type_class input');
-    //var select_legal_type_new=select_legal_type.replace(/legal_types_0/,"legal_types_"+legal_index);
-    //var input_legal_id_new=input_legal_id.replace(/legal_ids_0/,"legal_ids_"+legal_index);
-    //jQuery('.legal_type_class').append(select_legal_type);
-    //jQuery('.legal_type_class').append(input_legal_id);
-    var old_html=jQuery('.legals_div').html();
-    var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
-    new_html2=new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
-    new_html3=new_html2.replace(/add.png/,"remove.png");
-    new_html4=new_html3.replace(/add_link/,"remove_link");
-    jQuery('.legal_type_class').append("<div class=\"legals_div\">"+new_html4+"</div>");
+      var old_html=jQuery('.legals_div').html();
+      var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
+      new_html2=new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
+      new_html3=new_html2.replace(/add.png/,"remove.png");
+      new_html4=new_html3.replace(/add_link/,"remove_link");
+      jQuery('.legal_type_class').append("<div class=\"legals_div\">"+new_html4+"</div>");
     }
   });
   jQuery('.remove_link').live('click',function(){
@@ -61,6 +59,34 @@ jQuery(document).ready(function(){
 
   jQuery('#send_confirmation_email').click(function(){
     jQuery(this).closest('form').submit();
+  });
+  
+  jQuery('#suspend_link').click(function(){
+    var user_id = jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    loadingImage.show();
+    jQuery.ajax({
+        type: 'GET',
+        url: '/suspend_user/'+user_id,
+        success: function(data){
+          loadingImage.hide();
+          jQuery('#status').html(data);
+        }
+      });   
+  });
+  
+  jQuery('#reactivate_link').click(function(){
+    var user_id = jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    loadingImage.show();
+    jQuery.ajax({
+        type: 'GET',
+        url: '/reactivate_user/'+user_id,
+        success: function(data){
+          loadingImage.hide();
+          jQuery('#status').html(data);
+        }
+      });   
   });
   
   jQuery('.U_email, .U_username').bind('change',function(){
