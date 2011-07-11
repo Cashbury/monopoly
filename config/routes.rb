@@ -137,6 +137,7 @@ Kazdoor::Application.routes.draw do
     get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
+    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}

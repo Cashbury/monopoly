@@ -1,5 +1,11 @@
 <head>
-<%= javascript_include_tag 'users_management_scripts'%>
+<%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
+<style type="text/css">
+.birthday-picker select{width:auto;margin-right: 5px;}         
+#datepicker fieldset {border:none;padding:0;}
+
+</style>
+
 </head>
 <%= form_for @user, :url=>:users_management_index, :html=>{:class=>"mono-form"} do |f| %>
   <% if @user.errors.any? %>
@@ -15,7 +21,7 @@
   <fieldset>
     <legend>User Information</legend>
     <p>
-      <%= f.label "Select User Type" %><br />
+      <%= f.label "Select User Type" %>
 		  <%= f.select :role_id, options_from_collection_for_select(Role.all , :id, :displayed_role)%>
     </p>
     <p class="businesses_list" style="display:none">
@@ -31,18 +37,23 @@
       <%= f.text_field :first_name , :class=>"title" %>
     </p>
     <p>
-      <%= f.label :last_name %><br />
+      <%= f.label :last_name %>
       <%= f.text_field :last_name , :class=>"title" %>
     </p>
     <p>
-      <%= f.label :telephone_number %><br />
+      <%= f.label "Date of birth" %>
+      <div class="picker" id="datepicker"></div>
+    </p>
+    <p>
+      <%= f.label :telephone_number %>
       <%= f.text_field :telephone_number , :class=>"title" %>
     </p>
+    
   </fieldset>
   <fieldset>
     <legend>User Account</legend>
     <p>
-      <%= f.label :username %><br />
+      <%= f.label :username %>
       <%= f.text_field :username , :class=>"title U_username" %>
       <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
@@ -51,7 +62,7 @@
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
     <p>
-      <%= f.label :email %><br />
+      <%= f.label :email %>
       <%= f.text_field :email , :class=>"title U_email" %>
       <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
@@ -60,7 +71,7 @@
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
     <p>
-      <%= f.label :password %><br />
+      <%= f.label :password %>
       <%= f.password_field :password , :class=>"title" %>
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:password) %>
@@ -71,24 +82,16 @@
     <legend>User Mailing Address</legend>
       <%= f.fields_for :mailing_address,f.object.try(:mailing_address) do |mailing_address_form| %>
         <p>
-          <%= mailing_address_form.label :street_address %>
-          <%= mailing_address_form.text_field :street_address, :class=>"title" %>
-        </p>
-        <p>
-          <%= mailing_address_form.label :cross_street %>
-          <%= mailing_address_form.text_field :cross_street, :class=>"title" %>
-        </p>
-        <p>
-          <%= mailing_address_form.label :neighborhood %>
-          <%= mailing_address_form.text_field :neighborhood, :class=>"title" %>
-        </p>
-        <p>
           <%= mailing_address_form.label :country %>
           <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.try(:country_id))%>
         </p>
         <p>
           <%= mailing_address_form.label :city %>
           <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.try(:city_id))%>
+        </p>
+        <p>
+          <%= mailing_address_form.label :street_address %>
+          <%= mailing_address_form.text_field :street_address, :class=>"title" %>
         </p>
         <p>
           <%= mailing_address_form.label :zipcode %>
@@ -100,18 +103,6 @@
       <legend>User Billing Address</legend>
       <%= f.fields_for :billing_address,f.object.try(:billing_address) do |billing_address_form| %>
         <p>
-          <%= billing_address_form.label :street_address %>
-          <%= billing_address_form.text_field :street_address, :class=>"title" %>
-        </p>
-        <p>
-          <%= billing_address_form.label :cross_street %>
-          <%= billing_address_form.text_field :cross_street, :class=>"title" %>
-        </p>
-        <p> 
-          <%= billing_address_form.label :neighborhood %>
-          <%= billing_address_form.text_field :neighborhood, :class=>"title" %>
-        </p>
-        <p>
           <%= billing_address_form.label :country %>
           <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.try(:country_id))%>
         </p>
@@ -120,12 +111,16 @@
           <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.try(:city_id))%>
         </p>
         <p>
+          <%= billing_address_form.label :street_address %>
+          <%= billing_address_form.text_field :street_address, :class=>"title" %>
+        </p> 
+        <p>
           <%= billing_address_form.label :zipcode %>
           <%= billing_address_form.text_field :zipcode, :class=>"title" %>
         </p>
       <%end%>
     </fieldset>
-  <br />
+  
   <div class="actions">
     <%= f.submit "Add" %>
   </div>

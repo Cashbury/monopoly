@@ -22,7 +22,18 @@ jQuery(document).ready(function(){
     jQuery.getScript("/users_management/update_places/"+business_id);
   });
   
-   jQuery('#resend_password_link').click(function(){
+  jQuery('#resend_password_link').click(function(){
+    jQuery(this).closest('form').submit();
+  });
+  
+  jQuery("#datepicker").birthdaypicker({
+    dateFormat: "bigEndian",
+    monthFormat: "long",
+    placeholder: false,
+    hiddenDate: false
+  });
+
+  jQuery('#send_confirmation_email').click(function(){
     jQuery(this).closest('form').submit();
   });
   

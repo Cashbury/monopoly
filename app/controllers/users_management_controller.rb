@@ -16,8 +16,20 @@ class UsersManagementController < ApplicationController
   def create
     @user= User.new(params[:user])
     @user.employees.build(:role_id=>params[:user][:role_id],:business_id=>params[:business_id])    
+    if params[:user][:mailing_address_attributes].present?
+      address=Address.create(params[:user][:mailing_address_attributes])
+      @user.mailing_address_id=address.id
+    end
+    if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
+      @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
+    end  
+    if params[:user][:billing_address_attributes].present?
+      address=Address.create(params[:user][:billing_address_attributes])
+      @user.billing_address_id=address.id
+    end
     respond_to do |format|
       if @user.save
+        @user.send_confirmation_instructions if @user.persisted? 
         if params[:place_id].present?
           @user.places << Place.find(params[:place_id]) 
           @user.save!
@@ -79,12 +91,25 @@ class UsersManagementController < ApplicationController
   end
   def resend_password
     user = User.find_by_email(params[:user][:email])
-    user.send_reset_password_instructions if user && user.persisted?
-    #user=User.send_reset_password_instructions(params[:user])
+    user.send_reset_password_instructions if user && user.persisted?    
     respond_to do |format|
       format.html { 
        if user.errors.empty?
-    			redirect_to(users_management_path(user), :notice=>"Reset password instructions have been reset")
+    			redirect_to(users_management_path(user), :notice=>"Reset password instructions have been re-sent to #{user.full_name}")
+    		else    		  
+      		redirect_to(users_management_path(user),:error=>user.full_messages.join(','))
+    		end 
+      }
+    end
+  end
+  
+  def send_confirmation_email
+    user = User.find_by_email(params[:user][:email])
+    user.send_confirmation_instructions if user && user.persisted?    
+    respond_to do |format|
+      format.html { 
+       if user.errors.empty?
+    			redirect_to(users_management_path(user), :notice=>"Confirmation Email has been resend to #{user.full_name}")
     		else    		  
       		redirect_to(users_management_path(user),:error=>user.full_messages.join(','))
     		end 
