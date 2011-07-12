@@ -70,12 +70,25 @@
   <tr><td style="width:92px"><b>User Since: </b></td><td><%=@user.created_at.to_date%></td></tr>
   <tr><td style="width:92px"><b>Facebook-Account-Linked: </b></td><td><%=@user.is_fb_account ? "Yes" : "No"%></td></tr>
   <tr><td style="width:92px"><b>User ID: </b></td><td><%=@user.system_id%></td></tr>
-  <%unless @user.qr_code.nil? %>
-  <!--<table border="0">
-   <tr>
+</table>
+<%unless @user.qr_code.nil? %>
+<br/>
+<div id="user_code">
+<table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
+<caption><h4>User ID: <%=@user.system_id%></h4></caption>
+  <tr>
     <td><%= link_to (image_tag @user.qr_code.qr_code_image.photo.url, :width=>"50px", :height=>"50px"), qr_code_path(@user.qr_code)  %></td>
     <td><%=@user.qr_code.status ? "Active" : "Inactive"%></td>
-   </tr>
-  </table>-->
-  <%end%>
+    <td><%=link_to "View Txs" ,"#"%></td>
+    <td><%=link_to "Re-issue", "javascript:void(0)", {:id=>"reissue_code"}%><img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
+  </tr>
 </table>
+</div>
+<%end%>
+<br/>
+<h3>Manage User Program Enrollment @ a Business</h3>
+<%= select_tag :program_type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]}, {:id=>"program_type_selector"} %>
+<div id="listing_businesses_container">
+
+</div>
+

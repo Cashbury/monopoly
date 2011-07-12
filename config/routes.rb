@@ -157,6 +157,7 @@ Kazdoor::Application.routes.draw do
   match "check_role/:role_id"             =>"users_management#check_role"
   match "suspend_user/:id"                =>"users_management#suspend_user"
   match "reactivate_user/:id"             =>"users_management#reactivate_user"
+  match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
   #devise_for :users

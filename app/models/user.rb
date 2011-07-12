@@ -275,4 +275,9 @@ class User < ActiveRecord::Base
   def system_id
     self.qr_code.try(:hash_code)
   end
+  
+  def issue_qrcode(issued_by, size, code_type)
+    qr_code=QrCode.create(:issued_by=>issued_by, :size=>size, :code_type=>code_type, :associatable_id=>self.id, :associatable_type=>"User", :status=>true)
+    qr_code
+  end
 end

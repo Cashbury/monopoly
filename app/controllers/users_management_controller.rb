@@ -146,6 +146,14 @@ class UsersManagementController < ApplicationController
     render :text=>user.active ? "Active" : "Inactive"
   end
   
+  def reissue_code
+    user=User.find(params[:id])
+    qr_code=user.qr_code
+    @new_qrcode=user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
+    qr_code.update_attributes({:status=>false,:associatable_id=>nil,:associatable_type=>nil})
+    render :text=>(render_to_string :partial=> "user_code_container")
+  end
+  
   def list_places_and_bizs
     @businesses=Business.all
     @places=Place.all

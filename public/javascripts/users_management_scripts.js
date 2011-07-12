@@ -21,9 +21,14 @@ jQuery(document).ready(function(){
     var data = jQuery(ui.tab).attr("data-c");
     }
   });
- jQuery('select#business_id').bind('change',function(){
+  jQuery('select#business_id').bind('change',function(){
     var business_id = jQuery(":selected", this).val();
     jQuery.getScript("/users_management/update_places/"+business_id);
+  });
+  
+  jQuery('#program_type_selector').bind('change',function(){
+    var program_type_id = jQuery(":selected", this).val();
+
   });
   
   jQuery('#resend_password_link').click(function(){
@@ -71,6 +76,20 @@ jQuery(document).ready(function(){
         success: function(data){
           loadingImage.hide();
           jQuery('#status').html(data);
+        }
+      });   
+  });
+  
+  jQuery('#reissue_code').live("click",function(){
+    var user_id = jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    loadingImage.show();
+    jQuery.ajax({
+        type: 'GET',
+        url: '/reissue_code/'+user_id,
+        success: function(data){
+          loadingImage.hide();
+          jQuery('#user_code').html(data);
         }
       });   
   });
