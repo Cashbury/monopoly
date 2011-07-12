@@ -72,7 +72,7 @@
       <div class="page_con">  
         <div class="logo"><img src="/images/logo.png" alt="Logo" /></div>        
         <div class="qr_hold"> 
-          <% if @qr_code.code_type %> 
+          <% if @qr_code.size==2 %> 
           <table border="0" cellspacing="0" class="qr_table_large">
           <%else%>
           <table border="0" cellspacing="0" class="qr_table_small">
