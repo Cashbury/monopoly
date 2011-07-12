@@ -31,6 +31,4 @@ class Users::RegistrationsController < Devise::RegistrationsController
 		template
 	end
 
-
-
 end

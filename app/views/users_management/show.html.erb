@@ -67,4 +67,12 @@
     <td><span id="status"><%=@user.active ? "Active" : "Inactive"%></span> | <%=link_to "Suspend", "javascript:void(0)", {:id=>"suspend_link"}%> | <%=link_to "Reactivate", "javascript:void(0)", {:id=>"reactivate_link"}%>
     <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>     
   </tr>
+  <tr><td style="width:92px"><b>User Since: </b></td><td><%=@user.created_at.to_date%></td></tr>
+  <tr><td style="width:92px"><b>Facebook-Account-Linked: </b></td><td><%=@user.is_fb_account ? "Yes" : "No"%></td></tr>
+  <tr><td style="width:92px"><b>User ID: </b></td><td><%=@user.system_id%></td></tr>
+  <%unless @user.qr_image.nil? %>
+  <table border="0">
+   <tr><td><%= link_to (image_tag @user.qr_code.qr_image, :width=>"50px", :height=>"50px"), qr_code_path(@user.qr_code)  %></td></tr>
+  </table>
+  <%end%>
 </table>

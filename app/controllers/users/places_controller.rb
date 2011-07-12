@@ -97,5 +97,15 @@ class Users::PlacesController < Users::BaseController
     end
     @result
   end
-  
+  def add_my_phone
+    if current_user.update_attributes(:telephone_number=>params[:phone_number])
+      respond_to do |format|
+			  format.xml { render :xml =>current_user.to_xml(:only=>[:id,:telephone_number]),:status=>200 }
+		  end
+    else
+      respond_to do |format|
+			  format.xml { render :text => current_user.errors.full_messages.join(' , '),:status=>500 }
+		  end
+    end
+  end
 end

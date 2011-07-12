@@ -271,4 +271,8 @@ class User < ActiveRecord::Base
   def is_engaged_with_campaign?(campaign)
     !self.logs.where(:campaign_id=>campaign.id).limit(1).empty?
   end
+  
+  def system_id
+    self.qr_code.try(:hash_code)
+  end
 end

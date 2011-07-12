@@ -71,16 +71,21 @@
     <div class="page_top"></div>
       <div class="page_con">  
         <div class="logo"><img src="/images/logo.png" alt="Logo" /></div>        
-        <div class="qr_hold">    
-          <div class="qr_outer">                
-					  <div class="qr_code"><img src="/images/qr_code.jpg" alt="QR" /></div>                                
-          </div>      
-          <div class="follow">                
-            <img src="/images/icon_phone.png" alt="" />
-            <p>Snap Code using your Cashbury App.<br />To get the App <a href="http://<%=request.host_with_port%>/foryou">follow me</a></p>
-            <a href="#"><img src="/images/icon_follow.png" /></a>                
-          </div>                
-          <div class="clear"></div>                            
+        <div class="qr_hold"> 
+          <% if @qr_code.code_type %> 
+          <table border="0" cellspacing="0" class="qr_table_large">
+          <%else%>
+          <table border="0" cellspacing="0" class="qr_table_small">
+          <%end%>
+            <tr>
+    	        <td width="1" ><%=image_tag @qr_code.qr_code_image.photo.url , :class=>"qr_image"%></td>
+              <td class="qr_text">
+      	        <img src="/images/arrow_phone.png" class="qr_phone"/>
+                <p>Snap Code using your Cashbury App. <br /> To get the App <a href="http://<%=request.host_with_port%>/foryou">follow me</a></p>
+                <a href="#"><img src="/images/icon_follow.png"></a>
+              </td>
+            </tr>
+          </table>                           
         </div><!--QR-->   
         <div class="name" style="color:#000;font-family:Quattrocento;font-size:16px">
         <!--<img src="/images/name.png" alt="Name" />-->
