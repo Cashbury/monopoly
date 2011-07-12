@@ -2,6 +2,8 @@
 <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 </head>
 <% title "User | #{@user.full_name}" %>
+<% user_uid=@user.email.split("@facebook").first %>
+<%=image_tag @user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture?type=large" : "/images/user-default.jpg", :style=>"float:right;" %>
 <table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
   <caption><h4>User Account</h4></caption>
   <tr><td style="width:70px"><b>Username: </b></td><td><%= @user.username %></td></tr>
@@ -86,9 +88,10 @@
 </div>
 <%end%>
 <br/>
+<h3>Money Account @ Large Balance: <%=@user.money_account_at_large.try(:amount)%></h3>
 <h3>Manage User Program Enrollment @ a Business</h3>
-<%= select_tag :program_type_id,ProgramType.all.collect {|pt| [pt.name,pt.id]}, {:id=>"program_type_selector"} %>
+<%= select_tag :program_type_id, "<option value=''>...Program Type...</option>".html_safe + options_from_collection_for_select(ProgramType.all, "id", "name"), {:id=>"program_type_selector"}%>
+<img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
 <div id="listing_businesses_container">
-
 </div>
 

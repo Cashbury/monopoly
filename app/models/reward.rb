@@ -44,10 +44,7 @@ class Reward < ActiveRecord::Base
   validates_length_of :heading2, :maximum => 84
   after_update :reprocess_photo
   def reprocess_photo  
-    puts "ana henaaaaaaaaaaaa"
     if !self.reward_image.nil? and self.reward_image.cropping?
-      puts "wana kamaaaaaaan"
-      puts "#{self.reward_image.crop_w} and #{self.reward_image.crop_h}"
       self.reward_image.photo.reprocess!
       self.reward_image.save!
     end
@@ -85,6 +82,7 @@ class Reward < ActiveRecord::Base
       
       business_account_before_balance=business_account.amount
       business_account.increment(:amount,after_fees_amount)
+      business_account.increment(:cumulative_amount,after_fees_amount)
       
       #save the transaction record
       transaction=Transaction.create!(:from_account=>user_account.id,

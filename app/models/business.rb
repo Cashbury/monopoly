@@ -31,6 +31,7 @@ class Business < ActiveRecord::Base
   has_many :logs
   has_many :legal_ids , :as=>:associatable
   has_many :items,:dependent => :destroy
+  has_many :accounts
   #has_many :business_images,:as => :uploadable, :dependent => :destroy
   has_many :tmp_images,:as => :uploadable, :dependent => :destroy
 

@@ -154,6 +154,25 @@ class UsersManagementController < ApplicationController
     render :text=>(render_to_string :partial=> "user_code_container")
   end
   
+  def list_businesses_by_program_type
+    #@results=Business.joins([[:programs=>[:program_type,[:accounts=>:account_holder]]],"LEFT OUTER JOIN countries ON countries.id=businesses.country_id"]).where("programs.program_type_id=#{params[:program_type_id]} and account_holders.model_id=#{params[:uid]} and account_holders.model_type='User'").select("businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, accounts.amount as current_amount, accounts.cumulative_amount as cumulative_amount ")    
+    @results=Account.joins([:account_holder, :campaign=>[:program=>[:program_type,[:business=>:country]]]]).where("programs.program_type_id=#{params[:program_type_id]} and account_holders.model_id=#{params[:uid]} and account_holders.model_type='User'").select("businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, (SELECT amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as current_amount, (SELECT cumulative_amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ").group("businesses.id")
+    render :text=>(render_to_string :partial=> "listing_enrollments_container")
+  end
+  
+  def list_transactions
+    @user=User.find(params[:id])
+    pt=Program.find(params[:program_id]).program_type
+    if pt.name==ProgramType::AS[:marketing]
+      @transactions=Log.joins(:transaction=>:transaction_type).where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}").select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+    else
+      @transactions=Log.joins(:transaction=>:transaction_type).where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}").select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+    end
+    respond_to do |format|
+      format.html
+    end
+  end
+  
   def list_places_and_bizs
     @businesses=Business.all
     @places=Place.all

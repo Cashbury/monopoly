@@ -1,0 +1,20 @@
+<table class="mono-table" style="width:600px" border="0" cellspacing="0" cellpadding="0">
+  <th>Business</th>
+  <th>Country</th>
+  <th>Program Type</th>
+  <th>SVA Balance @business</th>
+  <th>Cumulative SVA Balance @business</th>
+  <th>View Tx logs</th>
+  <th>Status (Action)</th>
+  <% @results.each do |result| %>
+   <tr>
+    <td><%=result.b_name%></td>
+    <td><%=result.c_name%></td>
+    <td><%=result.pt_name%></td>
+    <td><%=result.current_amount%></td>
+    <td><%=result.cumulative_amount%></td>
+    <td><%=link_to "View Txs", list_transactions_users_management_path(result.uid,result.biz_id,result.p_id) %></td>
+    <td>Enrolled | <%=link_to "Un-Enroll", "#" %></td>
+   </tr>
+  <%end%>
+</table>

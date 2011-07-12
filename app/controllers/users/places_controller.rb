@@ -104,7 +104,8 @@ class Users::PlacesController < Users::BaseController
 		  end
     else
       respond_to do |format|
-			  format.xml { render :text => "ERROR:#{current_user.errors.full_messages.join(' , ')}",:status=>200 }
+        error_text=current_user.errors.on(:telephone_number) ? "ERROR:Invalid phone number. Your phone number should start with 00 or + then the country code then the rest of your phone number." : "ERROR:Something went wrong on server"
+			  format.xml { render :text => error_text,:status=>200 }
 		  end
     end
   end

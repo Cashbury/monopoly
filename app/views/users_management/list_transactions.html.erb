@@ -1,0 +1,43 @@
+<% title "Transactions" %>
+
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>From Account Holder Name</th>
+    <th>To Account Holder Name</th>
+    <th>Transaction Type</th>
+    <th>Transaction Fees Amount</th>
+    <th>Transaction Fees Percentage</th>
+    <th>Balance Before Tx (From Account)</th>
+    <th>Balance After Tx (From Account)</th>
+    <th>Balance Before Tx (To Account)</th>
+    <th>Balance After Tx (To Account)</th>
+    <th>After Fees Amount</th>
+    <th>Created At</th>
+  </tr>
+
+<% @transactions.each do |transaction| %>
+  <tr>
+    <% from_account=Account.find(transaction.from_account)%>
+    <% to_account=Account.find(transaction.to_account)%>
+    <% from_account_holder=from_account.account_holder%>
+    <% to_account_holder=to_account.account_holder%>
+    <% from_account_holder_name=from_account_holder.model_type=="User" ? User.find(from_account_holder.model_id).full_name : Business.find(from_account_holder.model_id).name  %>
+    <% to_account_holder_name=to_account_holder.model_type=="User" ? User.find(to_account_holder.model_id).full_name : Business.find(to_account_holder.model_id).name  %>      
+    <td><%=from_account_holder_name%></td>
+    <td><%=to_account_holder_name%></td>
+    <td><%= transaction.name%></td>
+    <td><%= transaction.fee_amount %></td>
+    <td><%= transaction.fee_percentage %></td>
+    <td><%= transaction.from_account_balance_before%></td>
+    <td><%= transaction.from_account_balance_after%></td>
+    <td><%= transaction.to_account_balance_before%></td>
+    <td><%= transaction.to_account_balance_after%></td>
+    <td><%= transaction.after_fees_amount%></td>
+    <td><%="#{transaction.created_at.strftime("%I:%M %p")} on #{transaction.created_at.strftime("%b %d , %Y")}"%></td>    
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'Back', users_management_path(@user) %>

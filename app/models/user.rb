@@ -174,7 +174,13 @@ class User < ActiveRecord::Base
 	def account_holder
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
 	end
-
+	
+  def money_account_at_large
+    unless (accholder=self.account_holder).nil?
+      accholder.accounts.where("accounts.business_id= NULL").first
+    end
+  end
+  
 	def snapped_qrcode(qr_code,engagement,place_id,lat,lng)
     campaign=engagement.campaign
 
@@ -207,6 +213,7 @@ class User < ActiveRecord::Base
 
       user_account_before_balance=user_account.amount
       user_account.increment!(:amount,after_fees_amount)
+      user_account.increment!(:cumulative_amount,after_fees_amount)
 
       #save the transaction record
       transaction=Transaction.create!(:from_account=>business_account.id,

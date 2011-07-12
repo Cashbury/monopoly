@@ -138,6 +138,7 @@ Kazdoor::Application.routes.draw do
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
     post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"    
+    get "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"    
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -157,6 +158,7 @@ Kazdoor::Application.routes.draw do
   match "check_role/:role_id"             =>"users_management#check_role"
   match "suspend_user/:id"                =>"users_management#suspend_user"
   match "reactivate_user/:id"             =>"users_management#reactivate_user"
+  match "list_by_program_type/:program_type_id/:uid" =>"users_management#list_businesses_by_program_type"
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"

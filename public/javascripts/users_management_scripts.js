@@ -28,7 +28,22 @@ jQuery(document).ready(function(){
   
   jQuery('#program_type_selector').bind('change',function(){
     var program_type_id = jQuery(":selected", this).val();
-
+    if (program_type_id!=""){
+      var user_id = jQuery('#user_id').val();
+      var loadingImage = jQuery(this).nextAll('img');
+      loadingImage.show();
+     jQuery.ajax({
+        type: 'GET',
+        url: '/list_by_program_type/'+program_type_id+"/"+user_id,
+        success: function(data){
+         loadingImage.hide();
+         jQuery('#listing_businesses_container').html(data);
+        },
+        error: function(data){
+          loadingImage.hide();
+        }
+      });   
+    }
   });
   
   jQuery('#resend_password_link').click(function(){
@@ -76,6 +91,9 @@ jQuery(document).ready(function(){
         success: function(data){
           loadingImage.hide();
           jQuery('#status').html(data);
+        },
+        error: function(data){
+          loadingImage.hide();
         }
       });   
   });
@@ -90,6 +108,9 @@ jQuery(document).ready(function(){
         success: function(data){
           loadingImage.hide();
           jQuery('#user_code').html(data);
+        },
+        error: function(data){
+          loadingImage.hide();
         }
       });   
   });
@@ -104,6 +125,9 @@ jQuery(document).ready(function(){
         success: function(data){
           loadingImage.hide();
           jQuery('#status').html(data);
+        },
+        error: function(data){
+          loadingImage.hide();
         }
       });   
   });
