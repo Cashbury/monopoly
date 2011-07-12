@@ -70,9 +70,9 @@
   <tr><td style="width:92px"><b>User Since: </b></td><td><%=@user.created_at.to_date%></td></tr>
   <tr><td style="width:92px"><b>Facebook-Account-Linked: </b></td><td><%=@user.is_fb_account ? "Yes" : "No"%></td></tr>
   <tr><td style="width:92px"><b>User ID: </b></td><td><%=@user.system_id%></td></tr>
-  <%unless @user.qr_image.nil? %>
-  <table border="0">
-   <tr><td><%= link_to (image_tag @user.qr_code.qr_image, :width=>"50px", :height=>"50px"), qr_code_path(@user.qr_code)  %></td></tr>
-  </table>
+  <%unless @user.qr_code.nil? %>
+  <!--<table border="0">
+   <tr><td><%= link_to (image_tag @user.qr_code.qr_code_image.photo.url, :width=>"50px", :height=>"50px"), qr_code_path(@user.qr_code)  %></td></tr>
+  </table>-->
   <%end%>
 </table>

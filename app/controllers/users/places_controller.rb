@@ -104,7 +104,7 @@ class Users::PlacesController < Users::BaseController
 		  end
     else
       respond_to do |format|
-			  format.xml { render :text => current_user.errors.full_messages.join(' , '),:status=>500 }
+			  format.xml { render :text => "ERROR:#{current_user.errors.full_messages.join(' , ')}",:status=>500 }
 		  end
     end
   end
