@@ -287,4 +287,5 @@ class User < ActiveRecord::Base
     qr_code=QrCode.create(:issued_by=>issued_by, :size=>size, :code_type=>code_type, :associatable_id=>self.id, :associatable_type=>"User", :status=>true)
     qr_code
   end
+
 end

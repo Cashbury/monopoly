@@ -43,6 +43,10 @@ class Reward < ActiveRecord::Base
   validates_length_of :heading1, :maximum => 40
   validates_length_of :heading2, :maximum => 84
   after_update :reprocess_photo
+  
+  cattr_reader :per_page
+  @@per_page = 20
+  
   def reprocess_photo  
     if !self.reward_image.nil? and self.reward_image.cropping?
       self.reward_image.photo.reprocess!

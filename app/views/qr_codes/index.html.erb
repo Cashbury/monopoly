@@ -140,7 +140,7 @@ jQuery(function(){
   <% end %>
 </fieldset>
 </div>
-<p><h2><b>Total: <%=@qr_codes.size%></b></h2></p>
+<p><h2><b>Total: <%=@qr_codes.total_entries%></b></h2></p>
 <br />
   <%= will_paginate @qr_codes %>
 <br/>

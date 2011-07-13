@@ -1,0 +1,55 @@
+<head>
+<%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
+</head>
+<% title "#{@user.full_name} accounts" %>
+
+<%= link_to 'Back', users_management_path(@user) %>
+<p><h2><b>Total: <%=@accounts.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @accounts %>
+<br/>
+<table class="mono-table" width="100%"  border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>SVA Balance</th>    
+    <th>Campaign</th>
+    <th>Program</th>
+    <th>Business</th>
+    <th>Created On</th>
+    <th></th>
+    <th></th>
+  </tr>
+<%= hidden_field_tag :user_id, @user.id %>
+<% @accounts.each do |account| %>
+  <tr id="account_<%=account.id%>">
+    <td><%= account.amount %></td>
+    <td><%= account.c_name%></td>
+    <td><%= account.pt_name %></td>
+    <td><%= account.business_id.present? ? Business.find(account.business_id).name :  account.b_name %></td>
+    <td><%= account.created_at.to_formatted_s(:long) if account.created_at%></td>
+    <td>
+      <%= form_tag deposit_account_users_management_path(@user) do %>
+        <%= label_tag "Amount" %>
+        <%= text_field_tag :amount,"", {:style=>"width:50px"} %>
+        <%= hidden_field_tag :account_id, account.id %>
+        <%= hidden_field_tag :page, @page %>  
+        <%= link_to 'Deposit', "javascript:void(0)", :class=>"deposit_link" %>
+      <% end %>  
+    </td>
+    <td>
+      <%= form_tag withdraw_account_users_management_path(@user) do %>
+        <%= label_tag "Amount" %>
+        <%= text_field_tag :amount,"", {:style=>"width:50px"} %>
+        <%= hidden_field_tag :account_id, account.id %> 
+        <%= hidden_field_tag :page, @page %> 
+        <%= link_to 'Withdraw', "javascript:void(0)", :class=>"withdraw_link" %>
+      <% end %>  
+    </td>
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @accounts %>
+<br/>
+
+
+<%= link_to 'Back', users_management_path(@user) %>

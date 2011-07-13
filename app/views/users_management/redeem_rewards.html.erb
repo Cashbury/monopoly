@@ -1,0 +1,50 @@
+<head>
+<%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
+</head>
+<% title "Redeem Rewards for #{@user.full_name}" %>
+<%= link_to 'Back', users_management_path(@user) %>
+<p><h2><b>Total: <%=@rewards.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @rewards %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Reward</th>
+    <th>Campaign</th>
+    <th>Program</th>
+    <th>Business</th>
+    <th>Total number of claims by <%=@user.full_name%></th>
+    <th>Max claim by user</th>
+    <th>Total number of claims by all users</th>
+    <th>Max claim</th>
+    <th>Created ON</th>
+    <th></th>
+  </tr>
+<% @rewards.each do |reward| %>
+  <tr>    
+    <td><%= reward.r_name%></td>
+    <td><%= reward.c_name%></td>
+    <td><%= reward.pt_name%></td>
+    <td><%= reward.b_name %></td>
+    <td><%= reward.redeemCount %></td>
+    <td><%= reward.max_claim_per_user %></td>
+    <td><%= reward.numberOfRedeems %></td>
+    <td><%= reward.max_claim %></td>
+    <td><%= reward.created_at.to_formatted_s(:long) if reward.created_at%></td>
+    <td>
+      <%= form_tag redeem_rewards_users_management_path(@user) do %>
+        <%= hidden_field_tag :reward_id, reward.id %>
+        <%= hidden_field_tag :redeemCount, reward.redeemCount %> 
+        <%= hidden_field_tag :numberOfRedeems, reward.numberOfRedeems %>  
+        <%= hidden_field_tag :page, @page %> 
+        <%= link_to 'Redeem', "javascript:void(0)", :class=>"redeem_link" %>
+      <% end %>
+    </td>   
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @rewards %>
+<br/>
+
+<%= link_to 'Back', users_management_path(@user) %>

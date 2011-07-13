@@ -13,6 +13,10 @@ transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect"
   Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
 end
 
+transaction_type=TransactionType.find_or_create_by_name(:name=>"Accounts Transfer", :fee_amount=>0.0, :fee_percentage=>0.0)
+%w( Withdraw Deposit ).each do |name|
+  Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
+end
 
 puts 'Creating countries and cities from contries_cities,txt ...'
 open(Rails.root.join('db').join('countries_cities.txt')) do |records|

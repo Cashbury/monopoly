@@ -59,7 +59,7 @@ class UsersManagementController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-
+    @results=get_businesses_list(params[:id],ProgramType.find_by_name(ProgramType::AS[:marketing]).try(:id))    
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
@@ -122,6 +122,7 @@ class UsersManagementController < ApplicationController
       }
     end
   end
+  
   def check_attribute_availability
     if User.exists?(["LOWER(#{params[:attribute_name]}) = ?", params[:attribute_value].mb_chars.downcase])
       respond_to do |format|
@@ -154,22 +155,136 @@ class UsersManagementController < ApplicationController
     render :text=>(render_to_string :partial=> "user_code_container")
   end
   
-  def list_businesses_by_program_type
-    #@results=Business.joins([[:programs=>[:program_type,[:accounts=>:account_holder]]],"LEFT OUTER JOIN countries ON countries.id=businesses.country_id"]).where("programs.program_type_id=#{params[:program_type_id]} and account_holders.model_id=#{params[:uid]} and account_holders.model_type='User'").select("businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, accounts.amount as current_amount, accounts.cumulative_amount as cumulative_amount ")    
-    @results=Account.joins([:account_holder, :campaign=>[:program=>[:program_type,[:business=>:country]]]]).where("programs.program_type_id=#{params[:program_type_id]} and account_holders.model_id=#{params[:uid]} and account_holders.model_type='User'").select("businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, (SELECT amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as current_amount, (SELECT cumulative_amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ").group("businesses.id")
+  def list_businesses_by_program_type    
+    @results=get_businesses_list(params[:uid],params[:program_type_id])
     render :text=>(render_to_string :partial=> "listing_enrollments_container")
   end
   
   def list_transactions
-    @user=User.find(params[:id])
+    @user=User.find(params[:id])    
     pt=Program.find(params[:program_id]).program_type
     if pt.name==ProgramType::AS[:marketing]
-      @transactions=Log.joins(:transaction=>:transaction_type).where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}").select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+      @transactions=Log.joins(:transaction=>:transaction_type)
+                       .where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}")
+                       .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
     else
-      @transactions=Log.joins(:transaction=>:transaction_type).where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}").select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+      @transactions=Log.joins(:transaction=>:transaction_type)
+                       .where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}")
+                       .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
     end
+  end
+  
+  def get_businesses_list(user_id,program_type_id)
+    @results=Account.joins([:account_holder, :campaign=>[:program=>[:program_type,[:business=>:country]]]])
+                    .where("programs.program_type_id=#{program_type_id} and account_holders.model_id=#{user_id} and account_holders.model_type='User'")
+                    .select("businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, (SELECT amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as current_amount, (SELECT cumulative_amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ")
+                    .group("businesses.id")
+  end
+  
+  def manage_user_accounts
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @user=User.find(params[:id])
+    @accounts=Account.joins([:account_holder,"LEFT OUTER JOIN campaigns on campaigns.id=accounts.campaign_id LEFT OUTER JOIN programs on programs.id=campaigns.program_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id LEFT OUTER JOIN businesses ON programs.business_id=businesses.id"])
+                     .where("account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+                     .select("accounts.id,accounts.amount as amount, accounts.cumulative_amount as cumulative_amount, campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, accounts.created_at, accounts.business_id")
+                     .paginate(:page => @page,:per_page => Account::per_page )
+  end
+  
+  def withdraw_account
+    account=Account.find(params[:account_id])
+    account=account.withdraw_from_account(params[:amount].to_f)
+    if account
+      at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
+      flash[:notice]="An amount of #{params[:amount]} points has been withdrawn from account at #{at_text}"
+      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+    else
+      flash[:error]="#{account.errors.full_messages.join(' , ')}"
+      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+    end
+  end
+  
+  def deposit_account
+    account=Account.find(params[:account_id])
+    account=account.deposit_to_account(params[:amount].to_f)
+    if account
+      at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
+      flash[:notice]="An amount of #{params[:amount]} points has been deposited to user account at #{at_text}"
+      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+    else
+      flash[:error]="#{account.errors.full_messages.join(' , ')}"
+      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+    end
+  end
+  
+  def redeem_rewards
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @user=User.find(params[:id])
+    @rewards= Reward.joins(:campaign=>[:program=>[:program_type,:business],:accounts=>[:account_holder]])
+                    .where("program_types.id=#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id} and rewards.is_active=true and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+                    .select("(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{params[:id]}) As redeemCount,rewards.id,rewards.name as r_name,campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, campaigns.created_at, (SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,rewards.max_claim, rewards.max_claim_per_user")
+                    .group("rewards.id")
+                    .paginate(:page => @page,:per_page => Reward::per_page )
+                     
+  end
+  
+  def redeem_reward_for_user
+    begin
+      @user=User.find(params[:id])
+      reward=Reward.find(params[:reward_id])
+      user_account=reward.campaign.user_account(@user)
+      if (reward.max_claim_per_user.nil? || reward.max_claim_per_user=="0"|| params[:redeemCount].to_i < reward.max_claim_per_user.to_i) and (reward.max_claim.nil? || reward.max_claim=="0" || params[:numberOfRedeems].to_i < reward.max_claim.to_i)          
+        reward.is_claimed_by(@user,user_account,nil,nil,nil)
+        flash[:notice]="#{reward.name} Reward is claimed by #{@user.full_name}"
+        redirect_to :action=>:redeem_rewards, :page=>params[:page]
+      else
+        per_user=params[:redeemCount].to_i >= reward.max_claim_per_user.to_i ? "per user" : "for all users"
+        flash[:error]="Maximum number of claiming #{reward.name} reward #{per_user} is reached"
+        redirect_to :action=>:redeem_rewards, :page=>params[:page]      
+      end
+    rescue Exception => e
+      logger.error "Exception #{e.class}: #{e.message}"
+		 	respond_to do |format|
+			  format.xml { render :text => e.message,:status=>500 }
+		  end
+		 end
+  end
+  
+  def list_engagements
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @user=User.find(params[:id])
+    @engagements= Engagement.joins(:campaign=>[:program=>[:program_type,:business],:accounts=>[:account_holder]])
+                            .where("program_types.id=#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id} and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+                            .select("accounts.amount as account_amount,engagements.id,engagements.amount,engagements.name as eng_name,campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, campaigns.created_at")
+                            .group("engagements.id")
+                            .paginate(:page => @page,:per_page => Reward::per_page )
+  end
+  
+  def make_engagement
+    begin
+      @user=User.find(params[:id])
+      qr_code=QrCode.where(:associatable_id=>params[:engagement_id],:associatable_type=>QrCode::ENGAGEMENT_TYPE).first
+      engagement=qr_code.try(:engagement)
+     if qr_code.nil?
+		    flash[:error]="QR Code no longer exists in the system!"
+      elsif !qr_code.status
+        flash[:error]="QR Code not Active!"
+      elsif !engagement.is_started
+        flash[:error]="Engagement no longer running!"
+      else
+        @user.snapped_qrcode(qr_code,engagement,nil,nil,nil)
+        flash[:notice]="#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{engagement.amount} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
+      end	
+      redirect_to :action=>:list_engagements, :page=>params[:page]										 
+    rescue Exception=>e
+      logger.error "Exception #{e.class}: #{e.message}"
+      flash[:error]=e.message
+      redirect_to :action=>:list_engagements, :page=>params[:page]										 
+		 end
+  end
+  
+  def respond_with_error(msg)
     respond_to do |format|
-      format.html
+      format.xml { render :text => msg ,:status=>500 }
     end
   end
   

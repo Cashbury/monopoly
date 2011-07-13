@@ -50,6 +50,28 @@ jQuery(document).ready(function(){
     jQuery(this).closest('form').submit();
   });
   
+  jQuery('.deposit_link').click(function(){
+    var form=jQuery(this).closest('form');
+    if (form.find(':text').val()!=""){
+      jQuery(this).closest('form').submit();
+    }
+  });
+  
+  jQuery('.withdraw_link').click(function(){
+    var form=jQuery(this).closest('form');
+    if (form.find(':text').val()!=""){
+      jQuery(this).closest('form').submit();
+    }
+  });
+  
+  jQuery('.redeem_link').click(function(){
+    jQuery(this).closest('form').submit();
+  });
+  
+  jQuery('.engage_link').click(function(){
+    jQuery(this).closest('form').submit();
+  });
+  
   jQuery("input[name=btype]").click(function(e){
       jQuery(".row.mailing").toggle();
       jQuery(".row.billing").toggle();

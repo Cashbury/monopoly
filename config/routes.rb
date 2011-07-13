@@ -134,11 +134,18 @@ Kazdoor::Application.routes.draw do
   
   end
   resources :users_management do
-    get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
+    get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
     post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"    
-    get "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"    
+    post "withdraw_account", :action=>:withdraw_account, :on=>:member, :as=>"withdraw_account"
+    post "deposit_account", :action=>:deposit_account, :on=>:member, :as=>"deposit_account"
+    post "redeem_rewards", :action=>:redeem_reward_for_user, :on=>:member, :as=>"redeem_rewards"    
+    post "make_engagement", :action=>:make_engagement, :on=>:member, :as=>"make_engagement"
+    get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"    
+    get  "manage_user_accounts", :action=>:manage_user_accounts, :on=>:member, :as=>:manage_user_accounts
+    get  "redeem_rewards", :action=>:redeem_rewards, :on=>:member, :as=>:redeem_rewards
+    get  "list_engagements", :action=>:list_engagements, :on=>:member, :as=>"list_engagements"  
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
