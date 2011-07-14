@@ -28,7 +28,7 @@
 
       <%= f.fields_for :rewards do |reward|%>
         <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst left", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %>
-        <label class="left"> times</label>
+        <label class="left"> times,</label>
         <input type="text" class="basic_info_caption1 inst left" style="width:135px" name="item_name" id="item_text_field" title="Coffee Drink" value="<%=@item_name%>" />
         <label class="left"> get a free</label>
         <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:330px;margin:0 0 0",:title=>"Coffee",:id=>"reward_name_field_id"}%>
