@@ -1,0 +1,43 @@
+<br/>
+<%= label_tag "Select Action" %><br/>
+<%= select_tag :action_id , options_from_collection_for_select(Action.all, "id", "name",@action.id)%>
+<img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
+<p><h2><b>Total: <%=@logged_actions.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @logged_actions %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Action</th>
+    <th>Reward</th>
+    <th>Spent Amount</th>
+    <th>Amount Type</th>
+    <th>Campaign</th>
+    <th>Program</th>
+    <th>Business</th>
+    <th>Place</th>
+    <th>Transaction Type</th>
+    <th>Transaction Status</th>
+    <th>Date</th>
+  </tr>
+  <% @logged_actions.each do |log| %>
+  <tr>
+    <td><%= "#{log.try(:first_name)} #{log.try(:last_name)}"  %></td>
+    <td><%= log.action_name        %></td>
+    <td><%= log.reward_name        %></td>
+    <td><%= log.spent_amount       %></td>
+    <td><%= log.amount_type        %></td>
+    <td><%= log.cname              %></td>
+    <td><%= log.program_name       %></td>
+    <td><%= log.bname              %></td>
+    <td><%= log.pname              %></td>
+    <td><%= log.tt_name            %></td>
+    <td><%= log.status ? "Settled" : "Not-Settled" %></td>
+    <td><%= log.created_on         %></td>
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @logged_actions %>
+<br/>

@@ -1,0 +1,53 @@
+<br/>
+<%= label_tag "Select Action" %><br/>
+<%= select_tag :action_id , options_from_collection_for_select(Action.all, "id", "name",@action.id)%>
+<p><h2><b>Total: <%=@logged_actions.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @logged_actions %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>User</th>
+    <th>Action</th>
+    <th>From Account Holder Name</th>
+    <th>To Account Holder Name</th>
+    <th>Transaction Type</th>
+    <th>Transaction Fees Amount</th>
+    <th>Transaction Fees Percentage</th>
+    <th>Balance Before Tx (From Account)</th>
+    <th>Balance After Tx (From Account)</th>
+    <th>Balance Before Tx (To Account)</th>
+    <th>Balance After Tx (To Account)</th>
+    <th>After Fees Amount</th>
+    <th>Transaction Type</th>
+    <th>Transaction Status</th>
+    <th>Date</th>
+  </tr>
+  <% @logged_actions.each do |log| %>
+  <tr>
+    <td><%= "#{log.try(:first_name)} #{log.try(:last_name)}"  %></td>
+    <td><%= log.action_name        %></td>
+    <% from_account=Account.find(log.from_account)%>
+    <% to_account=Account.find(log.to_account)%>
+    <% from_account_holder=from_account.account_holder%>
+    <% to_account_holder=to_account.account_holder%>
+    <% from_account_holder_name=from_account_holder.model_type=="User" ? User.find(from_account_holder.model_id).full_name : Business.find(from_account_holder.model_id).name  %>
+    <% to_account_holder_name=to_account_holder.model_type=="User" ? User.find(to_account_holder.model_id).full_name : Business.find(to_account_holder.model_id).name  %>      
+    <td><%=from_account_holder_name%></td>
+    <td><%=to_account_holder_name%></td>
+    <td><%= log.tt_name%></td>
+    <td><%= log.fee_amount %></td>
+    <td><%= log.fee_percentage %></td>
+    <td><%= log.from_account_balance_before%></td>
+    <td><%= log.from_account_balance_after%></td>
+    <td><%= log.to_account_balance_before%></td>
+    <td><%= log.to_account_balance_after%></td>
+    <td><%= log.after_fees_amount%></td>
+    <td><%= log.status ? "Settled" : "Not-Settled" %></td>
+    <td><%= log.created_on         %></td>
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @logged_actions %>
+<br/>

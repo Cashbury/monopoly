@@ -34,7 +34,7 @@ class Account < ActiveRecord::Base
   cattr_reader :per_page
   @@per_page = 20
   
-  def withdraw_from_account(amount)
+  def withdraw_from_account(amount,user_id)
     if associated_to_campaign?
       business_account=self.campaign.business_account
     elsif associated_to_business?
@@ -43,6 +43,7 @@ class Account < ActiveRecord::Base
       business_account=Account.find_or_create_by_account_holder_id(business_accholder.id)
     end
     user_account=self
+    date=Date.today.to_s
     Account.transaction do
       action=Action.where(:name=>Action::CURRENT_ACTIONS[:withdraw]).first
       transaction_type =action.transaction_type
@@ -71,11 +72,28 @@ class Account < ActiveRecord::Base
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
                                       :transaction_fees=>transaction_type.fee_amount)
+      
+      log_group=LogGroup.create!(:created_on=>date)
+      Log.create!(:user_id        =>user_id,
+                  :action_id      =>action.id,
+                  :log_group_id   =>log_group.id,
+                  :engagement_id  =>nil,
+                  :qr_code_id     =>nil,
+                  :campaign_id    =>nil,
+                  :business_id    =>self.business_id,
+                  :transaction_id =>transaction.id,
+                  :place_id       =>nil,
+                  :gained_amount  =>nil,
+                  :amount_type    =>nil,
+                  :frequency      =>1,
+                  :lat            =>nil,
+                  :lng            =>nil,
+                  :created_on     =>date)                                      
        self                               
     end
   end  
   
-  def deposit_to_account(amount)
+  def deposit_to_account(amount,user_id)
     if associated_to_campaign?
       business_account=self.campaign.business_account
     elsif associated_to_business?
@@ -84,8 +102,9 @@ class Account < ActiveRecord::Base
       business_account=Account.find_or_create_by_account_holder_id(business_accholder.id)
     end
     user_account=self
+    date=Date.today.to_s
     Account.transaction do
-      action=Action.where(:name=>Action::CURRENT_ACTIONS[:withdraw]).first
+      action=Action.where(:name=>Action::CURRENT_ACTIONS[:deposit]).first
       transaction_type =action.transaction_type
       after_fees_amount=transaction_type.fee_amount.nil? ? amount : amount-transaction_type.fee_amount
       after_fees_amount=transaction_type.fee_percentage.nil? ? after_fees_amount : (after_fees_amount-(after_fees_amount * transaction_type.fee_percentage/100))
@@ -113,6 +132,22 @@ class Account < ActiveRecord::Base
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
                                       :transaction_fees=>transaction_type.fee_amount)
+      log_group=LogGroup.create!(:created_on=>date)
+      Log.create!(:user_id        =>user_id,
+                  :action_id      =>action.id,
+                  :log_group_id   =>log_group.id,
+                  :engagement_id  =>nil,
+                  :qr_code_id     =>nil,
+                  :campaign_id    =>nil,
+                  :business_id    =>self.business_id,
+                  :transaction_id =>transaction.id,
+                  :place_id       =>nil,
+                  :gained_amount  =>nil,
+                  :amount_type    =>nil,
+                  :frequency      =>1,
+                  :lat            =>nil,
+                  :lng            =>nil,
+                  :created_on     =>date)                                      
        self                               
     end
   end  

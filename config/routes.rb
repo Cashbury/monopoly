@@ -145,7 +145,8 @@ Kazdoor::Application.routes.draw do
     get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"    
     get  "manage_user_accounts", :action=>:manage_user_accounts, :on=>:member, :as=>:manage_user_accounts
     get  "redeem_rewards", :action=>:redeem_rewards, :on=>:member, :as=>:redeem_rewards
-    get  "list_engagements", :action=>:list_engagements, :on=>:member, :as=>"list_engagements"  
+    get  "list_engagements", :action=>:list_engagements, :on=>:member, :as=>"list_engagements"
+    get  "logged_actions", :action=>:logged_actions, :on=>:member, :as=>"logged_actions"    
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}

@@ -2,6 +2,7 @@
 <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 </head>
 <% title "User | #{@user.full_name}" %>
+<p><%= link_to 'Edit', edit_users_management_path(@user) %> </p>
 <% user_uid=@user.email.split("@facebook").first %>
 <%=image_tag @user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture?type=large" : "/images/user-default.jpg", :style=>"float:right;" %>
 <table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
@@ -53,8 +54,8 @@
   <tr><td style="width:70px"><b>Note:  </b></td><td><%= @user.note %></td></tr>
   <tr><td style="width:70px"><b>Legal Ids:  </b></td>
     <td>
-    <%@user.legal_ids.each do |legal_id| %>
-    <%=LegalType.find(legal_id.legal_type_id).displayed_type%> : <%= legal_id.id_number %><br/>
+    <% @user.legal_ids.each do |legal| %>
+    <%=LegalType.find(legal.legal_type_id).displayed_type%> : <%= legal.id_number %><br/>
     <%end%>
     </td>
   </tr>
@@ -98,3 +99,4 @@
 <p><%=link_to "Deposit/Withdraw to/from SVA accounts @ businesses", manage_user_accounts_users_management_path(@user)%></p>
 <p><%=link_to "Redeem a reward @ businesses", redeem_rewards_users_management_path(@user)%></p>
 <p><%=link_to "Engage @ campaign @ businesses", list_engagements_users_management_path(@user)%></p>
+<p><%=link_to "Show Logged Actions", logged_actions_users_management_path(@user)%></p>

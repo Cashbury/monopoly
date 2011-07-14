@@ -68,7 +68,7 @@ class User < ActiveRecord::Base
   has_many :login_methods_users
   has_many :login_methods, :through=>"login_methods_users"
   has_one  :qr_code, :as=>:associatable
-  has_one :account_holder, :as=>:model  
+  has_one  :account_holder, :as=>:model  
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :places

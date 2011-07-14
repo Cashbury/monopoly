@@ -12,6 +12,7 @@ class UsersManagementController < ApplicationController
     @user.build_mailing_address
     @user.build_billing_address
     @total=LegalType.count
+    @legal_ids=[]
   end
   
   def create
@@ -33,14 +34,16 @@ class UsersManagementController < ApplicationController
         @user.send_confirmation_instructions if @user.persisted? 
         unless params[:legal_ids].empty? and params[:legal_types].empty?
           params[:legal_types].each_with_index do |legal_type_id, index|
-            LegalId.create(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
+            if params[:legal_ids][index].present? and legal_type_id.present?
+              LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
+            end
           end
         end
         if params[:place_id].present?
           @user.places << Place.find(params[:place_id]) 
           @user.save!
         end
-        format.html { redirect_to(users_management_index_path, :notice => 'User was successfully created.') }
+        format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully created.') }
         format.xml  { head :ok }
       else
         @user.build_mailing_address unless @user.mailing_address.present?
@@ -52,9 +55,67 @@ class UsersManagementController < ApplicationController
   end
   
   def edit
+    @user = User.find(params[:id])
+    @user.build_mailing_address unless @user.mailing_address.present?
+    @user.build_billing_address unless @user.billing_address.present?
+    @total=LegalType.count
+    @role_id=@user.roles.try(:first).try(:id)
+    @legal_ids=@user.legal_ids
   end
 
   def update
+    @user= User.find(params[:id])
+    unless @user.employees.where(:role_id=>params[:user][:role_id],:business_id=>params[:business_id]).first
+      @user.employees.delete_all
+      @user.employees.build(:role_id=>params[:user][:role_id],:business_id=>params[:business_id])    
+    end
+    if params[:user][:mailing_address_attributes].present?      
+      if @user.mailing_address.present?
+        @user.mailing_address.update_attributes(params[:user][:mailing_address_attributes])
+      else
+        address=Address.create(params[:user][:mailing_address_attributes])
+        @user.mailing_address_id=address.id
+      end
+    end
+    if params[:user][:billing_address_attributes].present?      
+      if @user.billing_address.present?
+        @user.billing_address.update_attributes(params[:user][:billing_address_attributes])
+      else
+        address=Address.create(params[:user][:billing_address_attributes])
+        @user.billing_address_id=address.id
+      end
+    end
+    if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
+      @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
+    end
+    respond_to do |format|
+      if @user.update_attributes(params[:user])
+        LegalId.delete_all
+        unless params[:legal_ids].empty? and params[:legal_types].empty?
+          params[:legal_types].each_with_index do |legal_type_id, index|            
+            if params[:legal_ids][index].present? and legal_type_id.present?
+              LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
+            end
+          end
+        end
+        if params[:place_id].present?
+          if @user.places.where(:place_id=>params[:place]).empty?
+            @user.places << Place.find(params[:place_id]) 
+            @user.save!
+          end
+        end
+        format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully updated.') }
+        format.xml  { head :ok }
+      else
+        @user.build_mailing_address unless @user.mailing_address.present?
+        @user.build_billing_address unless @user.billing_address.present?
+        @total=LegalType.count
+        @role_id=@user.roles.try(:first).try(:id)
+        @legal_ids=@user.legal_ids
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+      end
+    end
   end
   
   def show
@@ -95,6 +156,7 @@ class UsersManagementController < ApplicationController
       format.js
     end
   end
+  
   def resend_password
     user = User.find_by_email(params[:user][:email])
     user.send_reset_password_instructions if user && user.persisted?    
@@ -192,7 +254,7 @@ class UsersManagementController < ApplicationController
   
   def withdraw_account
     account=Account.find(params[:account_id])
-    account=account.withdraw_from_account(params[:amount].to_f)
+    account=account.withdraw_from_account(params[:amount].to_f,current_user.id)
     if account
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
       flash[:notice]="An amount of #{params[:amount]} points has been withdrawn from account at #{at_text}"
@@ -205,7 +267,7 @@ class UsersManagementController < ApplicationController
   
   def deposit_account
     account=Account.find(params[:account_id])
-    account=account.deposit_to_account(params[:amount].to_f)
+    account=account.deposit_to_account(params[:amount].to_f,current_user.id)
     if account
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
       flash[:notice]="An amount of #{params[:amount]} points has been deposited to user account at #{at_text}"
@@ -282,10 +344,26 @@ class UsersManagementController < ApplicationController
 		 end
   end
   
-  def respond_with_error(msg)
-    respond_to do |format|
-      format.xml { render :text => msg ,:status=>500 }
-    end
+  def logged_actions
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @user=User.find(params[:id])
+    @action_id=params[:action_id].to_i.zero? ? Action.find_by_name(Action::CURRENT_ACTIONS[:engagement]).id : params[:action_id].to_i
+    @action=Action.find(@action_id)
+    @logged_actions=Log.select("logs.*,transactions.*,transaction_types.name as tt_name,transaction_types.fee_amount,transaction_types.fee_percentage,rewards.name as reward_name, rewards.needed_amount as spent_amount,actions.name as action_name,engagements.name as ename,businesses.name as bname,engagements.amount,places.name as pname,users.first_name,users.last_name,program_types.name as program_name,campaigns.name as cname,measurement_types.name as amount_type")
+                       .joins([:user,[:transaction=>:transaction_type],"LEFT OUTER JOIN actions ON actions.id=logs.action_id LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN engagements ON engagements.id=logs.id LEFT OUTER JOIN rewards ON rewards.id=logs.reward_id LEFT OUTER JOIN campaigns ON campaigns.id=engagements.campaign_id LEFT OUTER JOIN measurement_types ON campaigns.measurement_type_id=measurement_types.id LEFT OUTER JOIN programs ON campaigns.program_id=programs.id LEFT OUTER JOIN businesses ON businesses.id=programs.business_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id"])
+                       .where("logs.user_id=#{params[:id]} and actions.id=#{@action_id}")
+                       .order("logs.created_on DESC")
+                       .paginate(:page => @page,:per_page => Log::per_page )
+    if request.xhr?
+      if @action.name==Action::CURRENT_ACTIONS[:engagement]
+          render :text=>(render_to_string :partial=> "engagements_logs",:layout=>false)
+      elsif @action.name==Action::CURRENT_ACTIONS[:redeem]
+          render :text=>(render_to_string :partial=> "rewards_logs",:layout=>false)
+      else    
+        render :text=>(render_to_string :partial=> "accounts_transfer_logs",:layout=>false)
+      end
+    end                
+                         
   end
   
   def list_places_and_bizs

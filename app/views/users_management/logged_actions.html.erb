@@ -1,0 +1,11 @@
+<head>
+<%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
+</head>
+<% title "Logged Actions for #{@user.full_name}" %>
+<%= link_to 'Back', users_management_path(@user) %>
+<%=hidden_field_tag :user_id, @user.id%>
+<div id="logged_actions_container">
+  <%=render :partial=>"engagements_logs"%>
+</div>
+
+<%= link_to 'Back', users_management_path(@user) %>

@@ -1,0 +1,639 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <title>app/controllers/users/places_controller.rb</title>
+    <link href="screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="print.css" media="print" rel="stylesheet" type="text/css" />
+    
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <script type="text/javascript" src="rcov.js"></script>
+  </head>
+  <body>
+    <h1>Monopoly C0 Coverage Information - RCov</h1>
+    <h2>app/controllers/users/places_controller.rb</h2>
+
+    
+
+    <div class="report_table_wrapper">
+      <table class='report' id='report_table'>
+        <thead>
+          <tr>
+            <th class="left_align">Name</th>
+            <th class="right_align">Total Lines</th>
+            <th class="right_align">Lines of Code</th>
+            <th class="left_align">Total Coverage</th>
+            <th class="left_align">Code Coverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left_align"><a href="app-controllers-users-places_controller_rb.html">app/controllers/users/places_controller.rb</a></td>
+            <td class='right_align'><tt>96</tt></td>
+            <td class='right_align'><tt>90</tt></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>4.17%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:4px"></div>
+            <div class="uncovered" style="width:96px"></div>
+          </div></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>4.44%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:4px"></div>
+            <div class="uncovered" style="width:96px"></div>
+          </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <h3>Key</h3>
+    
+    <div class="key"><pre><span class='marked'>Code reported as executed by Ruby looks like this...</span><span class='marked1'>and this: this line is also marked as covered.</span><span class='inferred'>Lines considered as run by rcov, but not reported by Ruby, look like this,</span><span class='inferred1'>and this: these lines were inferred by rcov (using simple heuristics).</span><span class='uncovered'>Finally, here's a line marked as not executed.</span></pre></div>
+
+    <h3>Coverage Details</h3>
+
+    <table class="details">
+      <tbody>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line1">1</a> class Users::PlacesController &lt; Users::BaseController</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line2">2</a>   def index</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line3">3</a>     @places=[] </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line4">4</a>     is_my_city=false</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line5">5</a>     if !params[:city_id].blank?#given specific city listing all places at that city</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line6">6</a>       city= City.closest(:origin=&gt;[params[:lat].to_f,params[:long].to_f]).first</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line7">7</a>       if city.id == params[:city_id]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line8">8</a>         @places=Place.with_address.geo_scope(:origin=&gt;[params[:lat].to_f,params[:long].to_f])</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line9">9</a>                                   .where(&quot;cities.id=#{params[:city_id]}&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line10">10</a>                                   .order(&quot;distance ASC&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line11">11</a>         is_my_city=!city.nil?                                  </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line12">12</a>       else</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line13">13</a>         city=City.where(:id=&gt;params[:city_id]).first</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line14">14</a>         @places=Place.with_address.where(&quot;cities.id=#{params[:city_id]}&quot;).order(&quot;places.name ASC&quot;)                                  </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line15">15</a>       end                             </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line16">16</a>     elsif !params[:lat].blank? &amp;&amp; !params[:long].blank?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line17">17</a>       #Get Nearest City</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line18">18</a>       city    = City.closest(:origin=&gt;[params[:lat].to_f,params[:long].to_f]).first</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line19">19</a>       @places = Place.with_address.within(DISTANCE,:units=&gt;:km,:origin=&gt;[params[:lat].to_f,params[:long].to_f]).order(&quot;distance ASC&quot;) #List nearby places</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line20">20</a>       #List all city places order by distance ASC if no nearby places</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line21">21</a>       @places = Place.with_address.geo_scope(:origin=&gt;[params[:lat].to_f,params[:long].to_f])</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line22">22</a>                                   .where(&quot;cities.id=#{city.id}&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line23">23</a>                                   .order(&quot;distance ASC&quot;) if @places.empty?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line24">24</a>       is_my_city=!city.nil?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line25">25</a>     else #default is San Fransisco all places</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line26">26</a>       city   =City.find_by_name(&quot;San Francisco&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line27">27</a>       @places=Place.with_address.where(&quot;cities.id=#{city.id}&quot;).order(&quot;places.name ASC&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line28">28</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line29">29</a>     unless params[:keywords].blank?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line30">30</a>       keys=params[:keywords].split(/[^A-Za-z0-9_\-]+/)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line31">31</a>       matched_places=[]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line32">32</a>       Business.tagged_with(keys,:any=&gt;true).collect{|b| matched_places +=b.places}</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line33">33</a>       temp_places = Place.tagged_with(keys,:any=&gt;true).with_address</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line34">34</a>       matched_places = matched_places | temp_places # merging places resulted from Business matched tags with Places matched tags</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line35">35</a>       @places= @places &amp; matched_places # Intersection</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line36">36</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line37">37</a>     targeted_campaigns=current_user.auto_enroll_at(@places)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line38">38</a>     respond_to do |format|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line39">39</a>       format.xml { render :xml =&gt; prepare_result(@places,is_my_city,city,targeted_campaigns) }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line40">40</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line41">41</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line42">42</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line43">43</a>   def list_all_cities</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line44">44</a>     @cities=City.order(&quot;name ASC&quot;).select(&quot;cities.name,cities.id&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line45">45</a>     respond_to do |format|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line46">46</a>       format.xml { render :xml =&gt; @cities }</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line47">47</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line48">48</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line49">49</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line50">50</a>   def prepare_result(places,is_my_city,city,targeted_campaigns)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="marked">
+            <td><pre><a name="line51">51</a>     @result={}</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line52">52</a>     @result[&quot;is_my_city&quot;]=is_my_city</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line53">53</a>     if city</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line54">54</a>       @result[&quot;city-id&quot;]  =city.id</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line55">55</a>       @result[&quot;city-name&quot;]=city.name</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line56">56</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line57">57</a>     @result[&quot;places&quot;]=[]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line58">58</a>     places.each_with_index do |place,index|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line59">59</a>       @result[&quot;places&quot;][index] = place.attributes.reject{|k,v| k==&quot;address_id&quot; || k==&quot;distance&quot;}</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line60">60</a>       business=place.business</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line61">61</a>       unless business.nil?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line62">62</a>         programs=business.programs</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line63">63</a>         @result[&quot;places&quot;][index][&quot;brand-name&quot;]    =business.try(:brand).try(:name)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line64">64</a>         @result[&quot;places&quot;][index][&quot;brand-image&quot;]   =business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:normal)) </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line65">65</a>         @result[&quot;places&quot;][index][&quot;brand-image-fb&quot;]=business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:thumb))</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line66">66</a>         @result[&quot;places&quot;][index][&quot;is_open&quot;]       =place.is_open?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line67">67</a>         @result[&quot;places&quot;][index][&quot;open-hours&quot;]    =place.open_hours.collect{|oh| {:from=&gt;oh.from.strftime(&quot;%I:%M %p&quot;),:to=&gt;oh.to.strftime(&quot;%I:%M %p&quot;),:day=&gt;OpenHour::DAYS.key(oh.day_no)}}</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line68">68</a>         @result[&quot;places&quot;][index][&quot;accounts&quot;]      =[]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line69">69</a>         @result[&quot;places&quot;][index][&quot;rewards&quot;]       =[]</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line70">70</a>         unless targeted_campaigns.empty?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line71">71</a>           results=programs.joins(:campaigns=&gt;[:rewards,:places,:accounts=&gt;[:measurement_type,:account_holder]])</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line72">72</a>                           .select(&quot;rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line73">73</a>                           .where(&quot;campaigns.id IN (#{targeted_campaigns.join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' &gt;= campaigns.start_date) and campaigns_places.place_id=#{place.id}&quot;)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line74">74</a>                            </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line75">75</a>           results.each_with_index do |result,i|</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line76">76</a>             @result[&quot;places&quot;][index][&quot;accounts&quot;] &lt;&lt; result.attributes.select {|key, value| key == &quot;amount&quot; || key==&quot;campaign_id&quot; || key==&quot;is_money&quot; || key==&quot;measurement_type&quot;}</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line77">77</a>             attributes=result.attributes</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line78">78</a>             reward_obj=Reward.find(result.reward_id)</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line79">79</a>             if (attributes[&quot;max_claim_per_user&quot;].nil? || attributes[&quot;max_claim_per_user&quot;]==&quot;0&quot;|| attributes[&quot;redeemCount&quot;].to_i &lt; attributes[&quot;max_claim_per_user&quot;].to_i) and (attributes[&quot;max_claim&quot;].nil? || attributes[&quot;max_claim&quot;]==&quot;0&quot; || attributes[&quot;numberOfRedeems&quot;].to_i &lt; attributes[&quot;max_claim&quot;].to_i)  </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line80">80</a>               @result[&quot;places&quot;][index][&quot;rewards&quot;][i] = attributes.reject {|k,v| k == &quot;amount&quot;  || k==&quot;is_money&quot; || k == &quot;model_id&quot; || k==&quot;model_type&quot; || k==&quot;measurement_type&quot;}</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line81">81</a>               if @result[&quot;places&quot;][index][&quot;rewards&quot;][i].present?</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line82">82</a>                 reward_image=reward_obj.reward_image</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line83">83</a>                 @result[&quot;places&quot;][index][&quot;rewards&quot;][i][&quot;reward-image&quot;]   =reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:normal))</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line84">84</a>                 @result[&quot;places&quot;][index][&quot;rewards&quot;][i][&quot;reward-image-fb&quot;]=reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:thumb))</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line85">85</a>                 how_to_get_amount_text=&quot;&quot;  </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line86">86</a>                 @result[&quot;places&quot;][index][&quot;rewards&quot;][i][&quot;how_to_get_amount&quot;]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+=&quot;#{eng.name} gets you #{eng.amount} #{attributes[&quot;measurement_type&quot;]}\n&quot;}.first</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line87">87</a>               end </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line88">88</a>             end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line89">89</a>           end #end_of_each_with_index</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line90">90</a>         end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line91">91</a>       end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line92">92</a>     end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line93">93</a>     @result</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line94">94</a>   end</pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line95">95</a>   </pre></td>
+          </tr>
+        
+          
+          
+          <tr class="uncovered">
+            <td><pre><a name="line96">96</a> end</pre></td>
+          </tr>
+        
+      </tbody>
+    </table>
+
+    <p>Generated on 2011-06-08 18:36:54 +0300 with <a href="http://github.com/relevance/rcov">rcov 0.9.8</a></p>
+
+  </body>
+</html>
