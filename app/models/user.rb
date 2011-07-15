@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
                   :authentication_token, :brands_attributes, :username, :telephone_number, :role_id, :home_town, :mailing_address_id, :billing_address_id
-                  
+
   attr_accessor :role_id
   has_many :templates
   has_many :brands
@@ -68,7 +68,7 @@ class User < ActiveRecord::Base
   has_many :login_methods_users
   has_many :login_methods, :through=>"login_methods_users"
   has_one  :qr_code, :as=>:associatable
-  has_one :account_holder, :as=>:model  
+  has_one :account_holder, :as=>:model
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :places
@@ -83,14 +83,14 @@ class User < ActiveRecord::Base
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
-  before_save :set_default_role , :on =>:create
+  after_create :set_default_role
   scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
   scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code").group("users.id")
-  
+
   validates_format_of :telephone_number, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
   cattr_reader :per_page
   @@per_page = 20
-  
+
   def self.terms(terms)
     return scoped if terms.blank?
     composed_scope = scoped
@@ -99,11 +99,12 @@ class User < ActiveRecord::Base
     end
     composed_scope
   end
-  
+
   def set_default_role
     current_roles = roles
-    consumer =  Role.where(:name=>Role::AS[:consumer]).limit(1).first
-    principal_user =  Role.where(:name=>Role::AS[:principal]).limit(1).first
+    consumer ||=  Role.where(:name=>Role::AS[:consumer]).limit(1).first
+    principal_user ||=  Role.where(:name=>Role::AS[:principal]).limit(1).first
+
     unless brands.blank?
       roles << principal_user unless current_roles.include? principal_user
     else
@@ -130,12 +131,12 @@ class User < ActiveRecord::Base
   def role?(role)
     return !!self.roles.find_by_name(role.to_s.camelize)
   end
-   
+
   def activate
     self.active=true
     save!
   end
-  
+
   def suspend
     self.active=false
     save!
@@ -174,13 +175,13 @@ class User < ActiveRecord::Base
 	def account_holder
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
 	end
-	
+
   def money_account_at_large
     unless (accholder=self.account_holder).nil?
       accholder.accounts.where("accounts.business_id= NULL").first
     end
   end
-  
+
 	def snapped_qrcode(qr_code,engagement,place_id,lat,lng)
     campaign=engagement.campaign
 
@@ -274,15 +275,15 @@ class User < ActiveRecord::Base
       return target.name=="new_comers" ? !self.engaged_with_business?(campaign.program.business) : self.engaged_with_business?(campaign.program.business)
     end
   end
-  
+
   def is_engaged_with_campaign?(campaign)
     !self.logs.where(:campaign_id=>campaign.id).limit(1).empty?
   end
-  
+
   def system_id
     self.qr_code.try(:hash_code)
   end
-  
+
   def issue_qrcode(issued_by, size, code_type)
     qr_code=QrCode.create(:issued_by=>issued_by, :size=>size, :code_type=>code_type, :associatable_id=>self.id, :associatable_type=>"User", :status=>true)
     qr_code

@@ -1,4 +1,8 @@
 Kazdoor::Application.routes.draw do
+  get "invite/friends"
+
+  get "friends/invite"
+
   get "primary_user/new"
   get "primary_user/show"
   resources :transaction_types
