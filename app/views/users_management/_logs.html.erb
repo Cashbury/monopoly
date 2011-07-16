@@ -6,6 +6,73 @@
 <br />
   <%= will_paginate @logged_actions %>
 <br/>
+<% if @action.name==Action::CURRENT_ACTIONS[:engagement] %>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Action</th>
+    <th>Engagement</th>
+    <th>Gained Amount</th>
+    <th>Amount Type</th>
+    <th>Campaign</th>
+    <th>Program</th>
+    <th>Business</th>
+    <th>Place</th>
+    <th>Transaction Type</th>
+    <th>Transaction Status</th>
+    <th>Date</th>
+  </tr>
+  <% @logged_actions.each do |log| %>
+  <tr>
+    <td><%= "#{log.try(:first_name)} #{log.try(:last_name)}"  %></td>
+    <td><%= log.action_name        %></td>
+    <td><%= log.ename              %></td>
+    <td><%= log.gained_amount      %></td>
+    <td><%= log.amount_type        %></td>
+    <td><%= log.cname              %></td>
+    <td><%= log.program_name       %></td>
+    <td><%= log.bname              %></td>
+    <td><%= log.pname              %></td>
+    <td><%= log.tt_name            %></td>
+    <td><%= log.status ? "Settled" : "Not-Settled" %></td>
+    <td><%= log.created_on         %></td>
+  </tr>
+<% end %>
+</table>
+<%elsif @action.name==Action::CURRENT_ACTIONS[:redeem]%>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Action</th>
+    <th>Reward</th>
+    <th>Spent Amount</th>
+    <th>Amount Type</th>
+    <th>Campaign</th>
+    <th>Program</th>
+    <th>Business</th>
+    <th>Place</th>
+    <th>Transaction Type</th>
+    <th>Transaction Status</th>
+    <th>Date</th>
+  </tr>
+  <% @logged_actions.each do |log| %>
+  <tr>
+    <td><%= "#{log.try(:first_name)} #{log.try(:last_name)}"  %></td>
+    <td><%= log.action_name        %></td>
+    <td><%= log.reward_name        %></td>
+    <td><%= log.spent_amount       %></td>
+    <td><%= log.amount_type        %></td>
+    <td><%= log.cname              %></td>
+    <td><%= log.program_name       %></td>
+    <td><%= log.bname              %></td>
+    <td><%= log.pname              %></td>
+    <td><%= log.tt_name            %></td>
+    <td><%= log.status ? "Settled" : "Not-Settled" %></td>
+    <td><%= log.created_on         %></td>
+  </tr>
+<% end %>
+</table>
+<%else%>
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <th>User</th>
@@ -48,6 +115,7 @@
   </tr>
 <% end %>
 </table>
+<%end%>
 <br />
   <%= will_paginate @logged_actions %>
 <br/>

@@ -1,3 +1,4 @@
+<% if @associatable.class.to_s==QrCode::ENGAGEMENT_TYPE %>
 <%@logs.each do |log|%>
   <% user=User.find(log.user_id) %> 
   <% user_uid=user.email.split("@facebook").first %>
@@ -40,4 +41,23 @@
       </table>
     </div>
   </div>
+<%end%>
+<%else%>
+  <%@logs.each do |log|%>
+    <% user=User.find(log.user_id) %> 
+    <% user_uid=user.email.split("@facebook").first %>
+    <% place= Place.where(:id=>log.place_id).first %>
+    <% location_name=place.present? ? "@ #{place.try(:name).try(:capitalize)} - #{place.try(:address).try(:common_address)} - (#{place.try(:lat)}, #{place.try(:long)})" : ""%>
+    
+    <div class="usr_com">
+      <!--<div class="toggle_link">
+        <a class="toggle_p selected" style="color:white" href="javascript:void(0)">Feed View</a>
+        <a class="toggle_a" href="javascript:void(0)">Transaction View</a>
+      </div>-->
+      <div class="feed_entry">
+        <img src="https://graph.facebook.com/<%=user_uid%>/picture"/>
+        <p> <%="#{user.try(:full_name)} has scanned #{@associatable.full_name} ID #{location_name} at #{log.created_at.strftime("%I:%M %p")} on #{log.created_at.strftime("%b %d , %Y")} by going out with Cashbury"%></p>
+      </div>
+    </div>
+  <%end%>
 <%end%>

@@ -94,6 +94,10 @@ class QrCode < ActiveRecord::Base
     self.associatable if self.associatable.class.to_s == "Engagement"
   end
   
+  def user
+    self.associatable if self.associatable.class.to_s == "User"
+  end
+  
   def business_name
     if engagement.blank?
       "NA"

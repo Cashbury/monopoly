@@ -5,7 +5,7 @@
 <%= link_to 'Back', users_management_path(@user) %>
 <%=hidden_field_tag :user_id, @user.id%>
 <div id="logged_actions_container">
-  <%=render :partial=>"engagements_logs"%>
+  <%=render :partial=>"logs"%>
 </div>
 
 <%= link_to 'Back', users_management_path(@user) %>

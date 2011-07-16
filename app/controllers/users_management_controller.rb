@@ -355,15 +355,8 @@ class UsersManagementController < ApplicationController
                        .order("logs.created_on DESC")
                        .paginate(:page => @page,:per_page => Log::per_page )
     if request.xhr?
-      if @action.name==Action::CURRENT_ACTIONS[:engagement]
-          render :text=>(render_to_string :partial=> "engagements_logs",:layout=>false)
-      elsif @action.name==Action::CURRENT_ACTIONS[:redeem]
-          render :text=>(render_to_string :partial=> "rewards_logs",:layout=>false)
-      else    
-        render :text=>(render_to_string :partial=> "accounts_transfer_logs",:layout=>false)
-      end
-    end                
-                         
+      render :text=>(render_to_string :partial=> "logs",:layout=>false)
+    end                         
   end
   
   def list_places_and_bizs
