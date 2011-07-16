@@ -1,4 +1,6 @@
 Kazdoor::Application.routes.draw do
+  resources :states
+
   get "invite/friends"
 
   get "friends/invite"

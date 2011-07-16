@@ -1,8 +1,7 @@
-<%= form_for(@country) do |f| %>
+<%= form_for(@country, :html=>{:class=>"mono-form"}) do |f| %>
   <% if @country.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@country.errors.count, "error") %> prohibited this country from being saved:</h2>
-
       <ul>
       <% @country.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -11,6 +10,44 @@
     </div>
   <% end %>
 
+
+  <p>
+    <%= f.label :name %>
+    <%= f.text_field :name , :class=>"title"%>
+  </p>
+  <p>
+    <%= f.label :iso2 %>
+    <%= f.text_field :iso2 , :class=>"title" %>
+  </p>
+
+  <p>
+    <%= f.label :iso3 %>
+    <%= f.text_field :iso3 , :class=>"title" %>
+  </p>
+  <p>
+    <%= f.label :ison %>
+    <%= f.text_field :ison , :class=>"title" %>
+  </p>
+  <p>
+    <%= f.label :internet %>
+    <%= f.text_field :internet,:class=>"title"  %>
+  </p>
+  <p>
+    <%= f.label :nationality_singular %>
+    <%= f.text_field :nationality_singular , :class=>"title"%>
+  </p>
+  <p>
+    <%= f.label :nationality_plural %>
+    <%= f.text_field :nationality_plural, :class=>"title" %>
+  </p>
+  <p>
+    <%= f.label :capital %>
+    <%= f.text_field :capital, :class=>"title" %>
+  </p>
+  <p>
+    <%= f.label :currency %>
+    <%= f.text_field :currency, :class=>"title" %>
+  </p>
   <div class="actions">
     <%= f.submit %>
   </div>
