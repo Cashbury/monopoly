@@ -4,7 +4,6 @@ class CreateNeighborhood < ActiveRecord::Migration
       t.string :name
       t.boolean :approved
     end
-    add_index :countries, :name
   end
 
   def self.down
