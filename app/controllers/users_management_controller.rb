@@ -48,6 +48,8 @@ class UsersManagementController < ApplicationController
       else
         @user.build_mailing_address unless @user.mailing_address.present?
         @user.build_billing_address unless @user.billing_address.present?
+        @total=LegalType.count
+        @legal_ids=[]
         format.html { render :action => "new" }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
@@ -132,7 +134,7 @@ class UsersManagementController < ApplicationController
     @user.destroy
 
     respond_to do |format|
-      format.html { redirect_to(users_management_index_path) }
+      format.html { redirect_to(users_management_index_path, :notice=>"User has been deleted") }
       format.xml  { head :ok }
     end
   end

@@ -101,13 +101,13 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
       </span>
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
-    <p>
+    <!--<p>
       <%= f.label :password %>
       <%= f.password_field :password , :class=>"title" %>
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:password) %>
       </span>
-    </p>
+    </p>-->
   </fieldset>
   <div class="tabs">
     <ul>

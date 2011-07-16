@@ -1,4 +1,4 @@
-class Users::PasswordsController < Devise::PasswordsController	
+class Users::PasswordsController < Devise::PasswordsController
 	def create
     respond_to do |format|  
 			format.html { super }  

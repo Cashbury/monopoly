@@ -6,6 +6,7 @@ Kazdoor::Application.routes.draw do
     :sessions => "users/sessions",
     :registrations=>"users/registrations",
     :password=>"users/passwords",
+    :confirmations => "users/confirmations"
   }
 
 	devise_scope :user do
@@ -13,8 +14,12 @@ Kazdoor::Application.routes.draw do
 			resources :sessions, :only => [:create, :destroy]
 			resources :registrations, :only=>[:create]
       resources :passwords, :only=>[:create]
+      resources :confirmations, :only=>[:update]
 		end
 	end
+  as :user do
+    match '/user/confirmation' => 'users/confirmations#update', :via => :put, :as=> :update_user_confirmation
+  end
 
 	namespace :users do
 		resources :users_snaps do
