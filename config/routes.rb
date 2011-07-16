@@ -5,6 +5,11 @@ Kazdoor::Application.routes.draw do
 
   get "primary_user/new"
   get "primary_user/show"
+
+  resources :countries
+  resources :cities
+  resources :neighborhoods
+
   resources :transaction_types
 	devise_for :users, :controllers => {
     :sessions => "users/sessions",
@@ -135,14 +140,14 @@ Kazdoor::Application.routes.draw do
     resources :campaigns,:controller => "businesses/campaigns" do
       post "/crop_image",:action=>:crop_image
     end
-  
+
   end
   resources :users_management do
     get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
-    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"    
-    get "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"    
+    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"
+    get "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -152,7 +157,7 @@ Kazdoor::Application.routes.draw do
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
-  match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"  
+  match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"
 
   match "/show_code/:id"                  =>"qr_codes#show_code"
   match "/update_places"                  =>"places#update_places"
