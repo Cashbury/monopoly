@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  abbr: MyString
+  approved: false
+
+two:
+  name: MyString
+  abbr: MyString
+  approved: false

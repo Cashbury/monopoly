@@ -1,6 +1,12 @@
 <%= javascript_include_tag 'prototype' %>
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
+
+<style type="text/css" media="screen">
+  div.form_item_div select{margin:0 5px 0 0}
+  div.form_item_div input {padding:5px 2px; margin:0 3px 0 0}
+  div.form_item_div label {height:30px; line-height:30px; padding:0 5px}
+</style>
 <%= form_for([@business ,@campaign],:html => { :multipart => true }) do |f| %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <% if @campaign.errors.any? %>
@@ -14,14 +20,16 @@
   </div>
   <% end %>
   <fieldset>
-    <legend class="section_title">Set the offer</legend>
+    <legend class="section_title">Make an Offer</legend>
     <div class="form_item_div">
     <%= f.fields_for :engagements do |engagement|%>
-      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px"}%>
+      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
-      <input type="text" class="basic_info_caption1 inst" style="width:135px" name="item_name" id="item_text_field" title="Coffee Drink" value="<%=@item_name%>" />
+
       <%= f.fields_for :rewards do |reward|%>
-        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %><label> times, Get a free </label>
+        <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst left", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %>
+        <input type="text" class="basic_info_caption1 inst left" style="width:135px" name="item_name" id="item_text_field" title="Coffee Drink" value="<%=@item_name%>" />
+        <label class="left"> Get a </label>
         <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:330px;margin:0 0 0",:title=>"Coffee",:id=>"reward_name_field_id"}%>
     </div>
   </fieldset>
@@ -128,13 +136,13 @@ jQuery(document).ready(function(){
     if (jQuery(this).html()=="Add More Details" || jQuery(this).html()=="Edit Details")
       jQuery(this).html("Hide Details");
     else{
-      <%if @campaign.new_record? %> 
+      <%if @campaign.new_record? %>
         jQuery(this).html("Add More Details");
       <%else%>
         jQuery(this).html("Edit Details");
       <%end%>
     }
-    jQuery("#details_box").slideToggle(); 
+    jQuery("#details_box").slideToggle();
   });
   jQuery('#description_field').keydown(function(){
     var desc_text = jQuery(this).val();
@@ -155,12 +163,12 @@ jQuery(document).ready(function(){
     var brand_name=jQuery("#brand_name_id").val();
     if (no_of_times!="" && reward_name!="" ){
       if (item_name!="" && offer_type.match(/Buy/)!=null){
-        jQuery("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
+        jQuery("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");
       }else{
-        jQuery("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
+        jQuery("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");
       }
       jQuery("#fb_enjoy_msg").val("enjoyed a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
-      jQuery("#fb_unlock_msg").val("unlocked a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");      
+      jQuery("#fb_unlock_msg").val("unlocked a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
     }
   });
   function update_select_item_list_display(object){
@@ -175,6 +183,6 @@ jQuery(document).ready(function(){
       jQuery('#item_text_field').val("");
     }
   }
-  
+
 });
 </script>

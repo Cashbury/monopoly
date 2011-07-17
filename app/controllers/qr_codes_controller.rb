@@ -30,7 +30,7 @@ class QrCodesController < ApplicationController
   # GET /qr_codes/1.xml
   def show
     @qr_code = QrCode.find(params[:id]) if params[:id].present?
-    @qr_code = QrCode.where(:hash_code=>params[:hash_code]).first if params[:hash_code].present?    
+    @qr_code = QrCode.where(:hash_code=>params[:hash_code]).first if params[:hash_code].present?
     @engagement=@qr_code.try(:engagement)
     @engagement_type=@engagement.try(:engagement_type)
     @brand=@engagement.try(:campaign).try(:program).try(:business).try(:brand)
@@ -82,9 +82,9 @@ class QrCodesController < ApplicationController
   # PUT /qr_codes/1.xml
   def update
     @qr_code = QrCode.find(params[:id])
-    respond_to do |format|    
+    respond_to do |format|
       if @qr_code.update_attributes(params[:qr_code])
-        format.html { 
+        format.html {
           flash[:notice]='Qr code was successfully updated.'
           if @qr_code.associatable_type=="Engagement"
             redirect_to :action=>:index , :engagement_id=>@qr_code.associatable_id
@@ -233,20 +233,20 @@ class QrCodesController < ApplicationController
     search = search.merge({:code_type=>params[:code_type]})       unless params[:code_type].blank?
     QrCode.where(search).paginate(:page => page,:per_page => QrCode::per_page )
   end
-  
+
   def search_user_qrs(page)
     search = {}
     search = {:associatable_id =>params[:user_id],:associatable_type=>QrCode::USER_TYPE}
     QrCode.where(search).paginate(:page => page,:per_page => QrCode::per_page )
   end
-  
+
   def check_code_status
     @qr_code=QrCode.find(params[:id])
     @associatable=@qr_code.associatable
     result={}
     if @associatable.present?
       if @associatable.class.to_s==QrCode::ENGAGEMENT_TYPE
-        all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}")        
+        all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}").order("created_at desc")        
       elsif @associatable.class.to_s==QrCode::USER_TYPE
         all_logs=Log.where("qr_code_id=#{params[:id]}")
       end
@@ -262,7 +262,7 @@ class QrCodesController < ApplicationController
       render :json=>result.to_json
     end
   end
-  
+
   def list_all_associatable_qrcodes
     if params[:type]=="1"
       #calculating total number of scanning user qrcode
@@ -275,7 +275,7 @@ class QrCodesController < ApplicationController
       @qrcodes=QrCode.select("qr_codes.*, (SELECT COUNT(DISTINCT logs.user_id) from logs where logs.qr_code_id=qr_codes.id) as number_of_people,(SELECT COUNT(*) from logs where logs.qr_code_id=qr_codes.id) as number_of_scans").associated_with_engagements.where(:associatable_id=>params[:id])
     end
   end
-  
+
   def prepare_filters_data
     @print_jobs   ||= PrintJob.all
     @brands       ||= Brand.all

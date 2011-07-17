@@ -1,6 +1,17 @@
 Kazdoor::Application.routes.draw do
+  resources :states
+
+  get "invite/friends"
+
+  get "friends/invite"
+
   get "primary_user/new"
   get "primary_user/show"
+
+  resources :countries
+  resources :cities
+  resources :neighborhoods
+
   resources :transaction_types
 	devise_for :users, :controllers => {
     :sessions => "users/sessions",
@@ -136,7 +147,7 @@ Kazdoor::Application.routes.draw do
     resources :campaigns,:controller => "businesses/campaigns" do
       post "/crop_image",:action=>:crop_image
     end
-  
+
   end
   resources :users_management do
     get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
@@ -161,7 +172,7 @@ Kazdoor::Application.routes.draw do
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
-  match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"  
+  match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"
 
   match "/show_code/:id"                  =>"qr_codes#show_code"
   match "/update_places"                  =>"places#update_places"
