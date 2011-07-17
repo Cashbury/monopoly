@@ -14,7 +14,8 @@
     <td><%=result.current_amount%></td>
     <td><%=result.cumulative_amount%></td>
     <td><%=link_to "View Txs", list_transactions_users_management_path(result.uid,result.biz_id,result.p_id) %></td>
-    <td>Enrolled | <%=link_to "Un-Enroll", "#" %></td>
+    <td><span id="program_status_<%=result.pt_id%>"><%=result.status ? "Enrolled" : "Un-Enrolled"%></span> | <%=link_to result.status ? "Un-Enroll" : "Enroll", "javascript:void(0)", :class=>"manage_enroll_link",:id=>result.pt_id %>
+    <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
    </tr>
   <%end%>
 </table>

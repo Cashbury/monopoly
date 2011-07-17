@@ -162,7 +162,7 @@ Kazdoor::Application.routes.draw do
     get  "manage_user_accounts", :action=>:manage_user_accounts, :on=>:member, :as=>:manage_user_accounts
     get  "redeem_rewards", :action=>:redeem_rewards, :on=>:member, :as=>:redeem_rewards
     get  "list_engagements", :action=>:list_engagements, :on=>:member, :as=>"list_engagements"
-    get  "logged_actions", :action=>:logged_actions, :on=>:member, :as=>"logged_actions"    
+    get  "logged_actions", :action=>:logged_actions, :on=>:member, :as=>"logged_actions"
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -183,6 +183,7 @@ Kazdoor::Application.routes.draw do
   match "suspend_user/:id"                =>"users_management#suspend_user"
   match "reactivate_user/:id"             =>"users_management#reactivate_user"
   match "list_by_program_type/:program_type_id/:uid" =>"users_management#list_businesses_by_program_type"
+  match "enrollments/:user_id/:pt_id/:enroll" => "users_management#manage_user_enrollments"
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
