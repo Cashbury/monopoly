@@ -6,6 +6,7 @@
   <th>Cumulative SVA Balance @business</th>
   <th>View Tx logs</th>
   <th>Status (Action)</th>
+  <th>Listing Campaigns</th>
   <% @results.each do |result| %>
    <tr>
     <td><%=result.b_name%></td>
@@ -16,6 +17,7 @@
     <td><%=link_to "View Txs", list_transactions_users_management_path(result.uid,result.biz_id,result.p_id) %></td>
     <td><span id="program_status_<%=result.pt_id%>"><%=result.status ? "Enrolled" : "Un-Enrolled"%></span> | <%=link_to result.status ? "Un-Enroll" : "Enroll", "javascript:void(0)", :class=>"manage_enroll_link",:id=>result.pt_id %>
     <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
+    <td><%=link_to "List Campaigns", list_campaigns_users_management_path(result.uid,result.biz_id,result.p_id) %></td>
    </tr>
   <%end%>
 </table>

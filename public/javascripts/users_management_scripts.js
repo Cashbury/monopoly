@@ -101,6 +101,33 @@ jQuery(document).ready(function(){
       });
   });
   
+  jQuery('.manage_campaign_enroll_link').live('click', function(){
+    var ele=jQuery(this)[0];
+    var ele2=jQuery(this);
+    var c_id=ele.id;
+    var user_id = jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    var enroll= ele.text=="Un-Enroll" ? 0 : 1 ;
+    loadingImage.show();
+    jQuery.ajax({
+      type: 'GET',
+      url: "/campaign_enrollments/"+user_id+"/"+c_id+"/"+enroll,
+      success: function(data){
+        loadingImage.hide();
+        if (data==0){
+          ele2.text("Enroll");
+          jQuery('#campaign_status_'+c_id).html("Un-Enrolled");
+        }else{
+          ele2.text("Un-Enroll");
+          jQuery('#campaign_status_'+c_id).html("Enrolled");
+        }
+      },
+      error: function(data){
+        loadingImage.hide();
+      }
+      });
+  });
+  
   jQuery('.withdraw_link').click(function(){
     var form=jQuery(this).closest('form');
     if (form.find(':text').val()!=""){

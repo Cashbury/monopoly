@@ -362,7 +362,32 @@ class UsersManagementController < ApplicationController
   end
   
   def manage_user_enrollments
-    ids=Program.joins([:program_type, :campaigns=>[:accounts=>:account_holder]]).where("account_holders.model_id=#{params[:user_id]} and account_holders.model_type='User' and program_types.id=#{params[:pt_id]}").select("accounts.id")
+    ids=Program.joins([:program_type, :campaigns=>[:accounts=>:account_holder]])
+               .where("account_holders.model_id=#{params[:user_id]} and account_holders.model_type='User' and program_types.id=#{params[:pt_id]}")
+               .select("accounts.id")
+    if request.xhr?
+      if Account.where(:id=>ids).update_all(:status=>params[:enroll].to_i)
+        render :text=>params[:enroll].to_i
+      else
+        render :text=>!params[:enroll].to_i
+      end
+    end
+  end
+  
+  def list_campaigns
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @user=User.find(params[:id])
+    @business= Business.find(params[:business_id])
+    @campaigns=Campaign.joins("LEFT OUTER JOIN accounts ON accounts.campaign_id=campaigns.id LEFT OUTER JOIN account_holders ON account_holders.id=accounts.account_holder_id",:program=>[:program_type,:business])
+                       .where("businesses.id=#{params[:business_id]} and programs.id=#{params[:program_id]} and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+                       .select("campaigns.id as c_id,campaigns.name as c_name,program_types.name as p_name, businesses.name as b_name, campaigns.created_at,accounts.status AS enrollment_status")
+                       .paginate(:page => @page,:per_page => Log::per_page )
+  end
+  
+  def manage_campaign_enrollments
+    ids=Campaign.joins(:accounts=>:account_holder)
+                .where("account_holders.model_id=#{params[:user_id]} and account_holders.model_type='User' and campaigns.id=#{params[:c_id]}")
+                .select("accounts.id")
     if request.xhr?
       if Account.where(:id=>ids).update_all(:status=>params[:enroll].to_i)
         render :text=>params[:enroll].to_i

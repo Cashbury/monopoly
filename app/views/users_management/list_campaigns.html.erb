@@ -1,0 +1,34 @@
+<head>
+<%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
+</head>
+<% title "Listing Campaigns for #{@business.name}" %>
+<%= link_to 'Back', users_management_path(@user) %>
+<%=hidden_field_tag :user_id, @user.id%>
+<p><h2><b>Total: <%=@campaigns.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @campaigns %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Campaign</th>
+    <th>Program</th>
+    <th>Business</th>
+    <th>Status</th>
+    <th>Created On</th>
+  </tr>
+<% @campaigns.each do |campaign| %>
+  <tr>
+    <td><%= campaign.c_name%></td>
+    <td><%= campaign.p_name%></td>
+    <td><%= campaign.b_name %></td>
+    <td><span id="campaign_status_<%=campaign.c_id%>"><%=campaign.enrollment_status=="1" ? "Enrolled" : "Un-Enrolled"%></span> | <%=link_to campaign.enrollment_status=="1" ?  "Un-Enroll" : "Enroll", "javascript:void(0)", :class=>"manage_campaign_enroll_link",:id=>campaign.c_id %>
+    <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
+    <td><%= campaign.created_at.to_formatted_s(:long) if campaign.created_at%></td> 
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @campaigns %>
+<br/>
+
+<%= link_to 'Back', users_management_path(@user) %>
