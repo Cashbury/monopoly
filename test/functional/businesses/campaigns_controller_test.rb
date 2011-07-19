@@ -33,7 +33,7 @@ class Businesses::CampaignsControllerTest < ActionController::TestCase
   test "should create campaign" do
     assert_difference('Campaign.count') do
       @campaign=Factory.build(:campaign,:program_id=>@program.id)      
-      @engagement=@campaign.engagements.build(:engagement_type_id=>Factory.create(:engagement_type,:name=>"Buy a product/service",:has_item=>true).id,:amount=>1)
+      @engagement=@campaign.engagements.build(:engagement_type_id=>Factory.create(:engagement_type,:name=>"Buy a product/service",:eng_type=>EngagementType::ENG_TYPE[:buy]).id,:amount=>1)
       @reward=@campaign.rewards.build(:name=>"Coffee Drink",:needed_amount=>10)
       params=@campaign.attributes
       params["item_name"]="Coffee"

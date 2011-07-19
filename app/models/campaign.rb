@@ -40,6 +40,11 @@ class Campaign < ActiveRecord::Base
 	attr_accessor   :places_list,:item_name
 	accepts_nested_attributes_for :engagements
 	accepts_nested_attributes_for :rewards
+	
+	CTYPE={
+	  :spend=>1
+	}
+	
   def init
     self.initial_biz_amount ||= 10000 
   end

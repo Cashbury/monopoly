@@ -35,8 +35,9 @@ puts "Creating system program types"
 ProgramType.find_or_create_by_name(:name=>"Marketing")
 ProgramType.find_or_create_by_name(:name=>"Money")
 puts "Creating system engagement types"
-EngagementType.find_or_create_by_name(:name=>"Visit/Check-IN", :is_visit=>true)
-EngagementType.find_or_create_by_name(:name=>"Buy a product/service",:has_item=>true)
+EngagementType.find_or_create_by_name(:name=>"visit", :eng_type=>EngagementType::ENG_TYPE[:visit])
+EngagementType.find_or_create_by_name(:name=>"buy",:eng_type=>EngagementType::ENG_TYPE[:buy])
+EngagementType.find_or_create_by_name(:name=>"spend",:eng_type=>EngagementType::ENG_TYPE[:spend])
 puts "Creating system measurement types"
 MeasurementType.find_or_create_by_name(:name=>"Money")
 MeasurementType.find_or_create_by_name(:name=>"Points")

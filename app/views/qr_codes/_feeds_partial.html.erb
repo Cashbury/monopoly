@@ -6,7 +6,7 @@
   <% place= Place.where(:id=>log.place_id).first %>
   <% location_name=place.try(:name).try(:capitalize) %>
   <% location_name=engagement.try(:campaign).try(:program).try(:business).try(:brand).try(:name) if location_name.nil? %>
-  <% engagement_text= engagement.engagement_type.is_visit ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}" %>
+  <% engagement_text= engagement.engagement_type.eng_type==EngagementType::ENG_TYPE[:visit] ? "visited #{location_name}" : "enjoyed a/an #{engagement.name.gsub("Buy ","")}" %>
   <div class="usr_com">
     <div class="toggle_link">
       <a class="toggle_p selected" style="color:white" href="javascript:void(0)">Feed View</a>

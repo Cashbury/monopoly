@@ -40,7 +40,10 @@ Kazdoor::Application.routes.draw do
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
-
+    resources :cashiers do
+      get '/check_role.:format',:action=>:check_user_role, :on =>:collection
+      get '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
+    end
     resource :businesses do
 			get '/primary_place', :action=>:primary_place,  :on =>:collection
 			post '/primary_place',:action=>:primary_place,  :on =>:collection
