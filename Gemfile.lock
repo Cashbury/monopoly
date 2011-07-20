@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/cavneb/make_flaggable.git
-  revision: fe6aac7e593fe5326363e0f0c840153f7454b034
-  specs:
-    make_flaggable (0.0.3)
-      activerecord (~> 3.0.0)
-
-GIT
   remote: http://github.com/paneq/calendar_date_select.git
   revision: 8e7ec79435a68665df40b14bd90f47e6ac5e9135
   branch: rails3test
@@ -170,7 +163,6 @@ DEPENDENCIES
   factory_girl_rails (= 1.0.1)
   geokit-rails3 (= 0.1.2)
   jquery-rails (= 0.2.7)
-  make_flaggable!
   mocha (= 0.9.12)
   mysql (= 2.8.1)
   nifty-generators (= 0.4.5)
