@@ -6,7 +6,8 @@ class CitiesController < ApplicationController
 
 
   def index
-    @cities = City.all
+
+    @cities = City.paginate :page =>params[:page] , :order => "name asc"
 
     respond_to do |format|
       format.html # index.html.erb

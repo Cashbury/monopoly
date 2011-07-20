@@ -1,8 +1,8 @@
-<h1>Listing countries</h1>
-
+<h1>Listing countries (<%= Country.count %>)</h1>
 <table class="mono-table" border="0" >
   <tr>
     <th>Name</th>
+    <th>Flag</th>
     <th></th>
     <th></th>
     <th></th>
@@ -10,7 +10,8 @@
 
 <% @countries.each do |country| %>
   <tr>
-    <td><%= country.name %></td>
+    <td><%= raw country.name %></td>
+    <td><%= image_tag "countries/#{country.iso2.to_s.downcase}.png" %></td>
     <td><%= link_to 'Show', country %></td>
     <td><%= link_to 'Edit', edit_country_path(country) %></td>
     <td><%= link_to 'Destroy', country, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -20,4 +21,5 @@
 
 <br />
 
-<%= link_to 'New Country', new_country_path %>
+<%= will_paginate @countries %>
+<%= link_to 'New Country', new_country_path %>id

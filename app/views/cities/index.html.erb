@@ -1,10 +1,10 @@
-<h1>Listing cities</h1>
+<h1>Listing cities (<%= City.count %>)</h1>
 
 <table class="mono-table" border="0">
   <tr>
     <th>Name</th>
     <th>Country</th>
-    <th>Flag</th>
+    <th>Tel. Area code</th>
     <th></th>
     <th></th>
     <th></th>
@@ -14,7 +14,7 @@
   <tr>
     <td><%= city.name %></td>
     <td><%= city.country.try :name %></td>
-    <td><%= city.area_code %></td>
+    <td><%= city.phone_area_code %></td>
     <td><%= link_to 'Show', city %></td>
     <td><%= link_to 'Edit', edit_city_path(city) %></td>
     <td><%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -23,5 +23,5 @@
 </table>
 
 <br />
-
+<%= will_paginate @cities %>
 <%= link_to 'New City', new_city_path %>

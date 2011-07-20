@@ -7,13 +7,13 @@
   Country:<%= @city.country.try :name %>
 </p>
 <p>
-  Area code:<%= @city.area_code %>
+  Area code:<%= @city.phone_area_code %>
 </p>
 <p>
   <% if @city.is_live? %>
-    "live"
+    live
   <%else%>
-    "not live yet"
+    not live yet
   <%end %>
 </p>
 <p>
