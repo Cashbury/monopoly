@@ -9,6 +9,7 @@
 #
 
 class Country < ActiveRecord::Base
+  # attr_accessible
   has_many :cities
   has_many :addresses
   has_one  :address_profile

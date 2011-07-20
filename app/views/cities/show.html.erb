@@ -1,5 +1,14 @@
 <p id="notice"><%= notice %></p>
 
-
+<p>
+  Name:  <%= @city.name %>
+</p>
+<p>
+  Country:<%= @city.country.try :name %>
+</p>
+<p>
+  Area code:<%= @city.area_code %>
+</p>
+<p>
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>

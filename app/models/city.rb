@@ -11,7 +11,7 @@
 #
 
 class City < ActiveRecord::Base
-  attr_accessor :name, :country_id, :lat, :lng, :area_code, :is_live
+  attr_accessible :name, :country_id, :lat, :lng, :area_code, :is_live
 
   belongs_to :country
   has_many :addresses
