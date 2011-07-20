@@ -1,5 +1,37 @@
 <p id="notice"><%= notice %></p>
 
+<p>
+  Name:  <%= @country.name %>
+</p>
+<p>
+  Abbr:<%= @country.abbr %>
+</p>
+<p>
+  iso2:<%= @country.iso2%>
+</p>
+<p>
+  iso3<%= @country.iso3 %>
+</p>
+<p>
+  ison:<%= @country.ison %>
+</p>
+<p>
+  nationality singular:<%= @country.nationality_singular %>
+</p>
+<p>
+  nationality plural:<%= @country.nationality_plural %>
+</p>
+<p>
+  country code:<%= @country.country_code %>
+</p>
+
+<p>
+  Currency :<%= @country.currency %>
+</p>
+<p>
+  Internet :<%= @country.internet %>
+</p>
+
 
 <%= link_to 'Edit', edit_country_path(@country) %> |
 <%= link_to 'Back', countries_path %>

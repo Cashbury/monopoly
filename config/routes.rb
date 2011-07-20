@@ -10,7 +10,6 @@ Kazdoor::Application.routes.draw do
   resources :like
 
   resources :states
-
   resources :countries
   resources :cities
   resources :neighborhoods

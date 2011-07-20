@@ -11,9 +11,14 @@
   <% end %>
 
 
+
   <p>
     <%= f.label :name %>
     <%= f.text_field :name , :class=>"title"%>
+  </p>
+  <p>
+    <%= f.label :abbr %>
+    <%= f.text_field :abbr , :class=>"title"%>
   </p>
   <p>
     <%= f.label :iso2 %>
@@ -47,6 +52,10 @@
   <p>
     <%= f.label :currency %>
     <%= f.text_field :currency, :class=>"title" %>
+  </p>
+  <p>
+    <%= f.label :country_code %>
+    <%= f.text_field :country_code, :class=>"title" %>
   </p>
   <div class="actions">
     <%= f.submit %>

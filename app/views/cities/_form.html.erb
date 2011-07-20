@@ -20,8 +20,12 @@
     <%= f.collection_select :country_id , Country.all , :id , :name %>
   </p>
   <p>
-    <%= f.label "state" %>
-    <%= f.collection_select :state_id , State.all , :id , :name %>
+    <%= f.label :area_code %>
+    <%= f.text_field :area_code, :class=>"title" %>
+  </p>
+  <p>
+    <%= f.check_box :is_live  %>
+    <%= f.label :is_live %>
   </p>
   <div class="actions">
     <%= f.submit %>

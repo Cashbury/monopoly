@@ -86,22 +86,7 @@ class PlacesController < ApplicationController
     render :json => @users
   end
 
-  def prepare_hours
-    @hours = []
-    7.upto(11) do | i |
-      @hours << "#{i}:00 AM"
-      @hours << "#{i}:30 AM"
-    end
-    @hours << "12:00 PM"
-    @hours << "12:30 PM"
-    1.upto(11) do | i |
-      @hours << "#{i}:00 PM"
-      @hours << "#{i}:30 PM"
-    end
-    @hours << "12:00 AM"
-    @hours << "12:30 AM"
-    return @hours
-  end
+
 
   private
 

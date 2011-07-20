@@ -3,6 +3,8 @@
 <table class="mono-table" border="0">
   <tr>
     <th>Name</th>
+    <th>Country</th>
+    <th>Flag</th>
     <th></th>
     <th></th>
     <th></th>
@@ -11,6 +13,8 @@
 <% @cities.each do |city| %>
   <tr>
     <td><%= city.name %></td>
+    <td><%= city.country.try :name %></td>
+    <td><%= city.area_code %></td>
     <td><%= link_to 'Show', city %></td>
     <td><%= link_to 'Edit', edit_city_path(city) %></td>
     <td><%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete %></td>

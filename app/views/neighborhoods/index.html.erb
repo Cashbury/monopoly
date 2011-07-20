@@ -2,13 +2,17 @@
 
 <table>
   <tr>
+    <th>Name</th>
+    <th>City</th>
     <th></th>
     <th></th>
     <th></th>
   </tr>
 
-<% @neighborhoods.each do |neighborhood| %>
+  <% @neighborhoods.each do |neighborhood| %>
   <tr>
+    <td><%= neighborhood.name %></td>
+    <td><%= neighborhood.city.try :name %></td>
     <td><%= link_to 'Show', neighborhood %></td>
     <td><%= link_to 'Edit', edit_neighborhood_path(neighborhood) %></td>
     <td><%= link_to 'Destroy', neighborhood, :confirm => 'Are you sure?', :method => :delete %></td>
