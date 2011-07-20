@@ -1,5 +1,5 @@
 <head>
-<%= javascript_include_tag '$.datePicker-2.1.2' %>
+<%= javascript_include_tag 'jQuery.datePicker-2.1.2' %>
 <%= stylesheet_link_tag 'datePicker' %>
 <style type="text/css" media="screen">
   div.form_item_div select{margin:0 5px 0 0}
@@ -23,7 +23,7 @@
   <% end %>
   <div class="row">
     <h4>Setting The rule</h4>
-    1 $=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
+    1 jQuery=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
   </div>
   <div class="row">
   <%=link_to "Add Engagement" ,"javascript:void(0)", {:id=>"add_engagement"} %>            
@@ -31,11 +31,11 @@
   <fieldset>
     <legend class="section_title">An Offer</legend>
     <div class="form_item_div">
-      <label class="left"> Spend $</label>   
+      <label class="left"> Spend jQuery</label>   
       <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
       <label class="left"> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
-      <label class="left"> Get a $</label>
+      <label class="left"> Get a jQuery</label>
       <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
       <label class="left"> Cash back, Offer available until </label> 
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
@@ -47,11 +47,11 @@
   <fieldset>
     <legend class="section_title">An Offer</legend>
     <div class="form_item_div">
-      <label class="left"> Spend $</label>   
+      <label class="left"> Spend jQuery</label>   
       <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0"} %>
       <label class="left"> before </label>
       <input type="text" class="basic_info_caption1 date_template datepicker" style="width:95px;margin:0 0 0" name="Z[end_date]">    
-      <label class="left"> Get a $</label>
+      <label class="left"> Get a jQuery</label>
       <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
       <label class="left"> Cash back, Offer available until</label>       
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]">
@@ -102,33 +102,33 @@
 
 <script type="text/javascript">
 var counter=0;
-$(document).ready(function(){
-  $('input.datepicker').live('click', function() {
-    $(this).datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' }).focus();
+jQuery(document).ready(function(){
+  jQuery('input.datepicker').live('click', function() {
+    jQuery(this).datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' }).focus();
   });
-  $("#add_engagement").click(function(){
-    var content=$('#template').html();
+  jQuery("#add_engagement").click(function(){
+    var content=jQuery('#template').html();
     var next_index=counter+1;
     var content1=content.replace(/X/g,"campaign[rewards_attributes]["+next_index+"]");
     var content2=content1.replace(/Z/g,"engagement["+next_index+"]");
-    $("#engagements_container").append(content2);
+    jQuery("#engagements_container").append(content2);
     
   });
-  $("input.datepicker").change(function () {
-    $("input.date_template").last().val($(":selected",this).val());
+  jQuery("input.datepicker").change(function () {
+    jQuery("input.date_template").last().val(jQuery(":selected",this).val());
   });
   
-  $("#add_details_link").click(function(){
-    if ($(this).html()=="Add More Details" || $(this).html()=="Edit Details")
-      $(this).html("Hide Details");
+  jQuery("#add_details_link").click(function(){
+    if (jQuery(this).html()=="Add More Details" || jQuery(this).html()=="Edit Details")
+      jQuery(this).html("Hide Details");
     else{
       <%if @campaign.new_record? %>
-        $(this).html("Add More Details");
+        jQuery(this).html("Add More Details");
       <%else%>
-        $(this).html("Edit Details");
+        jQuery(this).html("Edit Details");
       <%end%>
     }
-    $("#details_box").slideToggle();
+    jQuery("#details_box").slideToggle();
   });
 
 });

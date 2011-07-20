@@ -1,4 +1,4 @@
-//jQuery.noConflict();
+jQuery.noConflict();
 jQuery(function () {
   jQuery('#reports th a').live('click', function () {
     jQuery.getScript(this.href);
