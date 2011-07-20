@@ -150,7 +150,7 @@ Kazdoor::Application.routes.draw do
     resources :campaigns,:controller => "businesses/campaigns" do
       post "/crop_image",:action=>:crop_image
     end
-
+    resources :spend_campaigns,:controller => "businesses/spend_campaigns"
   end
   resources :users_management do
     get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
@@ -192,6 +192,7 @@ Kazdoor::Application.routes.draw do
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
+#  match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
   #devise_for :users
 
   # The priority is based upon order of creation:

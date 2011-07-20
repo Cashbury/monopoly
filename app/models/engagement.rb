@@ -46,7 +46,7 @@ class Engagement < ActiveRecord::Base
   validates :name, :presence =>true,
                    :length =>{:within=>3..50}
 
-  validates_presence_of :engagement_type_id, :amount, :fb_engagement_msg
+  validates_presence_of :engagement_type_id, :amount#, :fb_engagement_msg
   #validates_presence_of :item_id, :if=>Proc.new{|eng| eng.engagement_type.eng_type==EngagementType::ENG_TYPE[:buy]}
   validates_numericality_of :amount
   

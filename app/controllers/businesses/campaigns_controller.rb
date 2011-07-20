@@ -1,11 +1,11 @@
 class Businesses::CampaignsController < ApplicationController
   before_filter :authenticate_user!, :require_admin
-  before_filter :prepare_business
+  before_filter :prepare_business#, :except=>[:select_partial]
   
   def index
     program_type=ProgramType.find_or_create_by_name("Marketing")
     program=Program.where(:business_id=>@business.id,:program_type_id=>program_type.id).first
-    @campaigns=program.nil? ? [] : program.campaigns.select {|c| c.engagements.size==1 && c.rewards.size==1}
+    @campaigns=program.nil? ? [] : program.campaigns.select {|c| c.ctype==Campaign::CTYPE[:spend] || (c.engagements.size==1 && c.rewards.size==1)}
     
     respond_to do |format|
       format.html
@@ -37,7 +37,7 @@ class Businesses::CampaignsController < ApplicationController
     eng_type =EngagementType.find(eng_attrs[:engagement_type_id])
     if eng_type.eng_type==EngagementType::ENG_TYPE[:buy] 
       @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"#{params[:item_name].try(:capitalize)} points",:business_id=>@business.id)
-  elsif eng_type.eng_type==EngagementType::ENG_TYPE[:visit]
+    elsif eng_type.eng_type==EngagementType::ENG_TYPE[:visit]
       @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"Visit points",:business_id=>@business.id)
     else
       @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
@@ -154,6 +154,17 @@ class Businesses::CampaignsController < ApplicationController
       format.html { redirect_to(business_campaigns_url(@business)) }
     end
   end
+  
+  #def select_partial
+  #  engagement_type=EngagementType.find(params[:eng_type])
+  #  if engagement_type.eng_type==EngagementType::ENG_TYPE[:buy]
+  #    render :partial=>"buy_formula"
+  #  elsif engagement_type.eng_type==EngagementType::ENG_TYPE[:visit]
+  #    render :partial=>"visit_formula"
+  #  else
+  #    render :partial=>"spend_formula"
+  #  end
+  #end
   
   private 
   def prepare_business

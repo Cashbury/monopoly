@@ -1,0 +1,135 @@
+<head>
+<%= javascript_include_tag '$.datePicker-2.1.2' %>
+<%= stylesheet_link_tag 'datePicker' %>
+<style type="text/css" media="screen">
+  div.form_item_div select{margin:0 5px 0 0}
+  div.form_item_div input {padding:5px 2px; margin:0 3px 0 0}
+  div.form_item_div label {height:30px; line-height:30px; padding:0 5px}
+  .form_item_div .calendar_date_select_popup_icon {float:left}
+  .row {width:880px;}
+</style>
+</head>
+<%= form_tag(business_spend_campaigns_path(@business)) do  %>
+  <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
+  <% if @campaign.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
+      <ul>
+        <% @campaign.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+  </div>
+  <% end %>
+  <div class="row">
+    <h4>Setting The rule</h4>
+    1 $=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
+  </div>
+  <div class="row">
+  <%=link_to "Add Engagement" ,"javascript:void(0)", {:id=>"add_engagement"} %>            
+  <div id="engagements_container">
+  <fieldset>
+    <legend class="section_title">An Offer</legend>
+    <div class="form_item_div">
+      <label class="left"> Spend $</label>   
+      <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
+      <label class="left"> before </label>
+      <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
+      <label class="left"> Get a $</label>
+      <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
+      <label class="left"> Cash back, Offer available until </label> 
+      <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
+    </div>
+  </fieldset>
+  </div>
+  </div>
+  <div id="template" style="display:none">
+  <fieldset>
+    <legend class="section_title">An Offer</legend>
+    <div class="form_item_div">
+      <label class="left"> Spend $</label>   
+      <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0"} %>
+      <label class="left"> before </label>
+      <input type="text" class="basic_info_caption1 date_template datepicker" style="width:95px;margin:0 0 0" name="Z[end_date]">    
+      <label class="left"> Get a $</label>
+      <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
+      <label class="left"> Cash back, Offer available until</label>       
+      <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]">
+    </div>
+  </fieldset>
+  </div>
+  <br /><br />
+  <fieldset >
+    <legend class="section_title">Select the branches where this offer will be available</legend>
+    <div class="form_item_div">
+      <% @business.places.each do |place| %>
+        <% listed_places= @campaign.new_record? ? @business.places : @campaign.places%>
+        <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect{|i| i.id == place.id}) %>
+        <%= "#{place.name}"%><br />
+      <% end %>
+    </div>
+  </fieldset>
+  <br /><br />
+  <fieldset >
+    <legend class="section_title">Who is this offer targeted to</legend>
+    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
+  </fieldset><br/><br/>
+  <p><a id="add_details_link" href="javascript:void(0)">Add More Details</a></p>
+  <br /><br />
+  <fieldset id="details_box" style="display:none">
+    <legend class="section_title">More Details</legend>
+      <div class="row">
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= calendar_date_select_tag "campaign[start_date]"%>
+      </div>
+      <div class="row">
+        <%= label_tag :initial_amount %><br />
+        <%= text_field_tag "campaign[initial_amount]" ,0.0, {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
+      </div>
+      <div class="row">
+        <%= label_tag :initial_biz_amount %><br />
+        <%= text_field_tag "campaign[initial_biz_amount]" ,"", {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
+      </div>
+      <div class="row">
+        <%= label_tag "This offer should be available until" %><br />
+        <%= calendar_date_select_tag "campaign[end_date]"%>
+      </div>
+    <br /><br />
+  </fieldset>
+  <div class="actions">
+    <p><%= submit_tag "Make Offer"%></p>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+var counter=0;
+$(document).ready(function(){
+  $('input.datepicker').live('click', function() {
+    $(this).datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' }).focus();
+  });
+  $("#add_engagement").click(function(){
+    var content=$('#template').html();
+    var next_index=counter+1;
+    var content1=content.replace(/X/g,"campaign[rewards_attributes]["+next_index+"]");
+    var content2=content1.replace(/Z/g,"engagement["+next_index+"]");
+    $("#engagements_container").append(content2);
+    
+  });
+  $("input.datepicker").change(function () {
+    $("input.date_template").last().val($(":selected",this).val());
+  });
+  
+  $("#add_details_link").click(function(){
+    if ($(this).html()=="Add More Details" || $(this).html()=="Edit Details")
+      $(this).html("Hide Details");
+    else{
+      <%if @campaign.new_record? %>
+        $(this).html("Add More Details");
+      <%else%>
+        $(this).html("Edit Details");
+      <%end%>
+    }
+    $("#details_box").slideToggle();
+  });
+
+});
+</script>

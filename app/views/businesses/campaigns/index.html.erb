@@ -17,7 +17,7 @@
 
 <% @campaigns.each do |campaign | %>
   <tr>
-    <td><%= link_to campaign.name, business_campaign_url(@business,campaign)%></td>
+    <td><%= link_to campaign.name, campaign.ctype==Campaign::CTYPE[:spend]? business_spend_campaign_url(@business,campaign) : business_campaign_url(@business,campaign)%></td>
     <td><%= campaign.start_date %></td>
     <td><%= campaign.end_date %></td>
     <td><%= campaign.program.try(:business).try(:name) %></td>
@@ -26,9 +26,9 @@
     <td><%= campaign.initial_biz_amount %></td>
     <td><%= campaign.measurement_type.try(:name) %></td>
    
-    <td><%= link_to 'Show', business_campaign_path(@business,campaign) %></td>
-    <td><%= link_to 'Edit', edit_business_campaign_path(@business,campaign) %></td>
-    <td><%= button_to "Destroy", business_campaign_path(@business,campaign), :method=>:delete, :class=>:destroy,:confirm=>"Are you sure?" %></td>
+    <td><%= link_to 'Show', campaign.ctype==Campaign::CTYPE[:spend]? business_spend_campaign_url(@business,campaign) : business_campaign_url(@business,campaign) %></td>
+    <td><%= link_to 'Edit', campaign.ctype==Campaign::CTYPE[:spend]? edit_business_spend_campaign_path(@business,campaign) : edit_business_campaign_path(@business,campaign) %></td>
+    <td><%= button_to "Destroy", campaign.ctype==Campaign::CTYPE[:spend]? business_spend_campaign_path(@business,campaign) : business_campaign_path(@business,campaign), :method=>:delete, :class=>:destroy,:confirm=>"Are you sure?" %></td>
   </tr>
 <% end %>
 </table>
