@@ -246,7 +246,7 @@ class QrCodesController < ApplicationController
     result={}
     if @associatable.present?
       if @associatable.class.to_s==QrCode::ENGAGEMENT_TYPE
-        all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}").order("created_at desc")        
+        all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}").order("logs.created_at desc")        
       elsif @associatable.class.to_s==QrCode::USER_TYPE
         all_logs=Log.where("qr_code_id=#{params[:id]}")
       end
