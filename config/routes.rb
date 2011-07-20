@@ -1,12 +1,15 @@
 Kazdoor::Application.routes.draw do
-  resources :states
 
   get "invite/friends"
-
   get "friends/invite"
 
   get "primary_user/new"
   get "primary_user/show"
+
+
+  resources :like
+
+  resources :states
 
   resources :countries
   resources :cities

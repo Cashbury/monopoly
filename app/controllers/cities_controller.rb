@@ -3,6 +3,8 @@ class CitiesController < ApplicationController
 
   # GET /cities
   # GET /cities.xml
+
+
   def index
     @cities = City.all
 
