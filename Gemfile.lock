@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/cavneb/make_flaggable.git
+  revision: fe6aac7e593fe5326363e0f0c840153f7454b034
+  specs:
+    make_flaggable (0.0.3)
+      activerecord (~> 3.0.0)
+
+GIT
   remote: http://github.com/paneq/calendar_date_select.git
   revision: 8e7ec79435a68665df40b14bd90f47e6ac5e9135
   branch: rails3test
@@ -37,6 +44,7 @@ GEM
       activesupport (= 3.0.3)
     activesupport (3.0.3)
     acts-as-taggable-on (2.0.6)
+    archive-tar-minitar (0.5.2)
     arel (2.0.10)
     aws-s3 (0.6.2)
       builder
@@ -49,7 +57,8 @@ GEM
     carmen (0.2.5)
     carrierwave (0.5.2)
       activesupport (~> 3.0)
-    daemons (1.0.10)
+    columnize (0.3.4)
+    daemons (1.1.4)
     delayed_job (2.1.4)
       activesupport (~> 3.0)
       daemons
@@ -71,6 +80,8 @@ GEM
     jquery-rails (0.2.7)
       rails (~> 3.0)
       thor (~> 0.14.4)
+    linecache19 (0.5.12)
+      ruby_core_source (>= 0.1.4)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -115,15 +126,27 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    rspec-rails (2.2.0)
-      rails (~> 3.0.0)
-      rspec (~> 2.2)
+    rspec-rails (2.6.1)
+      actionpack (~> 3.0)
+      activesupport (~> 3.0)
+      railties (~> 3.0)
+      rspec (~> 2.6.0)
+    ruby-debug-base19 (0.11.25)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby_core_source (0.1.5)
+      archive-tar-minitar (>= 0.5.2)
     shoulda (2.11.3)
     thor (0.14.6)
     transitions (0.0.9)
     treetop (1.4.9)
       polyglot (>= 0.3.1)
-    tzinfo (0.3.28)
+    tzinfo (0.3.29)
     warden (1.0.4)
       rack (>= 1.0)
     wicked_pdf (0.6.0)
@@ -147,6 +170,7 @@ DEPENDENCIES
   factory_girl_rails (= 1.0.1)
   geokit-rails3 (= 0.1.2)
   jquery-rails (= 0.2.7)
+  make_flaggable!
   mocha (= 0.9.12)
   mysql (= 2.8.1)
   nifty-generators (= 0.4.5)
@@ -157,6 +181,7 @@ DEPENDENCIES
   rcov (= 0.9.9)
   rmagick (= 2.13.1)
   rspec-rails
+  ruby-debug19
   shoulda (= 2.11.3)
   transitions
   wicked_pdf (= 0.6.0)
