@@ -10,5 +10,12 @@
   Area code:<%= @city.area_code %>
 </p>
 <p>
+  <% if @city.is_live? %>
+    "live"
+  <%else%>
+    "not live yet"
+  <%end %>
+</p>
+<p>
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>
