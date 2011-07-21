@@ -21,8 +21,13 @@
     <%= f.label "Legal Business ID" %>
     <%= f.text_field :legal_id , :class=>"title" %>
   </p>
+  
+  <p>
+    <%= f.label "Activate Users ID" %>
+    <%= f.check_box :activate_users_id %>
+  </p>
 
-  <fieldset>
+<!--  <fieldset>
     <legend>Business Mailing Address</legend>
       <%= f.fields_for :mailing_address,f.object.mailing_address do |mailing_address_form| %>
         <p>
@@ -57,7 +62,7 @@
           <%= billing_address_form.text_field :neighborhood , :class=>"title" %>
         </p>
         -->
-        <p>
+  <!--      <p>
           <%= billing_address_form.hidden_field :country_id , :class=>"title" %>
         </p>
         <p>
@@ -70,7 +75,7 @@
           <%= billing_address_form.text_field :zipcode , :class=>"title" %>
         </p>
       <%end%>
-    </fieldset>
+    </fieldset>-->
     <br/>
 
   <p>

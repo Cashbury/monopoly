@@ -241,17 +241,23 @@ class QrCodesController < ApplicationController
   end
 
   def check_code_status
-    all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transacti1on_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}").order("created_at desc")
-
-    users_count=Log.select("count(DISTINCT user_id) as no_of_users").where("qr_code_id=#{params[:id]}").first
-    @logs=all_logs[params[:index].to_i,all_logs.size]
-    result={}
-    result[:no_of_scanning]=all_logs.size.to_s
-    result[:no_of_users]=users_count.no_of_users
-    result[:index]=params[:index].to_i+@logs.size
     @qr_code=QrCode.find(params[:id])
-    result[:status]=@qr_code.status? ? "Active" : "Inactive"
-    result[:response_text]=render_to_string :partial=> "feeds_partial"
+    @associatable=@qr_code.associatable
+    result={}
+    if @associatable.present?
+      if @associatable.class.to_s==QrCode::ENGAGEMENT_TYPE
+        all_logs=Log.joins(:transaction=>:transaction_type).select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id").where("qr_code_id=#{params[:id]}").order("logs.created_at desc")        
+      elsif @associatable.class.to_s==QrCode::USER_TYPE
+        all_logs=Log.where("qr_code_id=#{params[:id]}")
+      end
+      users_count=Log.select("count(DISTINCT user_id) as no_of_users").where("qr_code_id=#{params[:id]}").first
+      @logs=all_logs[params[:index].to_i,all_logs.size]
+      result[:no_of_scanning]=all_logs.size.to_s
+      result[:no_of_users]=users_count.no_of_users
+      result[:index]=params[:index].to_i+@logs.size
+      result[:status]=@qr_code.status? ? "Active" : "Inactive"
+      result[:response_text]=render_to_string :partial=> "feeds_partial"
+    end
     if request.xhr?
       render :json=>result.to_json
     end

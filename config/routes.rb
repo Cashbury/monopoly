@@ -20,6 +20,7 @@ Kazdoor::Application.routes.draw do
     :sessions => "users/sessions",
     :registrations=>"users/registrations",
     :password=>"users/passwords",
+    :confirmations => "users/confirmations"
   }
 
 	devise_scope :user do
@@ -27,8 +28,12 @@ Kazdoor::Application.routes.draw do
 			resources :sessions, :only => [:create, :destroy]
 			resources :registrations, :only=>[:create]
       resources :passwords, :only=>[:create]
+      resources :confirmations, :only=>[:update]
 		end
 	end
+  as :user do
+    match '/user/confirmation' => 'users/confirmations#update', :via => :put, :as=> :update_user_confirmation
+  end
 
 	namespace :users do
 		resources :users_snaps do
@@ -38,7 +43,10 @@ Kazdoor::Application.routes.draw do
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
-
+    resources :cashiers do
+      get '/check_role.:format',:action=>:check_user_role, :on =>:collection
+      get '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
+    end
     resource :businesses do
 			get '/primary_place', :action=>:primary_place,  :on =>:collection
 			post '/primary_place',:action=>:primary_place,  :on =>:collection
@@ -145,14 +153,23 @@ Kazdoor::Application.routes.draw do
     resources :campaigns,:controller => "businesses/campaigns" do
       post "/crop_image",:action=>:crop_image
     end
-
+    resources :spend_campaigns,:controller => "businesses/spend_campaigns"
   end
   resources :users_management do
-    get "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
+    get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
     post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"
-    get "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"
+    post "withdraw_account", :action=>:withdraw_account, :on=>:member, :as=>"withdraw_account"
+    post "deposit_account", :action=>:deposit_account, :on=>:member, :as=>"deposit_account"
+    post "redeem_rewards", :action=>:redeem_reward_for_user, :on=>:member, :as=>"redeem_rewards"
+    post "make_engagement", :action=>:make_engagement, :on=>:member, :as=>"make_engagement"
+    get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"
+    get  "list_campaigns/business/:business_id/programs/:program_id",:action=>:list_campaigns,:on =>:member ,:as =>"list_campaigns"
+    get  "manage_user_accounts", :action=>:manage_user_accounts, :on=>:member, :as=>:manage_user_accounts
+    get  "redeem_rewards", :action=>:redeem_rewards, :on=>:member, :as=>:redeem_rewards
+    get  "list_engagements", :action=>:list_engagements, :on=>:member, :as=>"list_engagements"
+    get  "logged_actions", :action=>:logged_actions, :on=>:member, :as=>"logged_actions"
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -172,6 +189,8 @@ Kazdoor::Application.routes.draw do
   match "suspend_user/:id"                =>"users_management#suspend_user"
   match "reactivate_user/:id"             =>"users_management#reactivate_user"
   match "list_by_program_type/:program_type_id/:uid" =>"users_management#list_businesses_by_program_type"
+  match "enrollments/:user_id/:pt_id/:enroll" => "users_management#manage_user_enrollments"
+  match "campaign_enrollments/:user_id/:c_id/:enroll" => "users_management#manage_campaign_enrollments"
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
@@ -183,6 +202,7 @@ Kazdoor::Application.routes.draw do
   #match "/v1/countries.format"               =>"countries#index"
  #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
 
+#  match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
   #devise_for :users
 
   # The priority is based upon order of creation:

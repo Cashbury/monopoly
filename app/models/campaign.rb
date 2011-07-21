@@ -34,12 +34,17 @@ class Campaign < ActiveRecord::Base
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
 	
 	after_create :create_campaign_business_account
-	after_initialize :init
+	before_create :init
 	after_save :update_places
 	scope :running_campaigns, where("#{Date.today} > start_date && #{Date.today} < end_date")
 	attr_accessor   :places_list,:item_name
 	accepts_nested_attributes_for :engagements
 	accepts_nested_attributes_for :rewards
+	
+	CTYPE={
+	  :spend=>1
+	}
+	
   def init
     self.initial_biz_amount ||= 10000 
   end

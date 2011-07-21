@@ -12,7 +12,7 @@
   </p>
   <p><small style="color:grey; font-size:11px">Keywords could be Name, Email, Telephone Number, User ID (QrCode) </small></p>
 <% end %> 
-<p><h2><b>Total: <%=@users.size%></b></h2></p>
+<p><h2><b>Total: <%=@users.total_entries%></b></h2></p>
 <br />
   <%= will_paginate @users %>
 <br/>

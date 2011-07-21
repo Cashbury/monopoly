@@ -77,6 +77,9 @@ class Business < ActiveRecord::Base
     end
   end
 
+ def account_holder
+	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
+  end
 
 
   #====================================================================

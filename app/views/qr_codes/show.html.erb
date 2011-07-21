@@ -91,7 +91,7 @@
         <!--<img src="/images/name.png" alt="Name" />-->
         <%if @engagement.nil?%>
           <b><%=User.where(:id=>@qr_code.associatable_id).first.try(:full_name) %>'s Code</b>
-        <% elsif !@engagement_type.is_visit %>
+        <% elsif @engagement_type.eng_type!=EngagementType::ENG_TYPE[:visit] %>
           <b><%=@engagement.name.gsub("Buy ","")%> Stamp @ <%=@brand.name%></b>
         <%else%>
           <b>Visit Stamp @ <%=@brand.name%></b>

@@ -2,6 +2,7 @@
 <%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
 <script type="text/javascript">
 var total_legals=<%=@total%>;
+var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
 </script>
 <style type="text/css">
 .birthday-picker select{width:auto;margin-right: 5px;}         
@@ -13,7 +14,7 @@ var total_legals=<%=@total%>;
 .ui-tabs {width:442px;margin-bottom:20px;}
 </style>
 </head>
-<%= form_for @user, :url=>:users_management_index, :html=>{:class=>"mono-form"} do |f| %>
+<%= form_for @user, :url=>@user.new_record? ? :users_management_index : :users_management, :html=>{:class=>"mono-form"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -28,7 +29,7 @@ var total_legals=<%=@total%>;
     <legend>User Information</legend>
     <p>
       <%= f.label "Select User Type" %>
-		  <%= f.select :role_id, options_from_collection_for_select(Role.all , :id, :displayed_role)%>
+		  <%= f.select :role_id, options_from_collection_for_select(Role.all , :id, :displayed_role,@role_id)%>
     </p>
     <p class="businesses_list" style="display:none">
       <%= label_tag "Business" %>
@@ -61,11 +62,23 @@ var total_legals=<%=@total%>;
     </p>
     <div class="legal_type_class">
       <%= label_tag "Legal IDs" %>
+      <% if @legal_ids.empty? %>
       <div class="legals_div">
         <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), {:id=>"legal_types_0"}%><%=text_field_tag "legal_ids[]","",{:class=>"title",:id=>"legal_ids_0"}%>
         <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
       </div>
-      
+      <%else%>
+      <%@legal_ids.each_with_index do |legal_id,index| %>
+      <div class="legals_div">
+        <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",legal_id.legal_type.id), {:id=>"legal_types_#{index}"}%><%=text_field_tag "legal_ids[]",legal_id.id_number,{:class=>"title",:id=>"legal_ids_#{index}"}%>
+        <%if index==0%>
+        <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+        <%else%>
+        <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
+        <%end%>
+      </div>
+      <%end%>
+      <%end%>
     </div>
   </fieldset>
   <fieldset>
@@ -88,13 +101,13 @@ var total_legals=<%=@total%>;
       </span>
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
-    <p>
+    <!--<p>
       <%= f.label :password %>
       <%= f.password_field :password , :class=>"title" %>
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:password) %>
       </span>
-    </p>
+    </p>-->
   </fieldset>
   <div class="tabs">
     <ul>
@@ -103,14 +116,14 @@ var total_legals=<%=@total%>;
     </ul>
     <div id="mailing">
       <fieldset style="border:none">
-        <%= f.fields_for :mailing_address,f.object.try(:mailing_address) do |mailing_address_form| %>
+        <%= f.fields_for :mailing_address,@user.try(:mailing_address) do |mailing_address_form| %>
           <p>
             <%= mailing_address_form.label :country %>
-            <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,mailing_address_form.object.try(:country_id))%>
+            <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name, mailing_address_form.object.try(:country_id))%>
           </p>
           <p>
             <%= mailing_address_form.label :city %>
-            <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,mailing_address_form.object.try(:city_id))%>
+            <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name, mailing_address_form.object.try(:city_id))%>
           </p>
           <p>
             <%= mailing_address_form.label :street_address %>
@@ -125,7 +138,7 @@ var total_legals=<%=@total%>;
     </div>
     <div id="billing">
       <fieldset style="border:none">
-        <%= f.fields_for :billing_address,f.object.try(:billing_address) do |billing_address_form| %>
+        <%= f.fields_for :billing_address,@user.try(:billing_address) do |billing_address_form| %>
           <p>
             <%= billing_address_form.label :country %>
             <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.try(:country_id))%>
@@ -147,6 +160,6 @@ var total_legals=<%=@total%>;
     </div>
   </div>
   <div class="actions">
-    <%= f.submit "Add" %>
+    <%= f.submit @user.new_record? ? "Add" : "Update" %>
   </div>
 <% end %>

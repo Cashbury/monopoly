@@ -13,6 +13,10 @@ transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect"
   Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
 end
 
+transaction_type=TransactionType.find_or_create_by_name(:name=>"Accounts Transfer", :fee_amount=>0.0, :fee_percentage=>0.0)
+%w( Withdraw Deposit ).each do |name|
+  Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
+end
 
 puts 'Creating countries and cities from contries_cities,txt ...'
 open(Rails.root.join('db').join('countries_cities.txt')) do |records|
@@ -31,8 +35,9 @@ puts "Creating system program types"
 ProgramType.find_or_create_by_name(:name=>"Marketing")
 ProgramType.find_or_create_by_name(:name=>"Money")
 puts "Creating system engagement types"
-EngagementType.find_or_create_by_name(:name=>"Visit/Check-IN", :is_visit=>true)
-EngagementType.find_or_create_by_name(:name=>"Buy a product/service",:has_item=>true)
+EngagementType.find_or_create_by_name(:name=>"visit", :eng_type=>EngagementType::ENG_TYPE[:visit])
+EngagementType.find_or_create_by_name(:name=>"buy",:eng_type=>EngagementType::ENG_TYPE[:buy])
+EngagementType.find_or_create_by_name(:name=>"spend",:eng_type=>EngagementType::ENG_TYPE[:spend])
 puts "Creating system measurement types"
 MeasurementType.find_or_create_by_name(:name=>"Money")
 MeasurementType.find_or_create_by_name(:name=>"Points")

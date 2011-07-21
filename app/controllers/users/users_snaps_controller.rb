@@ -1,18 +1,25 @@
 class Users::UsersSnapsController < Users::BaseController
 	def snap
 		begin		
-		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash],:associatable_type=>QrCode::ENGAGEMENT_TYPE).first
-		  engagement=qr_code.try(:engagement)       
+		  qr_code=QrCode.where(:hash_code=>params[:qr_code_hash]).first
+		  associatable=qr_code.try(:associatable)       
 		  if qr_code.nil?
 		    respond_with_error("QR Code no longer exists in the system!")
       elsif !qr_code.status
         respond_with_error("QR Code not Active!")
-      elsif !engagement.is_started
-        respond_with_error("Engagement no longer running!")          
+      elsif associatable.nil?
+        respond_with_error("QR Code has no association!")
+      elsif associatable.class.to_s==QrCode::ENGAGEMENT_TYPE and !associatable.is_started
+        respond_with_error("Engagement no longer running!")
       else
         respond_to do |format|
-          account,campaign,program,after_fees_amount=current_user.snapped_qrcode(qr_code,engagement,params[:place_id],params[:lat],params[:long])
-          format.xml {render :xml => snap_hash(account,engagement,campaign,program,after_fees_amount), :status => 200}
+          if associatable.class.to_s==QrCode::ENGAGEMENT_TYPE 
+            account,campaign,program,after_fees_amount=current_user.snapped_qrcode(qr_code,associatable,params[:place_id],params[:lat],params[:long])          
+            format.xml {render :xml => snap_hash(account,associatable,campaign,program,after_fees_amount), :status => 200}
+          else
+            current_user.snapped_qrcode(qr_code,associatable,params[:place_id],params[:lat],params[:long])            
+            format.xml { render :text => "User ID #{qr_code.hash_code} : User Name #{associatable.full_name}" ,:status=>200 }          
+          end            
         end
       end											 
     rescue Exception=>e

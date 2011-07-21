@@ -33,6 +33,10 @@
   <strong>Country:</strong>
   <%= @business.country.try(:name) %>
 </p>
+<p>
+  <strong>Users IDs Activated?</strong>
+  <%= @business.activate_users_id ? "Active" : "In-active" %>
+</p>
 <%unless @business.mailing_address.blank? %>
 <h3>Mailing Address</h3>
 <ul>

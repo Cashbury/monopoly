@@ -1,5 +1,4 @@
 jQuery(document).ready(function(){
- var legal_index=0;
  jQuery("select#user_role_id").bind('change',function(){
     var role_id = jQuery(this).val();
     jQuery.ajax({
@@ -26,13 +25,31 @@ jQuery(document).ready(function(){
     jQuery.getScript("/users_management/update_places/"+business_id);
   });
   
+  jQuery('#action_id').live('change',function(){
+    var action_id = jQuery(":selected", this).val();
+    var id=jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    loadingImage.show();
+    jQuery.ajax({
+      type: 'GET',
+      url: '/users_management/'+id+'/logged_actions?action_id='+action_id,
+      success: function(data){
+         loadingImage.hide();
+         jQuery('#logged_actions_container').html(data);
+      },
+      error: function(data){
+        loadingImage.hide();
+      }
+    });   
+  });
+  
   jQuery('#program_type_selector').bind('change',function(){
     var program_type_id = jQuery(":selected", this).val();
     if (program_type_id!=""){
       var user_id = jQuery('#user_id').val();
       var loadingImage = jQuery(this).nextAll('img');
       loadingImage.show();
-     jQuery.ajax({
+      jQuery.ajax({
         type: 'GET',
         url: '/list_by_program_type/'+program_type_id+"/"+user_id,
         success: function(data){
@@ -50,13 +67,88 @@ jQuery(document).ready(function(){
     jQuery(this).closest('form').submit();
   });
   
+  jQuery('.deposit_link').click(function(){
+    var form=jQuery(this).closest('form');
+    if (form.find(':text').val()!=""){
+      jQuery(this).closest('form').submit();
+    }
+  });
+  
+  jQuery('.manage_enroll_link').live('click', function(){
+    var ele=jQuery(this)[0];
+    var ele2=jQuery(this);
+    var pt_id=ele.id;
+    var user_id = jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    var enroll= ele.text=="Un-Enroll" ? 0 : 1 ;
+    loadingImage.show();
+    jQuery.ajax({
+      type: 'GET',
+      url: "/enrollments/"+user_id+"/"+pt_id+"/"+enroll,
+      success: function(data){
+        loadingImage.hide();
+        if (data==0){
+          ele2.text("Enroll");
+          jQuery('#program_status_'+pt_id).html("Un-Enrolled");
+        }else{
+          ele2.text("Un-Enroll");
+          jQuery('#program_status_'+pt_id).html("Enrolled");
+        }
+      },
+      error: function(data){
+        loadingImage.hide();
+      }
+      });
+  });
+  
+  jQuery('.manage_campaign_enroll_link').live('click', function(){
+    var ele=jQuery(this)[0];
+    var ele2=jQuery(this);
+    var c_id=ele.id;
+    var user_id = jQuery('#user_id').val();
+    var loadingImage = jQuery(this).nextAll('img');
+    var enroll= ele.text=="Un-Enroll" ? 0 : 1 ;
+    loadingImage.show();
+    jQuery.ajax({
+      type: 'GET',
+      url: "/campaign_enrollments/"+user_id+"/"+c_id+"/"+enroll,
+      success: function(data){
+        loadingImage.hide();
+        if (data==0){
+          ele2.text("Enroll");
+          jQuery('#campaign_status_'+c_id).html("Un-Enrolled");
+        }else{
+          ele2.text("Un-Enroll");
+          jQuery('#campaign_status_'+c_id).html("Enrolled");
+        }
+      },
+      error: function(data){
+        loadingImage.hide();
+      }
+      });
+  });
+  
+  jQuery('.withdraw_link').click(function(){
+    var form=jQuery(this).closest('form');
+    if (form.find(':text').val()!=""){
+      jQuery(this).closest('form').submit();
+    }
+  });
+  
+  jQuery('.redeem_link').click(function(){
+    jQuery(this).closest('form').submit();
+  });
+  
+  jQuery('.engage_link').click(function(){
+    jQuery(this).closest('form').submit();
+  });
+  
   jQuery("input[name=btype]").click(function(e){
       jQuery(".row.mailing").toggle();
       jQuery(".row.billing").toggle();
   });
   
   jQuery('.add_link').click(function(){
-    legal_index=legal_index+1;
     if (legal_index < total_legals){
       var old_html=jQuery('.legals_div').html();
       var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
@@ -64,6 +156,7 @@ jQuery(document).ready(function(){
       new_html3=new_html2.replace(/add.png/,"remove.png");
       new_html4=new_html3.replace(/add_link/,"remove_link");
       jQuery('.legal_type_class').append("<div class=\"legals_div\">"+new_html4+"</div>");
+      legal_index=legal_index+1;
     }
   });
   jQuery('.remove_link').live('click',function(){

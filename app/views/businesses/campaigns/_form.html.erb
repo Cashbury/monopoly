@@ -23,13 +23,12 @@
     <legend class="section_title">Make an Offer</legend>
     <div class="form_item_div">
     <%= f.fields_for :engagements do |engagement|%>
-      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
+      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.display_name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
-
       <%= f.fields_for :rewards do |reward|%>
         <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst left", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %>
         <input type="text" class="basic_info_caption1 inst left" style="width:135px" name="item_name" id="item_text_field" title="Coffee Drink" value="<%=@item_name%>" />
-        <label class="left"> Get a </label>
+        <label class="left"> times, Get a </label>
         <%= reward.text_field :name ,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:330px;margin:0 0 0",:title=>"Coffee",:id=>"reward_name_field_id"}%>
     </div>
   </fieldset>
@@ -131,6 +130,14 @@ jQuery(document).ready(function(){
   update_select_item_list_display(jQuery("#engagement_type_selection_list"));
   jQuery("#engagement_type_selection_list").change(function () {
     update_select_item_list_display(this);
+    /*eng_type_val=jQuery(":selected", this).val();
+    jQuery.ajax({
+      type: 'GET',
+      url: "/select_partial/"+eng_type_val,
+      success: function(data){
+        jQuery('.form_item_div').html(data);
+      }
+    });*/
   });
   jQuery("#add_details_link").click(function(){
     if (jQuery(this).html()=="Add More Details" || jQuery(this).html()=="Edit Details")
@@ -172,10 +179,13 @@ jQuery(document).ready(function(){
     }
   });
   function update_select_item_list_display(object){
-    buy_item_option = jQuery(":selected", object).text();
-    if(buy_item_option.match(/Buy/)!=null){
+    eng_type_option = jQuery(":selected", object).text().toLowerCase();
+    if(eng_type_option.match(/buy/)!=null){
       jQuery('#item_div').show();
       jQuery('#item_text_field').show();
+    }else if(eng_type_option.match(/spend/)!=null){
+      if(window.location.pathname!="<%=new_business_spend_campaign_path(@business)%>")
+        document.location.href="<%=new_business_spend_campaign_path(@business)%>";
     }else{
       jQuery('#item_div').hide();
       jQuery('#item_text_field').hide();
