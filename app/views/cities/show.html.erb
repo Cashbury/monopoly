@@ -1,4 +1,3 @@
-<p id="notice"><%= notice %></p>
 
 <p>
   Name:  <%= @city.name %>
@@ -8,6 +7,9 @@
 </p>
 <p>
   Area code:<%= @city.phone_area_code %>
+</p>
+<p>
+  TimeZone:<%= @city.time_zone %>
 </p>
 <p>
   <%=raw live?(@city) %>
