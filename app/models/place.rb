@@ -59,12 +59,12 @@ class Place < ActiveRecord::Base
                       .select("places.id,places.name,places.long,places.lat,places.description,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
                                addresses.zipcode,addresses.cross_street,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")
-  before_save :add_amenities_name_and_place_name_to_place_tag_lists  
+  before_save :add_amenities_name_and_place_name_to_place_tag_lists
   after_save :update_items
   before_validation :clear_photos
-  
+
   DISTANCE_UNIT="km"
-  
+
   def clear_photos
     self.tmp_images.each do |tmp_image|
       tmp_image.upload_type="PlaceImage"
@@ -73,7 +73,7 @@ class Place < ActiveRecord::Base
       image.destroy if image.delete_photo? && !image.photo.dirty?
     end
   end
-  
+
   def self.closest(options = {})
     geo_scope(options).order("#{distance_column_name} asc").limit(1)
   end
@@ -128,7 +128,7 @@ class Place < ActiveRecord::Base
   def self.save_place_by_geolocation(location,user)
     address = Geokit::Geocoders::GoogleGeocoder.geocode(location[:location])
 
-    country = Country.find_or_create_by_name_and_abbr(:name=>address.country, :abbr=>address.country_code)
+    country = Country.find_by_name_and_abbr(:name=>address.country, :abbr=>address.country_code)
     city = City.find_or_create_by_name_and_country_id(:name=>address.city, :country_id=>country.id)
 
     a = Address.new

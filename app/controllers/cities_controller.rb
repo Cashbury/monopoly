@@ -3,15 +3,20 @@ class CitiesController < ApplicationController
 
   # GET /cities
   # GET /cities.xml
-
-
   def index
-
-    @cities = City.paginate :page =>params[:page] , :order => "name asc"
-
     respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @cities }
+
+      format.html{
+        @cities= City.paginate :page=>params[:page], :order => "name asc" , :conditions=> search
+      }
+      format.xml{
+        cities_by_name
+      }
+      format.js do
+        cities_by_name
+        @cities = @cities.map {|city| {:id=>city.id, :name=>city.name}}
+        render :json , @cities
+      end
     end
   end
 
@@ -85,4 +90,17 @@ class CitiesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+
+  private #================
+
+  def cities_by_name
+    @cities = City.where(:name=>params[:name].capitalize).joins(:country) if params[:name].present?
+  end
+
+  def search
+    conditions = []
+    conditions = ["name like ?", "%#{params[:name]}%"] unless params[:name].blank?
+  end
+
 end

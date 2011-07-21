@@ -1,4 +1,9 @@
-<h1>Listing neighborhoods</h1>
+<h1>Listing neighborhoods  </h1>
+
+<%= form_tag("/countries" , :method=>:GET) do %>
+  <%= text_field_tag "name" %>
+  <%= submit_tag "Search" %>
+<% end %>
 
 <table>
   <tr>

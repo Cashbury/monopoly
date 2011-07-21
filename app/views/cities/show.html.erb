@@ -10,11 +10,7 @@
   Area code:<%= @city.phone_area_code %>
 </p>
 <p>
-  <% if @city.is_live? %>
-    live
-  <%else%>
-    not live yet
-  <%end %>
+  <%=raw live?(@city) %>
 </p>
 <p>
 <%= link_to 'Edit', edit_city_path(@city) %> |

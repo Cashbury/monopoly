@@ -12,6 +12,7 @@ Kazdoor::Application.routes.draw do
   resources :states
   resources :countries
   resources :cities
+
   resources :neighborhoods
 
   resources :transaction_types
@@ -160,7 +161,6 @@ Kazdoor::Application.routes.draw do
   match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
-  match "/get_users.:format"              =>"businesses#get_users"
   match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"
 
   match "/show_code/:id"                  =>"qr_codes#show_code"
@@ -175,6 +175,14 @@ Kazdoor::Application.routes.draw do
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
+
+  match "/v1/users/:column_type.:format"  =>"businesses#get_users" #pass term as query params
+
+  match "/v1/cities/:name.:format"        => "cities#index"
+
+  #match "/v1/countries.format"               =>"countries#index"
+ #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
+
   #devise_for :users
 
   # The priority is based upon order of creation:

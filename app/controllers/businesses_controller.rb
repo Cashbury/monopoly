@@ -94,9 +94,9 @@ class BusinessesController < ApplicationController
   end
 
   def update_cities
-    @cities = City.where(:country_id=> params[:id] )
-                  .where(['name LIKE ?', "#{params[:term]}%"])
-                  .map{|city| {:id=>city.id, :label=>city.name }}
+    @cities = City.where(['name LIKE ?', "#{params[:term]}%"]).
+                  limit(20).
+                  map{|city| {:id=>city.id, :label=>city.name }}
 
     @selector_id=params[:selector_id]
     respond_to do |format|
@@ -120,9 +120,10 @@ class BusinessesController < ApplicationController
 
 
   def get_users
-    @users1 = User.where(['username LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.username }}
-    #@users2 = User.where(['first_name LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.first_name }}
-    render :json => @users1 #| @users2
+    term = params[:term].to_s + "%"
+    column_type = params[:column_type] || "email"
+    @users = User.where([ " #{column_type} like ?", term ]).map{|con| {:id=>con.id, :label=>con.send(column_type) }}
+    render :json => @users #| @users2
   end
 
   def update_users

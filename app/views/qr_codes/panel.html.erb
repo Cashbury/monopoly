@@ -43,12 +43,25 @@ jQuery(function(){
     });
 
   jQuery("#user_id").autocomplete({
-      source:"/get_users.json",
+      source:"/v1/users/email.json",
       select:function(e,ui){
         jQuery("#associatable_id.associate").val(ui.item.id);
         jQuery("#associatable_type").val("User");
       }
   });
+
+  jQuery("#column_type").change(function(e){
+    var $select= jQuery(this);
+    jQuery("#user_id").autocomplete({
+        source:"/v1/users/"+$select.val()+".json",
+        select:function(e,ui){
+          jQuery("#associatable_id.associate").val(ui.item.id);
+          jQuery("#associatable_type").val("User");
+        }
+    });
+
+  });
+
 
   jQuery("input[name=btype]").click(function(e){
       jQuery(".row.users").toggle();
@@ -67,6 +80,18 @@ jQuery(function(){
 <style type="text/css" media="screen">
   .hide{
     display:none;
+  }
+
+  #column_type{
+    width:150px;float:left;
+  }
+  input.complete.title{
+    margin-left:10px;
+    margin-top: 5px;
+    width:300px;
+  }
+  #user,#brands{
+    padding: 10px 5px;
   }
 </style>
 
@@ -100,7 +125,12 @@ jQuery(function(){
       <div id="users">
         <p class="row users">
           <strong>Users</strong> <br/>
-          <%= text_field_tag :user_id , "" , :class=>"complete"%>
+          <select id="column_type" name="column_type">
+            <option value="email">Email</option>
+            <option value="username">User name</option>
+            <option value="telephone_number">Telephone number</option>
+          </select>
+          <%= text_field_tag :user_id , "" , :class=>"complete title"%>
           <p class="row">
             <%= submit_tag "Submit" %>
           </p>

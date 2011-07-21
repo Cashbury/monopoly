@@ -4,7 +4,9 @@ class CountriesController < ApplicationController
   # GET /countries
   # GET /countries.xml
   def index
-    @countries = Country.paginate :page =>params[:page] , :order => "name asc"
+    @countries = Country.paginate :page =>params[:page] ,
+                                  :order => "name asc" ,
+                                  :conditions => search
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @countries }
@@ -80,5 +82,12 @@ class CountriesController < ApplicationController
       format.html { redirect_to(countries_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def search
+    conditions=[]
+    conditions = ["name like ?", "%#{params[:name]}%"] unless params[:name].blank?
   end
 end
