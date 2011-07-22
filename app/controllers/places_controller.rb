@@ -1,6 +1,7 @@
 class PlacesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update, :get_opening_hours]
+  before_filter :set_place , :only =>[:google, :reset_google]
   def index
     @places = search_places
 
@@ -13,6 +14,9 @@ class PlacesController < ApplicationController
 
   def show
     @place = Place.find(params[:id])
+    client = Places::Client.new(:api_key => EXT_API["google_api_key"])
+    @gplaces =  client.search(:lat=>@place.lat.to_f, :lng=>@place.long.to_f, :name=>@place.name)
+
     respond_to do |format|
       format.html
       format.xml { render :xml => @places }
@@ -87,8 +91,23 @@ class PlacesController < ApplicationController
   end
 
 
+  def google
+    @place.google_reference = params[:reference_id]
+    @place.save!
+    redirect_to place_url(@place) , :notice=>"Linked a google place"
+  end
+
+  def reset_google
+    @place.google_reference = nil
+    @place.save!
+    redirect_to place_url(@place) , :notice=>"unlinked google place"
+  end
 
   private
+
+  def set_place
+    @place ||= Place.where(:id=>params[:id]).limit(1).first
+  end
 
   def search_places
     search_params ={}

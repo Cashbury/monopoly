@@ -1,0 +1,10 @@
+development:
+  google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
+  foursquare_api_key: 1
+
+production:
+  google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
+  foursquare_api_key: 1
+
+test:
+  google_api_key: 3

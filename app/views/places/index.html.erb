@@ -5,9 +5,9 @@
 <% title "Places" %>
 <div class="search_box ">
   <%= form_tag("/places",:method=>"get") do %>
-   <%= select_tag :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all, :id, :name),:class=>"title"%>
+    <%= select_tag :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.where(:is_live=>true), :id, :name),:class=>"title"%>
 
-   <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name),:class=>"title"%>
+    <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.where(:is_live=>true), :id, :name),:class=>"title"%>
 
    <%= submit_tag "Search" %>
   <% end %>

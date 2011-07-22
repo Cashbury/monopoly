@@ -89,9 +89,11 @@ Kazdoor::Application.routes.draw do
 	#       end
 	#     end
 	# end
-	resources :places
-	resources :places do
-		get '/for_businessid/:id' ,:action=>:for_businessid, :on =>:collection
+
+  resources :places do
+		get "/google/:reference_id" , :action =>:google,          :on=>:member,  :as =>"google"
+		get "/reset_google" ,         :action =>:reset_google ,   :on=>:member
+    get '/for_businessid/:id' ,   :action=>:for_businessid,   :on =>:collection, :as=>"for_businessid"
 	end
 
 	resources :users
@@ -194,6 +196,8 @@ Kazdoor::Application.routes.draw do
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
+
+
 
   match "/v1/users/:column_type.:format"  =>"businesses#get_users" #pass term as query params
 

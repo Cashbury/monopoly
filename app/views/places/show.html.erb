@@ -1,6 +1,5 @@
 <% title "Place | #{@place.name}" %>
 
-
 <p>
   <strong>Name:</strong>
   <%= @place.name %>
@@ -41,6 +40,15 @@
   <%end%>
 </p>
 <%end%>
+
+<% if @place.google_reference.blank? %>
+  <% @gplaces.results.each do |gplace| %>
+    <%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %><%= gplace.name %><br/>
+  <% end %>
+<% else %>
+    <%= link_to "reset google place", "/places/#{@place.id}/reset_google" %>
+<% end %>
+
 <p>
   <%= link_to "Edit",  edit_place_path(@place) %> |
   <%= link_to "Destroy", place_path(@place), :confirm => 'Are you sure?', :method => :delete %> |
