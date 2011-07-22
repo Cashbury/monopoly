@@ -28,8 +28,16 @@
     <%= f.label :time_zone %>
     <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all%>
   </p>
+  </p>
     <%= f.label :phone_area_code %>
     <%= f.text_field :phone_area_code, :class=>"title" %>
+  </p>
+  </p>
+    <%= f.label :lat %>
+    <%= f.text_field :lat, :class=>"title" %>
+  </p>
+    <%= f.label :long %>
+    <%= f.text_field :lng, :class=>"title" %>
   </p>
   <p>
     <%= f.check_box :is_live  %>
