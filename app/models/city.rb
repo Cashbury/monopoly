@@ -17,7 +17,7 @@ class City < ActiveRecord::Base
   has_many :addresses
 
   acts_as_mappable
-  #make_flaggable :like , :popular
+  make_flaggable :like , :popular
 
   def closest(options = {})
     geo_scope(options).order("#{distance_column_name} asc").limit(1)

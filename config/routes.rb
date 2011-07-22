@@ -201,6 +201,10 @@ Kazdoor::Application.routes.draw do
 
   match "/v1/users/:column_type.:format"  =>"businesses#get_users" #pass term as query params
 
+  match "/v1/cities/:id/vote/:like"       => "cities#vote"
+
+  match "/v1/cities/:id/votes"            => "cities#votes"
+
   match "/v1/cities/:name.:format"        => "cities#index"
 
   #match "/v1/countries.format"               =>"countries#index"

@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,:confirmable
 
 
-  #make_flagger
+  make_flagger
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
                   :authentication_token, :brands_attributes, :username, :telephone_number, :role_id, :home_town, :mailing_address_id, :billing_address_id
@@ -183,7 +183,7 @@ class User < ActiveRecord::Base
       accholder.accounts.where("accounts.business_id= NULL").first
     end
   end
-  
+
 	def snapped_qrcode(qr_code,associatable,place_id,lat,lng)
 	  if associatable.class.to_s=="Engagement"
       campaign=associatable.campaign
@@ -257,7 +257,7 @@ class User < ActiveRecord::Base
                     :lng            =>lng,
                     :created_on     =>date)
           [user_account,campaign,campaign.program,after_fees_amount]
-        end        
+        end
       elsif associatable.class.to_s=="User"
         date=Date.today.to_s
         action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
@@ -314,7 +314,7 @@ class User < ActiveRecord::Base
     qr_code
   end
 
-  # new function to set the password without knowing the current password used in our confirmation controller. 
+  # new function to set the password without knowing the current password used in our confirmation controller.
   def attempt_set_password(params)
     p = {}
     p[:password] = params[:password]
@@ -330,10 +330,10 @@ class User < ActiveRecord::Base
   def only_if_unconfirmed
     unless_confirmed {yield}
   end
-  
+
   def password_required?
     # Password is required if it is being set, but not for new records
-    if !persisted? 
+    if !persisted?
       false
     else
       !password.nil? || !password_confirmation.nil?
