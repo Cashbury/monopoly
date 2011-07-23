@@ -13,7 +13,6 @@ function Split_hour(index){
 function Split_hour_admin(index){
     from_to_html="";
     from_to_html = jQuery('#open_hour_'+index+'_from').closest("div.input_set").html();
-    console.log(from_to_html);
     from_to_html = from_to_html.replace(/from/g, "from2");
     from_to_html = from_to_html.replace(/to/g, "to2");
     closed1_label ="<label> Closed? </label>";
@@ -36,15 +35,14 @@ function initialize() {
     google.maps.event.addListener(marker,"dragend",function(){
         myMap.panTo(marker.getPosition());
         myMap2.panTo(marker.getPosition());
-        console.log("test");
-        jQuery('input#lat,input#place_lat').val(marker.getPosition().lat());
-        jQuery('input#long,input#place_long').val(marker.getPosition().lng());
+        jQuery('input#city_lng,input#long,input#place_long').val(marker.getPosition().lng());
+        jQuery('input#city_lat,input#lat,input#place_lat').val(marker.getPosition().lat());
     });
     google.maps.event.addListener(marker2,"dragend",function(){
         myMap.panTo(marker2.getPosition());
         myMap2.panTo(marker2.getPosition());
-        jQuery('input#lat,input#place_lat').val(marker2.getPosition().lat());
-        jQuery('input#long,input#place_long').val(marker2.getPosition().lng());
+        jQuery('input#city_lat,input#lat,input#place_lat').val(marker2.getPosition().lat());
+        jQuery('input#city_lng,input#long,input#place_long').val(marker2.getPosition().lng());
     });
   }
 
@@ -70,12 +68,11 @@ function initialize() {
             myMap2.setCenter(place.geometry.location);
             marker2.setMap(myMap2);
           }
-          console.log(strAddress);
           R = [""];
           //R = results[0].formatted_address.split(',');
           //R=results[0].address_components[0].long_name + results[0].address_components[1].long_name;
-          jQuery('input#lat, input#place_lat').val(place.geometry.location.lat());
-          jQuery('input#long,input#place_long').val(place.geometry.location.lng());
+          jQuery('input#city_lat, input#lat, input#place_lat').val(place.geometry.location.lat());
+          jQuery('input#city_lng,input#long,input#place_long').val(place.geometry.location.lng());
           //jQuery('input#place_address_attributes_street_address').val(R[0]);
         } else {
           //alert("Geocode was not successful for the following reason: " + status)
@@ -114,14 +111,14 @@ function initialize() {
         MonoV1.find_place_on_map(strAddress);
       });
 
-      jQuery('#place_address_attributes_street_address, #place_address_attributes_cross_street').blur(function(){
+      jQuery('#city_id, #country_id, #place_address_attributes_street_address, #place_address_attributes_cross_street').blur(function(){
 
         var strAddress  = "";
         var stAddress   = [];
         var address     = [];
 
         var $stAdd1       = jQuery('#place_address_attributes_street_address');
-        var $crossStreet  = jQuery('#lace_address_attributes_cross_street`');
+        var $crossStreet  = jQuery('#place_address_attributes_cross_street');
 
         if($stAdd1.val()!=""){
           strAddress +=" "+$stAdd1.val();
@@ -131,6 +128,17 @@ function initialize() {
           }
         }
 
+        strAddress +=" "+jQuery("#city_id").val() +" " + jQuery("#country_id").val();
+        MonoV1.find_place_on_map(strAddress);
+      });
+
+      jQuery('form.cities #city_name, form.cities #country_id').blur(function(){
+
+        var strAddress  = "";
+        var stAddress   = [];
+        var address     = [];
+
+        strAddress +=" "+jQuery("form.cities #city_name").val() +" " + jQuery("form.cities #country_id").val();
         MonoV1.find_place_on_map(strAddress);
       });
 

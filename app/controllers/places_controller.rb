@@ -56,6 +56,7 @@ class PlacesController < ApplicationController
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.add_open_hours(params[:open_hour])
     if @place.update_attributes(params[:place])
+
       flash[:notice] = "Successfully updated place."
       redirect_to place_url(@place)
     else

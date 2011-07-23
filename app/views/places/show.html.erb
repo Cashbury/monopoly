@@ -5,7 +5,9 @@
   <%= @place.name %>
 </p>
 <p>
-  <div id="map_canvas" style="width:412px; height:400px" class="google_map"></div>
+
+  <img src="http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=400x400&maptype=roadmap
+&markers=color:red%7Clabel:S%7C<%=@place.lat%>,<%=@place.long %>&sensor=true">
 
 
 <p>
