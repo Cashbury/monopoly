@@ -5,7 +5,7 @@ var total_legals=<%=@total%>;
 var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
 </script>
 <style type="text/css">
-.birthday-picker select{width:auto;margin-right: 5px;}         
+.birthday-picker select{width:auto;margin-right: 5px;}
 #datepicker fieldset {border:none;padding:0;}
 .legals_div select{width:auto;margin:0 10px 0 0;}
 .legals_div input {width:150px;padding-top:2px;}
@@ -51,7 +51,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
       <%= f.label "Date of birth" %>
       <div class="picker" id="datepicker"></div>
     </p>
-    
+
     <p>
       <%= f.label :home_town %>
       <%= f.select :home_town, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,f.object.try(:home_town))%>
@@ -86,7 +86,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
     <p>
       <%= f.label :username %>
       <%= f.text_field :username , :class=>"title U_username" %>
-      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
+      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:username) %>
       </span>
@@ -95,7 +95,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
     <p>
       <%= f.label :email %>
       <%= f.text_field :email , :class=>"title U_email" %>
-      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
+      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:email) %>
       </span>
@@ -150,7 +150,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
           <p>
             <%= billing_address_form.label :street_address %>
             <%= billing_address_form.text_field :street_address, :class=>"title" %>
-          </p> 
+          </p>
           <p>
             <%= billing_address_form.label :zipcode %>
             <%= billing_address_form.text_field :zipcode, :class=>"title" %>
@@ -159,7 +159,19 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
       </fieldset>
     </div>
   </div>
+  <%= toggle_fb_link(@user) %>
   <div class="actions">
     <%= f.submit @user.new_record? ? "Add" : "Update" %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+//  jQuery(function(){
+//    jQuery("#activate").live("click",function(e){
+//      jQuery.post("/v1/users/<%= @user.id %>/on");
+//    });
+//    jQuery("#deactivate").live("click",function(e){
+//      jQuery.post("/v1/users/<%= @user.id %>/off");
+//    });
+//  });
+</script>

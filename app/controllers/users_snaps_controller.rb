@@ -13,5 +13,21 @@ class UsersSnapsController < ApplicationController
 											  :page        => @page,
 												:type        =>Log::SEARCH_TYPES[:engagements]
   end
-  
+
+  def update_user
+    @user = User.where(:id=>params[:id]).select("id,email, is_fb_enabled,telephone_number").first
+    if @user.present?
+      if params[:status].downcase == "off"
+        @user.is_fb_enabled=false
+      else
+        @user.is_fb_enabled=true
+      end
+    end
+    @user.save!
+    respond_to do |f|
+      f.html { redirect_to :controller=>"users_management", :action=>"show", :id=>@user.id}
+      f.xml  { render :xml=>@user}
+    end
+  end
+
 end

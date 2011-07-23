@@ -16,4 +16,22 @@ module ApplicationHelper
       "<b> not live yet</b>"
     end
   end
+
+  def fb_feed_status_for(user)
+    if user.is_fb_enabled?
+      "<b style='color:green'>active</b>"
+    else
+      "<b style='color:red'>Inactive</b>"
+    end
+  end
+
+  def toggle_fb_link(user)
+   if user.is_fb_enabled?
+      link_to "Deactivate FB feed" , "/v1/users/#{user.id}/off.html" , :id=>"deactivate"
+    else
+      link_to "Active FB feed", "/v1/users/#{user.id}/on.html", :id=>"activate"
+    end
+  end
 end
+
+

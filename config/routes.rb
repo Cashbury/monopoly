@@ -207,10 +207,12 @@ Kazdoor::Application.routes.draw do
 
   match "/v1/cities/:name.:format"        => "cities#index"
 
-  #match "/v1/countries.format"               =>"countries#index"
- #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
+  match "/v1/users/:id/:status.:format"   => "users_snaps#update_user"
 
-#  match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
+  #match "/v1/countries.format"               =>"countries#index"
+  #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
+
+  #match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
   #devise_for :users
 
   # The priority is based upon order of creation:
