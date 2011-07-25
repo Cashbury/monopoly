@@ -186,6 +186,9 @@ jQuery(document).ready(function(){
     }else if(eng_type_option.match(/spend/)!=null){
       if(window.location.pathname!="<%=new_business_spend_campaign_path(@business)%>")
         document.location.href="<%=new_business_spend_campaign_path(@business)%>";
+    }else if(eng_type_option.match(/share/)!=null){
+      if(window.location.pathname!="<%=new_business_share_campaign_path(@business)%>")
+        document.location.href="<%=new_business_share_campaign_path(@business)%>";
     }else{
       jQuery('#item_div').hide();
       jQuery('#item_text_field').hide();

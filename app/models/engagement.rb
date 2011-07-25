@@ -36,35 +36,41 @@ class Engagement < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :engagement_type
   belongs_to :item
-  
+
   has_many :qr_codes, :as=>:associatable
   has_many :logs
-  
-  scope :stamps, where(:engagement_type => QrCode::STAMP) 
+
+  scope :stamps, where(:engagement_type => QrCode::STAMP)
   attr_accessor :places_list
- 
+
   validates :name, :presence =>true,
                    :length =>{:within=>3..50}
 
   validates_presence_of :engagement_type_id, :amount#, :fb_engagement_msg
   #validates_presence_of :item_id, :if=>Proc.new{|eng| eng.engagement_type.eng_type==EngagementType::ENG_TYPE[:buy]}
   validates_numericality_of :amount
-  
+
   def engagement_types
     ["check-in", QrCode::STAMP , "question", "spend"]
   end
-  
+
+
   def get_states
     ["deployed", "paused", "offline"]
   end
+
+
   def items_list(campaign)
     campaign.places.joins(:items).select("DISTINCT items.*")
   end
+
+
   def start
     self.is_started =true
     save!
   end
-  
+
+
   def stop
     self.is_started=false
     save!

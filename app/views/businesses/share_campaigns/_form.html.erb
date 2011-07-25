@@ -9,7 +9,7 @@
   .row {width:880px;}
 </style>
 </head>
-<%= form_tag(business_spend_campaigns_path(@business)) do  %>
+<%= form_tag(business_share_campaigns_path(@business)) do  %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <% if @campaign.errors.any? %>
   <div id="error_explanation">
@@ -22,23 +22,25 @@
   </div>
   <% end %>
   <div class="row">
-    <h4>Setting The rule</h4>
-    1 &#36;=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
-  </div>
-  <div class="row">
   <%=link_to "Add Engagement" ,"javascript:void(0)", {:id=>"add_engagement"} %>
   <div id="engagements_container">
   <fieldset>
     <legend class="section_title">An Offer</legend>
     <div class="form_item_div">
-      <label class="left"> Spend &#36; </label>
-      <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
+      <label class="left"> Share &amp; earn</label>
+     <select name="engagement_type" id="add_or_multiply" class="left" style="width:70px">
+        <option value="share_multiply">Multiply</option>
+        <option value="share_add">Add</option>
+      </select>
+
+      <%= text_field_tag "engagement[0][amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
       <label class="left"> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />
       <label class="left"> Get a &#36; </label>
       <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
       <label class="left"> Cash back, Offer available until </label>
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
+
     </div>
   </fieldset>
   </div>
@@ -129,6 +131,11 @@ jQuery(document).ready(function(){
       <%end%>
     }
     jQuery("#details_box").slideToggle();
+  });
+
+  jQuery("select#add_or_multiply").change(function(e){
+    var $select = jQuery(this);
+    console.log($select.val());
   });
 
 });
