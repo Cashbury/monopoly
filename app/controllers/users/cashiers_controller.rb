@@ -16,6 +16,10 @@ class Users::CashiersController < Users::BaseController
     end
   end
   
+  def ring_up
+    
+  end
+  
   def list_engagements_items
    @items=Item.joins(:engagements=>[:campaign=>[:program=>:business]])
               .where("businesses.id=#{params[:business_id]} and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")

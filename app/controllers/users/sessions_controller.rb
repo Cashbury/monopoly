@@ -60,6 +60,20 @@ class Users::SessionsController < Devise::SessionsController
   end
   
   def render_success_with_user(user)
-    render :xml => user.to_xml(:only=>[:id,:email,:first_name,:last_name,:authentication_token,:username] ),:status=>200
+    cashier_role=Role.find_by_name(Role::AS[:cashier])
+    result={}
+    result[:user]={}
+    if (employee=user.employees.where(:role_id=>cashier_role.id).first).present? #is cashier
+      result[:user]=user.attributes.select{|k,v| k=="id" || k=="email" || k=="first_name" || k=="last_name" || k=="authentication_token" || k=="username"}
+      result[:user][:business_id]=employee.business_id
+      business=Business.find(employee.business_id) if employee.business_id
+      if business.present?
+        result[:user][:brand_name]=business.brand.try(:name)
+        result[:user][:brand_image_url]=business.brand.brand_image.photo(:normal) if business.brand.brand_image.present?
+      end
+      render :xml => result, :status=>200
+    else
+      render :xml => user.to_xml(:only=>[:id,:email,:first_name,:last_name,:authentication_token,:username] ),:status=>200
+    end
   end
 end
