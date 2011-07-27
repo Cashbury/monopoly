@@ -6,7 +6,7 @@ class EngagementType < ActiveRecord::Base
     :buy=>"Buy",
     :spend=>"Spend",
     :visit=>"Visit/Check-IN",
-    :share => "Share and earn"
+    :share => " Share"
   }
 
   ENG_TYPE={
@@ -18,5 +18,9 @@ class EngagementType < ActiveRecord::Base
 
   def display_name
     TYPES[self.name.to_sym]
+  end
+
+  def self.list
+    where("name !='share'").order("name ASC")
   end
 end

@@ -23,7 +23,7 @@
     <legend class="section_title">Make an Offer</legend>
     <div class="form_item_div">
     <%= f.fields_for :engagements do |engagement|%>
-      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.display_name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
+      <%= engagement.select :engagement_type_id, EngagementType.list.collect{ |eng_type| [eng_type.display_name,eng_type.id]  } , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
       <%= f.fields_for :rewards do |reward|%>
         <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst left", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %>
