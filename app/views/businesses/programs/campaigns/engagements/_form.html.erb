@@ -1,34 +1,60 @@
+
 <script type="text/javascript">
- $(document).ready(function(){
-  $("#engagement_type_selection_list").change(function () {
-      buy_item_option = $(":selected", this).text();
+jQuery(document).ready(function(){
+
+  jQuery("#engagement_type_selection_list").change(function () {
+      buy_item_option = jQuery(":selected", this).text();
       if(buy_item_option == "Buy a product/service")
-        $('#item_div').show();
+        jQuery('#item_div').show();
       else{
-        $('#item_div').hide();
+        jQuery('#item_div').hide();
       }
   });
-  $('#engagement_type_selection_list,#item_selection_list').blur(function(){
-    var offer_type=$("#engagement_type_selection_list :selected").text();
-    var item_name=$("#item_selection_list :selected").text();
-    var no_of_times=($("#needed_amount_id")[0]==null) ? 1 : $("#needed_amount_id")[0].val();
-    var brand_name=$("#brand_name_id").val();
-    if (item_name!="" && offer_type.match(/Buy/)!=null){
-      $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
+
+  jQuery('#engagement_type_selection_list,#item_selection_list').change(function(){
+    var offer_type=jQuery("#engagement_type_selection_list :selected").text();
+    var item_name=jQuery("#item_selection_list :selected").text();
+    var no_of_times=(jQuery("#needed_amount_id")==null)? 1 : jQuery("#needed_amount_id").val();
+    var brand_name=jQuery("#brand_name_id").val();
+
+    if (item_name!="" && offer_type.match(/[B|b]uy/)!=null){
+      hide_non_buy_elements();
+      jQuery("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");
+    }else if(offer_type.match(/[S|s]hare/)){
+      hide_non_share_elements(no_of_times)
     }else{
-      $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
-    } 
-  });
+      hide_non_buy_elements();
+      jQuery("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");
+    }
+    });
+
+    function hide_non_share_elements(no_of_times){
+      jQuery("#engagement_description").closest("p").hide();
+      jQuery("#engagement_name").val("Share on facebook").closest("p").hide();
+      jQuery("#item_selection_list").closest("p").hide();
+      jQuery("#engagement_fb_engagement_msg").hide();
+      jQuery("#share_fb_engagement_label").show();
+      jQuery("#fb_engagement_msg").val("share on Facebook and earn +"+no_of_times+" point(s)");
+    }
+
+    function hide_non_buy_elements(no_of_times, brand_name, item_name){
+      jQuery("#engagement_description").closest("p").show();
+      jQuery("#engagement_name").closest("p").show();
+      jQuery("#item_selection_list").closest("p").show();
+      jQuery("#engagement_fb_engagement_msg").show();
+      jQuery("#share_fb_engagement_label").hide();
+    }
+
 });
 </script>
-<%= form_for [@business,@program ,@campaign, @engagement] do |f| %>
+<%= form_for [@business,@program ,@campaign, @engagement], :html=>{:class=>"mono-form"} do |f| %>
   <%= f.error_messages %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <p>
     <%= f.label :name %><br />
-    <%= f.text_field :name  %>
+    <%= f.text_field :name , :class=>"title" %>
   </p>
-  
+
   <p>
     <%= f.label :engagement_type_id, "Engagement Type" %><br />
     <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {}, {:id=>"engagement_type_selection_list"}%>
@@ -41,14 +67,16 @@
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  <%unless @campaign.measurement_type.business%>
+  <%unless @campaign.measurement_type.business %>
     <p>
       <%= f.label :amount %><br />
-      <%= f.text_field :amount,"1",:id=>"needed_amount_id" %>
+      <%= f.text_field :amount, :value=>"1", :id=>"needed_amount_id",  :class=>"title"%>
     </p>
-  <%end%> 
+  <%end%>
   <p>
-    <%= f.label :fb_engagement_msg, "Facebook msg when user makes an engagement" %><br />
+    <%= f.label :fb_engagement_msg, "Facebook msg when user makes an engagement", :id=>"engagement_fb_engagement_msg" %>    <%= f.label :fb_engagement_msg, "Message prompt displayed on the reciept of the user",
+      :id=>"share_fb_engagement_label", :style=>"display:none" %><br />
+
     <%= f.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :style=>"float:none;width: 540px;",:id=>"fb_engagement_msg"%>
   </p>
   <p>

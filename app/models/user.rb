@@ -341,4 +341,8 @@ class User < ActiveRecord::Base
   end
 
 
+  def engaged(engagement)
+    #depending on the type do
+  end
+
 end

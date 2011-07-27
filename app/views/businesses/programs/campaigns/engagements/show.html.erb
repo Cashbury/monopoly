@@ -7,7 +7,7 @@
   <strong>Engagement Type:</strong>
   <%= @engagement.engagement_type.name %>
 </p>
-<%if @engagement.try(:engagement_type).try(:type)==EngagementType::ENG_TYPE[:buy]%>
+<%if @engagement.try(:engagement_type).try(:eng_type) ==EngagementType::ENG_TYPE[:buy]%>
 <p>
   <strong>Item:</strong>
   <%= @engagement.item.try(:name) %>

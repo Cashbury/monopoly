@@ -79,7 +79,11 @@ function initialize() {
           //better error handling needed
         }
       });
+    },
+    engagement_share:function(){
+      console.log("change the implementation")
     }
+
   }
 
   jQuery(function(){

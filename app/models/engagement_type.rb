@@ -6,15 +6,14 @@ class EngagementType < ActiveRecord::Base
     :buy=>"Buy",
     :spend=>"Spend",
     :visit=>"Visit/Check-IN",
-    :share => "share and earn"
+    :share => "Share and earn"
   }
 
   ENG_TYPE={
     :buy=>1,
     :visit=>2,
     :spend=>3,
-    :share_add=>4,
-    :share_multiply=>5
+    :share=>4,
   }
 
   def display_name

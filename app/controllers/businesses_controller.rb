@@ -121,6 +121,8 @@ class BusinessesController < ApplicationController
 
   def get_users
     term = params[:term].to_s + "%"
+
+    params.select{|key,value| valid_keys.include? key.to_sym }
     column_type = params[:column_type] || "email"
     @users = User.where([ " #{column_type} like ?", term ]).map{|con| {:id=>con.id, :label=>con.send(column_type) }}
     render :json => @users #| @users2
@@ -133,6 +135,14 @@ class BusinessesController < ApplicationController
     end
   end
 
+
+  def get_engagement
+    @engagement = Engagement.find(params[:id])
+    respond_to do |f|
+      f.xml{render :xml=>@engagement}
+      f.json{render :json=>@engagement}
+    end
+  end
 
   def auto_business
     if current_user.role? Role::AS[:owner] || true

@@ -17,7 +17,7 @@
       <td>
         <% maddress = business.mailing_address %>
         <% unless maddress.nil? %>
-        <%= "#{maddress.try(:street_address)} , #{maddress.try(:zipcode)} , #{maddress.try(:country).try(:name)}" %>
+          <%= display_address(maddress) %>
         <%end%>
       </td>
       <td>Rajib Ahmed</td>

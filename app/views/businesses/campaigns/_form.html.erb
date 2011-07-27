@@ -51,16 +51,22 @@
   <fieldset >
     <legend class="section_title">Setting Facebook Messages</legend>
     <div class="row">
-      <%= reward.label "When user unlocks a reward" %><br />
-      <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 540px;" %>
+      <%= f.check_box :is_fb_enabled %>
+      <%= f.label :is_fb_enabled, "Enable Share on Facebook" %>
     </div>
-    <div class="row">
-      <%= reward.label "When user enjoys a reward" %><br />
-      <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_enjoy_msg", :style=>"width: 540px;" %>
-    </div>
-    <div class="row">
-      <%= engagement.label "When user makes an engagement" %><br />
-      <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 540px;" %>
+    <div class="face_book_message">
+      <div class="row">
+        <%= reward.label "When user unlocks a reward" %><br />
+        <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 540px;" %>
+      </div>
+      <div class="row">
+        <%= reward.label "When user enjoys a reward" %><br />
+        <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_enjoy_msg", :style=>"width: 540px;" %>
+      </div>
+      <div class="row">
+        <%= engagement.label "When user makes an engagement" %><br />
+        <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 540px;" %>
+      </div>
     </div>
   </fieldset>
   <p><a id="add_details_link" href="javascript:void(0)"><%=@campaign.new_record? ? "Add More Details" : "Edit Details"%></a></p>
@@ -127,6 +133,20 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
+
+    jQuery("#campaign_is_fb_enabled").click(function(e){
+      var $is_fb_enabled = jQuery(this);
+      if(!$is_fb_enabled.is(":checked")){
+        jQuery(".face_book_message").hide();
+        jQuery(".face_book_message").find("input").each(function(i,data){
+          jQuery(data).attr("disable",true);
+        })
+      }else{
+        jQuery(".face_book_message").show()
+      }
+    });
+
+
   update_select_item_list_display(jQuery("#engagement_type_selection_list"));
   jQuery("#engagement_type_selection_list").change(function () {
     update_select_item_list_display(this);

@@ -210,6 +210,7 @@ Kazdoor::Application.routes.draw do
 
   match "/v1/users/:id/:status.:format"   => "users_snaps#update_user"
 
+  match "/v1/engagements/:id.:format"     => "businesses#get_engagement"
   #match "/v1/countries.format"               =>"countries#index"
   #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
 
