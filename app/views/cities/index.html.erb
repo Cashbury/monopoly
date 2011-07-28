@@ -26,6 +26,7 @@
     <th>Name</th>
     <th>Country</th>
     <th>Tel. Area code</th>
+    <th>Likes By User</th>
     <th></th>
     <th></th>
     <th></th>
@@ -36,6 +37,7 @@
     <td><%= city.name %></td>
     <td><%= city.country.try :name %></td>
     <td><%= city.phone_area_code %></td>
+    <td><%= city.flaggings.count %></td>
     <td><%= link_to 'Show', city %></td>
     <td><%= link_to 'Edit', edit_city_path(city) %></td>
     <td><%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete %></td>
