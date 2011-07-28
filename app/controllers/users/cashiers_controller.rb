@@ -34,6 +34,7 @@ class Users::CashiersController < Users::BaseController
     #Spend based campaign    
     campaign=business.spend_based_campaign
     user.made_spend_engagement_at(business,campaign,params[:amount].to_f,params[:lat],params[:lng])
+    qr_code.scan
     s = {}
 		s.merge!({:amount             => params[:amount]})
 		s.merge!({:currency_symbol    => ISO4217::Currency.from_code(business.currency_code).symbol})
