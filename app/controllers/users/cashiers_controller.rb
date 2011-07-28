@@ -64,7 +64,7 @@ class Users::CashiersController < Users::BaseController
   end
   
   def require_cashier
-    unless current_user.role?(Role::AS[:cashier]) and current_user.role?(Role::AS[:admin])
+    unless current_user.role?(Role::AS[:cashier]) || current_user.role?(Role::AS[:admin])
       respond_to do |format|
         format.xml { render :text => "User is neither cashier nor admin" ,:status=>500 }
       end
