@@ -29,6 +29,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       params[:campaign][:rewards_attributes][key]["heading2"]="Spend #{value["needed_amount"]}#{currency_symbol} before #{params[:engagement]["0"][:end_date]}, Get a #{value["money_amount"]}#{currency_symbol} Cash back, Offer available until #{value["expiry_date"]}"
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f if value["needed_amount"].present?
       params[:campaign][:rewards_attributes][key]["name"]="$#{value[:money_amount]} Cash back"
+      params[:campaign][:rewards_attributes][key]["reward_money_amount"]=value[:money_amount]
     end
     found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
     @campaign=found.nil? ? @program.campaigns.build(params[:campaign]) : Campaign.find(found.id)
@@ -103,6 +104,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       params[:campaign][:rewards_attributes][key]["campaign_id"]=@campaign.id
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f
       params[:campaign][:rewards_attributes][key]["name"]="#{value[:money_amount]}#{currency_symbol} Cash back"
+      params[:campaign][:rewards_attributes][key]["reward_money_amount"]=value[:money_amount]
     end     
     respond_to do |format|
       if @campaign.update_attributes!(params[:campaign])

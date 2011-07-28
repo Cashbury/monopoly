@@ -27,7 +27,7 @@
 </p>
 <p>
   <strong>Currency:</strong>
-  <%= ISO4217::Currency.from_code(@business.currency_code).name %>
+  <%= ISO4217::Currency.from_code(@business.currency_code).try(:name) %>
 </p>
 <p>
   <strong>Tag List:</strong>

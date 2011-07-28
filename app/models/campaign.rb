@@ -48,7 +48,11 @@ class Campaign < ActiveRecord::Base
   def init
     self.initial_biz_amount ||= 10000 
   end
-	
+  
+	def spend_campaign?
+	  self.ctype==CTYPE[:spend]
+  end
+  
 	def is_running?
 	  date=Date.today
 	  date > start_date && date < end_date 

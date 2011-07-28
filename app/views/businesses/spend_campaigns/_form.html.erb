@@ -23,7 +23,7 @@
   <% end %>
   <div class="row">
     <h4>Setting The rule</h4>
-    1 jQuery=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
+    1 <%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
   </div>
   <div class="row">
   <%=link_to "Add Engagement" ,"javascript:void(0)", {:id=>"add_engagement"} %>            
@@ -33,11 +33,11 @@
     <div class="form_item_div">
       <label class="left"> Spend </label>   
       <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> before </label>
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
       <label class="left"> Get a </label>
       <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> Cash back, Offer available until </label> 
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$"%> Cash back, Offer available until </label> 
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
     </div>
   </fieldset>
@@ -49,11 +49,11 @@
     <div class="form_item_div">
       <label class="left"> Spend </label>   
       <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> before </label>
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> before </label>
       <input type="text" class="basic_info_caption1 date_template datepicker" style="width:95px;margin:0 0 0" name="Z[end_date]">    
       <label class="left"> Get a </label>
       <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> Cash back, Offer available until</label>       
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> Cash back, Offer available until</label>       
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]">
     </div>
   </fieldset>
