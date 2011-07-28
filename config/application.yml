@@ -1,10 +1,12 @@
 development:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
+  application_version: 1.0beta
 
 production:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
+  application_version: 1.0beta
 
 test:
   google_api_key: 3

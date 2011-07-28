@@ -11,26 +11,6 @@ class ApplicationController < ActionController::Base
     redirect_to root_url
   end
 
-  #For production loggin
-  #unless Rails.application.config.consider_all_requests_local
-    #rescue_from Exception, :with => :render_error
-    #rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
-    #rescue_from AbstractController::ActionNotFound, :with => :render_not_found
-    #rescue_from ActionController::RoutingError, :with => :render_not_found
-    #rescue_from ActionController::UnknownController, :with => :render_not_found
-    #rescue_from ActionController::UnknownAction, :with => :render_not_found
-  #end
-
-  #def render_error e
-      #render :text => "#{e.message} -- #{e.class}<br/>#{e.backtrace.join("<br/>")}"
-  #end
-
-  #def render_not_found e
-    #render :text => "#{e.message} -- #{e.class}<br/>#{e.backtrace.join("<br/>")}"
-  #end
-
-  #def add_sign_up_path_for(resource_or_scope)
-  #end
 
   def after_sign_in_path_for(resource_or_scope)
     if current_user.role? Role::AS[:principal] && !(current_user.role? Role::AS[:admin])
@@ -38,6 +18,7 @@ class ApplicationController < ActionController::Base
     elsif (current_user.role? Role::AS[:admin])
       businesses_url
     elsif current_user.role? Role::AS[:consumer]
+      #check here for he state of the application
       invite_friends_url
     else
       root_url

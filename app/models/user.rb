@@ -89,6 +89,8 @@ class User < ActiveRecord::Base
   scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
   scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code").group("users.id")
 
+
+
   validates_format_of :telephone_number, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
   cattr_reader :per_page
   @@per_page = 20
@@ -343,6 +345,20 @@ class User < ActiveRecord::Base
 
   def engaged(engagement)
     #depending on the type do
+  end
+
+
+  def share_link
+    self.id.alphadecimal
+  end
+
+  def self.find_by_share_id(short_id)
+    where(:id=>short_id.alphadecimal).limit(1).first
+  end
+
+  def update_share_sign_up_count
+    self.sign_up_count +=1
+    self.save!
   end
 
 end
