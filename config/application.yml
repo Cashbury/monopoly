@@ -1,3 +1,7 @@
+staging:
+  google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
+  foursquare_api_key: 1
+  application_version: 1.0beta
 development:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
