@@ -41,7 +41,7 @@ class Reward < ActiveRecord::Base
   validates_numericality_of :needed_amount,:max_claim, :allow_nil=>true
   validates_length_of :name, :maximum => 16
   validates_length_of :heading1, :maximum => 40
-  validates_length_of :heading2, :maximum => 84
+  validates_length_of :heading2, :maximum => 150#84
   after_update :reprocess_photo
   
   cattr_reader :per_page

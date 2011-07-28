@@ -24,22 +24,22 @@
   <% end %>
   <div class="row">
     <h4>Setting The rule</h4>
-    1 $=<%= text_field_tag "engagement[amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
+    1 <%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0;float:none",:default=>1}%> points
   </div>
   <%@rewards.each_with_index do |reward,index| %>
   <div class="row">
   <fieldset>
     <legend class="section_title">Edit Offer</legend>
     <div class="form_item_div">
-      <label class="left"> Spend $</label>   
+      <label class="left"> Spend </label>   
       <%= text_field_tag "campaign[rewards_attributes][#{index}][needed_amount]",reward.needed_amount, {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0",:title=>"50$", :id=>"needed_amount_id"} %>
       <%= hidden_field_tag "campaign[rewards_attributes][#{index}][id]", reward.id%>
-      <label class="left"> before </label>
-      <input type="text" value=<%=@engagement.end_date%> class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[end_date]">      
-      <label class="left"> Get a $</label>
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> before </label>
+      <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" value="<%=@engagement.end_date%>">      
+      <label class="left"> Get a </label>
       <%= text_field_tag "campaign[rewards_attributes][#{index}][money_amount]" ,reward.money_amount,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:100px;margin:0 0 0",:title=>"5$",:id=>"reward_name_field_id"}%>
-      <label class="left"> Cash back, Offer available until </label>       
-      <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]">
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> Cash back, Offer available until </label>       
+      <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" value="<%=reward.expiry_date%>">
     </div>
   </fieldset>
   </div>
@@ -65,7 +65,7 @@
   <fieldset id="details_box" style="display:none">
     <legend class="section_title">More Details</legend>
       <div class="row">
-        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= calendar_date_select_tag @campaign.start_date %>
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <input type="text" class="datepicker" style="width:95px;margin:0 0 0" name="campaign[start_date]" value="<%=@campaign.start_date%>" />   
       </div>
       <div class="row">
         <%= label_tag :initial_amount %><br />
@@ -77,7 +77,7 @@
       </div>
       <div class="row">
         <%= label_tag "This offer should be available until" %><br />
-        <%= calendar_date_select_tag "campaign[end_date]", @campaign.end_date%>
+        <input type="text" class="datepicker" style="width:95px;margin:0 0 0" name="campaign[end_date]" value="<%=@campaign.end_date%>" />   
       </div>
     <br /><br />
   </fieldset>

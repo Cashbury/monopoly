@@ -100,7 +100,7 @@ class Businesses::SpendCampaignsController < ApplicationController
     end
     @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
     reward_attrs.each do |key,value| 
-      params[:campaign][:rewards_attributes][key]["heading2"]="Spend #{value["needed_amount"]}#{currency_symbol} before #{params[:end_date]}, Get a #{value["money_amount"]}#{currency_symbol} Cash back, Offer available until #{value["expiry_date"]}"
+      params[:campaign][:rewards_attributes][key]["heading2"]="Spend #{value["needed_amount"]}#{currency_symbol} before #{params[:engagement]["0"][:end_date]}, Get a #{value["money_amount"]}#{currency_symbol} Cash back, Offer available until #{value["expiry_date"]}"
       params[:campaign][:rewards_attributes][key]["campaign_id"]=@campaign.id
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f
       params[:campaign][:rewards_attributes][key]["name"]="#{value[:money_amount]}#{currency_symbol} Cash back"
@@ -109,23 +109,27 @@ class Businesses::SpendCampaignsController < ApplicationController
     respond_to do |format|
       if @campaign.update_attributes!(params[:campaign])
         engagement=@campaign.engagements.first
-        engagement.update_attribute(:end_date,params[:end_date])
+        engagement.update_attribute(:end_date,params[:engagement]["0"][:end_date])
         format.html {         
           redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
         }
       else
         @campaign.errors.add(:item_name,"can't be blank") if params[:item_name]==""
         @reward=@campaign.rewards.first
+        @engagement = @campaign.engagements.first
+        @rewards    = @campaign.rewards
         @reward.build_reward_image unless @reward.reward_image.present?
         @item_name =@campaign.engagements.first.name.gsub(/Buy\s+/,'')
         format.html { render :action => "edit" }
       end
     end
-  rescue
-    respond_to do |format|
-      format.html { render :action => "edit" }
-      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
-    end
+  #rescue
+  #  respond_to do |format|
+  #    @engagement = @campaign.engagements.first
+  #    @rewards    = @campaign.rewards
+  #    format.html { render :action => "edit" }
+  #    format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
+  #  end
   end
   def crop_image
     @campaign=Campaign.find(params[:campaign_id])

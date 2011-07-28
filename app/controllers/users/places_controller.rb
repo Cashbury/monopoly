@@ -77,7 +77,7 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["rewards"]       =[]
         unless targeted_campaigns.empty?
           results=programs.joins(:campaigns=>[:rewards,:places,:accounts=>[:measurement_type,:account_holder]])
-                          .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.expiry_date,rewards.reward_money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type")
+                          .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.reward_money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type")
                           .where("campaigns.id IN (#{targeted_campaigns.join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id=#{place.id} and rewards.is_active=true and accounts.status=true")
                            
           results.each_with_index do |result,i|
@@ -96,6 +96,7 @@ class Users::PlacesController < Users::BaseController
                   @result["places"][index]["rewards"][i]["points_rate"]=points_rate
                   @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.reward_money_amount * points_rate if reward_obj.reward_money_amount.present?
                   @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
+                  @result["places"][index]["rewards"][i]["expiry_date"]=reward_campaign.engagements.first.try(:end_date)
                 end
                 how_to_get_amount_text=""  
                 @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{attributes["measurement_type"]}\n"}.first
