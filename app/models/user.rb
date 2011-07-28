@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
   has_many :followers
   has_many :businesses, :through=>:followers
   has_many :invitations, :foreign_key=>"from_user_id"
-
+  has_many :receipts
   has_many :employees #same user with different positions
   has_many :roles, :through=>:employees
   has_many :logs
@@ -347,6 +347,7 @@ class User < ActiveRecord::Base
                     :lat            =>lat,
                     :lng            =>lng,
                     :created_on     =>date)
+        self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>place_id, :receipt_text=>"", :amount=>after_fees_amount, :receipt_type=>Receipt::TYPE[:spend])
       end
     end
     rescue Exception=>e

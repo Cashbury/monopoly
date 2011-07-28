@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  business_id: 1
+  place_id: 1
+  receipt_text: MyString
+  amount: 1
+  receipt_type: MyString
+
+two:
+  business_id: 1
+  place_id: 1
+  receipt_text: MyString
+  amount: 1
+  receipt_type: MyString

@@ -106,7 +106,7 @@ class Businesses::CampaignsController < ApplicationController
     eng_type=EngagementType.find(eng_attrs[:engagement_type_id])
     if eng_type.eng_type==EngagementType::ENG_TYPE[:buy]
       @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"#{params[:item_name].capitalize} points",:business_id=>@business.id)
-  elsif eng_type.eng_type==EngagementType::ENG_TYPE[:visit]
+    elsif eng_type.eng_type==EngagementType::ENG_TYPE[:visit]
       @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"Visit points",:business_id=>@business.id)
     else
       @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")

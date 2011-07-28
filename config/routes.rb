@@ -193,7 +193,8 @@ Kazdoor::Application.routes.draw do
   match "reissue_code/:id"                =>"users_management#reissue_code"
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
-  
+  match "/users/:business_id/get_id.:format" =>"users/places#get_my_id"  
+  #get "/users/get_my_receipts.:format", :controller=>"users/places", :action=>:get_my_receipts
 #  match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
   #devise_for :users
 

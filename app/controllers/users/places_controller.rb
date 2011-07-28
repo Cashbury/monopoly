@@ -120,4 +120,22 @@ class Users::PlacesController < Users::BaseController
 		  end
     end
   end
+  
+  def get_my_id
+    #TODO implement params[:business_id] when user has various qrcodes at businesses
+    qr_code=current_user.qr_code
+    result={}
+    result[:user_id_image_url]=qr_code.try(:qr_code_image).try(:photo).try(:url)
+    result[:starting_timer_seconds ]=STARTING_TIMER_SEC
+    respond_to do |format|       
+      format.xml { render :xml => result,:status=>200 }
+    end
+  end
+  
+  def get_my_receipts
+    all_receipts=current_user.receipts.join([:business,:place]).select("receipts.*, places.name, businesses.name")
+    respond_to do |format|       
+      format.xml { render :xml => all_receipts.to_xml,:status=>200 }
+    end
+  end
 end

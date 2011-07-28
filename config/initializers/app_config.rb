@@ -3,3 +3,4 @@ IMAGES_CONTENT_TYPE = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png', 'i
 IMAGES_CONTENT_TYPE_NAME = ['JPG', 'PNG', 'BMP','JPEG']
 DISTANCE=10
 ENABLE_DELAYED_UPLOADS=false
+STARTING_TIMER_SEC=60
