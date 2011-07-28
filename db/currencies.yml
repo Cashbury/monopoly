@@ -1,0 +1,9 @@
+EGP:
+  name: Egyptian Pound
+  symbol: "ج.م"
+LBP:
+  name: Lebanese Pound
+  symbol: £
+USD:
+  name: US Dollar
+  symbol: $

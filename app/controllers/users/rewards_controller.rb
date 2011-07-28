@@ -37,10 +37,4 @@ class Users::RewardsController < Users::BaseController
 		r[:redeem].merge!({:account_amount   => account.amount})
     r
   end
-  
-  def respond_with_error(error)
-		respond_to do |format|
-			format.xml { render :text => error,:status=>500 }
-		end
-  end
 end

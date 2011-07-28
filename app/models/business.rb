@@ -76,8 +76,17 @@ class Business < ActiveRecord::Base
       return place.is_primary? == true
     end
   end
-
- def account_holder
+  
+  def has_spend_based_campaign?
+   self.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").size > 0
+    #Campaign.joins(:program=>:business).where("businesses.id=#{business.id} and campaigns.ctype=#{Campaign::CTYPE[:spend]}").limit(1).size > 0
+  end
+  
+  def spend_based_campaign
+    Campaign.joins(:program=>:business).where("businesses.id=#{self.id} and campaigns.ctype=#{Campaign::CTYPE[:spend]}").limit(1).first
+  end
+  
+  def account_holder
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
   end
 

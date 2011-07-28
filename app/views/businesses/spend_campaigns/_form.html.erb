@@ -31,13 +31,13 @@
   <fieldset>
     <legend class="section_title">An Offer</legend>
     <div class="form_item_div">
-      <label class="left"> Spend $</label>   
+      <label class="left"> Spend </label>   
       <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"> before </label>
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
-      <label class="left"> Get a $</label>
+      <label class="left"> Get a </label>
       <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"> Cash back, Offer available until </label> 
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> Cash back, Offer available until </label> 
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
     </div>
   </fieldset>
@@ -47,13 +47,13 @@
   <fieldset>
     <legend class="section_title">An Offer</legend>
     <div class="form_item_div">
-      <label class="left"> Spend $</label>   
+      <label class="left"> Spend </label>   
       <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"> before </label>
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> before </label>
       <input type="text" class="basic_info_caption1 date_template datepicker" style="width:95px;margin:0 0 0" name="Z[end_date]">    
-      <label class="left"> Get a $</label>
+      <label class="left"> Get a </label>
       <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"> Cash back, Offer available until</label>       
+      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).symbol%> Cash back, Offer available until</label>       
       <input type="text" class="basic_info_caption1 datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]">
     </div>
   </fieldset>
@@ -79,7 +79,7 @@
   <fieldset id="details_box" style="display:none">
     <legend class="section_title">More Details</legend>
       <div class="row">
-        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= calendar_date_select_tag "campaign[start_date]"%>
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <input type="text" class="datepicker" style="width:95px;margin:0 0 0" name="campaign[start_date]" />   
       </div>
       <div class="row">
         <%= label_tag :initial_amount %><br />
@@ -91,7 +91,7 @@
       </div>
       <div class="row">
         <%= label_tag "This offer should be available until" %><br />
-        <%= calendar_date_select_tag "campaign[end_date]"%>
+        <input type="text" class="datepicker" style="width:95px;margin:0 0 0" name="campaign[end_date]" />   
       </div>
     <br /><br />
   </fieldset>
@@ -102,34 +102,33 @@
 
 <script type="text/javascript">
 var counter=0;
-jQuery(document).ready(function(){
-  jQuery('input.datepicker').live('click', function() {
-    jQuery(this).datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' }).focus();
+$(document).ready(function(){
+  $('input.datepicker').live('click', function() {
+    $(this).datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' }).focus();
   });
-  jQuery("#add_engagement").click(function(){
-    var content=jQuery('#template').html();
+  $("#add_engagement").click(function(){
+    var content=$('#template').html();
     var next_index=counter+1;
     var content1=content.replace(/X/g,"campaign[rewards_attributes]["+next_index+"]");
     var content2=content1.replace(/Z/g,"engagement["+next_index+"]");
-    jQuery("#engagements_container").append(content2);
+    $("#engagements_container").append(content2);
     
   });
-  jQuery("input.datepicker").change(function () {
-    jQuery("input.date_template").last().val(jQuery(":selected",this).val());
+  $("input.datepicker").change(function () {
+    $("input.date_template").last().val($(":selected",this).val());
   });
   
-  jQuery("#add_details_link").click(function(){
-    if (jQuery(this).html()=="Add More Details" || jQuery(this).html()=="Edit Details")
-      jQuery(this).html("Hide Details");
+  $("#add_details_link").click(function(){
+    if ($(this).html()=="Add More Details" || $(this).html()=="Edit Details")
+      $(this).html("Hide Details");
     else{
       <%if @campaign.new_record? %>
-        jQuery(this).html("Add More Details");
+        $(this).html("Add More Details");
       <%else%>
-        jQuery(this).html("Edit Details");
+        $(this).html("Edit Details");
       <%end%>
     }
-    jQuery("#details_box").slideToggle();
+    $("#details_box").slideToggle();
   });
-
 });
 </script>

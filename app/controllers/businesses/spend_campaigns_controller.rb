@@ -20,12 +20,13 @@ class Businesses::SpendCampaignsController < ApplicationController
   def create
     @program_type=ProgramType.find_or_create_by_name(:name=>"Marketing")
     @program     =Program.find_or_create_by_business_id_and_program_type_id(:business_id=>@business.id,:program_type_id=>@program_type.id)
+    currency_symbol=ISO4217::Currency.from_code(@business.currency_code).symbol
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
     end 
     @reward_attrs=params[:campaign][:rewards_attributes]
     @reward_attrs.each do |key,value| 
-      params[:campaign][:rewards_attributes][key]["heading2"]="Spend $#{value["needed_amount"]} before #{params[:engagement]["0"][:end_date]}, Get a $#{value["money_amount"]} Cash back, Offer available until #{value["expiry_date"]}"
+      params[:campaign][:rewards_attributes][key]["heading2"]="Spend #{value["needed_amount"]}#{currency_symbol} before #{params[:engagement]["0"][:end_date]}, Get a #{value["money_amount"]}#{currency_symbol} Cash back, Offer available until #{value["expiry_date"]}"
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f if value["needed_amount"].present?
       params[:campaign][:rewards_attributes][key]["name"]="$#{value[:money_amount]} Cash back"
     end
@@ -33,7 +34,6 @@ class Businesses::SpendCampaignsController < ApplicationController
     @campaign=found.nil? ? @program.campaigns.build(params[:campaign]) : Campaign.find(found.id)
     @campaign.ctype=Campaign::CTYPE[:spend]
     if @campaign.engagements.empty?
-      puts "################## #{params[:engagement]["0"]["end_date"]}"
       @engagement=@campaign.engagements.build(params[:engagement]["0"])
       @engagement.name="Spend Engagement"
       @engagement.end_date=params[:engagement]["0"]["end_date"].to_date
@@ -56,11 +56,11 @@ class Businesses::SpendCampaignsController < ApplicationController
       end      
       format.html{ redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Offer was successfully created.')}
     end
-  #rescue
-  #  respond_to do |format|
-  #    format.html { render :action => "new" }
-  #    format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
-  #  end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "new" }
+      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
+    end
   end
   
   def show
@@ -81,6 +81,7 @@ class Businesses::SpendCampaignsController < ApplicationController
   def update
     @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
+    currency_symbol=ISO4217::Currency.from_code(@business.currency_code).symbol
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
     end 
@@ -98,10 +99,10 @@ class Businesses::SpendCampaignsController < ApplicationController
     end
     @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
     reward_attrs.each do |key,value| 
-      params[:campaign][:rewards_attributes][key]["heading2"]="Spend #{value["needed_amount"]}$ before #{params[:end_date]}, Get a #{value["money_amount"]} Cash back, Offer available until #{value["expiry_date"]}"
+      params[:campaign][:rewards_attributes][key]["heading2"]="Spend #{value["needed_amount"]}#{currency_symbol} before #{params[:end_date]}, Get a #{value["money_amount"]}#{currency_symbol} Cash back, Offer available until #{value["expiry_date"]}"
       params[:campaign][:rewards_attributes][key]["campaign_id"]=@campaign.id
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f
-      params[:campaign][:rewards_attributes][key]["name"]="$#{value[:money_amount]} Cash back"
+      params[:campaign][:rewards_attributes][key]["name"]="#{value[:money_amount]}#{currency_symbol} Cash back"
     end     
     respond_to do |format|
       if @campaign.update_attributes!(params[:campaign])

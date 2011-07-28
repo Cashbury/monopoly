@@ -11,7 +11,7 @@
     <%= f.label :brands %>
     <%= f.select :brand_id , @brands.collect{|b| [ b.name , b.id]} %>
   </p>
-
+  
   <p>
     <%= f.label "Legal Business Name" %>
     <%= f.text_field :name , :class=>"title" %>
@@ -26,8 +26,13 @@
     <%= f.label "Activate Users ID" %>
     <%= f.check_box :activate_users_id %>
   </p>
+  
+  <p>
+    <%= f.label :currency %>
+    <%= f.select :currency_code, ISO4217::Currency.currencies.values.collect{|c| [c.name,c.code]} %>
+  </p>
 
-<!--  <fieldset>
+  <fieldset>
     <legend>Business Mailing Address</legend>
       <%= f.fields_for :mailing_address,f.object.mailing_address do |mailing_address_form| %>
         <p>
@@ -60,9 +65,8 @@
         <p>
           <%= billing_address_form.label :neighborhood %>
           <%= billing_address_form.text_field :neighborhood , :class=>"title" %>
-        </p>
-        -->
-  <!--      <p>
+        </p>-->
+        <p>
           <%= billing_address_form.hidden_field :country_id , :class=>"title" %>
         </p>
         <p>
@@ -75,7 +79,7 @@
           <%= billing_address_form.text_field :zipcode , :class=>"title" %>
         </p>
       <%end%>
-    </fieldset>-->
+    </fieldset>
     <br/>
 
   <p>

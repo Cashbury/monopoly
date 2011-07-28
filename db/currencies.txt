@@ -1,0 +1,3 @@
+Egyptian Pound,EGP,ج.م
+Lebanese Pound,LBP,£
+US Dollar,USD,$

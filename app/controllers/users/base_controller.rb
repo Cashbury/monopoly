@@ -8,4 +8,10 @@ class Users::BaseController < ApplicationController
       end
     end
   end
+  
+  def respond_with_error(error)
+		respond_to do |format|
+			format.xml { render :text => error,:status=>500 }
+		end
+  end
 end

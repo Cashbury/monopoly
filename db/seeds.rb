@@ -58,3 +58,10 @@ puts "Creating system legal ids types"
 %w(social_number passport_number).each do |name|
   LegalType.find_or_create_by_name(:name => name )
 end
+puts "Seeding DB with currencies"
+#open(Rails.root.join('db').join('currencies.txt')) do |records|
+#  records.read.each_line do |record|
+#    currency_details=record.split(",")    
+#  end
+#end
+ISO4217::Currency.load_file(Rails.root.join('db').join('currencies.yml'))

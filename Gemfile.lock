@@ -49,6 +49,7 @@ GEM
     carmen (0.2.5)
     carrierwave (0.5.2)
       activesupport (~> 3.0)
+    currencies (0.4.0)
     daemons (1.0.10)
     delayed_job (2.1.4)
       activesupport (~> 3.0)
@@ -142,6 +143,7 @@ DEPENDENCIES
   cancan (= 1.6.5)
   carmen (= 0.2.5)
   carrierwave (= 0.5.2)
+  currencies
   delayed_job (= 2.1.4)
   devise (~> 1.1.5)
   factory_girl_rails (= 1.0.1)

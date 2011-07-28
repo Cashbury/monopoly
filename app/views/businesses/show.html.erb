@@ -26,6 +26,10 @@
   <%= @business.description %>
 </p>
 <p>
+  <strong>Currency:</strong>
+  <%= ISO4217::Currency.from_code(@business.currency_code).name %>
+</p>
+<p>
   <strong>Tag List:</strong>
   <%= @business.tag_list %>
 </p>
