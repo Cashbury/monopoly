@@ -14,9 +14,11 @@ class PlacesController < ApplicationController
 
   def show
     @place = Place.find(params[:id])
-    client = Places::Client.new(:api_key => EXT_API["google_api_key"])
+    client = Places::Client.new(:api_key => APP_CONFIG["google_api_key"])
     @gplaces =  client.search(:lat=>@place.lat.to_f, :lng=>@place.long.to_f, :name=>@place.name)
-
+    unless @place.google_reference.blank?
+      @gplace = client.details(:reference=>@place.google_reference)
+    end
     respond_to do |format|
       format.html
       format.xml { render :xml => @places }

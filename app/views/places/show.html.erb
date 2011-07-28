@@ -48,7 +48,10 @@
     <%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %><%= gplace.name %><br/>
   <% end %>
 <% else %>
-    <%= link_to "reset google place", "/places/#{@place.id}/reset_google" %>
+    <h4 id="heading">Google places info</h4>
+    <b><%= @gplace.try(:result).try(:name) %> </b></br>
+    <b><%= @gplace.try(:result).try(:rating) %></b>
+    <br/><%= link_to "reset google place", "/places/#{@place.id}/reset_google" %>
 <% end %>
 
 <p>
