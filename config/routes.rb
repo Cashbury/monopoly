@@ -204,9 +204,11 @@ Kazdoor::Application.routes.draw do
 
   match "/v1/cities/:id/vote/:like"       => "cities#vote"
 
-  match "/v1/cities/:id/votes"            => "cities#votes"
+  match "/v1/cities/:id/votes.:format"    => "cities#votes"
 
   match "/v1/cities/:name.:format"        => "cities#index"
+
+  match "/v1/popular_cities.:format"      => "cities#popular"
 
   match "/v1/users/:id/:status.:format"   => "users_snaps#update_user"
 

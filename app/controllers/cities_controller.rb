@@ -95,16 +95,22 @@ class CitiesController < ApplicationController
   def vote
     @city = City.find(params[:id])
     if(params[:like].downcase =="down")
-      current_user.unflag(@city, :like)
+      current_user.unflag(@city, "do not liked it")
     else
-      current_user.flag(@city, :like)
+      current_user.flag(@city, "like it")
     end
     render :nothing=>true
   end
 
   def votes
     @city = City.find(params[:id])
-    render :json=> [:id=>@city.id, :name=>@city.name,:like_count=>@city.flaggings.size() ]
+    render :xml => [:id=>@city.id, :name=>@city.name,:like_count=>@city.flaggings.count ]
+  end
+
+  def popular
+    @popular = Flagging.popular
+    y @popular
+    render :xml =>@popular
   end
 
   private #================
