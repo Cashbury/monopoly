@@ -109,7 +109,6 @@ class CitiesController < ApplicationController
 
   def popular
     @popular = Flagging.popular
-    y @popular
     render :xml =>@popular
   end
 
