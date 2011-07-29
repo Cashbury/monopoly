@@ -191,7 +191,30 @@ class Place < ActiveRecord::Base
                       )
     end
   end
-  private
+
+
+  def full_address
+    [address.street_address, address.city.try(:name), address.country.try(:name)].compact.join(", ")
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  private #=============================================
+
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
@@ -234,4 +257,5 @@ class Place < ActiveRecord::Base
     hour, min = parse_date(hour_txt)
     datetime = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, hour.to_i , min.to_i)
   end
+
 end

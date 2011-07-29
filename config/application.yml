@@ -2,15 +2,19 @@ staging:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
   application_version: 1.0beta
+  yelp_key : W6ZJv3oMzMqhTXvo9Mfg0Q
+
 development:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
   application_version: 1.0beta
+  yelp_key : W6ZJv3oMzMqhTXvo9Mfg0Q
 
 production:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
   application_version: 1.0beta
+  yelp_key : W6ZJv3oMzMqhTXvo9Mfg0Q
 
 test:
   google_api_key: 3
