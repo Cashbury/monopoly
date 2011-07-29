@@ -44,13 +44,24 @@
 <%end%>
 
 <% if @place.google_reference.blank? %>
+  <table class="mono-table">
+    <tr>
+    	<th>Name</th>
+    	<th>Address</th>
+    	<th>Link</th>
+    </tr>
   <% @gplaces.results.each do |gplace| %>
-    <%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %><%= gplace.name %><br/>
+    <tr>
+    	<td><%= gplace.name %></td>
+    	<td><%= gplace.vicinity %></td>
+        <td><%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %></td>
+    </tr>
   <% end %>
+  </table>
 <% else %>
     <h4 id="heading">Google places info</h4>
-    <b><%= @gplace.try(:result).try(:name) %> </b></br>
-    <b><%= @gplace.try(:result).try(:rating) %></b>
+    <b>Name:</b><%= @gplace.try(:result).try(:name) %></br>
+    <b>Rating:</b><%= @gplace.try(:result).try(:rating) %>
     <br/><%= link_to "reset google place", "/places/#{@place.id}/reset_google" %>
 <% end %>
 
