@@ -61,7 +61,8 @@
 <% else %>
     <h4 id="heading">Google places info</h4>
     <b>Name:</b><%= @gplace.try(:result).try(:name) %></br>
-    <b>Rating:</b><%= @gplace.try(:result).try(:rating) %>
+    <b>Rating:</b><%= rating = @gplace.try(:result).try(:rating) %><br/>
+    <div id="fixed"></div>
     <br/><%= link_to "reset google place", "/places/#{@place.id}/reset_google" %>
 <% end %>
 
@@ -76,8 +77,5 @@
                                 "http://maps.google.com/maps/api/js?sensor=true",
 %>
 <script type="text/javascript" language="javascript" >
-  jQuery(function(){
-
-    <%= get_maker_position_script(@place) %>
-  })
+  jQuery("#fixed").raty({path:"/images/" , half: true, readOnly:true, start:<%= rating || 0 %>})
 </script>
