@@ -43,7 +43,7 @@
 </p>
 <%end%>
 
-<% if @place.google_reference.blank? %>
+<% unless @place.google_reference.blank? || @gplaces.empty? %>
   <table class="mono-table">
     <tr>
     	<th>Name</th>
@@ -65,6 +65,7 @@
     <div id="fixed"></div>
     <br/><%= link_to "reset google place", "/places/#{@place.id}/reset_google" %>
 <% end %>
+
 
 <p>
   <%= link_to "Edit",  edit_place_path(@place) %> |
