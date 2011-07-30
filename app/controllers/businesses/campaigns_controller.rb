@@ -85,12 +85,11 @@ class Businesses::CampaignsController < ApplicationController
     @reward    =@campaign.rewards.first
     @reward.build_reward_image unless @reward.reward_image.present?
     @item_name =@engagement.name.gsub(/Buy\s+/,'')
-    y @share_engagement = @campaign.engagements.where(:engagement_type_id=>4).first
+    @share_engagement = @campaign.engagements.where(:engagement_type_id=>4).first
   end
 
   def update
     @campaign = Campaign.find(params[:id])
-    @share_engagement = @campaign.engagements.where(:engagement_type_id=>4).first
 
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
@@ -121,9 +120,9 @@ class Businesses::CampaignsController < ApplicationController
     params[:campaign][:engagements_attributes]["0"]["name"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]}"
     params[:campaign][:engagements_attributes]["0"]["description"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]} #{reward_attrs[:needed_amount]} times, Get a free #{reward_attrs[:name]}"
     respond_to do |format|
-      save_share_engagement(params[:share])
       if @campaign.update_attributes!(params[:campaign])
         format.html {
+          save_share_engagement(params[:share])
           @reward=@campaign.rewards.first
           if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.needed_cropping?
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.')
@@ -177,12 +176,13 @@ class Businesses::CampaignsController < ApplicationController
   private
 
   def save_share_engagement(share)
-    engagement= share.merge({:campaign_id=>@campaign.id})
+    debugger
     if share[:id].blank?
-      Engagement.create!(engagement) if share[:amount].present?
+      share = share.delete_if {|n| n=="id"}
+      @share_engagement= @campaign.engagements.create!(share)
     else
-      @share_engagement = Engagement.find(share["id"])
-      @share_engagement.update_attributes(engagement)
+      @share_engagement = Engagement.find(share[:id])
+      @share_engagement.update_attributes!(:amount=>share[:amount], :fb_engagement_msg=>share[:fb_engagement_msg])
     end
   end
   def prepare_business

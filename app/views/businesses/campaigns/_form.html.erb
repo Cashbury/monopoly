@@ -2,6 +2,8 @@
 <%= calendar_date_select_includes %>
 <% CalendarDateSelect.format=(:iso_date)%>
 
+
+
 <style type="text/css" media="screen">
   div.form_item_div select{margin:0 5px 0 0}
   div.form_item_div input {padding:5px 2px; margin:0 3px 0 0}
@@ -59,6 +61,7 @@
       <%= f.label :is_fb_enabled, "Enable Share on Facebook" %>
     </div>
     <div class="row">
+      <%= hidden_field_tag "share[name]", "Share based engagements" %>
       <%= hidden_field_tag "share[engagement_type_id]", "4" %>
       <%= text_field_tag "share[amount]", @share_engagement.try(:amount) || "2" , :class=>"title"%>
       <%= text_field_tag "share[fb_engagement_msg]", @share_engagement.try(:fb_engagement_msg) || "Share and dfada fenjoy 2" , :class=>"title" %>
@@ -145,18 +148,22 @@
 <script type="text/javascript">
 jQuery(document).ready(function(){
 
+
     jQuery("#campaign_is_fb_enabled").click(function(e){
-      var $is_fb_enabled = jQuery(this);
-      if(!$is_fb_enabled.is(":checked")){
-        jQuery(".face_book_message").hide();
-        jQuery(".face_book_message").find("input").each(function(i,data){
-          jQuery(data).attr("disable",true);
-        })
+      var $cb = jQuery(this);
+      if($cb.is(":checked")){
+        update_fb_msg();
+        enable_fields();
       }else{
-        jQuery(".face_book_message").show()
+      //engagement_type =jQuery("#engagement_type_id").val();
+        disable_fields();
       }
     });
 
+
+  <% unless @campaign.is_fb_enabled? %>
+    disable_fields();
+  <% end %>
 
   update_select_item_list_display(jQuery("#engagement_type_selection_list"));
   jQuery("#engagement_type_selection_list").change(function () {
@@ -226,4 +233,24 @@ jQuery(document).ready(function(){
   }
 
 });
+
+function enable_fields(){
+  jQuery("#share_amount").attr("disabled",false).css({background:""});
+  jQuery("#share_fb_engagement_msg").attr("disabled", false ).css({background: ""});
+}
+
+function disable_fields(){
+  jQuery("#share_amount").attr("disabled",true).css({background:"#ccc"});
+  jQuery("#share_fb_engagement_msg").attr("disabled", true ).css({background:"#ccc"});
+}
+function update_fb_msg(){
+    var amount = jQuery("#share_amount").val();
+    if(amount =="") {
+      amount=1;
+      jQuery("#share_amount").val(1);
+    }
+    jQuery("#share_fb_engagement_msg").val("share on Facebook and earn +"+amount+" point(s)");
+}
+
+
 </script>
