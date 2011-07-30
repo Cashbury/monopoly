@@ -23,4 +23,9 @@ class EngagementType < ActiveRecord::Base
   def self.list
     where("name !='share'").order("name ASC")
   end
+
+
+  def self.share_id
+    where("name='share'").first.id
+  end
 end

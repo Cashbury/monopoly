@@ -74,4 +74,8 @@ class Campaign < ActiveRecord::Base
     selected_places.each {|place| self.places << place}
   end
 
+  def update_engagement
+    engagment.delete({:engagement_type_id=>4})
+  end
+
 end

@@ -23,6 +23,10 @@
     <legend class="section_title">Make an Offer</legend>
     <div class="form_item_div">
     <%= f.fields_for :engagements do |engagement|%>
+
+    <% if  engagement.object.engagement_type_id !=4  %>
+      <% #the if statement is here because the share engagmements is also iterated %>
+
       <%= engagement.select :engagement_type_id, EngagementType.list.collect{ |eng_type| [eng_type.display_name,eng_type.id]  } , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
       <%= f.fields_for :rewards do |reward|%>
@@ -54,7 +58,12 @@
       <%= f.check_box :is_fb_enabled %>
       <%= f.label :is_fb_enabled, "Enable Share on Facebook" %>
     </div>
-    <%= engagement.text_field :amount %>
+    <div class="row">
+      <%= hidden_field_tag "share[engagement_type_id]", "4" %>
+      <%= text_field_tag "share[amount]", @share_engagement.try(:amount) || "2" , :class=>"title"%>
+      <%= text_field_tag "share[fb_engagement_msg]", @share_engagement.try(:fb_engagement_msg) || "Share and dfada fenjoy 2" , :class=>"title" %>
+      <%= hidden_field_tag "share[id]", @share_engagement.try(:id)  %>
+    </div>
     <div class="face_book_message">
       <div class="row">
         <%= reward.label "When user unlocks a reward" %><br />
@@ -121,11 +130,12 @@
           <%= image.label "Reward Image" %><br />
           <%= image.file_field :photo%><br />
           <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
-        <%- end -%>
+        <% end %>
       </div>
     <br /><br />
   </fieldset>
   <%end%>
+  <%end #ifends engaggement !=4%>
   <%end%>
   <div class="actions">
     <p><%= f.submit @campaign.new_record? ? "Make Offer" : "Update Offer"%></p>

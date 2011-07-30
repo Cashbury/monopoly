@@ -67,12 +67,12 @@ jQuery(document).ready(function(){
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  <%unless @campaign.measurement_type.business %>
+  <% #unless @campaign.measurement_type.present?  %>
     <p>
       <%= f.label :amount %><br />
       <%= f.text_field :amount, :value=>"1", :id=>"needed_amount_id",  :class=>"title"%>
     </p>
-  <%end%>
+  <% #end%>
   <p>
     <%= f.label :fb_engagement_msg, "Facebook msg when user makes an engagement", :id=>"engagement_fb_engagement_msg" %>    <%= f.label :fb_engagement_msg, "Message prompt displayed on the reciept of the user",
       :id=>"share_fb_engagement_label", :style=>"display:none" %><br />
