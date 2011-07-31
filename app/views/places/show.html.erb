@@ -43,21 +43,26 @@
 </p>
 <%end%>
 
-<% if  @place.google_reference.blank? && @gplaces.empty? %>
-  <table class="mono-table">
-    <tr>
-    	<th>Name</th>
-    	<th>Address</th>
-    	<th>Link</th>
-    </tr>
-  <% @gplaces.results.each do |gplace| %>
-    <tr>
-    	<td><%= gplace.name %></td>
-    	<td><%= gplace.vicinity %></td>
-        <td><%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %></td>
-    </tr>
+<% if  @place.google_reference.blank? %>
+  <% if @gplaces.results.present? %>
+    <table class="mono-table">
+      <tr>
+          <th>Name</th>
+          <th>Address</th>
+          <th>Link</th>
+        </tr>
+
+    <% @gplaces.results.each do |gplace| %>
+      <tr>
+          <td><%= gplace.name %></td>
+          <td><%= gplace.vicinity %></td>
+          <td><%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %></td>
+      </tr>
+    <% end %>
+    </table>
+  <% else %>
+    <h4>No matching place found in google places</h4>
   <% end %>
-  </table>
 <% else %>
     <h4 id="heading">Google places info</h4>
     <b>Name:</b><%= @gplace.try(:result).try(:name) %></br>
