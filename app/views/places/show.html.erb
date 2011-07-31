@@ -43,7 +43,7 @@
 </p>
 <%end%>
 
-<% unless @place.google_reference.blank? || @gplaces.empty? %>
+<% if  @place.google_reference.blank? && @gplaces.empty? %>
   <table class="mono-table">
     <tr>
     	<th>Name</th>
