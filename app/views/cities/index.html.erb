@@ -28,23 +28,22 @@
     <th>Tel. Area code</th>
     <th>Votes</th>
     <th></th>
-    <th></th>
-    <th></th>
   </tr>
 
 <% @cities.each do |city| %>
   <tr>
-    <td><%= city.name %></td>
+    <td><%= link_to(raw(city.name), city) %></td>
     <td><%= city.country.try :name %></td>
     <td><%= city.phone_area_code %></td>
     <td><%= city.flaggings.count %></td>
-    <td><%= link_to 'Show', city %></td>
-    <td><%= link_to 'Edit', edit_city_path(city) %></td>
-    <td><%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td>
+      <%= link_to 'Edit', edit_city_path(city) , :class=>"button" %>
+      <%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>
+    </td>
   </tr>
 <% end %>
 </table>
 
 <br />
 <%= will_paginate @cities %>
-<%= link_to 'New City', new_city_path %>
+<%= link_to 'New City', new_city_path , :class=>"button positive"%>

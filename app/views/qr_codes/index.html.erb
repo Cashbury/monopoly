@@ -1,29 +1,10 @@
 <% title "Manage QrCodes" %>
 <style type="text/css" media="screen">
-  table {
-    margin-top:10px;
-    border:1px #ccc solid;
-  }
-  th,td{
-    border-right:1px #ccc solid;
-    border-bottom:1px #ccc solid;
-    text-align:center;
-    padding:3px;
-  }
-  th{
-    background:#d2d2d2;
-  }
+
   select#template_id,select.filter{
     width:150px;
   }
 
-  a{
-    padding:3px;
-    text-decoration:none;
-  }
-  a:hover{
-    background:#9BE1FB;
-  }
   #test{
     margin-bottom:10px;
   }
@@ -32,7 +13,7 @@
   }
   #filters{
   }
-
+  .mono-table .less_fat{ padding: 0 2px}
 </style>
 
 <script type="text/javascript" language="javascript" charset="utf-8">
@@ -74,13 +55,13 @@ jQuery(function(){
      if (jQuery(this).is(":checked")){
       jQuery('#engegement_details').hide();
       jQuery('#user_details').show();
-     } 
+     }
     });
     jQuery('#filter_engagements').bind('change',function(){
      if (jQuery(this).is(":checked")){
       jQuery('#user_details').hide();
       jQuery('#engegement_details').show();
-     } 
+     }
     });
     jQuery("#user_id").autocomplete({
       source:"/get_users.json",
@@ -91,12 +72,12 @@ jQuery(function(){
     jQuery("#list_all_users").bind('change',function(){
       if (jQuery(this).is(":checked")){
         window.location="/qr_codes?all_users=1";
-      } 
+      }
     });
     jQuery("#list_all_engagements").bind('change',function(){
       if (jQuery(this).is(":checked")){
         window.location="/qr_codes?all_engs=1";
-      } 
+      }
     });
 
 })
@@ -135,7 +116,7 @@ jQuery(function(){
 
    <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"efilter filter" %>
     Or <%= check_box_tag :list_all_engagements%><%=label_tag "List all" %>
-   </div>    
+   </div>
  <!--<%= submit_tag "Export to template" %>-->
   <% end %>
 </fieldset>
@@ -145,7 +126,7 @@ jQuery(function(){
   <%= will_paginate @qr_codes %>
 <br/>
 <% unless @users_listing %>
-<table cellpadding="0" cellspacing="0">
+<table class="mono-table" cellpadding="0" cellspacing="0">
   <tr>
     <th>Code</th>
     <th>Associated to</th>
@@ -157,8 +138,6 @@ jQuery(function(){
     <th>Business</th>
     <th>Brand</th>
     <th>Issue Date</th>
-    <th></th>
-    <th></th>
     <th></th>
   </tr>
 
@@ -172,7 +151,7 @@ jQuery(function(){
         <%= qr_code.engagement.name %>
       <% end %>
     </td>
-    <td><%= qr_code.hash_code %></td>
+    <td><%= link_to qr_code.hash_code , qr_code  %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>
       <% if (qr_code.code_type) %>
@@ -200,9 +179,10 @@ jQuery(function(){
       <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
-    <td><%= link_to 'View', qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
+      <td class="less_fat">
+        <%= link_to 'Edit', edit_qr_code_path(qr_code) ,:class=>"button" %>
+        <%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>
+      </td>
   </tr>
 <% end %>
 </table>
@@ -234,9 +214,9 @@ jQuery(function(){
       <% end %>
     </td>
     <td><%= qr_code.created_at.to_formatted_s(:long) %></td>
-    <td><%= link_to 'View', qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'View', qr_code_path(qr_code) ,     :class=>"button"%></td>
+    <td><%= link_to 'Edit', edit_qr_code_path(qr_code), :class=>"button" %></td>
+    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %></td>
   </tr>
 <% end %>
 </table>

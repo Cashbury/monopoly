@@ -32,6 +32,14 @@ module ApplicationHelper
       link_to "Active FB feed", "/v1/users/#{user.id}/on.html", :id=>"activate"
     end
   end
+
+  def css3button(text,options={:tag=>:span, :class=>nil})
+    content_tag(options[:tag], :class=>options ) + text
+  end
+
+  def status_icon(status)
+    image_tag  status ?  "check_small.png" : "cross_small.png"
+  end
 end
 
 

@@ -26,17 +26,16 @@
     <th>Flag</th>
     <th>Name</th>
     <th></th>
-    <th></th>
-    <th></th>
   </tr>
 
 <% @countries.each do |country| %>
   <tr>
     <td><%= image_tag "countries/#{country.iso2.to_s.downcase}.png" %></td>
-    <td><%= raw country.name %></td>
-    <td><%= link_to 'Show', country %></td>
-    <td><%= link_to 'Edit', edit_country_path(country) %></td>
-    <td><%= link_to 'Destroy', country, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to(raw(country.name), country) %></td>
+    <td>
+      <%= link_to 'Edit', edit_country_path(country) , :class=>"button"%>
+      <%= link_to 'Destroy', country, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>
+    </td>
   </tr>
 <% end %>
 </table>
@@ -44,4 +43,4 @@
 <br />
 
 <%= will_paginate @countries %>
-<%= link_to 'New Country', new_country_path %>
+<%= link_to 'New Country', new_country_path  ,:class=>"button positive"%>

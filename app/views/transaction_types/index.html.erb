@@ -15,10 +15,10 @@
     <td><%= transaction_type.actions.collect{|action| action.name}.join(' , ') %></td>
     <td><%= transaction_type.fee_amount %></td>
     <td><%= transaction_type.fee_percentage %></td>
-    <td><%= link_to 'Edit', edit_transaction_type_path(transaction_type) %></td>
-    <td><%= button_to 'Destroy', transaction_type, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Edit', edit_transaction_type_path(transaction_type) , :class=>"button "%>
+    <%= link_to 'Destroy', transaction_type, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %></td>
   </tr>
 <% end %>
 </table>
 <br/>
-<%= link_to 'New Transaction Type', new_transaction_type_path %>
+<%= link_to 'New Transaction Type', new_transaction_type_path ,:class=>"button positive" %>

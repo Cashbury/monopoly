@@ -30,9 +30,9 @@
       <td><%= place.address.try(:country).try(:name) %></td>
       <td><%= place.business.try(:name) %></td>
       <td><%= place.phone %></td>
-      <td><%= link_to "Edit", edit_place_path(place) %></td>
+      <td><%= link_to "Edit", edit_place_path(place), :class=>"button" %></td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Place", new_place_path %></p>
+<p><%= link_to "New Place", new_place_path , :class=>"button positive" %></p>

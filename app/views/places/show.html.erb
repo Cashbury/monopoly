@@ -56,7 +56,7 @@
       <tr>
           <td><%= gplace.name %></td>
           <td><%= gplace.vicinity %></td>
-          <td><%= link_to "add google place", "/places/#{@place.id}/google/#{gplace.reference}" %></td>
+          <td><%= link_to "google place", "/places/#{@place.id}/google/#{gplace.reference}" ,:class=>"button"%></td>
       </tr>
     <% end %>
     </table>
@@ -73,9 +73,9 @@
 
 
 <p>
-  <%= link_to "Edit",  edit_place_path(@place) %> |
-  <%= link_to "Destroy", place_path(@place), :confirm => 'Are you sure?', :method => :delete %> |
-  <%= link_to "View All", places_path %>
+  <%= link_to "Edit",  edit_place_path(@place) , :class=>"button"%>
+  <%= link_to "Destroy", place_path(@place), :confirm => 'Are you sure?', :method => :delete ,:class=>"button"%>
+  <%= link_to "View All", places_path ,:class=>"button"%>
 </p>
 
 <%= javascript_include_tag      "businessend",

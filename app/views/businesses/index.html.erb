@@ -7,8 +7,7 @@
     <th>Address</th>
     <th>Principal</th>
     <th>Branches</th>
-    <th>Outstanding Balance</th>
-    <th colspan="3">&nbsp;</th>
+    <th></th>
   </tr>
   <% for business in @businesses %>
     <tr>
@@ -22,11 +21,12 @@
       </td>
       <td>Rajib Ahmed</td>
       <td><%= link_to "(#{business.places.size})", business_places_path(business) %></td>
-      <td>&nbsp</td>
-      <td><%= link_to "Edit", edit_business_path(business) %></td>
-      <td><%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td>
+        <%= link_to "Edit", edit_business_path(business) , :class=> "button"%>
+        <%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete , :class=>"negative button " %>
+      </td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Business", new_business_path %></p>
+<p><%= link_to "New Business", new_business_path , :class=>"positive button" %></p>

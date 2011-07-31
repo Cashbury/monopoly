@@ -23,14 +23,12 @@
     <th>Email</th>
     <th>Telephone Number</th>
     <th>Created On</th>
-    <th>Email Confirmed</th>
-    <th>Admin?</th>
     <th>Login Count</th>
     <th>Sign In IP</th>
     <th>Available Balance Amount</th>
+    <th>Confirmed</th>
+    <th>Admin?</th>
     <th>FB status</th>
-    <th></th>
-    <th></th>
     <th></th>
   </tr>
 
@@ -39,18 +37,19 @@
     <% user_uid=user.email.split("@facebook").first %>
     <td width="77"><%=image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg" %></td>
     <td width="100"><%= user.full_name%></td>
-    <td width="120"><%= user.email %></td>
+    <td width="120"><%= link_to user.email, users_management_path(user) %></td>
     <td><%= user.telephone_number %></td>
     <td><%= user.created_at.to_formatted_s(:long)%></td>
-    <td><%= user.confirmed_at.nil? ? "false" : "true" %></td>
-    <td><%= user.admin?%></td>
     <td><%= user.sign_in_count %></td>
     <td><%= user.current_sign_in_ip%></td>
-    <td><%= 0 || user.amount%></td>
-    <td><%= raw fb_feed_status_for(user) %></td>
-    <td><%= link_to 'Show', users_management_path(user) %></td>
-    <td><%= link_to 'Edit', edit_users_management_path(user) %></td>
-    <td><%= button_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= user.amount || 0  %></td>
+    <td><%= status_icon user.confirmed_at.nil? %></td>
+    <td><%= status_icon user.admin? %></td>
+    <td><%= status_icon user.is_fb_enabled %></td>
+    <td class="fat">
+      <%= link_to 'Edit', edit_users_management_path(user) ,:class=>"button"%>
+      <%= link_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete ,:class=>"button negative" %>
+    </td>
   </tr>
 <% end %>
 </table>
@@ -58,5 +57,8 @@
   <%= will_paginate @users %>
 <br/>
 
+<%= link_to "Add new user", new_users_management_path , :class=>"button"  %>
 
-<%= link_to 'Add new user', new_users_management_path %>
+<style type="text/css" media="screen">
+  .mono-table .fat{width:130px; padding:0 0 0 8px;}
+</style>
