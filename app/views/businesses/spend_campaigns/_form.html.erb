@@ -24,21 +24,21 @@
   </fieldset>
   <fieldset>
     <legend class="section_title">Setting The rule</legend>
-    1 <%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
+    1 <%=@business.currency_symbol || "$" %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
   </fieldset>
   <div class="row">
   <%=link_to "Add a spend based reward level" ,"javascript:void(0)", {:id=>"add_engagement"} %>            
   <div id="engagements_container">
   <fieldset>
-    <legend class="section_title">Offer 1</legend>
+    <legend class="section_title">Offer Level 1</legend>
     <div class="form_item_div">
       <label class="left"> Spend </label>   
       <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> before </label>
+      <label class="left"><%=@business.currency_symbol %> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
       <label class="left"> Get a </label>
       <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$"%> Cash back, Offer available until </label> 
+      <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until </label> 
       <input type="text" class="basic_info_caption1 reward_exp_date datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
     </div>
   </fieldset>
@@ -50,11 +50,11 @@
     <div class="form_item_div">
       <label class="left"> Spend </label>   
       <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 needed_amount", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> before </label>
+      <label class="left"><%=@business.currency_symbol %> before </label>
       <input type="text" class="basic_info_caption1 eng_date_template datepicker end_date" style="width:95px;margin:0 0 0" name="Z[end_date]" disabled="disabled" />    
       <label class="left"> Get a </label>
       <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"><%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %> Cash back, Offer available until</label>       
+      <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until</label>       
       <input type="text" class="basic_info_caption1 reward_exp_template datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]" disabled="disabled" />
     </div>
   </fieldset>
@@ -104,7 +104,7 @@ $(document).ready(function(){
     content.find(".money_amount").attr("name","campaign[rewards_attributes]["+counter+"][money_amount]")
     content.find(".reward_exp_template").attr("name","campaign[rewards_attributes]["+counter+"][expiry_date]")
     content.find(".end_date").attr("name","engagement["+counter+"][end_date]")
-    content.find(".section_title").html("Offer "+(counter+1));
+    content.find(".section_title").html("Offer Level "+(counter+1));
     $("#engagements_container").append(content.html());
     $("#engagements_container .form_item_div:last .eng_date_template").val($('.eng_end_date').val());
     $("#engagements_container .form_item_div:last .reward_exp_template").val($('.reward_exp_date').val());

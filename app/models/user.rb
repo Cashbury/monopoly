@@ -347,7 +347,7 @@ class User < ActiveRecord::Base
                     :lat            =>lat,
                     :lng            =>lng,
                     :created_on     =>date)
-        self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>place_id, :receipt_text=>"", :amount=>after_fees_amount, :receipt_type=>Receipt::TYPE[:spend])
+        self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>place_id, :receipt_text=>"", :amount=>after_fees_amount, :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>transaction.id)
       end
     end
     rescue Exception=>e

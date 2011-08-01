@@ -239,7 +239,7 @@ class UsersManagementController < ApplicationController
   end
   
   def get_businesses_list(user_id,program_type_id)
-    @results=Account.joins([:account_holder, :campaign=>[:program=>[:program_type,[:business=>:country]]]])
+    @results=Account.joins([:account_holder, :campaign=>[:program=>[:program_type,:business]]]).joins("LEFT OUTER JOIN countries ON businesses.country_id=countries.id")
                     .where("programs.program_type_id=#{program_type_id} and account_holders.model_id=#{user_id} and account_holders.model_type='User'")
                     .select("accounts.status,program_types.id as pt_id,businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, (SELECT amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as current_amount, (SELECT cumulative_amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ")
                     .group("businesses.id")

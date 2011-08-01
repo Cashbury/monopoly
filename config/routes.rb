@@ -36,22 +36,23 @@ Kazdoor::Application.routes.draw do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection
 		end
 		resources :places
+		resources :receipts
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
     resources :cashiers do
-      get '/check_role.:format',:action=>:check_user_role, :on =>:collection
-      get '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
+      get  '/check_role.:format',:action=>:check_user_role, :on =>:collection
+      get  '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
       post '/ring_up.:format', :action=>:ring_up, :on=>:collection
     end
     resource :businesses do
-			get '/primary_place', :action=>:primary_place,  :on =>:collection
+			get  '/primary_place', :action=>:primary_place, :on =>:collection
 			post '/primary_place',:action=>:primary_place,  :on =>:collection
-			get '/set_rewards',   :action=>:set_rewards ,   :on =>:collection
-			get '/open_sign/:id',     :action=>:open_sign ,     :on =>:collection
-			post '/open_sign/:id',    :action=>:open_sign ,     :on =>:collection
+			get  '/set_rewards',  :action=>:set_rewards , :on =>:collection
+			get  '/open_sign/:id',  :action=>:open_sign , :on =>:collection
+			post '/open_sign/:id',  :action=>:open_sign , :on =>:collection
     end
-    get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places
+    get '/list_all_cities.:format', :action=>:list_all_cities,:controller=>:places      
 	end
 	
 
@@ -194,7 +195,6 @@ Kazdoor::Application.routes.draw do
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
   match "/users/:business_id/get_id.:format" =>"users/places#get_my_id"  
-  #get "/users/get_my_receipts.:format", :controller=>"users/places", :action=>:get_my_receipts
 #  match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
   #devise_for :users
 

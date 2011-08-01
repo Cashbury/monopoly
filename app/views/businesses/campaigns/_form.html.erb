@@ -1,7 +1,3 @@
-<%= javascript_include_tag 'prototype' %>
-<%= calendar_date_select_includes %>
-<% CalendarDateSelect.format=(:iso_date)%>
-
 <style type="text/css" media="screen">
   div.form_item_div select{margin:0 5px 0 0}
   div.form_item_div input {padding:5px 2px; margin:0 3px 0 0}
@@ -68,7 +64,7 @@
   <fieldset id="details_box" style="display:none">
     <legend class="section_title"><%=@campaign.new_record? ? "More Details" : "Edit Details"%></legend>
       <div class="row">
-        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= f.calendar_date_select :start_date%>
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= f.text_field :start_date, :class=>"datepicker"%>
       </div>
       <div class="row">
         <%= f.label :initial_amount %><br />
@@ -80,7 +76,7 @@
       </div>
       <div class="row">
         <%= f.label "This offer should be available until" %><br />
-        <%= f.calendar_date_select :end_date%>
+        <%= f.text_field :end_date, :class=>"datepicker"%>
       </div>
       <div class="row" id="item_div">
         <%= engagement.label "Associated/Purchased Item" %><br />
@@ -126,9 +122,9 @@
 <% end %>
 
 <script type="text/javascript">
-jQuery(document).ready(function(){
-  update_select_item_list_display(jQuery("#engagement_type_selection_list"));
-  jQuery("#engagement_type_selection_list").change(function () {
+$(document).ready(function(){
+  update_select_item_list_display($("#engagement_type_selection_list"));
+  $("#engagement_type_selection_list").change(function () {
     update_select_item_list_display(this);
     /*eng_type_val=jQuery(":selected", this).val();
     jQuery.ajax({
@@ -139,30 +135,30 @@ jQuery(document).ready(function(){
       }
     });*/
   });
-  jQuery("#add_details_link").click(function(){
-    if (jQuery(this).html()=="Add More Details" || jQuery(this).html()=="Edit Details")
-      jQuery(this).html("Hide Details");
+  $("#add_details_link").click(function(){
+    if ($(this).html()=="Add More Details" || $(this).html()=="Edit Details")
+      $(this).html("Hide Details");
     else{
       <%if @campaign.new_record? %>
-        jQuery(this).html("Add More Details");
+        $(this).html("Add More Details");
       <%else%>
-        jQuery(this).html("Edit Details");
+        $(this).html("Edit Details");
       <%end%>
     }
-    jQuery("#details_box").slideToggle();
+    $("#details_box").slideToggle();
   });
-  jQuery('#description_field').keydown(function(){
-    var desc_text = jQuery(this).val();
+  $('#description_field').keydown(function(){
+    var desc_text = $(this).val();
     if ( desc_text.length > 84 ){
-      jQuery(this).val(desc_text.substring( 0, 84 ));
+      $(this).val(desc_text.substring( 0, 84 ));
       alert( 'Description value can only be 84 characters in length.' );
       return false;
     }
     else{
-      jQuery('#counter_field').val(84 - desc_text.length);
+      $('#counter_field').val(84 - desc_text.length);
     }
   });
-  jQuery('#reward_name_field_id,#needed_amount_id,#engagement_type_selection_list,#item_text_field').blur(function(){
+  $('#reward_name_field_id,#needed_amount_id,#engagement_type_selection_list,#item_text_field').blur(function(){
     var offer_type=jQuery("#engagement_type_selection_list :selected").text();
     var item_name=jQuery("#item_text_field").val();
     var no_of_times=jQuery("#needed_amount_id").val();
@@ -170,27 +166,27 @@ jQuery(document).ready(function(){
     var brand_name=jQuery("#brand_name_id").val();
     if (no_of_times!="" && reward_name!="" ){
       if (item_name!="" && offer_type.match(/Buy/)!=null){
-        jQuery("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");
+        $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");
       }else{
-        jQuery("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");
+        $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");
       }
-      jQuery("#fb_enjoy_msg").val("enjoyed a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
-      jQuery("#fb_unlock_msg").val("unlocked a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
+      $("#fb_enjoy_msg").val("enjoyed a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
+      $("#fb_unlock_msg").val("unlocked a/an "+reward_name+" @ "+ brand_name+" by going out with Cashbury");
     }
   });
   function update_select_item_list_display(object){
     eng_type_option = jQuery(":selected", object).text().toLowerCase();
     if(eng_type_option.match(/buy/)!=null){
-      jQuery('#item_div').show();
-      jQuery('#item_text_field').show();
+      $('#item_div').show();
+      $('#item_text_field').show();
     }else if(eng_type_option.match(/spend/)!=null){
       if(window.location.pathname!="<%=new_business_spend_campaign_path(@business)%>")
         document.location.href="<%=new_business_spend_campaign_path(@business)%>";
     }else{
-      jQuery('#item_div').hide();
-      jQuery('#item_text_field').hide();
-      jQuery('#item_div').val("");
-      jQuery('#item_text_field').val("");
+      $('#item_div').hide();
+      $('#item_text_field').hide();
+      $('#item_div').val("");
+      $('#item_text_field').val("");
     }
   }
 

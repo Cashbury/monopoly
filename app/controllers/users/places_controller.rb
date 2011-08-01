@@ -77,7 +77,7 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["rewards"]       =[]
         unless targeted_campaigns.empty?
           results=programs.joins(:campaigns=>[:rewards,:places,:accounts=>[:measurement_type,:account_holder]])
-                          .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.reward_money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type")
+                          .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type")
                           .where("campaigns.id IN (#{targeted_campaigns.join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id=#{place.id} and rewards.is_active=true and accounts.status=true")
                            
           results.each_with_index do |result,i|
@@ -86,7 +86,7 @@ class Users::PlacesController < Users::BaseController
             reward_obj=Reward.find(result.reward_id)
             reward_campaign=reward_obj.campaign
             if (attributes["max_claim_per_user"].nil? || attributes["max_claim_per_user"]=="0"|| attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i) and (attributes["max_claim"].nil? || attributes["max_claim"]=="0" || attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i)  
-              @result["places"][index]["rewards"][i] = attributes.reject {|k,v| k == "amount"  || k=="is_money" || k == "model_id" || k=="model_type" || k=="measurement_type" || k=="reward_money_amount"}
+              @result["places"][index]["rewards"][i] = attributes.reject {|k,v| k == "amount"  || k=="is_money" || k == "model_id" || k=="model_type" || k=="measurement_type" || k=="money_amount"}
               if @result["places"][index]["rewards"][i].present?
                 reward_image=reward_obj.reward_image
                 @result["places"][index]["rewards"][i]["reward-image"]   =reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:normal))
@@ -94,7 +94,7 @@ class Users::PlacesController < Users::BaseController
                 if reward_campaign.spend_campaign?
                   points_rate=reward_campaign.engagements.first.try(:amount)
                   @result["places"][index]["rewards"][i]["points_rate"]=points_rate
-                  @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.reward_money_amount * points_rate if reward_obj.reward_money_amount.present?
+                  @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.money_amount * points_rate if reward_obj.money_amount.present?
                   @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
                   @result["places"][index]["rewards"][i]["expiry_date"]=reward_campaign.engagements.first.try(:end_date)
                 end
@@ -131,11 +131,5 @@ class Users::PlacesController < Users::BaseController
       format.xml { render :xml => result,:status=>200 }
     end
   end
-  
-  def get_my_receipts
-    all_receipts=current_user.receipts.join([:business,:place]).select("receipts.*, places.name, businesses.name")
-    respond_to do |format|       
-      format.xml { render :xml => all_receipts.to_xml,:status=>200 }
-    end
-  end
+
 end

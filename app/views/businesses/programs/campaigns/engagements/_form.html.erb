@@ -17,8 +17,14 @@
       $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
     }else if (offer_type.match(/visit/)!=null){
       $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
-    } 
+    }else if (offer_type.match(/spend/)!=null) {
+      $("#fb_engagement_msg").val("earned {spend} points @ "+brand_name+" when the engagement is completed.");               
+    }
   });
+  
+  if ($("#engagement_type_selection_list :selected").text().toLowerCase().match(/spend/)!=null){
+    $("#fb_engagement_msg").val("earned {spend} points @ "+$("#brand_name_id").val()+" when the engagement is completed.");               
+  }
 });
 </script>
 <%= form_for [@business,@program ,@campaign, @engagement] do |f| %>

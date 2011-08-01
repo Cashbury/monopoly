@@ -20,7 +20,7 @@ class Businesses::SpendCampaignsController < ApplicationController
   def create
     @program_type=ProgramType.find_or_create_by_name(:name=>"Marketing")
     @program     =Program.find_or_create_by_business_id_and_program_type_id(:business_id=>@business.id,:program_type_id=>@program_type.id)
-    currency_symbol=ISO4217::Currency.from_code(@business.currency_code).symbol
+    currency_symbol=@business.currency_symbol
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
     end 
@@ -33,7 +33,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       params[:campaign][:rewards_attributes][key]["heading2"]=description
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f if value["needed_amount"].present?
       params[:campaign][:rewards_attributes][key]["name"]="$#{value[:money_amount]} Cash back"
-      params[:campaign][:rewards_attributes][key]["reward_money_amount"]=value[:money_amount]
+      params[:campaign][:rewards_attributes][key]["money_amount"]=value[:money_amount]
       params[:campaign][:rewards_attributes][key]["expiry_date"]=@reward_attrs["0"]["expiry_date"]
     end
     found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
@@ -62,11 +62,11 @@ class Businesses::SpendCampaignsController < ApplicationController
       end      
       format.html{ redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Offer was successfully created.')}
     end
-  #rescue
-  #  respond_to do |format|
-  #    format.html { render :action => "new" }
-  #    format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
-  #  end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "new" }
+      format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
+    end
   end
   
   def show
@@ -87,7 +87,7 @@ class Businesses::SpendCampaignsController < ApplicationController
   def update
     @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
-    currency_symbol=ISO4217::Currency.from_code(@business.currency_code).symbol
+    currency_symbol=@business.currency_symbol
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
     end 
@@ -113,7 +113,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       params[:campaign][:rewards_attributes][key]["campaign_id"]=@campaign.id
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f
       params[:campaign][:rewards_attributes][key]["name"]="#{value[:money_amount]}#{currency_symbol} Cash back"
-      params[:campaign][:rewards_attributes][key]["reward_money_amount"]=value[:money_amount]
+      params[:campaign][:rewards_attributes][key]["money_amount"]=value[:money_amount]
       params[:campaign][:rewards_attributes][key]["expiry_date"]=reward_attrs["0"][:expiry_date]
     end     
     respond_to do |format|

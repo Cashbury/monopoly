@@ -90,7 +90,9 @@ class Business < ActiveRecord::Base
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
   end
 
-
+  def currency_symbol
+    self.currency_code.present? ? ISO4217::Currency.from_code(self.currency_code).try(:symbol) : "$"
+  end
   #====================================================================
   private
   #====================================================================
