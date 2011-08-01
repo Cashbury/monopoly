@@ -449,3 +449,5 @@ padding-top: 60px;
 
 .note-error{color:#C00}
 .note-success{color:#690}
+.field{margin-bottom:5px;}
+.field label{float:left;width:135px;}

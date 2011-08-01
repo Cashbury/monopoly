@@ -42,9 +42,16 @@ class Campaign < ActiveRecord::Base
 	accepts_nested_attributes_for :rewards
 	
 	CTYPE={
-	  :spend=>1
+	  :spend=>1,
+	  :other=>2
 	}
 	
+	def validate
+    if Campaign.where("ctype=#{Campaign::CTYPE[:spend]} and ((end_date IS NOT null AND '#{Date.today}' BETWEEN start_date AND end_date) || '#{Date.today}' >= start_date)").any? 
+      errors.add_to_base "There is already a spend based campaign running at the business, You could edit it or remove from the system"
+    end
+  end
+
   def init
     self.initial_biz_amount ||= 10000 
   end

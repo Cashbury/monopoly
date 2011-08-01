@@ -1,11 +1,8 @@
 <head>
-<%= javascript_include_tag 'jQuery.datePicker-2.1.2' %>
-<%= stylesheet_link_tag 'datePicker' %>
 <style type="text/css" media="screen">
   div.form_item_div select{margin:0 5px 0 0}
   div.form_item_div input {padding:5px 2px; margin:0 3px 0 0}
-  div.form_item_div label {height:30px; line-height:30px; padding:0 5px}
-  .form_item_div .calendar_date_select_popup_icon {float:left}
+  div.form_item_div label {height:30px; line-height:30px; padding:0 5px}  
   .row {width:880px;}
 </style>
 </head>
@@ -103,7 +100,7 @@ $(document).ready(function(){
   $("#add_engagement").click(function(){
     var content=$('#template').clone();
     counter=counter+1;
-    content.find(".needed_amount").attr("name","campaign[rewards_attributes]["+counter+"][needed_amount]")
+    content.find(".needed_amount").attr("name","campaign[rewards_attributes]["+counter+"][needed_amount]")  
     content.find(".money_amount").attr("name","campaign[rewards_attributes]["+counter+"][money_amount]")
     content.find(".reward_exp_template").attr("name","campaign[rewards_attributes]["+counter+"][expiry_date]")
     content.find(".end_date").attr("name","engagement["+counter+"][end_date]")

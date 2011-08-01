@@ -1,19 +1,15 @@
-<%= javascript_include_tag 'prototype' %>
-<%= calendar_date_select_includes %>
-<% CalendarDateSelect.format=(:iso_date)%>
 <script type="text/javascript">
- jQuery(document).ready(function(){ 
-  jQuery("#measurement_type_selection").change(function () {
-      other_option = jQuery(":selected", this).text();
+ $(document).ready(function(){ 
+  $('.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' })
+  $("#measurement_type_selection").change(function () {
+      other_option = $(":selected", this).text();
       if(other_option == "Other")
-        jQuery('#new_measurement_type_div').show();
+        $('#new_measurement_type_div').show();
       else
-        jQuery('#new_measurement_type_div').hide();
+        $('#new_measurement_type_div').hide();
   });
 });
-
 </script>
-
 
 <%= form_for([@business,@program,@campaign]) do |f| %>
   <% if @campaign.errors.any? %>
@@ -27,44 +23,44 @@
       </ul>
     </div>
   <% end %>
-
   <div class="field">
-    <%= f.label :name %><%= mark_required(@campaign, :name) %>
+    <%= label_tag "Who is this campaign offered to?" %>
+    <%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %>
+  </div>
+  <div class="field">
+    <%= f.label "Campaign Type" %><%= mark_required(@campaign, :measurement_type) %>
+    <%= f.select :ctype,Campaign::CTYPE.each_pair{|k,v| [k,v]}  %>
+  </div>
+  <div class="field">
+    <%= f.label "Name #{mark_required(@campaign, :name)}" %>
     <%= f.text_field :name %>
   </div>
-  <br />
-
   <div class="field">
     <%= f.label :start_date %>
-    <%= f.calendar_date_select :start_date%>
-  </div><br />
+    <%= f.text_field :start_date, :value=>Date.today, :class=>"datepicker" %>
+  </div>
   <div class="field">
     <%= f.label :end_date %>
-    <%= f.calendar_date_select :end_date%>
-  </div><br />
+    <%= f.text_field :end_date, {:class=>"datepicker"} %>
+  </div>
   <div class="field">
-    <%= f.label :measurement_type_id %><%= mark_required(@campaign, :measurement_type) %>
+    <%= f.label "Measurement type #{mark_required(@campaign, :measurement_type_id)}" %>
     <%= f.select :measurement_type_id,@measurement_types.collect { |mt| [mt.name,mt.id]}, {}, {:id=>"measurement_type_selection"} %>
-  </div><br />
+  </div>
   
   <div class="field" id="new_measurement_type_div" style="display:none">
     <%= label_tag :measurement_name %><br />
     <%= text_field_tag :measurement_name %>
-   </div><br />
+   </div>
   
   <div class="field">
     <%= f.label :initial_amount %>
     <%= f.text_field :initial_amount %>
-  </div><br />
+  </div>
   <div class="field">
     <%= f.label :initial_biz_amount %>
     <%= f.text_field :initial_biz_amount %>
-  </div><br />
-  <div class="field">
-    <%= label_tag "Who is this campaign offered to?" %>
-    <%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %><br />
   </div>
-  <br />
   <div class="field">
      <fieldset>
       <legend>Assign Campaign to Places</legend>

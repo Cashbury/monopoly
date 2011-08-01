@@ -2,20 +2,20 @@
  $(document).ready(function(){
   $("#engagement_type_selection_list").change(function () {
       buy_item_option = $(":selected", this).text();
-      if(buy_item_option == "Buy a product/service")
+      if(buy_item_option.match(/buy/)!=null)
         $('#item_div').show();
       else{
         $('#item_div').hide();
       }
   });
   $('#engagement_type_selection_list,#item_selection_list').blur(function(){
-    var offer_type=$("#engagement_type_selection_list :selected").text();
+    var offer_type=$("#engagement_type_selection_list :selected").text().toLowerCase();
     var item_name=$("#item_selection_list :selected").text();
     var no_of_times=($("#needed_amount_id")[0]==null) ? 1 : $("#needed_amount_id")[0].val();
     var brand_name=$("#brand_name_id").val();
-    if (item_name!="" && offer_type.match(/Buy/)!=null){
+    if (item_name!="" && offer_type.match(/buy/)!=null){
       $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
-    }else{
+    }else if (offer_type.match(/visit/)!=null){
       $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
     } 
   });
@@ -31,20 +31,27 @@
   
   <p>
     <%= f.label :engagement_type_id, "Engagement Type" %><br />
-    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {}, {:id=>"engagement_type_selection_list"}%>
+    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {:selected => @campaign.spend_campaign? ? EngagementType.where(:eng_type=>EngagementType::ENG_TYPE[:spend]).first.try(:id) : ""}, {:id=>"engagement_type_selection_list"}%>
   </p>
+  <%unless @campaign.spend_campaign? %>
   <p id="item_div">
     <%= f.label :item %><br />
-    <%= select_tag "engagement[item_id]", "<option value=''>...Select...</option>".html_safe+options_from_collection_for_select(@items,"id","name",@engagement.try(:item).try(:id)),{:id=>"item_selection_list"} %>
+    <%= select_tag "engagement[item_id]",options_from_collection_for_select(@items,"id","name",@engagement.try(:item).try(:id)),{:id=>"item_selection_list", :include_blank=>true} %>
   </p>
+  <%end%>
   <p>
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  <%unless @campaign.measurement_type.business%>
+  <%if  @campaign.measurement_type.business.nil?%>
     <p>
       <%= f.label :amount %><br />
       <%= f.text_field :amount,"1",:id=>"needed_amount_id" %>
+    </p>
+  <%elsif @campaign.spend_campaign? %>
+    <p>
+      <%= f.label "Setting The rule" %><br />
+    1 <%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %>=<%= f.text_field :amount,:value=>"1"%> points
     </p>
   <%end%> 
   <p>

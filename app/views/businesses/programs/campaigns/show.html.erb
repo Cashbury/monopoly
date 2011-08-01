@@ -17,6 +17,11 @@
 </p>
 
 <p>
+  <b>Camapign Type:</b>
+  <%= Campaign::CTYPE.key(@campaign.ctype) %>
+</p>
+
+<p>
   <b>Business:</b>
   <%= @campaign.program.business.try(:name) %>
 </p>
