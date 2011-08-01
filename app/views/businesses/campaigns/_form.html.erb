@@ -61,11 +61,7 @@
       <%= f.label :is_fb_enabled, "Enable Share on Facebook" %>
     </div>
     <div class="row">
-      <%= hidden_field_tag "share[name]", "Share based engagements" %>
-      <%= hidden_field_tag "share[engagement_type_id]", "4" %>
-      <%= text_field_tag "share[amount]", @share_engagement.try(:amount) || "2" , :class=>"title"%>
-      <%= text_field_tag "share[fb_engagement_msg]", @share_engagement.try(:fb_engagement_msg) || "Share and dfada fenjoy 2" , :class=>"title" %>
-      <%= hidden_field_tag "share[id]", @share_engagement.try(:id)  %>
+        <%= render "shared/share_engagement", :share_engagement=>@share_engagement %>
     </div>
     <div class="face_book_message">
       <div class="row">

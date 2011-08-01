@@ -43,6 +43,9 @@
   </fieldset>
   </div>
   </div>
+
+
+
   <div id="template" style="display:none">
   <fieldset>
     <legend class="section_title">An Offer</legend>
@@ -59,7 +62,7 @@
   </fieldset>
   </div>
   <br /><br />
-  <fieldset >
+   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">
       <% @business.places.each do |place| %>
@@ -74,6 +77,13 @@
     <legend class="section_title">Who is this offer targeted to</legend>
     <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
   </fieldset><br/><br/>
+
+  <fieldset>
+    <legend>Facebook share</legend>
+    <%= check_box_tag "campaign[is_fb_enabled]" %><%= label_tag "Enable Facebook sharing engagement" %><br/>
+    <%= render "shared/share_engagement" , :share_engagement=>@share_engagement%>
+  </fieldset>
+
   <p><a id="add_details_link" href="javascript:void(0)">Add More Details</a></p>
   <br /><br />
   <fieldset id="details_box" style="display:none">
