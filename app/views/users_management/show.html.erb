@@ -89,7 +89,7 @@
 </div>
 <%end%>
 <br/>
-<h3>Money Account @ Large Balance: <%=@user.money_account_at_large.try(:amount)%></h3>
+<h3>Cash Account @ Cashbury: <%=@user.money_account_at_large.try(:amount)%></h3>
 <h3>Manage User Program Enrollment @ a Business</h3>
 <%= select_tag :program_type_id, "<option value=''>...Program Type...</option>".html_safe + options_from_collection_for_select(ProgramType.all, "id", "name", ProgramType.find_by_name(ProgramType::AS[:marketing]).try(:id)), {:id=>"program_type_selector"}%>
 <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
