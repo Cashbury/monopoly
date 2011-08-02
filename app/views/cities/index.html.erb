@@ -23,7 +23,7 @@
 
 <table class="mono-table" border="0">
   <tr>
-    <th>Name</th>
+    <th><%= sortable "name" %></th>
     <th>Country</th>
     <th>Tel. Area code</th>
     <th>Votes</th>
@@ -44,6 +44,24 @@
 <% end %>
 </table>
 
+
 <br />
 <%= will_paginate @cities %>
+
+
+<h2 id="heading">Popular cities</h2>
+<table class="mono-table">
+  <tr>
+    <th>Name</th>
+    <th>Votes</th>
+  </tr>
+
+  <% @flaggings.each do |flag| %>
+  <tr>
+    <td><%= flag[:name] %></td>
+    <td><%= flag[:count] %></td>
+  </tr>
+  <% end %>
+</table>
+
 <%= link_to 'New City', new_city_path , :class=>"button positive"%>

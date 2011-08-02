@@ -24,10 +24,10 @@
 <table class="mono-table" border="0" >
   <tr>
     <th>Flag</th>
-    <th>Name</th>
-    <th>Capital</th>
-    <th>Currency</th>
-    <th>Currency Code</th>
+    <th><%= sortable "name" %></th>
+    <th><%= sortable "capital" %></th>
+    <th><%= sortable "currency" %></th>
+    <th><%= sortable "currency_code" %></th>
     <th></th>
   </tr>
 
@@ -49,4 +49,8 @@
 <br />
 
 <%= will_paginate @countries %>
+
+
+
+
 <%= link_to 'New Country', new_country_path  ,:class=>"button positive"%>

@@ -39,8 +39,9 @@ class ApplicationController < ActionController::Base
   end
 
 
+
   protected
-	def require_admin
+  def require_admin
    #unless current_user.nil? || current_user.admin?
       #sign_out current_user
       #redirect_to new_user_session_path, :alert => t(:not_authorized)
@@ -49,5 +50,6 @@ class ApplicationController < ActionController::Base
       #return true
     #end
     true
-	end
-end
+  end
+
+ end
