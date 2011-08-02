@@ -40,6 +40,10 @@ module ApplicationHelper
   def status_icon(status)
     image_tag  status ?  "check_small.png" : "cross_small.png"
   end
+
+  def currency_icon
+    raw current_user.try(:country).try(:currency_code) || "&#36;"
+  end
 end
 
 
