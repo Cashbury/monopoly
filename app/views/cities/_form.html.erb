@@ -1,4 +1,10 @@
 
+<%= javascript_include_tag      "businessend",
+                                'jquery.tipTip',
+                                "http://maps.google.com/maps/api/js?sensor=true",
+%>
+
+
 <%= form_for(@city, :html=>{:class=>"mono-form cities"}) do |f| %>
   <% if @city.errors.any? %>
     <div id="error_explanation">
@@ -44,24 +50,9 @@
     <%= f.label :is_live %>
   </p>
 
-  <div id="map_canvas" style="width:412px; height:400px" class="google_map"></div>
-
   <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
 
-<%= javascript_include_tag      "businessend",
-                                'jquery.tipTip',
-                                "http://maps.google.com/maps/api/js?sensor=true",
-                              %>
-<script type="text/javascript" language="javascript" charset="utf-8">
-  //<![CDATA[
-jQuery(function(){
-    google.maps.event.addListener(marker,"dragend",function(){
-      console.log("test");
-    });
-  });
 
-//]]>
-</script>

@@ -17,6 +17,9 @@
 <p>
   Votes count :<%= @city.flaggings.count %>
 </p>
+
+<img src="http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=400x400&maptype=roadmap
+&markers=color:red%7Clabel:S%7C<%=@city.lat%>,<%=@city.lng %>&sensor=true">
 <p>
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>

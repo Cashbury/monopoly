@@ -25,6 +25,9 @@
   <tr>
     <th>Flag</th>
     <th>Name</th>
+    <th>Capital</th>
+    <th>Currency</th>
+    <th>Currency Code</th>
     <th></th>
   </tr>
 
@@ -32,6 +35,9 @@
   <tr>
     <td><%= image_tag "countries/#{country.iso2.to_s.downcase}.png" %></td>
     <td><%= link_to(raw(country.name), country) %></td>
+    <td><%= country.capital  %></td>
+    <td><%= country.currency %></td>
+    <td><%= country.currency_code  %></td>
     <td>
       <%= link_to 'Edit', edit_country_path(country) , :class=>"button"%>
       <%= link_to 'Destroy', country, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>

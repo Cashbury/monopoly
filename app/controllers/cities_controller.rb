@@ -27,7 +27,7 @@ class CitiesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @city }
+      format.xml  { render :xml => @city.to_xml(:include=>:country) }
     end
   end
 
@@ -67,7 +67,6 @@ class CitiesController < ApplicationController
   # PUT /cities/1.xml
   def update
     @city = City.find(params[:id])
-    debugger
     respond_to do |format|
       if @city.update_attributes(params[:city])
         format.html { redirect_to(@city, :notice => 'City was successfully updated.') }

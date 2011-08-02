@@ -176,7 +176,6 @@ class Businesses::CampaignsController < ApplicationController
   private
 
   def save_share_engagement(share)
-    debugger
     if share[:id].blank?
       share = share.delete_if {|n| n=="id"}
       @share_engagement= @campaign.engagements.create!(share)

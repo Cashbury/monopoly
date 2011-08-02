@@ -199,20 +199,22 @@ Kazdoor::Application.routes.draw do
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
 
 
+  scope "api" do
+    scope "v1" do
+      get "users/:id/engage/:engagement_id" => "services#engage"
+    end
+  end
 
   match "/v1/users/:column_type.:format"  =>"businesses#get_users" #pass term as query params
-
   match "/v1/cities/:id/vote/:like"       => "cities#vote"
-
   match "/v1/cities/:id/votes.:format"    => "cities#votes"
-
   match "/v1/cities/:name.:format"        => "cities#index"
-
   match "/v1/popular_cities.:format"      => "cities#popular"
-
   match "/v1/users/:id/:status.:format"   => "users_snaps#update_user"
-
   match "/v1/engagements/:id.:format"     => "businesses#get_engagement"
+
+
+
   #match "/v1/countries.format"               =>"countries#index"
   #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
 

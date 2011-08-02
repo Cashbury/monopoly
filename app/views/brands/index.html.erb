@@ -5,15 +5,16 @@
     <th>Name</th>
     <th>Description</th>
     <th></th>
-    <th></th>
   </tr>
 
 <% @brands.each do |brand| %>
   <tr>
     <td><%= link_to brand.name, brand %></td>
     <td><%= brand.description %></td>
-    <td><%= link_to 'Edit', edit_brand_path(brand) , :class=>"button"%></td>
-    <td><%= button_to 'Destroy', brand, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td>
+      <%= link_to 'Edit', edit_brand_path(brand) , :class=>"button"%>
+      <%= link_to 'Destroy', brand, :confirm => 'Are you sure?', :method => :delete ,:class=>"button negative"%>
+    </td>
   </tr>
 <% end %>
 </table>

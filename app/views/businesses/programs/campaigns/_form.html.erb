@@ -110,7 +110,7 @@
       <div id="fb_settings">
         <% f.fields_for :engagements do |engagement| %>
 
-          <%= engagement.hidden_field :name , :value=>"Share based engagement" %><br/>
+          <%= engagement.hidden_field :name , :value=>"Share " %><br/>
           <%= engagement.label :amount , "Earn points by sharing" %>
           <%= engagement.text_field :amount  , :id=> "engagement_amount" , :class=>"title"%>
           <%= engagement.label :fb_engagement_msg , "Message prompt displayed on the reciept of the user" %>
