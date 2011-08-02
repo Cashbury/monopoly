@@ -108,7 +108,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       description="Spend #{value["needed_amount"]}#{currency_symbol}"
       description << " before #{params[:engagement]["0"][:end_date]}" if params[:engagement]["0"][:end_date].present?
       description << ", Get a #{value["money_amount"]}#{currency_symbol} Cash back"
-      description << ", Offer available until #{@reward_attrs["0"]["expiry_date"]}" if @reward_attrs["0"]["expiry_date"].present?
+      description << ", Offer available until #{reward_attrs["0"]["expiry_date"]}" if reward_attrs["0"]["expiry_date"].present?
       params[:campaign][:rewards_attributes][key]["heading2"]=description
       params[:campaign][:rewards_attributes][key]["campaign_id"]=@campaign.id
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f

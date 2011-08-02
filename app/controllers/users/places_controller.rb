@@ -62,11 +62,12 @@ class Users::PlacesController < Users::BaseController
       @result["places"][index]["user-id-image-url"]=current_user.qr_code && business.activate_users_id ? URI.escape(current_user.qr_code.qr_code_image.photo.url) : nil
       unless business.nil?
         programs=business.programs
-        currency_symbol=ISO4217::Currency.from_code(business.currency_code).symbol if business.currency_code.present?
+        currency_symbol=business.currency_symbol
         @result["places"][index]["brand-name"]    =business.try(:brand).try(:name)
         @result["places"][index]["brand-image"]   =business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:normal)) 
         @result["places"][index]["brand-image-fb"]=business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:thumb))
         @result["places"][index]["is_open"]       =place.is_open?
+        @result["places"][index]["currency_symbol"]=currency_symbol
         @result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
         @result["places"][index]["business_has_user_id_card"]    =business.try(:activate_users_id)
         @result["places"][index]["images"]        =[]
@@ -76,31 +77,30 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["accounts"]      =[]
         @result["places"][index]["rewards"]       =[]
         unless targeted_campaigns.empty?
-          results=programs.joins(:campaigns=>[:rewards,:places,:accounts=>[:measurement_type,:account_holder]])
-                          .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type")
+          results=programs.joins(:campaigns=>[:rewards,:engagements,:places,:accounts=>[:measurement_type,:account_holder]])
+                          .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type, engagements.amount as spend_exchange_rule, engagements.end_date as spend_until, rewards.expiry_date as offer_available_until")
                           .where("campaigns.id IN (#{targeted_campaigns.join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id=#{place.id} and rewards.is_active=true and accounts.status=true")
                            
           results.each_with_index do |result,i|
-            @result["places"][index]["accounts"] << result.attributes.select {|key, value| key == "amount" || key=="campaign_id" || key=="is_money" || key=="measurement_type"}
-            attributes=result.attributes
             reward_obj=Reward.find(result.reward_id)
             reward_campaign=reward_obj.campaign
-            if (attributes["max_claim_per_user"].nil? || attributes["max_claim_per_user"]=="0"|| attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i) and (attributes["max_claim"].nil? || attributes["max_claim"]=="0" || attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i)  
-              @result["places"][index]["rewards"][i] = attributes.reject {|k,v| k == "amount"  || k=="is_money" || k == "model_id" || k=="model_type" || k=="measurement_type" || k=="money_amount"}
-              if @result["places"][index]["rewards"][i].present?
-                reward_image=reward_obj.reward_image
-                @result["places"][index]["rewards"][i]["reward-image"]   =reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:normal))
-                @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:thumb))
-                if reward_campaign.spend_campaign?
-                  points_rate=reward_campaign.engagements.first.try(:amount)
-                  @result["places"][index]["rewards"][i]["points_rate"]=points_rate
-                  @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.money_amount * points_rate if reward_obj.money_amount.present?
-                  @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
-                  @result["places"][index]["rewards"][i]["expiry_date"]=reward_campaign.engagements.first.try(:end_date)
-                end
-                how_to_get_amount_text=""  
-                @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{attributes["measurement_type"]}\n"}.first
-              end 
+            if (reward_obj.is_available_to?(current_user))
+              @result["places"][index]["accounts"] << result.attributes.select {|key, value| key == "amount" || key=="campaign_id" || key=="is_money" || key=="measurement_type"}
+              attributes=result.attributes
+              if (attributes["max_claim_per_user"].nil? || attributes["max_claim_per_user"]=="0"|| attributes["redeemCount"].to_i < attributes["max_claim_per_user"].to_i) and (attributes["max_claim"].nil? || attributes["max_claim"]=="0" || attributes["numberOfRedeems"].to_i < attributes["max_claim"].to_i)  
+                @result["places"][index]["rewards"][i] = attributes.reject {|k,v| k == "amount"  || k=="is_money" || k == "model_id" || k=="model_type" || k=="measurement_type" || k=="money_amount"}
+                if @result["places"][index]["rewards"][i].present?
+                  reward_image=reward_obj.reward_image
+                  @result["places"][index]["rewards"][i]["reward-image"]   =reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:normal))
+                  @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:thumb))
+                  if reward_campaign.spend_campaign?
+                    @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.money_amount * result.spend_exchange_rule.to_f if reward_obj.money_amount.present?
+                    @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
+                  end
+                  how_to_get_amount_text=""  
+                  @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{attributes["measurement_type"]}\n"}.first
+                end 
+              end
             end
           end #end_of_each_with_index
         end

@@ -263,7 +263,7 @@ class User < ActiveRecord::Base
       action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
       Account.transaction do
         qr_code.scan
-        QrCode.create(:code_type => QrCode::SINGLE_USE,:status=>1,:associatable_id=>associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>qr_code.size)
+        #QrCode.create(:code_type => QrCode::SINGLE_USE,:status=>1,:associatable_id=>associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>qr_code.size)
         log_group=LogGroup.create!(:created_on=>date)
         if place_id.blank?
           unless lat.blank? || lng.blank?
