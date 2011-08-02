@@ -87,7 +87,7 @@ class QrCode < ActiveRecord::Base
     self.status = 0
     save!
     #if it is a user's code, after each scan we auto reissue a new single use one
-    QrCode.create(:code_type => QrCode::SINGLE_USE, :status=>1, :associatable_id=>self.associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>self.size) if self.user?    
+    QrCode.create(:code_type => QrCode::SINGLE_USE, :status=>1, :associatable_id=>self.associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>self.size) if self.user    
    end
    #have add logger methods to logg here
   end
