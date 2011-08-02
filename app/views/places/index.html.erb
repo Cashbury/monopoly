@@ -2,15 +2,42 @@
   select{width:200px;}
 
 </style>
+<script type="text/javascript">
+//<![CDATA[
+jQuery(function(){
+    jQuery("input#name_country").autocomplete({
+      source: "/businesses/update_countries.js",
+      select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+        jQuery("input#country_id").val(ui.item.id);
+        jQuery("form").submit();
+      }
+    });
+    jQuery("input#name_city").autocomplete({
+      source:"/businesses/update_cities/1.js",
+      select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+        jQuery("input#city_id").val(ui.item.id);
+        jQuery("form").submit();
+      }
+    });
+  });
+//]]>
+</script>
+
+
+<%= form_tag("/places", :method=>:GET) do %>
+  <%= text_field_tag "name_country" , @country.try(:name), :placeholder=> "Country"%>
+  <%= text_field_tag "name_city" ,    @city.try(:name) , :placeholder=>"City"%>
+  <%= hidden_field_tag "country_id" , @country.try(:id)%>
+  <%= hidden_field_tag "city_id" ,    @city.try(:id)%>
+  <%= submit_tag "Search" %>
+<% end %>
 <% title "Places" %>
 <div class="search_box ">
-  <%= form_tag("/places",:method=>"get") do %>
-    <%= select_tag :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.where(:is_live=>true), :id, :name , params[:country_id]),:class=>"title"%>
 
-    <%= select_tag :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.where(:is_live=>true), :id, :name, params[:city_id]),:class=>"title"%>
-
-   <%= submit_tag "Search" %>
-  <% end %>
 </div>
 <table class="mono-table" border="0" cellpadding="0" cellspacing="0">
   <tr>
