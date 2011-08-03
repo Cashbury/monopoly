@@ -14,8 +14,8 @@ class Users::UsersSnapsController < Users::BaseController
       else
         respond_to do |format|
           if associatable.class.to_s==QrCode::ENGAGEMENT_TYPE 
-            account,campaign,program,after_fees_amount=current_user.snapped_qrcode(qr_code,associatable,params[:place_id],params[:lat],params[:long])          
-            format.xml {render :xml => snap_hash(account,associatable,campaign,program,after_fees_amount), :status => 200}
+            result=current_user.snapped_qrcode(qr_code,associatable,params[:place_id],params[:lat],params[:long])          
+            format.xml {render :xml => snap_hash(result[:user_account],associatable,result[:campaign],result[:program],result[:after_fees_amount]), :status => 200}
           else
             current_user.snapped_qrcode(qr_code,associatable,params[:place_id],params[:lat],params[:long])            
             format.xml { render :text => "User ID #{qr_code.hash_code} : User Name #{associatable.full_name}" ,:status=>200 }          

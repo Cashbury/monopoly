@@ -1,0 +1,43 @@
+<% title "View Transaction ##{@result.first.try(:transaction_id)} Details for #{@user.full_name}" %>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Transaction Type</th>
+    <th>QrCode Status</th>
+    <th>User </th>
+    <th>From Account Holder Name</th>
+    <th>To Account Holder Name</th>
+    <th>Transfer Amount</th>
+    <th>From Account Balance Before Tx</th>
+    <th>From Account Balance After Tx</th>
+    <th>To Account Balance Before Tx</th>
+    <th>To Account Balance After Tx</th>
+    <th>Time</th>
+    <th>Notes</th>
+    <th>Location</th>
+  </tr>
+<% @result.each do |result| %>
+  <tr>    
+    <td><%= result.log_type%></td>
+    <td><%= image_tag result.status=="1" ?  "on.png" : "off.png" %></td>
+    <td><%= "#{result.first_name} #{result.last_name}"%></td>
+    <% from_account=Account.find(result.from_account)%>
+    <% to_account=Account.find(result.to_account)%>
+    <% from_account_holder=from_account.account_holder%>
+    <% to_account_holder=to_account.account_holder%>
+    <% from_account_holder_name=from_account_holder.model_type=="User" ? User.find(from_account_holder.model_id).full_name : Business.find(from_account_holder.model_id).name  %>
+    <% to_account_holder_name=to_account_holder.model_type=="User" ? User.find(to_account_holder.model_id).full_name : Business.find(to_account_holder.model_id).name  %>      
+    <td><%= from_account_holder_name %></td>
+    <td><%= to_account_holder_name %></td>
+    <td><%= result.after_fees_amount%></td>
+    <td><%= result.from_account_balance_before %></td>
+    <td><%= result.from_account_balance_after %></td>
+    <td><%= result.to_account_balance_before %></td>
+    <td><%= result.to_account_balance_after %></td>
+    <td><%= result.created_at.to_formatted_s(:long) %></td>
+    <td><%= result.note%></td>
+    <td><%= result.pname %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'Back', "javascript:void(0)",:onclick=>"javascript:history.back()" %>

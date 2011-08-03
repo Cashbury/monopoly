@@ -1,16 +1,13 @@
 <% title "Loyal Customers" %>
-<%= javascript_include_tag 'prototype' %>
-<%= calendar_date_select_includes %>
-<% CalendarDateSelect.format=(:iso_date)%>
 <%= field_set_tag do %>
 	<h2>Filter By</h2>
 	<form id="filter_form">
 		<p>
-			<label style="margin:10px;">From Date</label><%= calendar_date_select_tag "filters_from_date", @from_date %>
+			<label style="margin:10px;">From Date</label><%= text_field_tag "filters_from_date", @from_date, :class=>"datepicker" %>
 			<label style="margin:10px;">Business</label><%= select_tag "filters_business_id", options_for_select(Business.all.collect {|b| [ b.name, b.id ] },@business_id),{:include_blank=>true} %>
 		</p>
     <p>
-    	<label style="margin:10px;">To Date</label><%= calendar_date_select_tag "filters_to_date", @to_date %>
+    	<label style="margin:10px;">To Date</label><%= text_field_tag "filters_to_date", @to_date, :class=>"datepicker" %>
     	<label style="margin:25px">Places</label><%= select_tag "filters_place_id", options_for_select(Place.all.collect {|b| [ b.name, b.id ] },@place_id),{:include_blank=>true}%>
     </p>
 		<p><a href="javascript:void(0)" onclick="submitLoyalCustomersSearch($('#filter_form'),1)">Filter</a></p>

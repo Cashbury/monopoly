@@ -15,6 +15,27 @@ $(document).ready(function(){
         }
       });   
   });
+  $(".role_box").change(function(){
+    //if ($(this).is(":checked")){
+      var role_ids=[];
+      $("INPUT[type='checkbox']:checked").each(function(index, domEle) {
+        role_ids.push($(domEle).val());
+      });
+      $.ajax({
+        type: 'GET',
+        url: '/check_role?role_ids='+role_ids,
+        success: function(data){
+          if (data=="true"){
+            $('.businesses_list').show();
+            $('.places_list').show();
+          }else{
+            $('.businesses_list').hide();
+            $('.places_list').hide();
+          }
+        }
+      });
+    //}
+  });
   $(".tabs").tabs({
     select:function(e,ui){
       var data = $(ui.tab).attr("data-c");
@@ -149,7 +170,7 @@ $(document).ready(function(){
   });
   
   $('.add_link').click(function(){
-    if (legal_index < total_legals){
+    if (legal_index < total_legals-1){
       var old_html=$('.legals_div').html();
       var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
       new_html2=new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
@@ -200,7 +221,7 @@ $(document).ready(function(){
         url: '/reissue_code/'+user_id,
         success: function(data){
           loadingImage.hide();
-          $('#user_code').html(data);
+          $('.sum').html(data);
         },
         error: function(data){
           loadingImage.hide();

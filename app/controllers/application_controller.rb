@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
 	#protect_from_forgery
-
+  #before_filter :check_permissions
   helper_method :current_user
   #for bypassing authorization beside devise controllers
   #enable_authorization :unless => :devise_controller?
@@ -10,7 +10,9 @@ class ApplicationController < ActionController::Base
     flash[:error] = exception.message
     redirect_to root_url
   end
-
+  #def check_permissions
+  #  authorize! :manage, current_user
+  #end
   #For production loggin
   #unless Rails.application.config.consider_all_requests_local
     #rescue_from Exception, :with => :render_error

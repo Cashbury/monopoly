@@ -1,7 +1,7 @@
 class BusinessesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
-  skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries, ]
+  skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
 
   def index
     @businesses = Business.all

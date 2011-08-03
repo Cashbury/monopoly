@@ -34,6 +34,7 @@ class Log < ActiveRecord::Base
 	belongs_to :log_group
 	belongs_to :transaction
 	belongs_to :action
+	belongs_to :qr_code
 	 
 	validates_numericality_of :gained_amount, :frequency, :lat, :lng ,:allow_nil => true
 	

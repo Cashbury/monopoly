@@ -2,7 +2,7 @@
 <%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
 <script type="text/javascript">
 var total_legals=<%=@total%>;
-var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
+var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
 </script>
 <style type="text/css">
 .birthday-picker select{width:auto;margin-right: 5px;}         
@@ -27,9 +27,19 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.size %>;
   <% end %>
   <fieldset >
     <legend>User Information</legend>
-    <p>
+    <!--<p>
       <%= f.label "Select User Type" %>
 		  <%= f.select :role_id, options_from_collection_for_select(Role.all , :id, :displayed_role,@role_id)%>
+    </p>-->
+    <p>
+    <%= f.label :roles, "Select User Roles" %><br />
+		<% Role.all.each do |role| %>
+			<%= check_box_tag(
+                        "user[roles_list][]",
+                        role.id,
+                        @user.roles.any? ? @user.roles.detect{|r| r.id == role.id} : false, {:class=>"role_box"}) %>
+			<%= "#{role.displayed_role}"%><br />
+		<% end %>
     </p>
     <p class="businesses_list" style="display:none">
       <%= label_tag "Business" %>

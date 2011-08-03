@@ -31,7 +31,10 @@
       <%= form_tag make_engagement_users_management_path(@user) do %>
         <%= hidden_field_tag :engagement_id, engagement.id %>
         <%= hidden_field_tag :page, @page %> 
-        <%= link_to 'Make Engagement', "javascript:void(0)", :class=>"engage_link" %>
+        <%if engagement.ctype.to_i== Campaign::CTYPE[:spend] %>
+        Amount <%= text_field_tag :amount,"", {:style=>"width:40px"} %>
+        <%end%>
+        <p><%= link_to 'Make Engagement', "javascript:void(0)", :class=>"engage_link" %></p>
       <% end %>
     </td>   
   </tr>

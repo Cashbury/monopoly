@@ -1,9 +1,4 @@
-<table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
-<caption><h4>User ID: <%=@new_qrcode.hash_code%></h4></caption>
-  <tr>
-    <td><%= link_to (image_tag @new_qrcode.qr_code_image.photo.url, :width=>"50px", :height=>"50px"), qr_code_path(@new_qrcode)  %></td>
-    <td><%=@new_qrcode.status ? "Active" : "Inactive"%></td>
-    <td><%=link_to "View Txs" ,"#"%></td>
-    <td><%=link_to "Re-issue", "javascript:void(0)", {:id=>"reissue_code"}%><img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
-  </tr>
-</table>
+<%= link_to (image_tag @new_qrcode.qr_code_image.photo.url, :width=>"100px", :height=>"100px"), qr_code_path(@user.qr_code)  %>
+<p>Current user ID: <%=@new_qrcode.hash_code%></p>
+<p>Type: Digital &nbsp;&nbsp; <%=link_to "Re-issue", "javascript:void(0)", {:id=>"reissue_code"}%><img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></p>
+

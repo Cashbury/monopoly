@@ -27,22 +27,24 @@ class Users::CashiersController < Users::BaseController
         #Loyalty collect campaigns
         unless params[:engagements].blank?
           params[:engagements].each do |record| 
-            records=record.split(',')
-            engagement_id=records.first;quantity=records.second
-            engagement=Engagement.find(engagement_id)
-            user.engaged_with(engagement,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i)
+            if record.present?
+              records=record.split(',')
+              engagement_id=records.first;quantity=records.second
+              engagement=Engagement.find(engagement_id)
+              user.engaged_with(engagement,engagement.amount,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i)
+            end
           end
         end
         #Spend based campaign    
         campaign=business.spend_based_campaign
         if campaign.engagements.first.end_date > Date.today
-          user.made_spend_engagement_at(business,campaign,params[:amount].to_f,params[:lat],params[:lng])
-          user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
-          qr_code.scan
+          user.made_spend_engagement_at(qr_code,business,campaign,params[:amount].to_f,params[:lat],params[:lng])
+          #user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
+          #qr_code.scan
         end
         s = {}
 		    s.merge!({:amount             => params[:amount]})
-		    s.merge!({:currency_symbol    => ISO4217::Currency.from_code(business.currency_code).symbol})
+		    s.merge!({:currency_symbol    => business.currency_code})
 		    s.merge!({:customer_name      => user.full_name})
 		    s.merge!({:customer_type      => user_type})
 		    user_uid=user.email.split("@facebook").first
@@ -79,9 +81,9 @@ class Users::CashiersController < Users::BaseController
   end
   
   def require_cashier
-    unless current_user.role?(Role::AS[:cashier]) || current_user.role?(Role::AS[:admin])
+    unless current_user.role?(Role::AS[:cashier]) #|| current_user.role?(Role::AS[:admin])
       respond_to do |format|
-        format.xml { render :text => "User is neither cashier nor admin" ,:status=>500 }
+        format.xml { render :text => "User is not a cashier" ,:status=>500 }
       end
     end
   end

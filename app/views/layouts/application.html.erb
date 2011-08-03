@@ -14,15 +14,15 @@
     <%= yield(:head) %>
     <script type="text/javascript" language="javascript" charset="utf-8">
     //<![CDATA[
-      jQuery(document).ready(function(){
-        jQuery(".sub_menu").hide();
-        jQuery(".main_header").click(function(){
-          elements = jQuery('.menu_item');
-          selected_link=jQuery(this)
+      $(document).ready(function(){
+        $(".sub_menu").hide();
+        $(".main_header").click(function(){
+          elements = $('.menu_item');
+          selected_link=$(this)
           elements.each(function(index, domEle) {
-            if(selected_link[0] != jQuery(domEle)[0]){
-             jQuery(domEle).removeClass('menu_item');
-             jQuery(domEle).next(".sub_menu").slideUp(300);
+            if(selected_link[0] != $(domEle)[0]){
+             $(domEle).removeClass('menu_item');
+             $(domEle).next(".sub_menu").slideUp(300);
             }
           });
           selected_link.toggleClass('menu_item');

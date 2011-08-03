@@ -1,0 +1,23 @@
+<table class="mono-table" style="width:600px" border="0" cellspacing="0" cellpadding="0">
+  <th>Business</th>
+  <th>Country</th>
+  <th>Program Type</th>
+  <th>SVA Balance @business</th>
+  <th>Cumulative SVA Balance @business</th>
+  <th>View Tx logs</th>
+  <th>Status (Action)</th>
+  <th>Listing Campaigns</th>
+  <% @all_logs.each do |log| %>
+   <tr>
+    <td><%=result.b_name%></td>
+    <td><%=result.c_name%></td>
+    <td><%=result.pt_name%></td>
+    <td><%=result.current_amount%></td>
+    <td><%=result.cumulative_amount%></td>
+    <td><%=link_to "View Txs", list_transactions_users_management_path(result.uid,result.biz_id,result.p_id) %></td>
+    <td><span id="program_status_<%=result.pt_id%>"><%=result.status ? "Enrolled" : "Un-Enrolled"%></span> | <%=link_to result.status ? "Un-Enroll" : "Enroll", "javascript:void(0)", :class=>"manage_enroll_link",:id=>result.pt_id %>
+    <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
+    <td><%=link_to "List Campaigns", list_campaigns_users_management_path(result.uid,result.biz_id,result.p_id) %></td>
+   </tr>
+  <%end%>
+</table>

@@ -24,7 +24,7 @@
   </fieldset>
   <fieldset>
     <legend class="section_title">Setting The rule</legend>
-    1 <%=@business.currency_symbol || "$" %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
+    1 <%=@business.currency_symbol %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
   </fieldset>
   <div class="row">
   <%=link_to "Add a spend based reward level" ,"javascript:void(0)", {:id=>"add_engagement"} %>            
