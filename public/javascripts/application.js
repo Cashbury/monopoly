@@ -1,6 +1,10 @@
 //jQuery.noConflict();
 $(function () {
-  $('.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' })
+  $('.datepicker').live('click', function () {
+    $(this).datepicker({ dateFormat: "yyyy-mm-dd" });
+  });
+  //$("#datepicker").datepicker({dateFormat: 'yyyy-mm-dd'});
+  //$('.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' })
   $('#reports th a').live('click', function () {
     $.getScript(this.href);
     return false;
@@ -72,17 +76,32 @@ function change_engagement_status(biz_id,prog_id,c_id,eng_id)
 }
 
 var submitUsersSnapsSearch = function(form,page){
-	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
-	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
-	fromDate  = (jQuery('#filters_from_date').val()=="") ? 0 : jQuery('#filters_from_date').val();
-	toDate    = (jQuery('#filters_to_date').val()=="")? 0 : jQuery('#filters_to_date').val();
+	businessId = ($('select#filters_business_id').val() == "") ? 0 : $('select#filters_business_id').val();
+	placeId    = ($('select#filters_place_id').val()=="") ? 0 : $('select#filters_place_id').val();
+	fromDate  = ($('#filters_from_date').val()=="") ? 0 : $('#filters_from_date').val();
+	toDate    = ($('#filters_to_date').val()=="")? 0 : $('#filters_to_date').val();
 	window.location = "/users_snaps/businesses/" + businessId + "/places/" + placeId + "/from_date/" + fromDate + "/to_date/"+ toDate;
 }
 
 var submitLoyalCustomersSearch = function(form,page){
-	businessId = (jQuery('select#filters_business_id').val() == "") ? 0 : jQuery('select#filters_business_id').val();
-	placeId    = (jQuery('select#filters_place_id').val()=="") ? 0 : jQuery('select#filters_place_id').val();
-	fromDate  = (jQuery('#filters_from_date').val()=="") ? 0 : jQuery('#filters_from_date').val();
-	toDate    = (jQuery('#filters_to_date').val()=="")? 0 : jQuery('#filters_to_date').val();
+	businessId = ($('select#filters_business_id').val() == "") ? 0 : $('select#filters_business_id').val();
+	placeId    = ($('select#filters_place_id').val()=="") ? 0 : $('select#filters_place_id').val();
+	fromDate  = ($('#filters_from_date').val()=="") ? 0 : $('#filters_from_date').val();
+	toDate    = ($('#filters_to_date').val()=="")? 0 : $('#filters_to_date').val();
 	window.location = "/loyal_customers/businesses/" + businessId + "/places/" + placeId + "/from_date/" + fromDate + "/to_date/"+ toDate;
+}
+
+function remove_fields(link) {
+  $(link).prev("input[type=hidden]").val("1");
+  $(link).closest(".fields").hide();
+}
+
+function add_fields(link, association, content) {
+  var new_id = new Date().getTime();
+  var regexp = new RegExp("new_" + association, "g")
+  counter=counter+1;
+  new_content=content.replace(/Offer Level [0-9]/,"Offer Level "+(counter+1));
+  $(link).parent().before(new_content.replace(regexp, new_id));
+  $(".reward_end_date").datepicker().trigger("change");
+  $(".reward_exp_date").datepicker().trigger("change");
 }

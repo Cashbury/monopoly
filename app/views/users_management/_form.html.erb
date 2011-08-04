@@ -27,10 +27,6 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
   <% end %>
   <fieldset >
     <legend>User Information</legend>
-    <!--<p>
-      <%= f.label "Select User Type" %>
-		  <%= f.select :role_id, options_from_collection_for_select(Role.all , :id, :displayed_role,@role_id)%>
-    </p>-->
     <p>
     <%= f.label :roles, "Select User Roles" %><br />
 		<% Role.all.each do |role| %>
@@ -111,13 +107,6 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
       </span>
       <span class="form-note note-success L-success" style="display:none;"></span>
     </p>
-    <!--<p>
-      <%= f.label :password %>
-      <%= f.password_field :password , :class=>"title" %>
-      <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
-        <%= @user.errors.on(:password) %>
-      </span>
-    </p>-->
   </fieldset>
   <div class="tabs">
     <ul>

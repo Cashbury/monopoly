@@ -5,75 +5,66 @@
   div.form_item_div label {height:30px; line-height:30px; padding:0 5px}  
   .row {width:880px;}
 </style>
+<script type="text/javascript">
+var counter=<%= @rewards.present? and @rewards.size > 0 ? @rewards.size-1 : 0  %>;
+$(document).ready(function(){
+  $(".reward_exp_date").datepicker().live("change",function () {
+    $(".reward_exp_date").val($(this).val());
+  });
+  $("#add_details_link").click(function(){
+    if ($(this).html()=="Settings +")
+      $(this).html("Hide Settings +");
+    else
+      $(this).html("Settings +");
+    $("#details_box").slideToggle();
+  });
+  $(".reward_end_date").datepicker().live("change",function(){
+    $("#engagement_end_date").val($(this).val());
+    $(".reward_end_date").val($(this).val());
+  });
+  $('.money_amount').live("blur",function(){
+    var money_amount=$(this).val();
+    var brand_name=$("#brand_name_id").val();
+    if (money_amount !="" ){        
+      $(this).nextAll(".fb_enjoy_msg").val("enjoyed a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
+      $(this).nextAll(".fb_unlock_msg").val("unlocked a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
+    }
+  });
+
+});
+</script>
 </head>
-<%= form_tag(business_spend_campaigns_path(@business)) do  %>
+<% form_for [@business ,@campaign],:url=>@campaign.new_record? ? business_spend_campaigns_path(@business) : business_spend_campaign_path(@business,@campaign) do |f| %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
-  <% if @campaign.errors.any? %>
-  <div id="error_explanation">
-    <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
-      <ul>
-        <% @campaign.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-  </div>
-  <% end %>
+  <%= f.error_messages %>
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
     <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",Target.find_by_name("returning_comers").try(:id)) %></div>
   </fieldset>
-  <fieldset>
-    <legend class="section_title">Setting The rule</legend>
-    1 <%=@business.currency_symbol %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
-  </fieldset>
-  <div class="row">
-  <%=link_to "Add a spend based reward level" ,"javascript:void(0)", {:id=>"add_engagement"} %>            
-  <div id="engagements_container">
-  <fieldset>
-    <legend class="section_title">Offer Level 1</legend>
-    <div class="form_item_div">
-      <label class="left"> Spend </label>   
-      <%= text_field_tag "campaign[rewards_attributes][0][needed_amount]","", {:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"><%=@business.currency_symbol %> before </label>
-      <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
-      <label class="left"> Get a </label>
-      <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:45px;margin:0 0 0"}%>
-      <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until </label> 
-      <input type="text" class="basic_info_caption1 reward_exp_date datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
-      <br style="clear:both;"/>
-      <label style="display:block;">When user unlocks a reward</label> 
-      <%= text_field_tag "campaign[rewards_attributes][0][fb_unlock_msg]","", :class=>"basic_info_input fb_unlock_msg", :maxlength=>100, :style=>"width: 540px;" %>
-      <br style="clear:both;"/>
-      <label style="display:block;">When user enjoys a reward</label>
-      <%= text_field_tag "campaign[rewards_attributes][0][fb_enjoy_msg]","", :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :style=>"width: 540px;" %>
-    </div>
-  </fieldset>
-  </div>
-  </div>
-  <div id="template" style="display:none">
+  <% f.fields_for :engagements do |engagement| %>
     <fieldset>
-      <legend class="section_title">A</legend>
-      <div class="form_item_div">
-        <label class="left"> Spend </label>   
-        <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 needed_amount", :style=>"width:45px;margin:0 0 0"} %>
-        <label class="left"><%=@business.currency_symbol %> before </label>
-        <input type="text" class="basic_info_caption1 eng_date_template datepicker end_date" style="width:95px;margin:0 0 0" name="Z[end_date]" disabled="disabled" />    
-        <label class="left"> Get a </label>
-        <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:45px;margin:0 0 0"}%>
-        <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until</label>       
-        <input type="text" class="basic_info_caption1 reward_exp_template datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]" disabled="disabled" />
-        <br style="clear:both;"/>
-        <label style="display:block;">When user unlocks a reward</label> 
-        <%= text_field_tag "X[fb_unlock_msg]","", :class=>"fb_unlock_msg basic_info_input", :maxlength=>100, :style=>"width: 670px;" %>
-        <br style="clear:both;"/>
-        <label style="display:block;">When user enjoys a reward</label>
-        <%= text_field_tag "X[fb_enjoy_msg]","", :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :style=>"width: 670px;" %>
-      </div>
+      <legend class="section_title">Setting The rule</legend>
+      1 <%=@business.currency_symbol %>=<%= engagement.text_field :amount,{:value=> 1,:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none"}%> points
     </fieldset>
+    <%= engagement.hidden_field :end_date,{:id=>"engagement_end_date"} %>
+    <%= engagement.label "Facebook msg when user makes an engagement" %><br />
+    <%= engagement.text_field :fb_engagement_msg,{:value=>"earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;"} %>
+  <%end%>
+  <div class="row" id="engagements_container">
+  <% if @campaign.new_record? %>
+    <% f.fields_for :rewards do |reward| %>
+      <%= render "reward_fields", :f => reward %>
+    <% end %>
+  <%else%>
+   <%@campaign.rewards.each_with_index do |reward_builder,index| %>
+    <%@index=index+1%>
+    <% f.fields_for :rewards,reward_builder do |reward| %>
+      <%= render "reward_fields", :f => reward %>
+    <% end %>
+    <%end%>
+  <%end%>
+  <p><%= link_to_add_fields "Add a spend based reward level", f, :rewards%></p>
   </div>
-    <%= label_tag "When user makes an engagement" %><br />
-    <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;" %>
-
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">
@@ -84,67 +75,22 @@
       <% end %>
     </div>
   </fieldset>
-  <br /><br />
   <p><a id="add_details_link" href="javascript:void(0)">Settings +</a></p>
   <br /><br />
   <fieldset id="details_box" style="display:none">
     <legend class="section_title">More Details</legend>
       <div class="row">
-        Launch now <%= check_box_tag("launch_today","",1) %> or at <input type="text" class="datepicker" style="width:95px;margin:0 0 0" name="campaign[start_date]" />   
+        Launch now <%= check_box_tag("launch_today","",1) %> or at <%= f.text_field :start_date,{:class=>"datepicker",:style=>"width:95px;margin:0 0 0"}%> 
       </div>
       <div class="row">
-        <%= label_tag :initial_amount %><br />
-        <%= text_field_tag "campaign[initial_amount]" ,0.0, {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
+        <%= f.label :initial_amount %><br />
+        <%= f.text_field :initial_amount ,{:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
       </div>
       <div class="row">
-        <%= label_tag :initial_biz_amount %><br />
-        <%= text_field_tag "campaign[initial_biz_amount]" ,"", {:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
+        <%= f.label :initial_biz_amount %><br />
+        <%= f.text_field :initial_biz_amount,{:value=>10000,:class=>"basic_info_caption1",:style=>"width:350px;float:none"}%>
       </div>
     <br /><br />
   </fieldset>
-  <div class="actions">
-    <p><%= submit_tag "Make Offer"%></p>
-  </div>
+  <p><%= f.submit @campaign.new_record? ? "Create" : "Update"%></p>
 <% end %>
-
-<script type="text/javascript">
-var counter=0;
-$(document).ready(function(){
-  $("#add_engagement").click(function(){
-    var content=$('#template').clone();
-    counter=counter+1;
-    content.find(".needed_amount").attr("name","campaign[rewards_attributes]["+counter+"][needed_amount]")  
-    content.find(".money_amount").attr("name","campaign[rewards_attributes]["+counter+"][money_amount]")
-    content.find(".reward_exp_template").attr("name","campaign[rewards_attributes]["+counter+"][expiry_date]")
-    content.find(".fb_unlock_msg").attr("name","campaign[rewards_attributes]["+counter+"][fb_unlock_msg]")
-    content.find(".fb_enjoy_msg").attr("name","campaign[rewards_attributes]["+counter+"][fb_enjoy_msg]")
-    content.find(".end_date").attr("name","engagement["+counter+"][end_date]")
-    content.find(".section_title").html("Offer Level "+(counter+1));
-    $("#engagements_container").append(content.html());
-    $("#engagements_container .form_item_div:last .eng_date_template").val($('.eng_end_date').val());
-    $("#engagements_container .form_item_div:last .reward_exp_template").val($('.reward_exp_date').val());
-  });
-  $(".eng_end_date").datepicker().change(function () {
-    $(".eng_date_template").val($(this).val());
-  });
-  $(".reward_exp_date").datepicker().change(function () {
-    $(".reward_exp_template").val($(this).val());
-  });
-  $("#add_details_link").click(function(){
-    if ($(this).html()=="Settings +")
-      $(this).html("Hide Settings +");
-    else
-      $(this).html("Settings +");
-    $("#details_box").slideToggle();
-  });
-  
-  $('.money_amount').live("blur",function(){
-    var money_amount=$(this).val();
-    var brand_name=$("#brand_name_id").val();
-    if (money_amount !="" ){        
-      $(this).nextAll(".fb_enjoy_msg").val("enjoyed a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
-      $(this).nextAll(".fb_unlock_msg").val("unlocked a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
-    }
-  });
-});
-</script>

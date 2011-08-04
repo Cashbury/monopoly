@@ -35,11 +35,11 @@ class Reward < ActiveRecord::Base
   has_one :reward_image, :as => :uploadable, :dependent => :destroy
   accepts_nested_attributes_for :reward_image
   #attr_accessor :places_list
-  
+  attr_accessor :end_date
   #after_save :update_categories
   validates_presence_of :name, :needed_amount#, :fb_unlock_msg, :fb_enjoy_msg
   validates_numericality_of :needed_amount,:max_claim, :allow_nil=>true
-  validates_length_of :name, :maximum => 16
+  validates_length_of :name, :maximum => 25#16
   validates_length_of :heading1, :maximum => 40
   validates_length_of :heading2, :maximum => 150 #84
   after_update :reprocess_photo

@@ -13,8 +13,11 @@ class Businesses::SpendCampaignsController < ApplicationController
   end
   
   def new
-    found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
-    @campaign=found.nil? ? Campaign.new : Campaign.find(found.id)
+    #found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
+    #@campaign=found.nil? ? Campaign.new : Campaign.find(found.id)
+    @campaign=Campaign.new
+    @campaign.engagements.build
+    @campaign.rewards.build
   end
 
   def create
@@ -24,43 +27,44 @@ class Businesses::SpendCampaignsController < ApplicationController
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
     end 
-    @reward_attrs=params[:campaign][:rewards_attributes]
+    @engagement_attrs=params[:campaign][:engagements_attributes]["0"]
+    @reward_attrs=params[:campaign][:rewards_attributes]    
+    if @reward_attrs["0"]["expiry_date"].present? and  @reward_attrs["0"]["expiry_date"].match(/\//)
+      date_details1=@reward_attrs["0"]["expiry_date"].split("/").reverse
+      expiry_date="#{date_details1[0]}-#{date_details1[2]}-#{date_details1[1]}"
+    end
+    if @engagement_attrs["end_date"].present? and @engagement_attrs["end_date"].match(/\//)
+      date_details=@engagement_attrs["end_date"].split("/").reverse
+      end_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
+    end
+    params[:campaign][:engagements_attributes]["0"]["engagement_type_id"]=EngagementType.find_by_eng_type(EngagementType::ENG_TYPE[:spend]).id      
+    params[:campaign][:engagements_attributes]["0"]["name"]="Spend Engagement"
+    params[:campaign][:engagements_attributes]["0"]["end_date"]=end_date if end_date.present?
     @reward_attrs.each do |key,value| 
       description="Spend #{value["needed_amount"]}#{currency_symbol}"
-      description << " before #{params[:engagement]["0"][:end_date]}" if params[:engagement]["0"][:end_date].present?
-      description << ", Get a #{value["money_amount"]}#{currency_symbol} Cash back"
-      description << ", Offer available until #{@reward_attrs["0"]["expiry_date"]}" if @reward_attrs["0"]["expiry_date"].present?
+      description << " before #{end_date}" if @engagement_attrs[:end_date].present?
+      description << ", Get a #{"%0.2f" % value["money_amount"]}#{currency_symbol} Cash back"
+      description << ", Offer available until #{expiry_date}" if @reward_attrs["0"]["expiry_date"].present?
       params[:campaign][:rewards_attributes][key]["heading2"]=description
-      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f if value["needed_amount"].present?
-      params[:campaign][:rewards_attributes][key]["name"]="$#{value[:money_amount]} Cash back"
-      params[:campaign][:rewards_attributes][key]["money_amount"]=value[:money_amount]
-      params[:campaign][:rewards_attributes][key]["expiry_date"]=@reward_attrs["0"]["expiry_date"]
+      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * @engagement_attrs[:amount].to_f if value["needed_amount"].present?
+      params[:campaign][:rewards_attributes][key]["name"]="$#{value[:money_amount]} Cash back"   
+      params[:campaign][:rewards_attributes][key]["expiry_date"]=expiry_date if expiry_date.present?
     end
-    found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
-    @campaign=found.nil? ? @program.campaigns.build(params[:campaign]) : Campaign.find(found.id)
+    @campaign=@program.campaigns.build(params[:campaign])
     @campaign.ctype=Campaign::CTYPE[:spend]
-    @campaign.end_date=@reward_attrs["0"]["expiry_date"]
-    if @campaign.engagements.empty?
-      @engagement=@campaign.engagements.build(params[:engagement]["0"])
-      @engagement.name="Spend Engagement"
-      @engagement.end_date=params[:engagement]["0"]["end_date"].to_date
-      @engagement.engagement_type_id=EngagementType.find_by_eng_type(EngagementType::ENG_TYPE[:spend]).id      
-    else  
-      @engagement=@campaign.engagements.first
-      @engagement.update_attributes(params[:engagement]["0"])
-    end    
+    @campaign.end_date=expiry_date.to_date if expiry_date.present? 
     if params[:target_id].present?
       @campaign.has_target=true
       @campaign.targets << Target.find(params[:target_id])   
     end
     @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
     @campaign.name="Spend based Campaign"
-    @campaign.ctype=Campaign::CTYPE[:spend]
     respond_to do |format|
-      Campaign.transaction do
-        @campaign.new_record? ? @campaign.save! : @campaign.update_attributes!(params[:campaign])
-        @engagement.save if @engagement.present?
-      end      
+       if @campaign.save    
+        format.html { redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Offer was successfully created.')}
+      else
+        format.html { render :action => "new" }
+      end     
       format.html{ redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Offer was successfully created.')}
     end
   rescue
@@ -104,54 +108,43 @@ class Businesses::SpendCampaignsController < ApplicationController
       @campaign.targets.delete_all
       @campaign.has_target=false
     end
+    engagement_attrs=params[:campaign][:engagements_attributes]["0"]
+    reward_attrs=params[:campaign][:rewards_attributes]    
+    if reward_attrs["0"]["expiry_date"].present? and  reward_attrs["0"]["expiry_date"].split("/").any?
+      date_details1=reward_attrs["0"]["expiry_date"].split("/").reverse
+      expiry_date="#{date_details1[0]}-#{date_details1[2]}-#{date_details1[1]}"
+    end
+    if engagement_attrs["end_date"].present? and engagement_attrs["end_date"].split("/").any?
+      date_details=engagement_attrs["end_date"].split("/").reverse
+      end_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
+    end
+    params[:campaign][:engagements_attributes]["0"]["end_date"]=end_date if end_date.present?
     @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
-    @campaign.end_date=reward_attrs["0"]["expiry_date"]
+    @campaign.end_date=expiry_date if expiry_date.present?
     reward_attrs.each do |key,value|
       description="Spend #{value["needed_amount"]}#{currency_symbol}"
-      description << " before #{params[:engagement]["0"][:end_date]}" if params[:engagement]["0"][:end_date].present?
-      description << ", Get a #{value["money_amount"]}#{currency_symbol} Cash back"
-      description << ", Offer available until #{reward_attrs["0"]["expiry_date"]}" if reward_attrs["0"]["expiry_date"].present?
+      description << " before #{end_date}" if end_date.present?
+      description << ", Get a #{ "%0.2f" % value["money_amount"]}#{currency_symbol} Cash back"
+      description << ", Offer available until #{expiry_date}" if expiry_date.present?
       params[:campaign][:rewards_attributes][key]["heading2"]=description
-      params[:campaign][:rewards_attributes][key]["campaign_id"]=@campaign.id
-      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * params[:engagement]["0"][:amount].to_f
+      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * engagement_attrs[:amount].to_f
       params[:campaign][:rewards_attributes][key]["name"]="#{value[:money_amount]}#{currency_symbol} Cash back"
-      params[:campaign][:rewards_attributes][key]["money_amount"]=value[:money_amount]
-      params[:campaign][:rewards_attributes][key]["expiry_date"]=reward_attrs["0"][:expiry_date]
+      params[:campaign][:rewards_attributes][key]["expiry_date"]=expiry_date if expiry_date.present?
     end     
     respond_to do |format|
-      if @campaign.update_attributes!(params[:campaign])
-        engagement=@campaign.engagements.first
-        engagement.update_attribute(:end_date,params[:engagement]["0"][:end_date])
-        format.html {         
-          redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
-        }
+      if @campaign.update_attributes(params[:campaign])
+        format.html { redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') }
       else
-        @campaign.errors.add(:item_name,"can't be blank") if params[:item_name]==""
-        @reward=@campaign.rewards.first
-        @engagement = @campaign.engagements.first
-        @rewards    = @campaign.rewards
-        @reward.build_reward_image unless @reward.reward_image.present?
-        @item_name =@campaign.engagements.first.name.gsub(/Buy\s+/,'')
         format.html { render :action => "edit" }
       end
     end
   rescue
     respond_to do |format|
-      @engagement = @campaign.engagements.first
-      @rewards    = @campaign.rewards
       format.html { render :action => "edit" }
       format.xml  { render :xml => @campaign.errors, :status => :unprocessable_entity }
     end
   end
-  def crop_image
-    @campaign=Campaign.find(params[:campaign_id])
-    @reward=Reward.find(params[:reward_id])
-    if @reward.update_attributes!(params[:reward])
-      redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
-    else    
-      render :action=>"crop"
-    end    
-  end
+  
   def destroy
     @campaign = Campaign.find(params[:id])
     @campaign.destroy
