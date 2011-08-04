@@ -22,7 +22,7 @@
   <% end %>
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
-    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",Target.find_by_name("returning_comers").try(:id)) %></div>
+    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.targets.first.try(:id)) %></div>
   </fieldset>
   <fieldset>
     <legend class="section_title">Setting The rule</legend>
@@ -39,23 +39,22 @@
       <label class="left"><%=@business.currency_symbol %> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" value="<%=@engagement.end_date%>">      
       <label class="left"> Get a </label>
-      <%= text_field_tag "campaign[rewards_attributes][#{index}][money_amount]" ,reward.money_amount,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:100px;margin:0 0 0",:title=>"5$",:id=>"reward_name_field_id"}%>
+      <%= text_field_tag "campaign[rewards_attributes][#{index}][money_amount]" ,reward.money_amount,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:45px;margin:0 0 0",:title=>"5$",:id=>"reward_name_field_id"}%>
       <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until </label>       
       <input type="text" class="basic_info_caption1 reward_exp_date datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][<%=index%>][expiry_date]" value="<%=reward.expiry_date%>">
       <br style="clear:both;"/>
       <label style="display:block;">When user unlocks a reward</label> 
-      <%= text_field_tag "campaign[rewards_attributes][#{index}][fb_unlock_msg]",reward.fb_unlock_msg, :class=>"basic_info_input ", :maxlength=>100, :class=>"fb_unlock_msg", :style=>"width: 670px;" %>
+      <%= text_field_tag "campaign[rewards_attributes][#{index}][fb_unlock_msg]",reward.fb_unlock_msg, :class=>"basic_info_input fb_unlock_msg", :maxlength=>100, :style=>"width: 670px;" %>
+      <br style="clear:both;"/>
       <label style="display:block;">When user enjoys a reward</label>
-      <%= text_field_tag "campaign[rewards_attributes][#{index}][fb_enjoy_msg]",reward.fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :class=>"fb_enjoy_msg", :style=>"width: 670px;" %>
+      <%= text_field_tag "campaign[rewards_attributes][#{index}][fb_enjoy_msg]",reward.fb_enjoy_msg, :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :style=>"width: 670px;" %>
     </div>
   </fieldset>
   </div>
    <%end%>
   <br /><br />
-  <div class="row">
-    <%= label_tag "When user makes an engagement" %><br />
-    <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :class=>"fb_engagement_msg", :style=>"width: 670px;" %>
-  </div>
+  <%= label_tag "When user makes an engagement" %><br />
+  <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;" %>
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">

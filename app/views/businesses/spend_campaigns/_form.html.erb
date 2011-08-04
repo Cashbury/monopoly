@@ -37,14 +37,15 @@
       <label class="left"><%=@business.currency_symbol %> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
       <label class="left"> Get a </label>
-      <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:100px;margin:0 0 0"}%>
+      <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:45px;margin:0 0 0"}%>
       <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until </label> 
       <input type="text" class="basic_info_caption1 reward_exp_date datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
       <br style="clear:both;"/>
       <label style="display:block;">When user unlocks a reward</label> 
-      <%= text_field_tag "campaign[rewards_attributes][0][fb_unlock_msg]","", :class=>"basic_info_input ", :maxlength=>100, :class=>"fb_unlock_msg", :style=>"width: 540px;" %>
+      <%= text_field_tag "campaign[rewards_attributes][0][fb_unlock_msg]","", :class=>"basic_info_input fb_unlock_msg", :maxlength=>100, :style=>"width: 540px;" %>
+      <br style="clear:both;"/>
       <label style="display:block;">When user enjoys a reward</label>
-      <%= text_field_tag "campaign[rewards_attributes][0][fb_enjoy_msg]","", :class=>"basic_info_input", :maxlength=>100, :class=>"fb_enjoy_msg", :style=>"width: 540px;" %>
+      <%= text_field_tag "campaign[rewards_attributes][0][fb_enjoy_msg]","", :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :style=>"width: 540px;" %>
     </div>
   </fieldset>
   </div>
@@ -58,21 +59,20 @@
         <label class="left"><%=@business.currency_symbol %> before </label>
         <input type="text" class="basic_info_caption1 eng_date_template datepicker end_date" style="width:95px;margin:0 0 0" name="Z[end_date]" disabled="disabled" />    
         <label class="left"> Get a </label>
-        <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:100px;margin:0 0 0"}%>
+        <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:45px;margin:0 0 0"}%>
         <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until</label>       
         <input type="text" class="basic_info_caption1 reward_exp_template datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]" disabled="disabled" />
         <br style="clear:both;"/>
         <label style="display:block;">When user unlocks a reward</label> 
-        <%= text_field_tag "X[fb_unlock_msg]","", :class=>"basic_info_input fb_unlock_msg", :maxlength=>100, :class=>"fb_unlock_msg", :style=>"width: 670px;" %>
+        <%= text_field_tag "X[fb_unlock_msg]","", :class=>"fb_unlock_msg basic_info_input", :maxlength=>100, :style=>"width: 670px;" %>
+        <br style="clear:both;"/>
         <label style="display:block;">When user enjoys a reward</label>
-        <%= text_field_tag "X[fb_enjoy_msg]","", :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :class=>"fb_enjoy_msg", :style=>"width: 670px;" %>
+        <%= text_field_tag "X[fb_enjoy_msg]","", :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :style=>"width: 670px;" %>
       </div>
     </fieldset>
   </div>
-  <div class="row">
     <%= label_tag "When user makes an engagement" %><br />
-    <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :class=>"fb_engagement_msg", :style=>"width: 670px;" %>
-  </div>
+    <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;" %>
 
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
