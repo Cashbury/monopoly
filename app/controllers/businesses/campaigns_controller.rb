@@ -49,7 +49,7 @@ class Businesses::CampaignsController < ApplicationController
       if @campaign.save!
         format.html {
           @reward=@campaign.rewards.first
-          save_share_engagement(params[:share])
+          #save_share_engagement(params[:share])
 
           if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.need_cropping
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.')
@@ -85,7 +85,7 @@ class Businesses::CampaignsController < ApplicationController
     @reward    =@campaign.rewards.first
     @reward.build_reward_image unless @reward.reward_image.present?
     @item_name =@engagement.name.gsub(/Buy\s+/,'')
-    @share_engagement = @campaign.engagements.where(:engagement_type_id=>4).first
+    #@share_engagement = @campaign.engagements.where(:engagement_type_id=>4).first
   end
 
   def update
@@ -122,7 +122,7 @@ class Businesses::CampaignsController < ApplicationController
     respond_to do |format|
       if @campaign.update_attributes!(params[:campaign])
         format.html {
-          save_share_engagement(params[:share])
+          #save_share_engagement(params[:share])
           @reward=@campaign.rewards.first
           if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.needed_cropping?
             redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.')
@@ -174,7 +174,6 @@ class Businesses::CampaignsController < ApplicationController
   #end
 
   private
-
   def save_share_engagement(share)
     if share[:id].blank?
       share = share.delete_if {|n| n=="id"}

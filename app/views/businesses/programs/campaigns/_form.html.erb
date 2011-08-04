@@ -109,13 +109,14 @@
       <%= f.label :is_fb_enabled, "Enable Facebook sharing engagment", :id=>"is_fb_enabled", :class=>"left" , :style=>"width:300px"%>
       <div id="fb_settings">
         <% f.fields_for :engagements do |engagement| %>
-
-          <%= engagement.hidden_field :name , :value=>"Share " %><br/>
-          <%= engagement.label :amount , "Earn points by sharing" %>
-          <%= engagement.text_field :amount  , :id=> "engagement_amount" , :class=>"title"%>
-          <%= engagement.label :fb_engagement_msg , "Message prompt displayed on the reciept of the user" %>
-          <%= engagement.text_field :fb_engagement_msg , :id=>"fb_share_msg" , :class=>"title" %>
-          <%= engagement.hidden_field :engagement_type_id , :value=>EngagementType.share_id.to_s, :id=>"engagement_type_id" %>
+          <% if  engagement.object.engagement_type_id ==4  %>
+            <%= engagement.hidden_field :name , :value=>"Share " %><br/>
+            <%= engagement.label :amount , "Earn points by sharing" %>
+            <%= engagement.text_field :amount  , :id=> "engagement_amount" , :class=>"title"%>
+            <%= engagement.label :fb_engagement_msg , "Message prompt displayed on the reciept of the user" %>
+            <%= engagement.text_field :fb_engagement_msg , :id=>"fb_share_msg" , :class=>"title" %>
+            <%= engagement.hidden_field :engagement_type_id , :value=>EngagementType.share_id.to_s, :id=>"engagement_type_id" %>
+          <% end %>
         <% end %>
       </div>
     </fieldset>

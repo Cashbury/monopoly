@@ -61,7 +61,7 @@
       <%= f.label :is_fb_enabled, "Enable Share on Facebook" %>
     </div>
     <div class="face_book_message">
-      <%= render "shared/share_engagement", :share_engagement=>@share_engagement %>
+      <%  #render "shared/share_engagement", :share_engagement=>@share_engagement %>
       <div class="row">
         <%= reward.label "When user unlocks a reward" %><br />
         <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 540px;" %>
