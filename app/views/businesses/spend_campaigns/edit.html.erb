@@ -1,7 +1,5 @@
 <% title "#{@business.name} \ Make an offer" %>
 <head>
-<%= javascript_include_tag 'jquery.datePicker-2.1.2' %>
-<%= stylesheet_link_tag 'datePicker' %>
 <style type="text/css" media="screen">
   div.form_item_div select{margin:0 5px 0 0}
   div.form_item_div input {padding:5px 2px; margin:0 3px 0 0}
@@ -28,27 +26,36 @@
   </fieldset>
   <fieldset>
     <legend class="section_title">Setting The rule</legend>
-    1 <%=@business.currency_symbol || "$" %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
+    1 <%=@business.currency_symbol %>=<%= text_field_tag "engagement[0][amount]" ,@engagement.try(:amount) || 1,{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none",:default=>1}%> points
   </fieldset>
   <%@rewards.each_with_index do |reward,index| %>
   <div class="row">
   <fieldset>
-    <legend class="section_title">Edit Offer</legend>
+    <legend class="section_title">Edit Offer Level <%=index+1%></legend>
     <div class="form_item_div">
       <label class="left"> Spend </label>   
       <%= text_field_tag "campaign[rewards_attributes][#{index}][needed_amount]",reward.needed_amount, {:class=>"basic_info_caption1 inst", :style=>"width:45px;margin:0 0 0",:title=>"50$", :id=>"needed_amount_id"} %>
       <%= hidden_field_tag "campaign[rewards_attributes][#{index}][id]", reward.id%>
-      <label class="left"><%=@business.currency_symbol || "$" %> before </label>
+      <label class="left"><%=@business.currency_symbol %> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" value="<%=@engagement.end_date%>">      
       <label class="left"> Get a </label>
       <%= text_field_tag "campaign[rewards_attributes][#{index}][money_amount]" ,reward.money_amount,{:maxlength=>16,:class=>"basic_info_caption1 inst",:style=>"width:100px;margin:0 0 0",:title=>"5$",:id=>"reward_name_field_id"}%>
-      <label class="left"><%=@business.currency_symbol || "$" %> Cash back, Offer available until </label>       
+      <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until </label>       
       <input type="text" class="basic_info_caption1 reward_exp_date datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][<%=index%>][expiry_date]" value="<%=reward.expiry_date%>">
+      <br style="clear:both;"/>
+      <label style="display:block;">When user unlocks a reward</label> 
+      <%= text_field_tag "campaign[rewards_attributes][#{index}][fb_unlock_msg]",reward.fb_unlock_msg, :class=>"basic_info_input ", :maxlength=>100, :class=>"fb_unlock_msg", :style=>"width: 670px;" %>
+      <label style="display:block;">When user enjoys a reward</label>
+      <%= text_field_tag "campaign[rewards_attributes][#{index}][fb_enjoy_msg]",reward.fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :class=>"fb_enjoy_msg", :style=>"width: 670px;" %>
     </div>
   </fieldset>
   </div>
    <%end%>
   <br /><br />
+  <div class="row">
+    <%= label_tag "When user makes an engagement" %><br />
+    <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :class=>"fb_engagement_msg", :style=>"width: 670px;" %>
+  </div>
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">
@@ -84,7 +91,6 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-  $('input.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' }).focus();
   $("#add_details_link").click(function(){
     if ($(this).html()=="Edit Settings")
       $(this).html("Hide Settings");
@@ -93,10 +99,10 @@ $(document).ready(function(){
     $("#details_box").slideToggle();
   });
   $(".eng_end_date").datepicker().change(function () {
-    $(".eng_date_template").val($(this).val());
+    $(".eng_end_date").datepicker().val($(this).val());
   });
   $(".reward_exp_date").datepicker().change(function () {
-    $(".reward_exp_template").val($(this).val());
+    $(".reward_exp_date").datepicker().val($(this).val());
   });
 });
 </script>

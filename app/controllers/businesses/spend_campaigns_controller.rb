@@ -39,6 +39,7 @@ class Businesses::SpendCampaignsController < ApplicationController
     found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
     @campaign=found.nil? ? @program.campaigns.build(params[:campaign]) : Campaign.find(found.id)
     @campaign.ctype=Campaign::CTYPE[:spend]
+    @campaign.end_date=@reward_attrs["0"]["expiry_date"]
     if @campaign.engagements.empty?
       @engagement=@campaign.engagements.build(params[:engagement]["0"])
       @engagement.name="Spend Engagement"
@@ -104,6 +105,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       @campaign.has_target=false
     end
     @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
+    @campaign.end_date=reward_attrs["0"]["expiry_date"]
     reward_attrs.each do |key,value|
       description="Spend #{value["needed_amount"]}#{currency_symbol}"
       description << " before #{params[:engagement]["0"][:end_date]}" if params[:engagement]["0"][:end_date].present?

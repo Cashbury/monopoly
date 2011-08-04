@@ -37,29 +37,43 @@
       <label class="left"><%=@business.currency_symbol %> before </label>
       <input type="text" class="basic_info_caption1 eng_end_date datepicker" style="width:95px;margin:0 0 0" name="engagement[0][end_date]" />   
       <label class="left"> Get a </label>
-      <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:100px;margin:0 0 0"}%>
+      <%= text_field_tag "campaign[rewards_attributes][0][money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:100px;margin:0 0 0"}%>
       <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until </label> 
       <input type="text" class="basic_info_caption1 reward_exp_date datepicker" style="width:95px;margin:0 0 0" name="campaign[rewards_attributes][0][expiry_date]" />
+      <br style="clear:both;"/>
+      <label style="display:block;">When user unlocks a reward</label> 
+      <%= text_field_tag "campaign[rewards_attributes][0][fb_unlock_msg]","", :class=>"basic_info_input ", :maxlength=>100, :class=>"fb_unlock_msg", :style=>"width: 540px;" %>
+      <label style="display:block;">When user enjoys a reward</label>
+      <%= text_field_tag "campaign[rewards_attributes][0][fb_enjoy_msg]","", :class=>"basic_info_input", :maxlength=>100, :class=>"fb_enjoy_msg", :style=>"width: 540px;" %>
     </div>
   </fieldset>
   </div>
   </div>
   <div id="template" style="display:none">
-  <fieldset>
-    <legend class="section_title">A</legend>
-    <div class="form_item_div">
-      <label class="left"> Spend </label>   
-      <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 needed_amount", :style=>"width:45px;margin:0 0 0"} %>
-      <label class="left"><%=@business.currency_symbol %> before </label>
-      <input type="text" class="basic_info_caption1 eng_date_template datepicker end_date" style="width:95px;margin:0 0 0" name="Z[end_date]" disabled="disabled" />    
-      <label class="left"> Get a </label>
-      <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:100px;margin:0 0 0"}%>
-      <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until</label>       
-      <input type="text" class="basic_info_caption1 reward_exp_template datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]" disabled="disabled" />
-    </div>
-  </fieldset>
+    <fieldset>
+      <legend class="section_title">A</legend>
+      <div class="form_item_div">
+        <label class="left"> Spend </label>   
+        <%= text_field_tag "X[needed_amount]","", {:class=>"basic_info_caption1 needed_amount", :style=>"width:45px;margin:0 0 0"} %>
+        <label class="left"><%=@business.currency_symbol %> before </label>
+        <input type="text" class="basic_info_caption1 eng_date_template datepicker end_date" style="width:95px;margin:0 0 0" name="Z[end_date]" disabled="disabled" />    
+        <label class="left"> Get a </label>
+        <%= text_field_tag "X[money_amount]" ,"",{:maxlength=>16,:class=>"basic_info_caption1 money_amount",:style=>"width:100px;margin:0 0 0"}%>
+        <label class="left"><%=@business.currency_symbol %> Cash back, Offer available until</label>       
+        <input type="text" class="basic_info_caption1 reward_exp_template datepicker" style="width:95px;margin:0 0 0" name="X[expiry_date]" disabled="disabled" />
+        <br style="clear:both;"/>
+        <label style="display:block;">When user unlocks a reward</label> 
+        <%= text_field_tag "X[fb_unlock_msg]","", :class=>"basic_info_input fb_unlock_msg", :maxlength=>100, :class=>"fb_unlock_msg", :style=>"width: 670px;" %>
+        <label style="display:block;">When user enjoys a reward</label>
+        <%= text_field_tag "X[fb_enjoy_msg]","", :class=>"basic_info_input fb_enjoy_msg", :maxlength=>100, :class=>"fb_enjoy_msg", :style=>"width: 670px;" %>
+      </div>
+    </fieldset>
   </div>
-  <br /><br />
+  <div class="row">
+    <%= label_tag "When user makes an engagement" %><br />
+    <%= text_field_tag "engagement[0][fb_engagement_msg]","earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :class=>"fb_engagement_msg", :style=>"width: 670px;" %>
+  </div>
+
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">
@@ -96,13 +110,14 @@
 <script type="text/javascript">
 var counter=0;
 $(document).ready(function(){
-  $('input.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' })
   $("#add_engagement").click(function(){
     var content=$('#template').clone();
     counter=counter+1;
     content.find(".needed_amount").attr("name","campaign[rewards_attributes]["+counter+"][needed_amount]")  
     content.find(".money_amount").attr("name","campaign[rewards_attributes]["+counter+"][money_amount]")
     content.find(".reward_exp_template").attr("name","campaign[rewards_attributes]["+counter+"][expiry_date]")
+    content.find(".fb_unlock_msg").attr("name","campaign[rewards_attributes]["+counter+"][fb_unlock_msg]")
+    content.find(".fb_enjoy_msg").attr("name","campaign[rewards_attributes]["+counter+"][fb_enjoy_msg]")
     content.find(".end_date").attr("name","engagement["+counter+"][end_date]")
     content.find(".section_title").html("Offer Level "+(counter+1));
     $("#engagements_container").append(content.html());
@@ -121,6 +136,15 @@ $(document).ready(function(){
     else
       $(this).html("Settings +");
     $("#details_box").slideToggle();
+  });
+  
+  $('.money_amount').live("blur",function(){
+    var money_amount=$(this).val();
+    var brand_name=$("#brand_name_id").val();
+    if (money_amount !="" ){        
+      $(this).nextAll(".fb_enjoy_msg").val("enjoyed a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
+      $(this).nextAll(".fb_unlock_msg").val("unlocked a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
+    }
   });
 });
 </script>
