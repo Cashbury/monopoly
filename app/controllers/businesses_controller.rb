@@ -3,8 +3,15 @@ class BusinessesController < ApplicationController
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
   skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries, ]
 
+  helper_method :sort_column , :sort_direction
   def index
-    @businesses = Business.all
+    @businesses ||= Business.search_by_name(params[:name]).
+                          search_by_brand_name(params[:brand_name]).
+                          search_by_address("country_id",params[:country_id]).
+                          search_by_address("city_id", params[:city_id]).
+                          order("#{params[:sort]} #{params[:direction]}").
+                          paginate  :page=>params[:page]
+
     respond_to do |format|
       format.html
       format.xml { render :xml => @businesses }
@@ -166,17 +173,12 @@ class BusinessesController < ApplicationController
     end
   end
 
-  # Please ... use models !!
-  def prepare_hours
-    @hours = []
-    12.downto(1) do | i |
-       @hours << "#{i}:00 AM"
-       @hours << "#{i}:30 AM"
-    end
-    12.downto(1) do | i |
-       @hours << "#{i}:00 PM"
-       @hours << "#{i}:30 PM"
-    end
-    return @hours
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ?  params[:direction] : "asc"
+  end
+
+  def sort_column
+    Business.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
 end

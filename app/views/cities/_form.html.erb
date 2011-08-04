@@ -17,11 +17,13 @@
     </div>
   <% end %>
 
+
   <p>
     <%= f.label "name" %>
     <%= f.text_field :name , :class=>"title" %>
   </p>
 
+  <%= image_tag "countries/#{@city.country.try(:iso2).to_s.downcase}.png" %>
   <div id="city_map" style="height:400px; width:400px">
 
   </div>

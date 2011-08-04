@@ -1,9 +1,44 @@
-<% title "Businesses" %>
+<script type="text/javascript">
+//<![CDATA[
+jQuery(function(){
+    jQuery("input#name_country").autocomplete({
+      source: "/businesses/update_countries.js",
+      select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+        jQuery("input#country_id").val(ui.item.id);
+        jQuery("form").submit();
+      }
+    });
+    jQuery("input#name_city").autocomplete({
+      source:"/businesses/update_cities/1.js",
+      select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+        jQuery("input#city_id").val(ui.item.id);
+        jQuery("form").submit();
+      }
+    });
+  });
+//]]>
+</script>
+
+
+<%= form_tag("/businesses", :method=>:GET) do %>
+  <%= text_field_tag "name" ,         @country.try(:name), :placeholder=> "Business name"%>
+  <%= text_field_tag "brand_name" ,    @city.try(:name) , :placeholder=>"Brand name"%>
+  <%= text_field_tag "name_country" , @country.try(:name), :placeholder=> "Country"%>
+  <%= text_field_tag "name_city" ,    @city.try(:name) , :placeholder=>"City"%>
+  <%= hidden_field_tag "country_id" , @country.try(:id)%>
+  <%= hidden_field_tag "city_id" ,    @city.try(:id)%>
+  <%= submit_tag "Search" %>
+<% end %><% title "Businesses" %>
 
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <th>Name</th>
+    <th><%= sortable "name" %></th>
     <th>Brand Image</th>
+    <th>Brand </th>
     <th>Address</th>
     <th>Principal</th>
     <th>Branches</th>
@@ -13,6 +48,7 @@
     <tr>
       <td><%= link_to business.name, business %></td>
       <td><%= image_tag business.try(:brand).try(:brand_image).try(:photo).url(:normal) unless business.try(:brand).try(:brand_image).nil? %></td>
+      <td><%= business.brand.try :name %></td>
       <td>
         <% maddress = business.mailing_address %>
         <% unless maddress.nil? %>

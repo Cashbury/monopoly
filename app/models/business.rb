@@ -17,7 +17,7 @@
 
 class Business < ActiveRecord::Base
 	acts_as_taggable
-	
+
 	has_many :targets
   has_many :places, :dependent => :destroy
   has_many :programs,:dependent => :destroy
@@ -49,14 +49,17 @@ class Business < ActiveRecord::Base
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   attr_accessor :categories_list
 
-  after_save :update_categories
 
-	#validates :tag_list, :presence=>true
-	validates :brand_id, :presence=>true , :numericality => true
-	validates_presence_of :name
-	validates_associated :places
-	before_validation :clear_photos
+
+  after_save :update_categories
+  before_validation :clear_photos
   before_save :add_business_name_to_biz_tag_list
+
+  #validates :tag_list, :presence=>true
+  validates :brand_id, :presence=>true , :numericality => true
+  validates_presence_of :name
+  validates_associated :places
+
 
   def clear_photos
     self.tmp_images.each do |tmp_image|
@@ -66,6 +69,8 @@ class Business < ActiveRecord::Base
     #  image.destroy if image.delete_photo? && !image.photo.dirty?
     #end
   end
+
+
 
 
   # This method checks for
@@ -81,6 +86,31 @@ class Business < ActiveRecord::Base
 	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
   end
 
+
+
+  def self.search_by_brand_name(name)
+    if name.present?
+      joins(:brand).where([" brands.name  like ?", "%#{name}%"])
+    else
+      scoped
+    end
+  end
+
+  def self.search_by_name(name)
+    if name.present?
+      where([" businesses.name  like ?", "%#{name}%"])
+    else
+      scoped
+    end
+  end
+
+  def self.search_by_address(column, address_id)
+    if address_id.present?
+      joins(:mailing_address).where(["addresses.#{column}=?",address_id])
+    else
+      scoped
+    end
+  end
 
   #====================================================================
   private
