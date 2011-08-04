@@ -66,11 +66,11 @@
     <%= f.text_field :phone_country_code, :class=>"title" %>
   </p>
   <p>
-    <%= f.check_box :is_live %>
-    <%= f.label :is_live %>
+    <%= f.check_box :is_live , :class=>"left" , :style=>"margin:5px 5px 0 0; width:10px"%>
+    <%= f.label :is_live, :class=>"left" ,:style=>"width:100px;" %>
   </p>
 
-
+  <div class="clear"></div>
   <div class="actions">
     <%= f.submit %>
   </div>

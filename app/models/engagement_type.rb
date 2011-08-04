@@ -26,6 +26,6 @@ class EngagementType < ActiveRecord::Base
 
 
   def self.share_id
-    where("name='share'").first.id
+    where("name='share'").try(:first).try(:eng_type)
   end
 end

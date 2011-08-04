@@ -1,11 +1,13 @@
 <script type="text/javascript">
 //<![CDATA[
 jQuery(function(){
+
     jQuery("input#name_country").autocomplete({
       source: "/businesses/update_countries.js",
       select:function(e,ui){
         //var path = window.location.pathname;
         //console.log(path+"?name="+ui.item.label);
+        jQuery("input#name_country").val(ui.item.label);
         jQuery("input#country_id").val(ui.item.id);
         jQuery("form").submit();
       }
@@ -15,24 +17,28 @@ jQuery(function(){
       select:function(e,ui){
         //var path = window.location.pathname;
         //console.log(path+"?name="+ui.item.label);
+        jQuery("input#name_city").val(ui.item.label);
         jQuery("input#city_id").val(ui.item.id);
         jQuery("form").submit();
       }
     });
-  });
+
+});
 //]]>
 </script>
 
 
 <%= form_tag("/businesses", :method=>:GET) do %>
-  <%= text_field_tag "name" ,         @country.try(:name), :placeholder=> "Business name"%>
-  <%= text_field_tag "brand_name" ,    @city.try(:name) , :placeholder=>"Brand name"%>
-  <%= text_field_tag "name_country" , @country.try(:name), :placeholder=> "Country"%>
-  <%= text_field_tag "name_city" ,    @city.try(:name) , :placeholder=>"City"%>
-  <%= hidden_field_tag "country_id" , @country.try(:id)%>
-  <%= hidden_field_tag "city_id" ,    @city.try(:id)%>
+  <%= text_field_tag "name" ,         params[:name], :placeholder=> "Business name"%>
+  <%= text_field_tag "brand_name" ,   params[:brand_name] , :placeholder=>"Brand name"%>
+  <%= text_field_tag "name_country" , params[:name_country], :placeholder=> "Country"%>
+  <%= text_field_tag "name_city" ,    params[:name_city], :placeholder=>"City"%>
+  <%= hidden_field_tag "country_id" , params[:country_id]%>
+  <%= hidden_field_tag "city_id" ,    params[:city_id]%>
   <%= submit_tag "Search" %>
-<% end %><% title "Businesses" %>
+  <%= submit_tag("Start Over", { :name => 'reset', :id => 'reset_button', :type => "reset" }) %>
+<% end %>
+<% title "Businesses" %>
 
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
