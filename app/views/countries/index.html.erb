@@ -28,6 +28,7 @@
     <th><%= sortable "capital" %></th>
     <th><%= sortable "currency" %></th>
     <th><%= sortable "currency_code" %></th>
+    <th><%= sortable "phone_country_code" %></th>
     <th></th>
   </tr>
 
@@ -38,6 +39,7 @@
     <td><%= country.capital  %></td>
     <td><%= country.currency %></td>
     <td><%= country.currency_code  %></td>
+    <td><%= country.phone_country_code %></td>
     <td>
       <%= link_to 'Edit', edit_country_path(country) , :class=>"button"%>
       <%= link_to 'Destroy', country, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>

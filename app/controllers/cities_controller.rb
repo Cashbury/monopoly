@@ -130,5 +130,4 @@ class CitiesController < ApplicationController
   def sort_column
     City.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
-
 end
