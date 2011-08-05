@@ -1,4 +1,4 @@
-<%= form_for(@country, :html=>{:class=>"mono-form"}) do |f| %>
+<%= form_for(@country, :html=>{:class=>"mono-form",:multipart=>true}) do |f| %>
   <% if @country.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@country.errors.count, "error") %> prohibited this country from being saved:</h2>
@@ -56,6 +56,10 @@
   <p>
     <%= f.label :currency_symbol %>
     <%= f.text_field :currency_symbol, :class=>"title" %>
+  </p>
+  <p>
+    <%= f.label :currency_icon %>
+    <%= f.file_field :currency_icon, :class=>"title" %>
   </p>
   <p>
     <%= f.label :currency %>

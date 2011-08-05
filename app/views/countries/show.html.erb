@@ -2,9 +2,6 @@
   Name:  <%= @country.name %>
 </p>
 <p>
-  Abbr:<%= @country.abbr %>
-</p>
-<p>
   iso2:<%= @country.iso2%>
 </p>
 <p>
@@ -21,6 +18,9 @@
 </p>
 <p>
   Phone country code:<%= @country.phone_country_code %>
+</p>
+<p>
+  Currency Icon : <%= image_tag @country.currency_icon.url(:small) if @country.currency_icon.present? %>
 </p>
 <p>
   Currency symbol :<%= @country.currency_symbol %>
