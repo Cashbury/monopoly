@@ -1,10 +1,10 @@
-class InviteController < ApplicationController
+class InvitesController < ApplicationController
 
-  before_filter :log_cookies
+  #before_filter :log_cookies
 
-  def friends
+  def index
+
   end
-
 
   def show
     @user = User.find_by_share_id(params[:id])

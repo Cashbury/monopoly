@@ -4,9 +4,9 @@ Kazdoor::Application.routes.draw do
   get "primary_user/new"
   get "primary_user/show"
 
-  get "invite/friends"
-  resources :invite , :only=>[:show, :index]
-
+  resources :invites , :only=>[:show, :index] do
+    get "share_link" , :on=>:collection
+  end
 
   resources :like
 

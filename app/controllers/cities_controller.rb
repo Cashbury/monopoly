@@ -7,7 +7,7 @@ class CitiesController < ApplicationController
     respond_to do |format|
 
       format.html{
-        @cities= City.paginate :page=>params[:page], :order => "name asc" , :conditions=> search ,:per_page=>5
+        @cities= City.order("#{sort_column} #{sort_direction}").paginate :page=>params[:page], :conditions=> search ,:per_page=>5
         @flaggings = Flagging.popular
       }
       format.xml{

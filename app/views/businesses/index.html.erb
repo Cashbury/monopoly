@@ -28,7 +28,7 @@ jQuery(function(){
 </script>
 
 
-<%= form_tag("/businesses", :method=>:GET) do %>
+<%= form_tag("/businesses", :method=>:GET, :class=>"left") do %>
   <%= text_field_tag "name" ,         params[:name], :placeholder=> "Business name"%>
   <%= text_field_tag "brand_name" ,   params[:brand_name] , :placeholder=>"Brand name"%>
   <%= text_field_tag "name_country" , params[:name_country], :placeholder=> "Country"%>
@@ -36,8 +36,9 @@ jQuery(function(){
   <%= hidden_field_tag "country_id" , params[:country_id]%>
   <%= hidden_field_tag "city_id" ,    params[:city_id]%>
   <%= submit_tag "Search" %>
-  <%= submit_tag("Start Over", { :name => 'reset', :id => 'reset_button', :type => "reset" }) %>
 <% end %>
+<%= link_to "reset", businesses_path ,:class=>"button" , :style=>"margin-left:10px"%>
+<div class="clear"></div>
 <% title "Businesses" %>
 
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
