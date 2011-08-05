@@ -12,9 +12,7 @@ class Businesses::SpendCampaignsController < ApplicationController
     end
   end
   
-  def new
-    #found=@business.programs.joins(:campaigns).where("campaigns.ctype=#{Campaign::CTYPE[:spend]}").select("campaigns.id").first
-    #@campaign=found.nil? ? Campaign.new : Campaign.find(found.id)
+  def new   
     @campaign=Campaign.new
     @campaign.engagements.build
     @campaign.rewards.build
@@ -43,7 +41,7 @@ class Businesses::SpendCampaignsController < ApplicationController
     @reward_attrs.each do |key,value| 
       description="Spend #{value["needed_amount"]}#{currency_symbol}"
       description << " before #{end_date}" if @engagement_attrs[:end_date].present?
-      description << ", Get a #{"%0.2f" % value["money_amount"]}#{currency_symbol} Cash back"
+      description << ", Get a #{"%0.2f" % value["money_amount"]}#{currency_symbol} Cash back" if value["money_amount"].present?
       description << ", Offer available until #{expiry_date}" if @reward_attrs["0"]["expiry_date"].present?
       params[:campaign][:rewards_attributes][key]["heading2"]=description
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * @engagement_attrs[:amount].to_f if value["needed_amount"].present?
@@ -119,12 +117,11 @@ class Businesses::SpendCampaignsController < ApplicationController
       end_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
     end
     params[:campaign][:engagements_attributes]["0"]["end_date"]=end_date if end_date.present?
-    @campaign.measurement_type= MeasurementType.find_or_create_by_name(:name=>"Points")
     @campaign.end_date=expiry_date if expiry_date.present?
     reward_attrs.each do |key,value|
       description="Spend #{value["needed_amount"]}#{currency_symbol}"
       description << " before #{end_date}" if end_date.present?
-      description << ", Get a #{ "%0.2f" % value["money_amount"]}#{currency_symbol} Cash back"
+      description << ", Get a #{ "%0.2f" % value["money_amount"]}#{currency_symbol} Cash back" if value["money_amount"].present?
       description << ", Offer available until #{expiry_date}" if expiry_date.present?
       params[:campaign][:rewards_attributes][key]["heading2"]=description
       params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * engagement_attrs[:amount].to_f
@@ -135,6 +132,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       if @campaign.update_attributes(params[:campaign])
         format.html { redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') }
       else
+        @engagement = @campaign.engagements.first
         format.html { render :action => "edit" }
       end
     end
