@@ -6,7 +6,7 @@ class EngagementType < ActiveRecord::Base
     :buy=>"Buy",
     :spend=>"Spend",
     :visit=>"Visit/Check-IN",
-    :share => "share"
+    :share => " Share"
   }
 
   ENG_TYPE={
