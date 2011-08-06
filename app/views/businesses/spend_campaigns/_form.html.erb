@@ -50,7 +50,7 @@ $(document).ready(function(){
     <%= engagement.label "Facebook msg when user makes an engagement" %><br />
     <%= engagement.text_field :fb_engagement_msg,{:value=>"earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;"} %>
   <%end%>
-  <div class="row" id="engagements_container">
+  <div style="clear:both"/>
   <% if @campaign.new_record? %>
     <% f.fields_for :rewards do |reward| %>
       <%= render "reward_fields", :f => reward %>
@@ -64,7 +64,6 @@ $(document).ready(function(){
     <%end%>
   <%end%>
   <p><%= link_to_add_fields "Add a spend based reward level", f, :rewards%></p>
-  </div>
   <fieldset >
     <legend class="section_title">Select the branches where this offer will be available</legend>
     <div class="form_item_div">
