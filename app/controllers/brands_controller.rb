@@ -56,6 +56,7 @@ class BrandsController < ApplicationController
     end
   rescue
     respond_to do |format|
+      @brand.build_brand_image if @brand.brand_image.nil?
       format.html { render :action => "new" }
       format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
     end 
@@ -83,6 +84,7 @@ class BrandsController < ApplicationController
     end
   rescue
     respond_to do |format|
+      @brand.build_brand_image if @brand.brand_image.nil?
       format.html { render :action => "edit" }
       format.xml  { render :xml => @brand.errors, :status => :unprocessable_entity }
     end

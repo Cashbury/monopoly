@@ -27,5 +27,14 @@ class Item < ActiveRecord::Base
 	accepts_nested_attributes_for :places
 	accepts_nested_attributes_for :item_image
 	
-	validates_presence_of :name
+	validates_presence_of :name	
+	after_update :reprocess_photo
+	
+	private  
+  def reprocess_photo  
+    if !self.item_image.nil? and self.item_image.cropping?
+      self.item_image.photo.reprocess!
+      self.item_image.save
+    end
+  end  
 end

@@ -5,7 +5,7 @@ $(function () {
     //$('.datepicker').datepicker({dateFormat: 'yyyy-mm-dd'}); 
     //$(this).datepicker({showOn:'focus'}).focus();
   });
-  //$("#datepicker").datepicker({dateFormat: 'yyyy-mm-dd'});
+  $("#datepicker").datepicker({dateFormat: 'yyyy-mm-dd'});
   //$('.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' })
   $('#reports th a').live('click', function () {
     $.getScript(this.href);

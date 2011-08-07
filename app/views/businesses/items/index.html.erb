@@ -1,12 +1,13 @@
-<% title "Item" %>
+<% title "#{@business.name} Items" %>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="0">
+<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Description</th>
     <th>Price</th>
     <th>Cost</th>
     <th>Product Code</th>
+    <th colspan=3></th>
   </tr>
   <% for item in @items %>
     <tr>

@@ -1,7 +1,7 @@
 <head>
 <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 <style>
-	.user-id{ background: #EEEEEE; -moz-border-radius:10px; -webkit-border-radius:10px; width:700px;}
+	.user-id{ background: #EEEEEE; -moz-border-radius:10px; -webkit-border-radius:10px; width:735px;}
 	.user-id h2{ font-size:20px;}
 	.user-id h2, .user-id .sum{ padding:15px; border-bottom:3px solid #fff;}
 	.user-id .sum{ font-size:20px; padding-left:130px; position:relative;}
@@ -16,7 +16,7 @@
 <p><%= link_to 'Edit', edit_users_management_path(@user) %> </p>
 <% user_uid=@user.email.split("@facebook").first %>
 <%=image_tag @user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture?type=large" : "/images/user-default.jpg", :style=>"float:right;" %>
-<table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
+<table class="mono-table" style="width:685px" border="0" cellspacing="0" cellpadding="0">
   <caption><h4>User Account</h4></caption>
   <tr><td style="width:70px"><b>Username: </b></td><td><%= @user.username %></td></tr>
   <tr><td style="width:70px"><b>First Name: </b></td><td><%= @user.first_name %></td></tr>
@@ -72,7 +72,7 @@
   </tr>
 </table>
 <br/>
-<table class="mono-table" style="width:500px" border="0" cellspacing="0" cellpadding="0">
+<table class="mono-table" style="width:685px" border="0" cellspacing="0" cellpadding="0">
   <%=hidden_field_tag :user_id, @user.id %>
   <caption><h4>System Info</h4></caption>
   <tr><td style="width:92px"><b>User Types: </b></td><td><%=@user.roles.collect{|r| r.name }.join(' , ')%></td></tr>

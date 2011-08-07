@@ -72,7 +72,7 @@ class Users::CashiersController < Users::BaseController
    @items.each_with_index do |item,index|     
      item_obj=Item.find(item.item_id)
      @result["items"][index]=item.attributes
-     @result["items"][index]["item-image-url"]=item_obj.item_image ? URI.escape(item_obj.item_image.photo.url(:thumb)): nil
+     @result["items"][index]["item-image-url"]=item_obj.item_image ? URI.escape(item_obj.item_image.photo.url(:normal)): nil
    end
    
    respond_to do |format|

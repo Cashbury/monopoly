@@ -27,7 +27,7 @@
 </p>
 <p>
   <strong>Currency:</strong>
-  <%= ISO4217::Currency.from_code(@business.currency_code).try(:name) %>
+  <%= @business.currency_code %>
 </p>
 <p>
   <strong>Tag List:</strong>
@@ -63,7 +63,7 @@
 <%end%>
 <h3>Branches</h3>
 <p>
-  <table width="100%" border="1" cellspacing="0" cellpadding="0">
+  <table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
     <tr>
       <th>Name</th>
       <th>Address</th>

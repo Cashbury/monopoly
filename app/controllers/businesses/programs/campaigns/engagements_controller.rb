@@ -32,7 +32,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def new
     @engagement = Engagement.new
-    @items= @engagement.items_list(@campaign)
+    @items= @business.items
   end
   
   def create
@@ -49,7 +49,7 @@ class Businesses::Programs::Campaigns::EngagementsController < ApplicationContro
   
   def edit
     @engagement = Engagement.find(params[:id])
-    @items= @engagement.items_list(@campaign)
+    @items= @business.items
   end
   
   def update

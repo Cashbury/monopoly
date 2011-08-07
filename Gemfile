@@ -2,7 +2,7 @@ source :gemcutter
 source "http://gemcutter.org"
 gem 'rack', "1.2.1"
 gem 'rails', '3.0.3'
-gem 'mysql', "=2.8.1"
+gem 'mysql2', '~> 0.2.7'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 group :development do
@@ -67,4 +67,4 @@ gem 'rmagick','=2.13.1' #server has this
 gem 'aws-s3','=0.6.2'
 gem 'paperclip','=2.3.11'
 gem 'cancan' , "=1.6.5"
-gem 'currencies', :require => 'iso4217'
+gem 'currencies',:require => 'iso4217'

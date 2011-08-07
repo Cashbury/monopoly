@@ -1,4 +1,4 @@
-<% title "Crop Brand Image" %>  
+<% title "Crop Item Image" %>  
 <% content_for (:head) do %>  
 <%= stylesheet_link_tag "jquery.Jcrop" %>  
 <style type="text/css">
@@ -28,8 +28,8 @@
     var rx = 81/coords.w;  
     var ry = 52/coords.h;  
     $('#preview').css({  
-      width: Math.round(rx * <%= @brand.brand_image.photo_geometry(:normal).width %>) + 'px',  
-      height: Math.round(ry * <%= @brand.brand_image.photo_geometry(:normal).height %>) + 'px',  
+      width: Math.round(rx * <%= @item.item_image.photo_geometry(:normal).width %>) + 'px',  
+      height: Math.round(ry * <%= @item.item_image.photo_geometry(:normal).height %>) + 'px',  
       marginLeft: '-' + Math.round(rx * coords.x) + 'px',  
       marginTop:  '-' + Math.round(ry * coords.y) + 'px'  
     });    
@@ -43,19 +43,19 @@
 <div class="image-crop clearfix">
 	<div class="item">
   	<h3>Original</h3>
-    <div><%= image_tag @brand.brand_image.photo.url(:normal), :id => "cropbox" %>  </div>
+    <div><%= image_tag @item.item_image.photo.url(:normal), :id => "cropbox" %>  </div>
     <p>Drag the selected area to adjust </p>
   </div>
   <div class="arrow item"><img src="/images/go-previous-rtl.png"  /></div>
   <div class="item">
   	<h3>Preview</h3>
     <div style="width: 81px; height: 52px; overflow: hidden;">  
-    <%= image_tag @brand.brand_image.photo.url(:normal), :id => "preview" %>
+    <%= image_tag @item.item_image.photo.url(:normal), :id => "preview" %>
     </div>
   </div>	
 </div>
-<%= form_for @brand do |f| %>  
-  <%= f.fields_for :brand_image,f.object.brand_image do |builder| %>
+<%= form_for [@business ,@item] do |f| %>  
+  <%= f.fields_for :item_image,f.object.item_image do |builder| %>
     <% for attribute in [:crop_x, :crop_y, :crop_w, :crop_h] %>  
       <p><%=attribute%>: <%= builder.text_field attribute, :id => attribute,:readonly => true %></p>  
     <% end %>  
