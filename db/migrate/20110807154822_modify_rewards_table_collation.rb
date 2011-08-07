@@ -1,30 +1,31 @@
 class ModifyRewardsTableCollation < ActiveRecord::Migration
   def self.up
-    drop_table :rewards
-  end
-
-  def self.down
+    #drop_table :rewards
     create_table :rewards,:options => "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci" do |t|
       t.string :name
-      t.needed_amount :decimal
-      t.max_claim :integer
-      t.expiry_date :date
-      t.legal_term :text
-      t.campaign_id :integer
-      t.max_claim_per_user :integer
-      t.is_active :boolean
-      t.heading1 :string
-      t.heading2 :text
-      t.sales_price :decimal, :precision=> 20, :scale=>3
-      t.offer_price :decimal, :precision=> 20, :scale=>3
-      t.cost :decimal, :precision=> 20, :scale=>3
-      t.foreign_identifier :string
-      t.start_date :datetime
-      t.fb_unlock_msg :string
-      t.fb_enjoy_msg :string
-      t.money_amount :decimal, :precision=> 20, :scale=>3
+      t.decimal :needed_amount
+      t.integer :max_claim
+      t.date :expiry_date
+      t.text :legal_term
+      t.integer :campaign_id
+      t.integer :max_claim_per_user
+      t.boolean :is_active
+      t.string :heading1
+      t.string :heading2
+      t.decimal :sales_price
+      t.decimal :offer_price
+      t.decimal :cost
+      t.string :foreign_identifier
+      t.datetime :start_date
+      t.string :fb_unlock_msg
+      t.string :fb_enjoy_msg
+      t.decimal :money_amount
 
       t.timestamps
     end
+  end
+
+  def self.down
+    drop_table :rewards
   end
 end
