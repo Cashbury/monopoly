@@ -1,7 +1,9 @@
 //jQuery.noConflict();
 $(function () {
   $('.datepicker').live('click', function () {
-    $(this).datepicker({ dateFormat: "yyyy-mm-dd" });
+    $(this).datepicker({ dateFormat: 'yyyy-mm-dd' });
+    //$('.datepicker').datepicker({dateFormat: 'yyyy-mm-dd'}); 
+    //$(this).datepicker({showOn:'focus'}).focus();
   });
   //$("#datepicker").datepicker({dateFormat: 'yyyy-mm-dd'});
   //$('.datepicker').datepicker({showOn:'focus',dateFormat: 'dd-mm-yy' })

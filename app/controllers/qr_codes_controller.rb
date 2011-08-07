@@ -108,9 +108,10 @@ class QrCodesController < ApplicationController
   def destroy
     @qr_code = QrCode.find(params[:id])
     engagement_id = @qr_code.engagement.id  if @qr_code.engagement
+    list_all_users=1 if @qr_code.user
     @qr_code.destroy
     respond_to do |format|
-      format.html { redirect_to :action=>:index , :engagement_id =>engagement_id }
+      format.html { redirect_to :action=>:index , :engagement_id =>engagement_id, :all_users=>list_all_users }
       format.xml  { head :ok }
     end
   end
