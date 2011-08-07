@@ -18,8 +18,10 @@ class ItemImage < Image
   belongs_to :item
   has_attached_file :photo,
                     :styles => {
-                      :thumb  => "100x100>" #for fb share
-                     },
+                      :thumb  => "100x100>", #for fb share
+                      :normal => Proc.new { |instance| instance.resize }
+                    },
+                    :processors => [:cropper] ,
                     :storage => :s3,
                     :s3_credentials => "#{Rails.root}/config/s3.yml",
                     :path => "items/:id/:style/:filename"

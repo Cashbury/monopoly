@@ -25,9 +25,10 @@ $(document).ready(function(){
   $('.money_amount').live("blur",function(){
     var money_amount=$(this).val();
     var brand_name=$("#brand_name_id").val();
+    var currency_symbol=$("#currency_symbol").val();
     if (money_amount !="" ){        
-      $(this).nextAll(".fb_enjoy_msg").val("enjoyed a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
-      $(this).nextAll(".fb_unlock_msg").val("unlocked a "+money_amount+"$ cash back reward @ "+ brand_name+" by going out with Cashbury");
+      $(this).nextAll(".fb_enjoy_msg").val("enjoyed a "+currency_symbol+money_amount+" cash back reward @ "+ brand_name+" by going out with Cashbury");
+      $(this).nextAll(".fb_unlock_msg").val("unlocked a "+currency_symbol+money_amount+" cash back reward @ "+ brand_name+" by going out with Cashbury");
     }
   });
 
@@ -36,6 +37,7 @@ $(document).ready(function(){
 </head>
 <% form_for [@business ,@campaign],:url=>@campaign.new_record? ? business_spend_campaigns_path(@business) : business_spend_campaign_path(@business,@campaign) do |f| %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
+  <%=hidden_field_tag :currency_symbol,@business.currency_symbol, :id=>"currency_symbol"%>
   <%= f.error_messages %>
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
