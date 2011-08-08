@@ -17,7 +17,7 @@ class Users::CashiersController < Users::BaseController
   end
   
   def ring_up
-    #begin
+    begin
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
         user=qr_code.user
