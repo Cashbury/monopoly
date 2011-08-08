@@ -62,6 +62,7 @@ class User < ActiveRecord::Base
   has_many :employees #same user with different positions
   has_many :roles, :through=>:employees
   has_many :logs
+  has_many :places
   has_many :followers, :as=>:followed
   has_many :business_customers
   has_many :businesses, :through=>:business_customers

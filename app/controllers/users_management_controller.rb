@@ -33,20 +33,21 @@ class UsersManagementController < ApplicationController
     if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
       @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
     end
+    @user.places << Place.find(params[:place_id])  if params[:place_id].present?
     respond_to do |format|
       if @user.save
         @user.send_confirmation_instructions if @user.persisted? 
-        unless params[:legal_ids].empty? and params[:legal_types].empty?
+        unless params[:legal_ids].empty? || params[:legal_types].empty?
           params[:legal_types].each_with_index do |legal_type_id, index|
             if params[:legal_ids][index].present? and legal_type_id.present?
               LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
             end
           end
         end
-        if params[:place_id].present?
-          @user.places << Place.find(params[:place_id]) 
-          @user.save!
-        end
+        #if params[:place_id].present?
+        #  @user.places << Place.find(params[:place_id]) 
+        #  @user.save!
+        #end
         format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully created.') }
         format.xml  { head :ok }
       else
@@ -65,7 +66,11 @@ class UsersManagementController < ApplicationController
     @user.build_mailing_address unless @user.mailing_address.present?
     @user.build_billing_address unless @user.billing_address.present?
     @total=LegalType.count
-    @role_id=@user.roles.try(:first).try(:id)
+    #@roles=@user.roles.select {|role| role.require_business?}
+    @roles=@user.employees.select {|employee| employee.business_id.present?}.collect{|e| e.business_id}
+    @show_biz_and_place=@roles.any?
+    @business_id=@roles.first
+    @place_id=@user.places.first.try(:id)
     @legal_ids=@user.legal_ids
   end
 
@@ -75,6 +80,10 @@ class UsersManagementController < ApplicationController
       @user.employees.delete_all
       params[:user][:roles_list].each do |role_id|
         @user.employees.build(:role_id=>role_id,:business_id=>params[:business_id])    
+      end
+      if params[:place_id].present?
+        @user.places.delete_all
+        @user.places << Place.find(params[:place_id])
       end
     end
     if params[:user][:mailing_address_attributes].present?      
@@ -99,19 +108,19 @@ class UsersManagementController < ApplicationController
     respond_to do |format|
       if @user.update_attributes(params[:user])
         LegalId.delete_all
-        unless params[:legal_ids].empty? and params[:legal_types].empty?
+        unless params[:legal_ids].empty? || params[:legal_types].empty?
           params[:legal_types].each_with_index do |legal_type_id, index|            
             if params[:legal_ids][index].present? and legal_type_id.present?
               LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
             end
           end
         end
-        if params[:place_id].present?
-          if @user.places.where(:id=>params[:place_id]).empty?
-            @user.places << Place.find(params[:place_id]) 
-            @user.save!
-          end
-        end
+        #if params[:place_id].present?
+        #  if @user.places.where(:id=>params[:place_id]).empty?
+        #    @user.places << Place.find(params[:place_id]) 
+        #    @user.save!
+        #  end
+        #end
         format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully updated.') }
         format.xml  { head :ok }
       else
@@ -179,14 +188,8 @@ class UsersManagementController < ApplicationController
   
   def check_role
     roles=Role.where(:id=>params[:role_ids].split(','))
-    required=false
-    roles.each do |role|
-      if role.require_business?
-        required=true
-        break
-      end
-    end
-    render :text=>required
+    business_roles=roles.select {|role| role.require_business?}
+    render :text=>business_roles.any?
   end
   
   def update_places

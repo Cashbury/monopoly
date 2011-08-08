@@ -1,8 +1,13 @@
-<head>
+<% content_for (:head) do %> 
 <%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
 <script type="text/javascript">
 var total_legals=<%=@total%>;
 var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
+$(document).ready(function () {
+$('select.birth-year').val(<%=@user.try(:dob).try(:year) %>);
+$('select.birth-month').val(<%=@user.try(:dob).try(:month) %>);
+$('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
+});
 </script>
 <style type="text/css">
 .birthday-picker select{width:auto;margin-right: 5px;}         
@@ -13,7 +18,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
 .legals_div a {position:absolute;right:55px;top:10px}
 .ui-tabs {width:442px;margin-bottom:20px;}
 </style>
-</head>
+<%end%>
 <%= form_for @user, :url=>@user.new_record? ? :users_management_index : :users_management, :html=>{:class=>"mono-form"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
@@ -37,13 +42,21 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
 			<%= "#{role.displayed_role}"%><br />
 		<% end %>
     </p>
+    <% if @show_biz_and_place %>
+    <p class="businesses_list">
+    <%else%>
     <p class="businesses_list" style="display:none">
+    <%end%>
       <%= label_tag "Business" %>
-      <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name")%>
+      <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name",@business_id)%>
     </p>
+    <% if @show_biz_and_place %>
+    <p class="places_list">
+    <%else%>
     <p class="places_list" style="display:none">
+    <%end%>
       <%= label_tag "Place" %>
-      <%= select_tag :place_id , "<option value=''>Select place...</option>".html_safe +  options_from_collection_for_select(@places, "id", "name") %>
+      <%= select_tag :place_id , "<option value=''>Select place...</option>".html_safe +  options_from_collection_for_select(@places, "id", "name",@place_id) %>
     </p>
     <p>
       <%= f.label :first_name %>
@@ -55,7 +68,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
     </p>
     <p>
       <%= f.label "Date of birth" %>
-      <div class="picker" id="datepicker"></div>
+      <div class="picker" id="datepicker" ></div>
     </p>
     
     <p>
