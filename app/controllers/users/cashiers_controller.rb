@@ -55,12 +55,14 @@ class Users::CashiersController < Users::BaseController
         end
       else
         respond_to do |format|     
-          format.xml {render :text => "Invalid Qrcode"  , :status => 500}
+          format.xml {render :text => "Invalid Qrcode"  , :status => 200}
         end
       end
     rescue Exception=>e
       logger.error "Exception #{e.class}: #{e.message}"
-      render :text => e.message, :status => 500
+      respond_to do |format|     
+        format.xml {render :text => e.message  , :status => 200}
+      end
     end
   end
   

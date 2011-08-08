@@ -290,15 +290,15 @@ class User < ActiveRecord::Base
 	end
 	
   def made_spend_engagement_at(qr_code,business,spend_campaign,ringup_amount,lat,lng,log_group) 
-    begin
+    #begin
       if spend_campaign.present?
         engagement=spend_campaign.engagements.first
         result=engaged_with(engagement,ringup_amount * engagement.amount,qr_code,nil,lat,lng,"User made a spend based engagement through cashier",1,log_group) 
-        self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
+        self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)
       end
-    rescue Exception=>e
-      logger.error "Exception #{e.class}: #{e.message}"
-    end
+    #rescue Exception=>e
+    #  logger.error "Exception #{e.class}: #{e.message}"
+    #end
   end
   
 	def ensure_authentication_token!
