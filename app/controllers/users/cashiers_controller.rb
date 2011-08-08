@@ -17,7 +17,7 @@ class Users::CashiersController < Users::BaseController
   end
   
   def ring_up
-    begin
+    #begin
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
         user=qr_code.user
@@ -25,20 +25,21 @@ class Users::CashiersController < Users::BaseController
         business=Business.find(employee.business_id)
         user_type=user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         #Loyalty collect campaigns
+        result={}
         unless params[:engagements].blank?
           params[:engagements].each do |record| 
             if record.present?
               records=record.split(',')
               engagement_id=records.first;quantity=records.second
               engagement=Engagement.find(engagement_id)
-              user.engaged_with(engagement,engagement.amount,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i)
+              result=user.engaged_with(engagement,engagement.amount,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, nil)              
             end
           end
         end
         #Spend based campaign    
         campaign=business.spend_based_campaign
         if campaign.engagements.first.end_date > Date.today
-          user.made_spend_engagement_at(qr_code,business,campaign,params[:amount].to_f,params[:lat],params[:lng])
+          user.made_spend_engagement_at(qr_code,business,campaign,params[:amount].to_f,params[:lat],params[:lng],result[:log_group])
           #user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
           #qr_code.scan
         end

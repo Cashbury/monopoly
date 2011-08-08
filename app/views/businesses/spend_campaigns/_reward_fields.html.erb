@@ -3,7 +3,7 @@
   <legend class="section_title">Offer Level <%=@index || "1"%></legend>
   <div class="form_item_div">
     <label class="left"> Spend <%=@business.currency_symbol %></label>   
-    <%= f.text_field :needed_amount,{:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
+    <%= f.text_field :needed_money_amount,{:class=>"basic_info_caption1 test", :style=>"width:45px;margin:0 0 0"} %>
     <label class="left"> before </label>
     <%= f.text_field :end_date,{:class=>"basic_info_caption1 reward_end_date datepicker", :style=>"width:95px;margin:0 0 0", :value=> @engagement.try(:end_date)} %>
     <label class="left"> Get a <%=@business.currency_symbol %></label>

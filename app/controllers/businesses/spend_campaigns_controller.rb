@@ -47,13 +47,13 @@ class Businesses::SpendCampaignsController < ApplicationController
     params[:campaign][:engagements_attributes]["0"]["name"]="Spend Engagement"
     params[:campaign][:engagements_attributes]["0"]["end_date"]=end_date if end_date.present?
     @reward_attrs.each do |key,value| 
-      description="Spend #{currency_symbol}#{value["needed_amount"]}"
+      description="Spend #{currency_symbol}#{value["needed_money_amount"]}"
       description << " before #{end_date}" if @engagement_attrs[:end_date].present?
       money_amount= value["money_amount"].to_f.to_s.match(/\.0$/) ? value["money_amount"] : "%0.2f" % value["money_amount"]
       description << ", Get a #{currency_symbol}#{money_amount} Cash back" if money_amount.present?
       description << ", Offer available until #{expiry_date}" if @reward_attrs["0"]["expiry_date"].present?
       params[:campaign][:rewards_attributes][key]["heading2"]=description
-      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * @engagement_attrs[:amount].to_f if value["needed_amount"].present?
+      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_money_amount"].to_f * @engagement_attrs[:amount].to_f if value["needed_money_amount"].present?
       params[:campaign][:rewards_attributes][key]["name"]="#{currency_symbol}#{money_amount} Cash back"   
       params[:campaign][:rewards_attributes][key]["expiry_date"]=expiry_date if expiry_date.present?
     end
@@ -99,6 +99,8 @@ class Businesses::SpendCampaignsController < ApplicationController
   def update
     @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
+    @engagement = @campaign.engagements.first
+    @rewards=@campaign.rewards
     currency_symbol=@business.currency_symbol
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
@@ -136,14 +138,16 @@ class Businesses::SpendCampaignsController < ApplicationController
     params[:campaign][:engagements_attributes]["0"]["end_date"]=end_date if end_date.present?
     @campaign.end_date=expiry_date if expiry_date.present?
     reward_attrs.each do |key,value|
-      description="Spend #{currency_symbol}#{value["needed_amount"]}"
+      description="Spend #{currency_symbol}#{value["needed_money_amount"]}"
       description << " before #{end_date}" if end_date.present?
       money_amount= value["money_amount"].to_f.to_s.match(/\.0$/) ? value["money_amount"] : "%0.2f" % value["money_amount"]
       description << ", Get a #{currency_symbol}#{money_amount} Cash back" if money_amount.present?
       description << ", Offer available until #{expiry_date}" if expiry_date.present?
       params[:campaign][:rewards_attributes][key]["heading2"]= description
-      params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_amount"].to_f * engagement_attrs[:amount].to_f
-      params[:campaign][:rewards_attributes][key]["name"]="#{currency_symbol}#{money_amount}#{currency_symbol} Cash back"
+      if @engagement.amount.to_f != engagement_attrs[:amount].to_f || @rewards[key.to_i].needed_money_amount.to_f != value["needed_money_amount"].to_f
+        params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_money_amount"].to_f * engagement_attrs[:amount].to_f
+      end
+      params[:campaign][:rewards_attributes][key]["name"]="#{currency_symbol}#{money_amount}} Cash back"
       params[:campaign][:rewards_attributes][key]["expiry_date"]=expiry_date if expiry_date.present?
     end     
     respond_to do |format|

@@ -35,22 +35,22 @@ $(document).ready(function(){
 });
 </script>
 </head>
-<% form_for [@business ,@campaign],:url=>@campaign.new_record? ? business_spend_campaigns_path(@business) : business_spend_campaign_path(@business,@campaign) do |f| %>
+<%= form_for [@business ,@campaign],:url=>@campaign.new_record? ? business_spend_campaigns_path(@business) : business_spend_campaign_path(@business,@campaign) do |f| %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <%=hidden_field_tag :currency_symbol,@business.currency_symbol, :id=>"currency_symbol"%>
   <%= f.error_messages %>
   <fieldset >
     <legend class="section_title">Who is this offer targeted to</legend>
-    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",Target.find_by_name("returning_comers").try(:id)) %></div>
+    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.new_record? ? Target.find_by_name("returning_comers").try(:id) : f.object.try(:targets).try(:first).try(:id) )%></div>
   </fieldset>
-  <% f.fields_for :engagements do |engagement| %>
+  <%= f.fields_for :engagements do |engagement| %>
     <fieldset>
       <legend class="section_title">Setting The rule</legend>
-      1 <%=@business.currency_symbol %>=<%= engagement.text_field :amount,{:value=> 1,:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none"}%> points
+      1 <%=@business.currency_symbol %>=<%= engagement.text_field :amount,{:value=> @engagement.try(:amount) || 1,:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none"}%> points
     </fieldset>
     <%= engagement.hidden_field :end_date,{:id=>"engagement_end_date"} %>
     <%= engagement.label "Facebook msg when user makes an engagement" %><br />
-    <%= engagement.text_field :fb_engagement_msg,{:value=>"earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;"} %>
+    <%= engagement.text_field :fb_engagement_msg,{:value=>@engagement.try(:fb_engagement_msg) || "earned {spend} points @ #{@business.try(:brand).try(:name)} when the engagement is completed.", :class=>"basic_info_input", :maxlength=>150, :style=>"width: 670px;"} %>
   <%end%>
   <div style="clear:both"/>
   <% if @campaign.new_record? %>
@@ -60,7 +60,7 @@ $(document).ready(function(){
   <%else%>
    <%@campaign.rewards.each_with_index do |reward_builder,index| %>
     <%@index=index+1%>
-    <% f.fields_for :rewards,reward_builder do |reward| %>
+    <%= f.fields_for :rewards,reward_builder do |reward| %>
       <%= render "reward_fields", :f => reward %>
     <% end %>
     <%end%>
