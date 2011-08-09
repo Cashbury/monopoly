@@ -5,8 +5,11 @@ class Users::ReceiptsController < Users::BaseController
     result={}
     result[:receipts]=[]
     all_receipts.each_with_index do |receipt,index|
-      result[:receipts][index]=receipt.attributes
-      result[:receipts][index][:currency_symbol]=Business.find(receipt.business_id).currency_symbol
+      brand=Brand.find(receipt.brand_id)
+      result[:receipts][index]= receipt.attributes
+      result[:receipts][index][:currency_symbol] = Business.find(receipt.business_id).currency_symbol
+      result[:receipts][index][:brand_image]     = brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:normal)) 
+      result[:receipts][index][:brand_image_fb]  = brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))
       log_group=LogGroup.where(:id=>receipt.log_group_id).first
       if log_group.present?
         result[:receipts][index][:engagements]=[]

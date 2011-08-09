@@ -2,11 +2,11 @@ class Users::CashiersController < Users::BaseController
   before_filter :require_cashier, :except=>[:check_user_role]
   def check_user_role
     begin
-      cashier_role=Role.find_by_name(Role::AS[:cashier])
-      employee=Employee.where(:user_id=>current_user.id, :role_id=>cashier_role.id).first
+      cashier_role = Role.find_by_name(Role::AS[:cashier])
+      employee = Employee.where(:user_id=>current_user.id, :role_id=>cashier_role.id).first
       result={}
-      result["is_cashier"]=employee.present?
-      result["business-id"]=employee.present? ? employee.business_id : nil
+      result["is_cashier"]= employee.present?
+      result["business-id"]= employee.present? ? employee.business_id : nil
       respond_to do |format|
         format.xml { render :xml =>result,:status=>200 }
       end
@@ -21,9 +21,9 @@ class Users::CashiersController < Users::BaseController
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
         user=qr_code.user
-        employee=current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
-        business=Business.find(employee.business_id)
-        user_type=user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
+        employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
+        business= Business.find(employee.business_id)
+        user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         #Loyalty collect campaigns
         result={}
         unless params[:engagements].blank?
@@ -67,7 +67,7 @@ class Users::CashiersController < Users::BaseController
   end
   
   def list_engagements_items
-   @items=Item.list_engagements_items(params[:business_id])   
+   @items= Item.list_engagements_items(params[:business_id])   
    @result={}  
    @result["items"]=[]         
    @items.each_with_index do |item,index|     
