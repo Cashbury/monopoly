@@ -30,6 +30,12 @@ class Item < ActiveRecord::Base
 	validates_presence_of :name	
 	after_update :reprocess_photo
 	
+	def self.list_engagements_items(business_id)
+	  joins(:engagements=>[:campaign=>[:program=>:business]])
+    .where("businesses.id=#{business_id} and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")
+    .select("engagements.id as engagement_id, items.id as item_id, items.name as item_name")
+  end
+  
 	private  
   def reprocess_photo  
     if !self.item_image.nil? and self.item_image.cropping?

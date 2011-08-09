@@ -1,4 +1,5 @@
 class Users::ReceiptsController < Users::BaseController
+  after_filter :delete_all_receipts, :only=>[:index]
   def index
     all_receipts=current_user.list_receipts
     result={}
@@ -18,5 +19,11 @@ class Users::ReceiptsController < Users::BaseController
     respond_to do |format|       
       format.xml { render :xml => result,:status=>200 }
     end
+  end
+  
+  
+  def delete_all_receipts
+    #remove all current user receipts after listing
+    current_user.receipts.destroy_all
   end
 end

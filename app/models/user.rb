@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
   has_many :followers
   has_many :businesses, :through=>:followers
   has_many :invitations, :foreign_key=>"from_user_id"
-  has_many :receipts
+  has_many :receipts,:dependent=>:destroy
   has_many :employees #same user with different positions
   has_many :roles, :through=>:employees
   has_many :logs
@@ -362,5 +362,6 @@ class User < ActiveRecord::Base
         .joins([:business=>:brand])
         .joins("LEFT OUTER JOIN places ON receipts.place_id=places.id")
         .select("receipts.spend_campaign_id as campaign_id,receipts.log_group_id,receipts.amount,receipts.business_id, receipts.place_id, receipts.receipt_text,receipts.receipt_type, receipts.user_id, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+        
   end
 end

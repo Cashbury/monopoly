@@ -67,9 +67,7 @@ class Users::CashiersController < Users::BaseController
   end
   
   def list_engagements_items
-   @items=Item.joins(:engagements=>[:campaign=>[:program=>:business]])
-              .where("businesses.id=#{params[:business_id]} and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date)")
-              .select("engagements.id as engagement_id, items.id as item_id, items.name as item_name")
+   @items=Item.list_engagements_items(params[:business_id])   
    @result={}  
    @result["items"]=[]         
    @items.each_with_index do |item,index|     

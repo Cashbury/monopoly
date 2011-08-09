@@ -147,7 +147,7 @@ class Businesses::SpendCampaignsController < ApplicationController
       if @engagement.amount.to_f != engagement_attrs[:amount].to_f || @rewards[key.to_i].needed_money_amount.to_f != value["needed_money_amount"].to_f
         params[:campaign][:rewards_attributes][key]["needed_amount"]=value["needed_money_amount"].to_f * engagement_attrs[:amount].to_f
       end
-      params[:campaign][:rewards_attributes][key]["name"]="#{currency_symbol}#{money_amount}} Cash back"
+      params[:campaign][:rewards_attributes][key]["name"]="#{currency_symbol}#{money_amount} Cash back"
       params[:campaign][:rewards_attributes][key]["expiry_date"]=expiry_date if expiry_date.present?
     end     
     respond_to do |format|
