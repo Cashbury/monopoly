@@ -357,5 +357,10 @@ class User < ActiveRecord::Base
     end
   end
 
-
+  def list_receipts
+    self.receipts
+        .joins([:business=>:brand])
+        .joins("LEFT OUTER JOIN places ON receipts.place_id=places.id")
+        .select("receipts.spend_campaign_id as campaign_id,receipts.log_group_id,receipts.amount,receipts.business_id, receipts.place_id, receipts.receipt_text,receipts.receipt_type, receipts.user_id, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+  end
 end
