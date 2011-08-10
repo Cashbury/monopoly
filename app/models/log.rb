@@ -36,6 +36,7 @@ class Log < ActiveRecord::Base
 	belongs_to :action
 	belongs_to :qr_code
   belongs_to :campaign
+  belongs_to :scanner,:class_name=>"User", :foreign_key=>"issued_by"
   
 	validates_numericality_of :gained_amount, :frequency, :lat, :lng ,:allow_nil => true
 	
@@ -80,5 +81,14 @@ class Log < ActiveRecord::Base
                     .paginate(:page => options[:page],:per_page => per_page)
     end                     
     return @results
+  end
+  
+  
+  def self.all_qrcodes_transactions(user_id)
+    joins(:qr_code,:transaction)
+    .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id LEFT OUTER JOIN users ON logs.issued_by=users.id") 
+    .where("qr_codes.associatable_id=#{user_id} and qr_codes.associatable_type='User'")
+    .select("users.id as user_id, logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
+    .order("logs.created_at DESC")    
   end
 end

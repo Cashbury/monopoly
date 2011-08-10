@@ -1,6 +1,7 @@
 class UsersManagementController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :list_places_and_bizs, :only=>[:new,:create,:edit,:update]
+  @@per_page=20
   
   def index
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
@@ -160,13 +161,9 @@ class UsersManagementController < ApplicationController
     @user = User.find(params[:id])
     @qr_code= @user.qr_code
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @all_transactions=Log.joins(:qr_code,:transaction,:user)
-                         .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id") 
-                         .where("qr_codes.associatable_id=#{params[:id]} and qr_codes.associatable_type='User'")
-                         .select("logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
-                         .order("logs.created_at DESC")
-                         .paginate(:page => @page,:per_page => Account::per_page )
-    #render :layout=>false                         
+    @all_transactions=Log.all_qrcodes_transactions(params[:id])
+                         .paginate(:page => @page,:per_page =>@@per_page )
+    render :layout=>false                         
   end
   
   #View details at qrcode transaction
@@ -393,7 +390,7 @@ class UsersManagementController < ApplicationController
           flash[:error]="You must enter the ring up amount first"
         end    
       else
-        @user.snapped_qrcode(nil,engagement,nil,nil,nil)
+        @user.snapped_qrcode(nil,engagement,nil,nil,nil, current_user.id)
         flash[:notice]="#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{engagement.amount} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
       end	
       redirect_to :action=>:list_engagements, :page=>params[:page]										 

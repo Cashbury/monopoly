@@ -38,8 +38,8 @@ class Users::CashiersController < Users::BaseController
         end
         #Spend based campaign    
         campaign=business.spend_based_campaign
-        if campaign.engagements.first.end_date > Date.today
-          user.made_spend_engagement_at(qr_code,business,campaign,params[:amount].to_f,params[:lat],params[:lng],result[:log_group])
+        if campaign.present? and campaign.engagements.first.end_date > Date.today
+          user.made_spend_engagement_at(qr_code, business, campaign, params[:amount].to_f, params[:lat], params[:lng], result[:log_group], current_user.id)
           #user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
           #qr_code.scan
         end
