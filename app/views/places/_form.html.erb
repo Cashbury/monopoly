@@ -16,77 +16,77 @@
   .box_slider .button{width:100px ; padding:5px}
 </style>
 <script type="text/javascript">
-  jQuery(document).ready(function(){
+  $(document).ready(function(){
 
-  jQuery('#owner_view h1').hide();
-  jQuery('#owner_view input[type=submit]').remove();
+  $('#owner_view h1').hide();
+  $('#owner_view input[type=submit]').remove();
 
-  jQuery('#place_update').click(function(e){
-    jQuery('form.mono-form').submit();
+  $('#place_update').click(function(e){
+    $('form.mono-form').submit();
   });
 
 
 
-  jQuery('#split_hours').click(function(){
-   if(jQuery('#split_hours').is(':checked')){
+  $('#split_hours').click(function(){
+   if($('#split_hours').is(':checked')){
     for(index=0;index < 7;index++){
       from_to_html = jQuery('#open_hour_'+index+'_from').closest(".times").html();
       from_to_html = from_to_html.replace(/from/g, "from2");
       from_to_html = from_to_html.replace(/to/g, "to2");
       console.log(from_to_html);
-      jQuery('#open_hour_div_'+index).append("<p id=open_hour_p_"+index+">"+from_to_html+"</p>");
+      $('#open_hour_div_'+index).append("<p id=open_hour_p_"+index+">"+from_to_html+"</p>");
     }
    }else{
     for(index=0;index < 7;index++)
-     jQuery('#open_hour_p_'+index).remove();
+     $('#open_hour_p_'+index).remove();
    }
   });
-  jQuery('.close_box').click(function(){
+  $('.close_box').click(function(){
     var ele=jQuery(this)
     if(ele.is(':checked')){
       var i=ele.parent()[0].id.split(/_/)[3];
-      jQuery('#open_hour_'+i+'_from').attr('disabled',true);
-      jQuery('#open_hour_'+i+'_to').attr('disabled',true);
-      if (jQuery('#open_hour_'+i+'_from2')!=null && jQuery('#open_hour_'+i+'_to2')!=null){
-        jQuery('#open_hour_'+i+'_from2').attr('disabled',true);
-        jQuery('#open_hour_'+i+'_to2').attr('disabled',true);
+      $('#open_hour_'+i+'_from').attr('disabled',true);
+      $('#open_hour_'+i+'_to').attr('disabled',true);
+      if ($('#open_hour_'+i+'_from2')!=null && $('#open_hour_'+i+'_to2')!=null){
+        $('#open_hour_'+i+'_from2').attr('disabled',true);
+        $('#open_hour_'+i+'_to2').attr('disabled',true);
       }
     }else{
       var i=ele.parent()[0].id.split(/_/)[3];
-      jQuery('#open_hour_'+i+'_from').attr('disabled',false);
-      jQuery('#open_hour_'+i+'_to').attr('disabled',false);
-      if (jQuery('#open_hour_'+i+'_from2')!=null && jQuery('#open_hour_'+i+'_to2')!=null){
-        jQuery('#open_hour_'+i+'_from2').attr('disabled',false);
-        jQuery('#open_hour_'+i+'_to2').attr('disabled',false);
+      $('#open_hour_'+i+'_from').attr('disabled',false);
+      $('#open_hour_'+i+'_to').attr('disabled',false);
+      if ($('#open_hour_'+i+'_from2')!=null && $('#open_hour_'+i+'_to2')!=null){
+        $('#open_hour_'+i+'_from2').attr('disabled',false);
+        $('#open_hour_'+i+'_to2').attr('disabled',false);
       }
     }
   });
 
-  jQuery('#place_business_id').change(function(e){
-    var $pb =jQuery(this).val();
-    jQuery.getScript('/businesses/check_primary_place/'+ $pb +'.js');
+  $('#place_business_id').change(function(e){
+    var $pb =$(this).val();
+    $.getScript('/businesses/check_primary_place/'+ $pb +'.js');
   });
-  jQuery('select#place_address_attributes_country_id').bind('change',function(){
-    var country_id = jQuery(":selected", this).val();
-    jQuery.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
+  $('select#place_address_attributes_country_id').bind('change',function(){
+    var country_id = $(":selected", this).val();
+    $.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
   });
-  jQuery('#open_hour_apply_to_all').click(function(){
-  if( jQuery(this).is(':checked') ){
-      from_hour = jQuery('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
-      to_hour = jQuery('#open_hour_0_to').val(); // the selected value of the first day ( to hour)
-      from2_hour = jQuery('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
-      to2_hour = jQuery('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)
-      jQuery('.from_class').each(function(index, element){
-        jQuery(this).val(from_hour);
+  $('#open_hour_apply_to_all').click(function(){
+  if( $(this).is(':checked') ){
+      from_hour = $('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
+      to_hour = $('#open_hour_0_to').val(); // the selected value of the first day ( to hour)
+      from2_hour = $('#open_hour_0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
+      to2_hour = $('#open_hour_0_to2').val(); // the selected value of the first day - if user splits the time ( to2 hour)
+      $('.from_class').each(function(index, element){
+        $(this).val(from_hour);
         if(from2_hour){
-         jQuery('#open_hour_'+index+'_from2').val(from2_hour)
+         $('#open_hour_'+index+'_from2').val(from2_hour)
         }// if from2_hour end
       }); // end of .each function
 
-      jQuery('.to_class').each(function(index, element){
-        jQuery(this).val(to_hour);
+      $('.to_class').each(function(index, element){
+        $(this).val(to_hour);
         if(to2_hour){
-          jQuery('#open_hour_'+index+'_to2').val(to2_hour);
+          $('#open_hour_'+index+'_to2').val(to2_hour);
         }// if from2_hour end
       }); // end of .each function
     } //end if

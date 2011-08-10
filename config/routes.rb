@@ -195,6 +195,8 @@ Kazdoor::Application.routes.draw do
   match "enrollments/:user_id/:pt_id/:enroll" => "users_management#manage_user_enrollments"
   match "campaign_enrollments/:user_id/:c_id/:enroll" => "users_management#manage_campaign_enrollments"
   match "reissue_code/:id"                =>"users_management#reissue_code"
+  match "reissue_code_from_listing_txs/:id" =>"users_management#reissue_code_from_listing_txs"
+  
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
   match "/users/:business_id/get_id.:format" =>"users/places#get_my_id"  

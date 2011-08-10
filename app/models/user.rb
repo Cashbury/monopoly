@@ -294,7 +294,8 @@ class User < ActiveRecord::Base
       if spend_campaign.present?
         engagement=spend_campaign.engagements.first
         result=engaged_with(engagement,ringup_amount * engagement.amount,qr_code,nil,lat,lng,"User made a spend based engagement through cashier",1,log_group) 
-        self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)
+        #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)
+        self.receipts.create(:receipt_text=>"", :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
       end
     #rescue Exception=>e
     #  logger.error "Exception #{e.class}: #{e.message}"
@@ -358,10 +359,14 @@ class User < ActiveRecord::Base
   end
 
   def list_receipts
+    #self.receipts
+    #    .joins([:business=>:brand,:campaign=>:engagements])
+    #    .joins("LEFT OUTER JOIN places ON receipts.place_id=places.id")
+    #    .select("brands.id as brand_id, engagements.fb_engagement_msg, receipts.spend_campaign_id as campaign_id, receipts.log_group_id, receipts.amount, receipts.business_id, receipts.place_id, receipts.receipt_text, receipts.receipt_type, receipts.user_id, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
     self.receipts
-        .joins([:business=>:brand,:campaign=>:engagements])
-        .joins("LEFT OUTER JOIN places ON receipts.place_id=places.id")
-        .select("brands.id as brand_id, engagements.fb_engagement_msg, receipts.spend_campaign_id as campaign_id, receipts.log_group_id, receipts.amount, receipts.business_id, receipts.place_id, receipts.receipt_text, receipts.receipt_type, receipts.user_id, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
-        
+        .joins([:transaction,:log_group=>[:logs=>[[:business=>:brand], [:campaign=>:engagements]]]])
+        .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
+        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+        .where("logs.transaction_id = receipts.transaction_id")
   end
 end

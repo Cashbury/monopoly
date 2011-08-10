@@ -15,6 +15,9 @@ class LogGroup < ActiveRecord::Base
 	
 	
 	def get_receipt_engagements
-	  self.logs.joins(:engagement=>[:item,:campaign]).select("campaigns.id as campaign_id,logs.gained_amount as amount, engagements.name as title, logs.frequency as quantity")
+	  self.logs
+	      .joins(:engagement=>[:item,:campaign=>[:accounts=>:account_holder]])
+	      .select("accounts.amount as current_balance, campaigns.id as campaign_id,logs.gained_amount as amount, engagements.name as title, logs.frequency as quantity")
+	      .where("account_holders.id=logs.user_id")
   end
 end

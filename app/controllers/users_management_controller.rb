@@ -158,13 +158,15 @@ class UsersManagementController < ApplicationController
   #View All transactions at user's code
   def all_qr_codes_transactions
     @user = User.find(params[:id])
+    @qr_code= @user.qr_code
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @all_transactions=Log.joins(:qr_code,:transaction,:user)
                          .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id") 
                          .where("qr_codes.associatable_id=#{params[:id]} and qr_codes.associatable_type='User'")
-                         .select("logs.id as log_id,qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
+                         .select("logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
                          .order("logs.created_at DESC")
                          .paginate(:page => @page,:per_page => Account::per_page )
+    #render :layout=>false                         
   end
   
   #View details at qrcode transaction
@@ -262,9 +264,15 @@ class UsersManagementController < ApplicationController
   def reissue_code
     @user=User.find(params[:id])
     qr_code=@user.qr_code
-    @new_qrcode=@user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
-    qr_code.update_attributes :status=>false, :associatable_id=>nil
+    @new_qrcode=qr_code.scan
     render :text=>(render_to_string :partial=> "user_code_container")
+  end
+  
+  def reissue_code_from_listing_txs
+    @user=User.find(params[:id])
+    old_qr_code=@user.qr_code
+    @qr_code=old_qr_code.scan
+    render :text=>(render_to_string :partial=> "qrcode_container")
   end
   
   def list_businesses_by_program_type    

@@ -8,28 +8,28 @@
 <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
 <%= javascript_include_tag :defaults %>
 <script type="text/javascript">
-  jQuery(document).ready(function(){
+  $(document).ready(function(){
     var timer, delay = 2000, index=0; 
     send_check_request();
     timer = setInterval(function(){
       send_check_request();
     }, delay);
-    jQuery('.toggle_a').live('click',function(){ 
-      if (jQuery(this).hasClass("selected")===false){
-      jQuery(this).css('color','white');
-        jQuery(this).closest('.toggle_link').children('.toggle_p').css('color','#CDCDCD');
+    $('.toggle_a').live('click',function(){ 
+      if ($(this).hasClass("selected")===false){
+      $(this).css('color','white');
+        $(this).closest('.toggle_link').children('.toggle_p').css('color','#CDCDCD');
         toggle_contents(jQuery(this));       
-        jQuery(this).addClass('selected');
-        jQuery(this).closest('.toggle_link').children('.toggle_p').removeClass('selected');
+        $(this).addClass('selected');
+        $(this).closest('.toggle_link').children('.toggle_p').removeClass('selected');
       }
     });
-    jQuery('.toggle_p').live('click',function(){
-      if (jQuery(this).hasClass("selected")===false){
-        jQuery(this).css('color','white');        
-        jQuery(this).closest('.toggle_link').children('.toggle_a').css('color','#CDCDCD');
-        toggle_contents(jQuery(this));
-        jQuery(this).addClass('selected');
-        jQuery(this).closest('.toggle_link').children('.toggle_a').removeClass("selected");
+    $('.toggle_p').live('click',function(){
+      if ($(this).hasClass("selected")===false){
+        $(this).css('color','white');        
+        $(this).closest('.toggle_link').children('.toggle_a').css('color','#CDCDCD');
+        toggle_contents($(this));
+        $(this).addClass('selected');
+        $(this).closest('.toggle_link').children('.toggle_a').removeClass("selected");
       }
     });
     function toggle_contents(object){
@@ -39,16 +39,16 @@
       object.closest('.usr_com').children('.transaction_details').html(feed_text);        
     }
     function send_check_request(){
-      jQuery.ajax({
+      $.ajax({
         type: 'GET',
         url: '/check_status/<%=@qr_code.id%>?index='+index,
         ifModified: true,
         success: function(data){
           if(data!=null){
             if(data.response_text!="" && index!=data.index){
-              jQuery('.container').append(data.response_text);
-              jQuery('#scanning_summary').html("Scanned "+ data.no_of_scanning+" times by "+data.no_of_users+ (data.no_of_users=="1" ? " person" : " people"));
-              jQuery('#code_status').html("Status: "+data.status);
+              $('.container').append(data.response_text);
+              $('#scanning_summary').html("Scanned "+ data.no_of_scanning+" times by "+data.no_of_users+ (data.no_of_users=="1" ? " person" : " people"));
+              $('#code_status').html("Status: "+data.status);
             }
             index=data.index;
           }

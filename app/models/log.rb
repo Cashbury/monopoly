@@ -35,7 +35,8 @@ class Log < ActiveRecord::Base
 	belongs_to :transaction
 	belongs_to :action
 	belongs_to :qr_code
-	 
+  belongs_to :campaign
+  
 	validates_numericality_of :gained_amount, :frequency, :lat, :lng ,:allow_nil => true
 	
 	LOG_ACTIONS={:engagement=>"Engagement", :redeem=>"Redeem"}

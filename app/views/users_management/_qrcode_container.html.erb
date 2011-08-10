@@ -1,0 +1,19 @@
+<div class="page">
+  <div class="page_top"></div>
+  <div class="page_con">  
+    <div class="logo"><img src="/images/logo.png" alt="Logo" /></div>        
+      <div class="qr_hold"> 
+        <% if @qr_code.size || @qr_code.code_type %> 
+        <table border="0" cellspacing="0" class="qr_table_large">
+        <%else%>
+        <table border="0" cellspacing="0" class="qr_table_small">
+        <%end%>
+          <tr>
+  	        <td width="1" ><%=image_tag @qr_code.qr_code_image.photo.url , :class=>"qr_image"%></td>           
+          </tr>
+        </table>                           
+      </div><!--QR-->                    
+      <p class="bottom_text">ID Reference: <%=@qr_code.hash_code%> . Issue on: <%="#{@qr_code.created_at.strftime("%b %d , %Y")} @ #{@qr_code.created_at.strftime("%I:%M %p")}"%> . Status: <%=@qr_code.status? ? "Active" : "Inactive" %> . <%=link_to "Re-issue", "javascript:void(0)", {:id=>"reissue_code"}%><img src="/images/loading.gif" width="16" height="16" alt="Loading" style="position:relative;display:none" /></p>        
+    </div>
+  <div class="page_bot"></div>
+</div><!--Page-->
