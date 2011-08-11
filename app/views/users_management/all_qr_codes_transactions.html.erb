@@ -13,16 +13,18 @@ $(document).ready(function () {
   var marker;
   var timer, delay = 2000, index=0; 
   timer = setInterval(function(){
+     var qr_code_id = $('#qr_code_id').val();
+     var user_id = $('#user_id').val();
      $.ajax({
         type: 'GET',
-        url: '/check_status/<%=@qr_code.id%>?index='+index,
+        url: '/users_management/'+user_id+'/check_txs_updates/'+qr_code_id+'?index='+index,
         ifModified: true,
         success: function(data){
           if(data!=null){
             if(data.response_text!="" && index!=data.index){
-              $('.container').append(data.response_text);
-              $('#scanning_summary').html("Scanned "+ data.no_of_scanning+" times by "+data.no_of_users+ (data.no_of_users=="1" ? " person" : " people"));
-              $('#code_status').html("Status: "+data.status);
+              $('.qrcode_container').html(data.qr_code_updates);
+              $('.mono-table tr:first').after(data.txs_rows);
+              $('#qr_code_id').html(data.new_qrcode);              
             }
             index=data.index;
           }
@@ -107,6 +109,7 @@ $(document).ready(function () {
 </head>
 <body>
 <%=hidden_field_tag :user_id, @user.id %>
+<%=hidden_field_tag :qr_code_id, @qr_code.id %>
 <div class="yellow_block">
   <div class="qr_code_title"><h1 class="page_path"><%= link_to '<<', users_management_path(@user), {:class=>"back_link"} %><span><%=@user.full_name%>:</span><a href="#">Digital ID</a><span class="dimmed">Physical ID</span></h1></div>
   <div class="container"> 

@@ -90,4 +90,13 @@ class Log < ActiveRecord::Base
     .select("businesses.id as business_id, users.id as user_id, logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
     .order("logs.created_at DESC")    
   end
+  
+  
+  def self.latest_qrcode_transactions(qr_code_id)
+    joins(:qr_code,:transaction)
+    .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id LEFT OUTER JOIN users ON logs.issued_by=users.id") 
+    .where("qr_codes.id=#{qr_code_id}")
+    .select("businesses.id as business_id, users.id as user_id, logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
+    .order("logs.created_at DESC")    
+  end
 end

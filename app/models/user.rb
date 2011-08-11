@@ -197,8 +197,8 @@ class User < ActiveRecord::Base
     Account.transaction do
       qr_code.scan if qr_code.present?
       #check if user has engaged with biz before else create record for it
-      if self.business_customers.where(:business_id=>campaign.program.business).empty?
-        self.business_customers.create(:business_id=>campaign.program.business)
+      if self.business_customers.where(:business_id=>campaign.program.business.id).empty?
+        self.business_customers.create(:business_id=>campaign.program.business.id)
       end
       if user_account.nil?
         accholder=AccountHolder.find_or_create_by_model_id_and_model_type(:model_id=>self.id,:model_type=>self.class.to_s)
@@ -243,8 +243,6 @@ class User < ActiveRecord::Base
           place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
         end
       end
-      logger.error "##################### Issued by #{issued_by}"
-      logger.error "##################### attributes #{Log.new}"
       Log.create!(:user_id        =>self.id,
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,

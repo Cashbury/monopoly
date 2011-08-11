@@ -171,6 +171,7 @@ Kazdoor::Application.routes.draw do
     get  "logged_actions", :action=>:logged_actions, :on=>:member, :as=>"logged_actions"
     get  "all_qr_codes_transactions",:action=>:all_qr_codes_transactions, :on=>:member, :as=>"all_qr_codes_transactions"
     get  "view_tx_details/log/:log_id", :action=>:view_tx_details, :on=>:member, :as=>"view_tx_details"
+    get  "check_txs_updates/:qr_code_id", :action=> :check_txs_updates, :on=>:member, :as=>"check_txs_updates"
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -186,6 +187,7 @@ Kazdoor::Application.routes.draw do
   match "/update_places"                  =>"places#update_places"
   match "/auto_business"                  =>"businesses#auto_business"
   match "/check_status/:id"               =>"qr_codes#check_code_status"
+
   match "/code/:hash_code"                =>"qr_codes#show"
   #match "check_role/:role_id"             =>"users_management#check_role"
   match "check_role"                      =>"users_management#check_role"
