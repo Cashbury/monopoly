@@ -24,7 +24,8 @@ $(document).ready(function () {
             if(data.response_text!="" && index!=data.index){
               $('.qrcode_container').html(data.qr_code_updates);
               $('.mono-table tr:first').after(data.txs_rows);
-              $('#qr_code_id').html(data.new_qrcode);              
+              $('#qr_code_id').html(data.new_qrcode);    
+              $('.total_entries').html( parseInt($('.total_entries').html()) +  parseInt(data.size));
             }
             index=data.index;
           }
@@ -126,7 +127,7 @@ $(document).ready(function () {
   <div class="container"> 
     <div class="white_block_title">
       <h2>Transaction History for <%=@user.full_name%>'s ID</h2>
-      <h3><strong>Total: <%=@all_transactions.size%></strong><span>filter by [business name V] & [Date Range]</span></h3>
+      <h3><strong>Total: <strong class="total_entries"><%=@all_transactions.size%></strong></strong></h3>
     </div>
     <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>

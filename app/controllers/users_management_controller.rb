@@ -468,6 +468,7 @@ class UsersManagementController < ApplicationController
     result[:qr_code_updates]= render_to_string :partial=> "qrcode_container"
     result[:txs_rows]= render_to_string :partial=> "transaction_row"
     result[:new_qrcode]= @qr_code.id
+    result[:size]= latest_transactions.size
     result[:index]= params[:index].to_i+@txs.size
     if request.xhr?
       render :json=>result.to_json
