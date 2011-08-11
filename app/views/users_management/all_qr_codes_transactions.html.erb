@@ -11,6 +11,24 @@
 $(document).ready(function () {
   var map;
   var marker;
+  var timer, delay = 2000, index=0; 
+  timer = setInterval(function(){
+     $.ajax({
+        type: 'GET',
+        url: '/check_status/<%=@qr_code.id%>?index='+index,
+        ifModified: true,
+        success: function(data){
+          if(data!=null){
+            if(data.response_text!="" && index!=data.index){
+              $('.container').append(data.response_text);
+              $('#scanning_summary').html("Scanned "+ data.no_of_scanning+" times by "+data.no_of_users+ (data.no_of_users=="1" ? " person" : " people"));
+              $('#code_status').html("Status: "+data.status);
+            }
+            index=data.index;
+          }
+        }
+      });
+  }, delay);
   $('#reissue_code').live("click",function(){
       var user_id = $('#user_id').val();
       var loadingImage = $(this).nextAll('img');

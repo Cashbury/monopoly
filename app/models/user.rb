@@ -189,7 +189,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def engaged_with(associatable,engagement_amount,qr_code,place_id,lat,lng,note,freq=1,log_group, issued_by)
+  def engaged_with(associatable, engagement_amount, qr_code, place_id, lat, lng, note, freq=1, log_group, issued_by)
     campaign=associatable.campaign
     user_account=campaign.user_account(self)
     business_account=campaign.business_account
@@ -243,6 +243,8 @@ class User < ActiveRecord::Base
           place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
         end
       end
+      logger.error "##################### Issued by #{issued_by}"
+      logger.error "##################### attributes #{Log.new}"
       Log.create!(:user_id        =>self.id,
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,

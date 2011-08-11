@@ -36,7 +36,6 @@ class Log < ActiveRecord::Base
 	belongs_to :action
 	belongs_to :qr_code
   belongs_to :campaign
-  belongs_to :scanner,:class_name=>"User", :foreign_key=>"issued_by"
   
 	validates_numericality_of :gained_amount, :frequency, :lat, :lng ,:allow_nil => true
 	
