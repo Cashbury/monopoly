@@ -11,23 +11,24 @@
 $(document).ready(function () {
   var map;
   var marker;
-  var timer, delay = 2000, index=0; 
+  var timer, delay = 2000, last_log_id=0; 
   timer = setInterval(function(){
      var qr_code_id = $('#qr_code_id').val();
      var user_id = $('#user_id').val();
      $.ajax({
         type: 'GET',
-        url: '/users_management/'+user_id+'/check_txs_updates/'+qr_code_id+'?index='+index,
+        url: '/users_management/'+user_id+'/check_txs_updates/'+qr_code_id+'?last_log_id='+last_log_id,
         ifModified: true,
         success: function(data){
-          if(data!=null){
-            if(data.response_text!="" && index!=data.index){
+          if(!$.isEmptyObject(data)){
+            if(data.txs_rows!="" && last_log_id < data.last_log_id){
               $('.qrcode_container').html(data.qr_code_updates);
               $('.mono-table tr:first').after(data.txs_rows);
-              $('#qr_code_id').html(data.new_qrcode);    
+              $('#qr_code_id').val(data.new_qrcode);    
               $('.total_entries').html( parseInt($('.total_entries').html()) +  parseInt(data.size));
+              last_log_id=data.last_log_id;
             }
-            index=data.index;
+            //index=data.index;
           }
         }
       });
@@ -127,7 +128,7 @@ $(document).ready(function () {
   <div class="container"> 
     <div class="white_block_title">
       <h2>Transaction History for <%=@user.full_name%>'s ID</h2>
-      <h3><strong>Total: <strong class="total_entries"><%=@all_transactions.size%></strong></strong></h3>
+      <h3><strong>Total: <strong class="total_entries"><%=@all_transactions.total_entries%></strong></strong></h3>
     </div>
     <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>

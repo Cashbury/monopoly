@@ -460,16 +460,17 @@ class UsersManagementController < ApplicationController
   
   def check_txs_updates
     @qr_code= QrCode.find(params[:qr_code_id])
-    latest_transactions= Log.latest_qrcode_transactions(@qr_code.id)
+    @latest_transactions= Log.latest_qrcode_transactions(@qr_code.id)
     @user= User.find(params[:id])
     result={}
-    @qr_code=@user.qr_code
-    @txs= latest_transactions[params[:index].to_i,latest_transactions.size]
-    result[:qr_code_updates]= render_to_string :partial=> "qrcode_container"
-    result[:txs_rows]= render_to_string :partial=> "transaction_row"
-    result[:new_qrcode]= @qr_code.id
-    result[:size]= latest_transactions.size
-    result[:index]= params[:index].to_i+@txs.size
+    if @latest_transactions.any? and @latest_transactions.first.log_id > params[:last_log_id].to_i
+      @qr_code=@user.qr_code
+      result[:qr_code_updates]= render_to_string :partial=> "qrcode_container"
+      result[:txs_rows]= render_to_string :partial=> "transaction_row"
+      result[:new_qrcode]= @qr_code.id
+      result[:size]= @latest_transactions.length
+      result[:last_log_id]= @latest_transactions.first.log_id
+    end
     if request.xhr?
       render :json=>result.to_json
     end
