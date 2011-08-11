@@ -1,4 +1,4 @@
-<!--<% title "View all Qrcodes TXs for #{@user.full_name}" %>
+<% title "View all Qrcodes TXs for #{@user.full_name}" %>
 <head>
 <link  href="http://fonts.googleapis.com/css?family=Cuprum:regular&v1" rel="stylesheet" type="text/css" >
 <link href='http://fonts.googleapis.com/css?family=Play&subset=greek,latin&v1' rel='stylesheet' type='text/css'>
@@ -20,7 +20,7 @@ $(document).ready(function () {
           url: '/reissue_code_from_listing_txs/'+user_id,
           success: function(data){
             loadingImage.hide();
-            $('.container').html(data);
+            $('.qrcode_container').html(data);
           },
           error: function(data){
             loadingImage.hide();
@@ -62,50 +62,88 @@ $(document).ready(function () {
   });
 });
 </script>
+<style type="text/css" media="screen">
+  .white_block{width:100%;overflow:hidden;  background: url("/images/top-shadow.png") repeat-x scroll 0 0 transparent;}
+	.white_block_title h2{font-weight:bold;font-size:2.5em;}
+	.white_block_title h3{color:#929292;font-size:2.3em;font-weight:bold;}
+	.white_block_title h3 strong{margin-right:10px;}
+	.white_block_title h3 span{color:#cbcbcb;}
+	.white_block table{color:#bababa;}
+	.white_block	tbody th{color:#666666;}
+	.white_block	tbody tr:nth-child(2n) td, tbody tr.even td{background:none;}
+	.white_block a{color:#bababa;}
+	.white_block a:hover{color:#666666;}
+  .page_path{float:left;margin:20px;width:100%;font-weight:bold;font-size:2.5em;}
+	.page_path a{color:#000;margin:0 5px;}	
+	.page_path .dimmed{color:#bababa;}
+	.page_path .back_link{color:#bababa;text-decoration:none}
+  .tmp_link{ background: url("/images/tmp_link.png") no-repeat scroll 0 0 transparent;height:52px;width:52px;float:left;text-indent: -10000px;}
+  .tmp_link:hover{background: url("/images/tmp_link_hover.png") no-repeat scroll 0 0 transparent;}
+  .tmp_link.selected{background: url("/images/tmp_link_hover.png") no-repeat scroll 0 0 transparent;}
+  p.bottom_text{width:800px}
+  p.bottom_text span{padding:0 20px;color:#000;}
+  .yellow_block{width:100%;overflow:hidden;background-color: yellow;}
+  .qr_code_title {margin: 0 161px;}
+</style>
+
 </head>
-<%= link_to 'Back', users_management_path(@user) %>
 <body>
 <%=hidden_field_tag :user_id, @user.id %>
-<div class="container" style="background-color:yellow"> 
-  <%=render :partial=>"qrcode_container"%> 
+<div class="yellow_block">
+  <div class="qr_code_title"><h1 class="page_path"><%= link_to '<<', users_management_path(@user), {:class=>"back_link"} %><span><%=@user.full_name%>:</span><a href="#">Digital ID</a><span class="dimmed">Physical ID</span></h1></div>
+  <div class="container"> 
+    <div class="page">
+      <div class="page_top"></div>
+      <div class="page_con">  
+        <div class="logo"><img src="/images/logo.png" alt="Logo" /></div>        
+        <%=render :partial=>"qrcode_container"%> 
+        <div class="page_bot"></div>
+    </div><!--Page-->
+  </div>
 </div>
-<h2>Transaction History for <%=@user.full_name%>'s ID</h2>
-<p><h2><b>Total: <%=@all_transactions.size%></b></h2></p>
-<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <th>QR</th>
-    <th></th>
-    <th>What</th>
-    <th>When</th>
-    <th>Where</th>
-    <th>Scanned by</th>
-    <th>View Tx Details</th>
-  </tr>
-<% @all_transactions.each do |transaction| %>
-    <tr class="tx_row">    
-      <% qr_code=QrCode.find(transaction.qr_code_id) %>
-      <td><%= link_to (image_tag qr_code.qr_image, :width=>"50px", :height=>"50px"), qr_code_path(qr_code)  %></td>
-      <td>QR Sequence: <%= transaction.qr_code_id%></td>
-      <td>Earned <%= transaction.gained_amount%> points @ <%=transaction.bname%></td>
-      <td><%= "Scanned on #{transaction.created_at.strftime("%b %d , %Y")} @ #{transaction.created_at.strftime("%I:%M %p")}"  %></td>
-      <td>
-        <%=link_to "tmp_link", "javascript:void(0)", :class=>"tmp_link"%>
-        <%=hidden_field_tag :lng, transaction.lng , {:class=>"lng"} %>
-        <%=hidden_field_tag :lat, transaction.lat , {:class=>"lat"} %>
-        
-      </td>
-      <td>Scanned by <%=link_to "#{transaction.first_name} #{transaction.last_name}",  users_management_path(transaction.user_id)%> <%="Cashier @ #{transaction.bname}"%></td>
-      <td><%= link_to "View details", view_tx_details_users_management_path(@user,transaction.log_id) %></td>
-    </tr>
-    <tr><td colspan=7><div class="map_canvas" style="width:1000px; height:300px; display:none"></div></td></tr>
-<% end %>
+<div class="white_block">
+  <div class="container"> 
+    <div class="white_block_title">
+      <h2>Transaction History for <%=@user.full_name%>'s ID</h2>
+      <h3><strong>Total: <%=@all_transactions.size%></strong><span>filter by [business name V] & [Date Range]</span></h3>
+    </div>
+    <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <th>QR</th>
+        <th></th>
+        <th>What</th>
+        <th>When</th>
+        <th>Where</th>
+        <th>Scanned by</th>
+        <th>View Tx Details</th>
+      </tr>
+    <% @all_transactions.each do |transaction| %>
+        <tr class="tx_row">    
+          <% qr_code=QrCode.find(transaction.qr_code_id) %>
+          <td><%= link_to (image_tag qr_code.qr_image, :width=>"50px", :height=>"50px"), qr_code_path(qr_code)  %></td>
+          <td>QR Sequence: <%= transaction.qr_code_id%></td>
+          <td>Earned <%= transaction.gained_amount%> points @ <%=transaction.bname%></td>
+          <td><%= "Scanned on #{transaction.created_at.strftime("%b %d , %Y")} @ #{transaction.created_at.strftime("%I:%M %p")}"  %></td>
+          <td>
+            <%=link_to "tmp_link", "javascript:void(0)", :class=>"tmp_link"%>
+            <%=hidden_field_tag :lng, transaction.lng , {:class=>"lng"} %>
+            <%=hidden_field_tag :lat, transaction.lat , {:class=>"lat"} %>
+          </td>
+          <td>
+            Scanned by <%=link_to "#{transaction.first_name} #{transaction.last_name}",  users_management_path(transaction.user_id)%> 
+            <p style="margin-top:5px;"><%="Cashier @ "%><%= link_to transaction.bname, business_path(transaction.business_id) %></p>
+          </td>
+          <td><%= link_to "View details", view_tx_details_users_management_path(@user,transaction.log_id) %></td>
+        </tr>
+        <tr><td colspan=7><div class="map_canvas" style="width:1000px; height:300px; display:none"></div></td></tr>
+    <% end %>
 
-</table>
-
-<%= link_to 'Back', users_management_path(@user) %>
+    </table>
+    </div>
+</div>
 </body>
-</html>-->
-<head>
+</html>
+<!--<head>
 <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 </head>
 <% title "View all Qrcodes TXs for #{@user.full_name}" %>
@@ -143,4 +181,4 @@ $(document).ready(function () {
   <%= will_paginate @all_transactions %>
 <br/>
 
-<%= link_to 'Back', users_management_path(@user) %>
+<%= link_to 'Back', users_management_path(@user) %>-->

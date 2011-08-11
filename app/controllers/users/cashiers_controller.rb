@@ -32,7 +32,7 @@ class Users::CashiersController < Users::BaseController
               records= record.split(',')
               engagement_id= records.first;quantity=records.second
               engagement= Engagement.find(engagement_id)
-              result= user.engaged_with(engagement,engagement.amount,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group])              
+              result= user.engaged_with(engagement,engagement.amount,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
             end
           end
         end
