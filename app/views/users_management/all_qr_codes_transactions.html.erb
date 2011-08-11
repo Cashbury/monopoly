@@ -1,4 +1,4 @@
-<% title "View all Qrcodes TXs for #{@user.full_name}" %>
+<!--<% title "View all Qrcodes TXs for #{@user.full_name}" %>
 <head>
 <link  href="http://fonts.googleapis.com/css?family=Cuprum:regular&v1" rel="stylesheet" type="text/css" >
 <link href='http://fonts.googleapis.com/css?family=Play&subset=greek,latin&v1' rel='stylesheet' type='text/css'>
@@ -104,8 +104,8 @@ $(document).ready(function () {
 
 <%= link_to 'Back', users_management_path(@user) %>
 </body>
-</html>
-<!--<head>
+</html>-->
+<head>
 <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 </head>
 <% title "View all Qrcodes TXs for #{@user.full_name}" %>
@@ -143,4 +143,4 @@ $(document).ready(function () {
   <%= will_paginate @all_transactions %>
 <br/>
 
-<%= link_to 'Back', users_management_path(@user) %>-->
+<%= link_to 'Back', users_management_path(@user) %>

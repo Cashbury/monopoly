@@ -163,7 +163,7 @@ class UsersManagementController < ApplicationController
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @all_transactions=Log.all_qrcodes_transactions(params[:id])
                          .paginate(:page => @page,:per_page =>@@per_page )
-    render :layout=>false                         
+    #render :layout=>false                         
   end
   
   #View details at qrcode transaction
