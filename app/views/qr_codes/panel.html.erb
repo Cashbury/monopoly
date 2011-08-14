@@ -1,64 +1,64 @@
 <%title 'Issue QrCodes'%>
 <script type="text/javascript" language="javascript" charset="utf-8">
 //<![CDATA[
-jQuery(function(){
+$(function(){
 
-  jQuery("select#engagement_id").bind('change',function(e){
-    var $e = jQuery(this);
-    jQuery("#associatable_id").val($e.val());
+  $("select#engagement_id").bind('change',function(e){
+    var $e = $(this);
+    $("#associatable_id").val($e.val());
   });
 
-  jQuery('select#brand_id').bind('change',function(){
-    var brand_id = jQuery(":selected", this).val();
-    jQuery.getScript("/qr_codes/update_businesses/"+brand_id);
+  $('select#brand_id').bind('change',function(){
+    var brand_id = $(":selected", this).val();
+    $.getScript("/qr_codes/update_businesses/"+brand_id);
   });
 
-  jQuery('select#business_id').bind('change',function(){
-    var business_id = jQuery(":selected", this).val();
-    jQuery.getScript("/qr_codes/update_programs/"+business_id);
+  $('select#business_id').bind('change',function(){
+    var business_id = $(":selected", this).val();
+    $.getScript("/qr_codes/update_programs/"+business_id);
   });
 
-  jQuery('select#program_id').bind('change',function(){
-    var program_id = jQuery(":selected", this).val();
-    jQuery.getScript("/qr_codes/update_campaigns/"+program_id);
+  $('select#program_id').bind('change',function(){
+    var program_id = $(":selected", this).val();
+    $.getScript("/qr_codes/update_campaigns/"+program_id);
   });
 
-  jQuery('select#campaign_id').bind('change',function(){
-    var campaign_id = jQuery(":selected", this).val();
-    jQuery.getScript("/qr_codes/update_engagements/"+campaign_id);
+  $('select#campaign_id').bind('change',function(){
+    var campaign_id = $(":selected", this).val();
+    $.getScript("/qr_codes/update_engagements/"+campaign_id);
   });
 
-  jQuery('#code_type').bind('change',function(){
-    var code_type_value = jQuery(":selected", this).val();
-    if (code_type_value=="1"){jQuery(".code_size").hide();}else{jQuery(".code_size").show();}
+  $('#code_type').bind('change',function(){
+    var code_type_value = $(":selected", this).val();
+    if (code_type_value=="1"){$(".code_size").hide();}else{$(".code_size").show();}
   });
 
-  jQuery("#associate_link").click(function(){
-    if (jQuery(this).html()=="Associate now")
-      jQuery(this).html("Cancel");
+  $("#associate_link").click(function(){
+    if ($(this).html()=="Associate now")
+      $(this).html("Cancel");
     else
-      jQuery(this).html("Associate now");
-      jQuery("#associate_box").slideToggle();
+      $(this).html("Associate now");
+      $("#associate_box").slideToggle();
 
     });
 
-  jQuery("#user_id").autocomplete({
+  $("#user_id").autocomplete({
       source:"/get_users.json",
       select:function(e,ui){
-        jQuery("#associatable_id.associate").val(ui.item.id);
-        jQuery("#associatable_type").val("User");
+        $("#associatable_id.associate").val(ui.item.id);
+        $("#associatable_type").val("User");
       }
   });
 
-  jQuery("input[name=btype]").click(function(e){
-      jQuery(".row.users").toggle();
-      jQuery(".row.brands").toggle();
+  $("input[name=btype]").click(function(e){
+      $(".row.users").toggle();
+      $(".row.brands").toggle();
   });
 
-  jQuery(".tabs").tabs({
+  $(".tabs").tabs({
     select:function(e,ui){
-    var data = jQuery(ui.tab).attr("data-c");
-      jQuery("#associatable_type").val(data);
+    var data = $(ui.tab).attr("data-c");
+      $("#associatable_type").val(data);
     }
   });
 })

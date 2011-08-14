@@ -93,6 +93,23 @@ class Business < ActiveRecord::Base
   def currency_symbol
     self.currency_code.present? ? ISO4217::Currency.from_code(self.currency_code).try(:symbol) : "$"
   end
+  
+  def list_campaigns
+    self.programs
+        .joins([:program_type,[:campaigns=>[:accounts=>:account_holder]]])
+        .where("account_holders.model_id=#{self.id} and account_holders.model_type='#{self.class.to_s}'")
+        .select("campaigns.name as c_name, program_types.name as pt_name, accounts.amount as biz_balance, campaigns.id as c_id")
+  end
+  
+  def list_all_enrolled_customers
+    self.users
+        .joins(:logs)
+        .group("logs.user_id")
+        .select("count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+        .order("total DESC")
+              
+    
+  end
   #====================================================================
   private
   #====================================================================

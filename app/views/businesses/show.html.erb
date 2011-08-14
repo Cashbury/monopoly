@@ -1,10 +1,9 @@
 <% title "Business | #{@business.name}" %>
+<% content_for (:head) do %>  
 <style type="text/css" media="screen">
-  table th,td{
-    width:150px;
-}
+  table th,td{width:150px;}
 </style>
-
+<%end%>
 <h3>Category</h3>
 <p>
 	<ol>
@@ -41,6 +40,10 @@
   <strong>Users IDs Activated?</strong>
   <%= @business.activate_users_id ? "Active" : "In-active" %>
 </p>
+<p>
+  <strong><%="#{@business.users.length} Customers - "%></strong>
+  <%= link_to "View", list_all_enrolled_customers_business_path(@business)%>
+</p>
 <%unless @business.mailing_address.blank? %>
 <h3>Mailing Address</h3>
 <ul>
@@ -62,30 +65,47 @@
 </ul>
 <%end%>
 <h3>Branches</h3>
-<p>
-  <table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
+<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Name</th>
+    <th>Address</th>
+    <th>Neiborhood</th>
+    <th>Phone Number</th>
+    <th>City</th>
+    <th>Country</th>
+    <th>Zipcode</th>
+  </tr>
+  <% for place in @business.places %>
+  <tr>
+    <td><%= link_to place.name, business_place_path(@business,place) %></td>
+    <td><%= place.try(:address).try(:street_address) %>   </td>
+    <td><%= place.try(:address).try(:neighborhood) %>     </td>
+    <td><%= place.phone %>                                </td>
+    <td><%= place.try(:address).try(:city).try(:name) %>  </td>
+    <td><%= place.try(:address).try(:country).try(:name) %></td>
+    <td><%= place.try(:address).try(:zipcode) %></td>
+  </tr>
+  <% end %>
+</table>
+<h3>Campaigns</h3>
+<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Campaign</th>
+    <th>Program Type</th>
+    <th>SVA balance</th>
+    <th>View Transactions</th>
+    <th>View Enrolled customers</th>
+  </tr>
+  <% for campaign in @campaigns %>
     <tr>
-      <th>Name</th>
-      <th>Address</th>
-      <th>Neiborhood</th>
-      <th>Phone Number</th>
-      <th>City</th>
-      <th>Country</th>
-      <th>Zipcode</th>
-    </tr>
-	  <% for place in @business.places %>
-    <tr>
-      <td><%= link_to place.name, business_place_path(@business,place) %></td>
-      <td><%= place.try(:address).try(:street_address) %>   </td>
-      <td><%= place.try(:address).try(:neighborhood) %>     </td>
-      <td><%= place.phone %>                                </td>
-      <td><%= place.try(:address).try(:city).try(:name) %>  </td>
-      <td><%= place.try(:address).try(:country).try(:name) %></td>
-      <td><%= place.try(:address).try(:zipcode) %></td>
+      <td><%= campaign.c_name %></td>
+      <td><%= campaign.pt_name %></td>
+      <td><%= campaign.biz_balance %></td>      
+      <td><%= link_to "View Txs", list_campaign_transactions_business_path(@business,campaign.c_id) %></td>
+      <td><%= link_to "View Enrolled Customers", list_enrolled_customers_business_path(@business,campaign.c_id) %></td>
     </tr>
 	  <% end %>
-  </table>
-</p>
+</table>
 <p>
   <%= link_to "Edit", edit_business_path(@business) %> |
   <%= link_to "View All", businesses_path %> |

@@ -77,17 +77,9 @@ class Account < ActiveRecord::Base
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,
-                  :engagement_id  =>nil,
-                  :qr_code_id     =>nil,
-                  :campaign_id    =>nil,
                   :business_id    =>self.business_id,
                   :transaction_id =>transaction.id,
-                  :place_id       =>nil,
-                  :gained_amount  =>nil,
-                  :amount_type    =>nil,
                   :frequency      =>1,
-                  :lat            =>nil,
-                  :lng            =>nil,
                   :created_on     =>date)                                      
        self                               
     end
@@ -136,17 +128,9 @@ class Account < ActiveRecord::Base
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,
-                  :engagement_id  =>nil,
-                  :qr_code_id     =>nil,
-                  :campaign_id    =>nil,
                   :business_id    =>self.business_id,
-                  :transaction_id =>transaction.id,
-                  :place_id       =>nil,
-                  :gained_amount  =>nil,
-                  :amount_type    =>nil,
+                  :transaction_id =>transaction.id,      
                   :frequency      =>1,
-                  :lat            =>nil,
-                  :lng            =>nil,
                   :created_on     =>date)                                      
        self                               
     end
@@ -163,4 +147,12 @@ class Account < ActiveRecord::Base
   def associated_to_program?
     self.program_id.present?
   end  
+  
+  def self.listing_user_enrollments(user_id,program_type_id)
+    joins([:account_holder, :campaign=>[:program=>[:program_type,:business]]])
+    .joins("LEFT OUTER JOIN countries ON businesses.country_id=countries.id")
+    .where("campaigns.ctype=#{Campaign::CTYPE[:spend]} and programs.program_type_id=#{program_type_id} and account_holders.model_id=#{user_id} and account_holders.model_type='User'")
+    .select("accounts.status,program_types.id as pt_id,businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, accounts.amount as current_amount, accounts.cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ")
+    .group("businesses.id")
+  end
 end

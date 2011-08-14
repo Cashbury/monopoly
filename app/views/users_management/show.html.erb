@@ -1,4 +1,5 @@
-<head>
+<% title "User | #{@user.full_name}" %>
+<% content_for (:head) do %> 
 <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
 <style>
 	.user-id{ background: #EEEEEE; -moz-border-radius:10px; -webkit-border-radius:10px; width:735px;}
@@ -11,8 +12,7 @@
 	.user-id table{padding:0 15px 15px; width:100%;}
 	.user-id table th{ text-align:left;}
 </style>
-</head>
-<% title "User | #{@user.full_name}" %>
+<%end%>
 <p><%= link_to 'Edit', edit_users_management_path(@user) %> </p>
 <% user_uid=@user.email.split("@facebook").first %>
 <%=image_tag @user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture?type=large" : "/images/user-default.jpg", :style=>"float:right;" %>

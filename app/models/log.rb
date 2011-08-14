@@ -99,4 +99,58 @@ class Log < ActiveRecord::Base
     .select("businesses.id as business_id, users.id as user_id, logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
     .order("logs.created_at DESC")    
   end
+  
+  # 5 recent transactions from user's code
+  def self.get_recent_transactions(user_id)
+    joins(:qr_code,:transaction,:user)
+    .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id") 
+    .where("qr_codes.associatable_id=#{user_id} and qr_codes.associatable_type='User'")
+    .select("logs.id as log_id,logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
+    .order("logs.created_at DESC")
+    .limit(5)
+  end
+  
+  
+  def self.view_tx_details(log_id)
+    joins([:action=>:transaction_type],:qr_code,:transaction,:user)
+    .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id")     
+    .where("logs.id=#{log_id}")
+    .select("transactions.id as transaction_id, transaction_types.name as log_type, qr_codes.status, users.first_name, users.last_name, transactions.from_account, transactions.to_account, transactions.from_account_balance_before, transactions.from_account_balance_after, transactions.to_account_balance_before, transactions.to_account_balance_after, logs.created_at, places.name as pname, transactions.note, transactions.after_fees_amount")
+    .order("logs.created_at desc")
+  end
+  
+  def self.list_campaign_transactions(c_id)
+    joins(:campaign, :transaction,[:action=>:transaction_type])
+    .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id")     
+    .where("campaigns.id=#{c_id}")
+    .select("transactions.id as transaction_id, transaction_types.name as log_type, transactions.from_account, transactions.to_account, transactions.from_account_balance_before, transactions.from_account_balance_after, transactions.to_account_balance_before, transactions.to_account_balance_after, logs.created_at, places.name as pname, transactions.note, transactions.after_fees_amount")
+    .order("logs.created_at desc")
+  end
+  
+  
+  def self.list_enrolled_customers(c_id,place_id)
+    if place_id.present?
+      engagements_logs
+      .joins(:user,[:campaign=>[[:accounts=>:account_holder],:measurement_type]])
+      .joins("INNER JOIN places ON logs.place_id=places.id")
+      .select("places.name as p_name, count(*) as total, CONCAT(users.first_name,' ',users.last_name) as full_name, accounts.created_at as enrolled_since, accounts.amount, accounts.cumulative_amount, measurement_types.name as m_name, accounts.id as account_no ")
+      .where("logs.campaign_id=#{c_id} and logs.place_id=#{place_id} and account_holders.model_id=users.id and account_holders.model_type='User'")
+      .group("logs.user_id", :place_id)
+      .order("total DESC")
+    else
+      engagements_logs
+      .joins(:user,[:campaign=>[[:accounts=>:account_holder],:measurement_type]])
+      .joins("LEFT OUTER JOIN places ON logs.place_id=places.id")
+      .select("places.name as p_name, count(*) as total, CONCAT(users.first_name,' ',users.last_name) as full_name, accounts.created_at as enrolled_since, accounts.amount, accounts.cumulative_amount, measurement_types.name as m_name, accounts.id as account_no ")
+      .where("logs.campaign_id=#{c_id} and account_holders.model_id=users.id and account_holders.model_type='User'")
+      .group("logs.user_id")
+      .order("total DESC")
+    end
+  
+    #self.accounts.joins(:account_holder,:measurement_type)
+    #             .joins("INNER JOIN users ON users.id= account_holders.model_id")
+    #             .where("account_holders.model_type='User'")
+    #             .select("(select count(*) from logs where users.id=logs.user_id and logs.campaign_id=#{c_id}) as total, CONCAT(users.first_name,' ',users.last_name) as full_name, accounts.created_at as enrolled_since, accounts.amount, accounts.cumulative_amount, measurement_types.name as m_name, accounts.id as account_no ")
+    #             .order("total DESC")
+  end
 end

@@ -1,0 +1,23 @@
+<% title raw("#{@business.name} &rarr; Enrolled Customers") %>
+<p><h2><b>Total: <%=@result.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @result %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Customer Name</th>
+    <th>Email</th>
+    <th>Total # of engagements</th>
+  </tr>
+<% @result.each do |result| %>
+  <tr>   
+    <td><%= result.full_name %></td>
+    <td><%= result.email%></td>
+    <td><%= result.total %></td>
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @result %>
+<br/>
+<%= link_to 'Back', "javascript:void(0)",:onclick=>"javascript:history.back()" %>

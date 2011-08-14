@@ -75,10 +75,13 @@ Kazdoor::Application.routes.draw do
 	end
 
   resources :businesses do
-	  get "update_cities/:id",:action=>:update_cities,    :on =>:collection, :as =>"update_cities"
-	  get "update_users/:id",:action=>:update_users,    :on =>:collection, :as =>"update_users"
+	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
+	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
 	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
 	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
+	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
+	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
+	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
 	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
@@ -181,6 +184,7 @@ Kazdoor::Application.routes.draw do
   match '/business_signup'                => "home#business_signup"
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
+  match "/get_places.:format"             =>"businesses#get_places"
   match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"
 
   match "/show_code/:id"                  =>"qr_codes#show_code"

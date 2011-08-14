@@ -1,8 +1,10 @@
 class BusinessesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
+  before_filter :prepare_business, :only=> [:show, :edit, :update, :destroy, :list_campaign_transactions, :list_enrolled_customers, :list_all_enrolled_customers ]
   skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
-
+  @@per_page=20
+  
   def index
     @businesses = Business.all
     respond_to do |format|
@@ -13,8 +15,8 @@ class BusinessesController < ApplicationController
   end
 
   def show
-    @business = Business.find(params[:id])
     @categories = Category.all
+    @campaigns= @business.list_campaigns
     respond_to do |format|
       format.html
       format.xml { render :xml => @business }
@@ -61,7 +63,6 @@ class BusinessesController < ApplicationController
 
   def edit
     @brands  = Brand.all
-    @business = Business.find(params[:id])
     @categories = Category.all
     3.times { @business.places.build }
     @business.places.each do |place|
@@ -73,7 +74,6 @@ class BusinessesController < ApplicationController
    end
 
   def update
-    @business = Business.find(params[:id])
     if @business.update_attributes(params[:business])
        flash[:notice] = "Successfully updated business."
        redirect_to @business
@@ -87,12 +87,32 @@ class BusinessesController < ApplicationController
    end
 
   def destroy
-    @business = Business.find(params[:id])
     @business.destroy
     flash[:notice] = "Successfully destroyed business."
     redirect_to businesses_url
   end
-
+  
+  def list_campaign_transactions
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @campaign = Campaign.find(params[:c_id])
+    @result = Log.list_campaign_transactions(params[:c_id])
+                 .paginate(:page => @page,:per_page => @@per_page )
+  end
+  
+  def list_enrolled_customers
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @campaign = Campaign.find(params[:c_id])
+    @result = Log.list_enrolled_customers(params[:c_id], params[:place_id])
+                       .paginate(:page => @page,:per_page => @@per_page )
+  end  
+    
+    
+  def list_all_enrolled_customers
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @result = @business.list_all_enrolled_customers
+                       .paginate(:page => @page,:per_page => @@per_page )
+  end    
+  
   def update_cities
     @cities = City.where(:country_id=> params[:id] )
                   .where(['name LIKE ?', "#{params[:term]}%"])
@@ -123,6 +143,10 @@ class BusinessesController < ApplicationController
     @users1 = User.where(['username LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.username }}
     #@users2 = User.where(['first_name LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.first_name }}
     render :json => @users1 #| @users2
+  end
+  def get_places
+    @places = Place.where(['name LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }}
+    render :json => @places
   end
 
   def update_users
@@ -168,4 +192,9 @@ class BusinessesController < ApplicationController
     end
     return @hours
   end
+  
+  def prepare_business
+    @business = Business.find(params[:id])
+  end
+    
 end

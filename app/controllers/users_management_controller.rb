@@ -138,22 +138,12 @@ class UsersManagementController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    @results=get_businesses_list(params[:id],ProgramType.find_by_name(ProgramType::AS[:marketing]).try(:id))    
-    @recent_transactions=get_recent_transactions(params[:id])
+    @results=Account.listing_user_enrollments(params[:id],ProgramType.find_by_name(ProgramType::AS[:marketing]).try(:id))    
+    @recent_transactions=Log.get_recent_transactions(params[:id])
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
     end
-  end
-  
-  # 5 recent transactions at user's code
-  def get_recent_transactions(user_id)
-    Log.joins(:qr_code,:transaction,:user)
-       .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id") 
-       .where("qr_codes.associatable_id=#{user_id} and qr_codes.associatable_type='User'")
-       .select("logs.id as log_id,logs.created_at, businesses.name as bname, places.name as pname, users.first_name, users.last_name, logs.gained_amount")
-       .order("logs.created_at DESC")
-       .limit(5)
   end
   
   #View All transactions at user's code
@@ -169,10 +159,7 @@ class UsersManagementController < ApplicationController
   #View details at qrcode transaction
   def view_tx_details
     @user = User.find(params[:id])
-    @result=Log.joins([:action=>:transaction_type],:qr_code,:transaction,:user)
-               .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id")     
-               .where("logs.id=#{params[:log_id]}")
-               .select("transactions.id as transaction_id,transaction_types.name as log_type, qr_codes.status, users.first_name, users.last_name, transactions.from_account, transactions.to_account, transactions.from_account_balance_before, transactions.from_account_balance_after, transactions.to_account_balance_before, transactions.to_account_balance_after, logs.created_at, places.name as pname, transactions.note, transactions.after_fees_amount")
+    @result=Log.view_tx_details(params[:log_id])
   end
   
   def destroy
@@ -273,7 +260,7 @@ class UsersManagementController < ApplicationController
   end
   
   def list_businesses_by_program_type    
-    @results=get_businesses_list(params[:uid],params[:program_type_id])
+    @results=Account.listing_user_enrollments(params[:uid],params[:program_type_id])
     render :text=>(render_to_string :partial=> "listing_enrollments_container")
   end
   
@@ -284,18 +271,13 @@ class UsersManagementController < ApplicationController
       @transactions=Log.joins(:transaction=>:transaction_type)
                        .where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}")
                        .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+                       .order("transactions.created_at desc")                       
     else
       @transactions=Log.joins(:transaction=>:transaction_type)
                        .where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}")
                        .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+                       .order("transactions.created_at desc")
     end
-  end
-  
-  def get_businesses_list(user_id,program_type_id)
-    Account.joins([:account_holder, :campaign=>[:program=>[:program_type,:business]]]).joins("LEFT OUTER JOIN countries ON businesses.country_id=countries.id")
-           .where("programs.program_type_id=#{program_type_id} and account_holders.model_id=#{user_id} and account_holders.model_type='User'")
-           .select("accounts.status,program_types.id as pt_id,businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, (SELECT amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as current_amount, (SELECT cumulative_amount from accounts where business_id=businesses.id and account_holder_id=account_holders.id) as cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ")
-           .group("businesses.id")
   end
   
   def manage_user_accounts
@@ -303,7 +285,7 @@ class UsersManagementController < ApplicationController
     @user=User.find(params[:id])
     @accounts=Account.joins([:account_holder,"LEFT OUTER JOIN campaigns on campaigns.id=accounts.campaign_id LEFT OUTER JOIN programs on programs.id=campaigns.program_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id LEFT OUTER JOIN businesses ON programs.business_id=businesses.id"])
                      .where("account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
-                     .select("accounts.id,accounts.amount as amount, accounts.cumulative_amount as cumulative_amount, campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, accounts.created_at, accounts.business_id")
+                     .select("accounts.id, accounts.amount as amount, accounts.cumulative_amount as cumulative_amount, campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, accounts.created_at, accounts.business_id")
                      .paginate(:page => @page,:per_page => Account::per_page )
   end
   

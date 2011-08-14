@@ -1,0 +1,56 @@
+<% title raw("#{@business.name} &rarr; #{@campaign.name} &rarr; Enrolled Customers") %>
+<% content_for(:head) do %>
+<script type="text/javascript">
+$(function(){
+  $("#place_id").autocomplete({
+    source:"/get_places.json",
+    select:function(e,ui){
+      $("#associatable_place_id.associate").val(ui.item.id);
+    }
+  });
+  
+  $("input.complete").keyup(function(event){
+    if(event.keyCode == 13){
+      var url = $(this).closest('form').serialize();
+      window.location="<%=list_enrolled_customers_business_path(@business,@campaign)%>?place_id="+$('.associate').val();
+    }
+  });
+});
+</script>
+<% end %>
+<%=label_tag "Place" %><br/>
+<%= text_field_tag :place_id , "" , :class=>"complete"%>
+<%= hidden_field_tag :associatable_place_id , nil , :class=>"associate" %>
+
+<p><h2><b>Total: <%=@result.total_entries%></b></h2></p>
+<br />
+  <%= will_paginate @result %>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Customer Name</th>
+    <th>Enrolled Since</th>
+    <th>Account #</th>
+    <th>SVA @ campaign</th>
+    <th>Cumulative SVA @ campaign</th>
+    <th>Measurement type</th>
+    <th>Total # of engagements</th>
+    <th>Place</th>
+  </tr>
+<% @result.each do |result| %>
+  <tr>   
+    <td><%= result.full_name %></td>
+    <td><%= result.enrolled_since.to_formatted_s(:long) %></td>
+    <td><%= result.account_no%></td>
+    <td><%= result.amount %></td>
+    <td><%= result.cumulative_amount %></td>
+    <td><%= result.m_name %></td>
+    <td><%= result.total %></td>
+    <td><%= result.p_name || "All"%></td>
+  </tr>
+<% end %>
+</table>
+<br />
+  <%= will_paginate @result %>
+<br/>
+<%= link_to 'Back', "javascript:void(0)",:onclick=>"javascript:history.back()" %>

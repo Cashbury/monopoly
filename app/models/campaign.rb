@@ -78,6 +78,7 @@ class Campaign < ActiveRecord::Base
     account_holder  = AccountHolder.find_or_create_by_model_id(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s) 
 	  account = Account.find_or_create_by_campaign_id_and_account_holder_id(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder_id => account_holder.id)
   end
+  
   def update_places
     places.delete_all
     selected_places = places_list.nil? ? [] : places_list.keys.collect{|id| Place.find(id)}
