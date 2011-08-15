@@ -101,13 +101,40 @@ class Business < ActiveRecord::Base
         .select("campaigns.name as c_name, program_types.name as pt_name, accounts.amount as biz_balance, campaigns.id as c_id")
   end
   
-  def list_all_enrolled_customers
-    self.users
+  NEW_CUSTOMER=1
+  RETURNING_CUSTOMER=2
+ 
+  def list_all_enrolled_customers(type_id)
+    case type_id
+      when NEW_CUSTOMER #new customers are those who are enrolled (have accounts @biz) but not engaged yet
+        ids=self.users.collect{|u| u.id}.join(',')
+        self.programs.joins(:campaigns=>[:accounts=>:account_holder]) 
+                     .joins("INNER JOIN users ON account_holders.model_id=users.id")
+                     .where("account_holders.model_type='User' and users.id NOT IN (#{ids})")                     
+                     .group("users.id")
+                     .select("0 as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+                     .order("total DESC")
+      when RETURNING_CUSTOMER #customers that have been engaged with the biz before
+        self.users
         .joins(:logs)
         .group("logs.user_id")
         .select("count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
         .order("total DESC")
-              
+    else
+      ids=self.users.collect{|u| u.id}.join(',')
+      new_customers=self.programs.joins(:campaigns=>[:accounts=>:account_holder]) 
+                                 .joins("INNER JOIN users ON account_holders.model_id=users.id")
+                                 .where("account_holders.model_type='User' and users.id NOT IN (#{ids})")                     
+                                 .group("users.id")
+                                 .select("0 as total,users.id as user_id,(CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+                                 .order("total DESC")
+      returning_customers=self.users
+                              .joins(:logs)
+                              .group("logs.user_id")
+                              .select("users.id as user_id, count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+                              .order("total DESC")                         
+      result=(new_customers | returning_customers).uniq_by { |i| i.user_id }
+    end            
     
   end
   #====================================================================

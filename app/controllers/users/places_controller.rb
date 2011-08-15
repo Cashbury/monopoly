@@ -97,6 +97,7 @@ class Users::PlacesController < Users::BaseController
                     @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.money_amount * result.spend_exchange_rule.to_f if reward_obj.money_amount.present?
                     @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
                   end
+                  @result["places"][index]["rewards"][i]["is_spend"]=reward_campaign.spend_campaign?
                   how_to_get_amount_text=""  
                   @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{attributes["measurement_type"]}\n"}.first
                 end 

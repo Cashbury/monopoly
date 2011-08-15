@@ -75,8 +75,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :places
-  #has_and_belongs_to_many :roles
-  #has_and_belongs_to_many :login_methods
+  
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   belongs_to :country, :foreign_key=>"home_town"
@@ -87,6 +86,8 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   after_create :set_default_role
+  after_create :initiate_user_code
+
   scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
   scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code").group("users.id")
 
@@ -101,6 +102,10 @@ class User < ActiveRecord::Base
       composed_scope = composed_scope.with_code.where('qr_codes.hash_code LIKE :term OR email LIKE :term OR first_name LIKE :term OR last_name LIKE :term OR telephone_number LIKE :term ', { :term => term })
     end
     composed_scope
+  end
+  
+  def initiate_user_code
+    issue_qrcode(0, 1, QrCode::SINGLE_USE)
   end
   
   def set_default_role
@@ -361,10 +366,6 @@ class User < ActiveRecord::Base
   end
 
   def list_receipts
-    #self.receipts
-    #    .joins([:business=>:brand,:campaign=>:engagements])
-    #    .joins("LEFT OUTER JOIN places ON receipts.place_id=places.id")
-    #    .select("brands.id as brand_id, engagements.fb_engagement_msg, receipts.spend_campaign_id as campaign_id, receipts.log_group_id, receipts.amount, receipts.business_id, receipts.place_id, receipts.receipt_text, receipts.receipt_type, receipts.user_id, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
     self.receipts
         .joins([:transaction,:log_group=>[:logs=>[[:business=>:brand], [:campaign=>:engagements]]]])
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")

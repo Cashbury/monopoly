@@ -2,7 +2,8 @@ source :gemcutter
 source "http://gemcutter.org"
 gem 'rack', "1.2.1"
 gem 'rails', '3.0.3'
-gem 'mysql2', '~> 0.2.7'
+#gem 'mysql2', '~> 0.2.7'
+gem 'mysql2', '=0.2.11'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 group :development do

@@ -109,7 +109,8 @@ class BusinessesController < ApplicationController
     
   def list_all_enrolled_customers
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @result = @business.list_all_enrolled_customers
+    @type_id= params[:type_id].to_i.zero? ? 0 : params[:type_id].to_i
+    @result = @business.list_all_enrolled_customers(@type_id)
                        .paginate(:page => @page,:per_page => @@per_page )
   end    
   

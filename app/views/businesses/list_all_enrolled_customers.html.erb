@@ -1,4 +1,19 @@
 <% title raw("#{@business.name} &rarr; Enrolled Customers") %>
+<% content_for (:head) do %>
+<script type="text/javascript">
+  $(function(){
+    $("#type_id").change(function(){
+      var type_id=$(this).val();
+      window.location="<%=list_all_enrolled_customers_business_path(@business)%>?type_id="+type_id;
+    });
+  });
+</script>
+<% end %>
+<p>
+  <strong>Users Type:</strong> <br/>
+  <%= select_tag :type_id , options_for_select( {"....Select Type...."=>0, "New Customers"=>1, "Returning Customers"=>2 }, @type_id) %>
+</p>
+
 <p><h2><b>Total: <%=@result.total_entries%></b></h2></p>
 <br />
   <%= will_paginate @result %>
@@ -12,8 +27,8 @@
 <% @result.each do |result| %>
   <tr>   
     <td><%= result.full_name %></td>
-    <td><%= result.email%></td>
-    <td><%= result.total %></td>
+    <td><%= result.email %></td>
+    <td><%= result.total || 0 %></td>
   </tr>
 <% end %>
 </table>
