@@ -2,7 +2,6 @@
   <% if @neighborhood.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@neighborhood.errors.count, "error") %> prohibited this neighborhood from being saved:</h2>
-
       <ul>
       <% @neighborhood.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
@@ -11,6 +10,14 @@
     </div>
   <% end %>
 
+  <p>
+    <%= f.label :name %>
+    <%= f.text_field :name , :class=>"title" %>
+  </p>
+  <p>
+    <%= f.check_box :approved %>
+    <%= f.label :approved %>
+  </p>
   <div class="actions">
     <%= f.submit %>
   </div>

@@ -42,17 +42,32 @@ $(function(){
 
     });
 
+
   $("#user_id").autocomplete({
-      source:"/get_users.json",
+      source:"/v1/users/email.json",
       select:function(e,ui){
         $("#associatable_id.associate").val(ui.item.id);
         $("#associatable_type").val("User");
       }
   });
 
+
+  $("#column_type").change(function(e){
+    var $select= $(this);
+    $("#user_id").autocomplete({
+        source:"/v1/users/"+$select.val()+".json",
+        select:function(e,ui){
+          $("#associatable_id.associate").val(ui.item.id);
+          $("#associatable_type").val("User");
+        }
+    });
+  });
+
+
   $("input[name=btype]").click(function(e){
-      $(".row.users").toggle();
-      $(".row.brands").toggle();
+    $(".row.users").toggle();
+    $(".row.brands").toggle();
+
   });
 
   $(".tabs").tabs({
@@ -68,6 +83,18 @@ $(function(){
   .hide{
     display:none;
   }
+
+  #column_type{
+    width:150px;float:left;
+  }
+  input.complete.title{
+    margin-left:10px;
+    margin-top: 5px;
+    width:300px;
+  }
+  #user,#brands{
+    padding: 10px 5px;
+  }
 </style>
 
 <%= form_tag do |form| %>
@@ -77,7 +104,7 @@ $(function(){
   </p>
   <p class="row code_size" style="display:none">
     <strong>Select Code Size</strong> <br/>
-    <%=  select_tag :size , options_for_select( {"For Pre-Printed Card (100x100)"=>0, "For Web (300x300)"=>1 },1) %>
+    <%=  select_tag :size , options_for_select( {"For Pre-Printed Card (240x240)"=>0, "For Web (300x300)"=>1 },1) %>
   </p>
   <p class="row">
     <strong>QrCode Status</strong> <br/>
@@ -100,7 +127,12 @@ $(function(){
       <div id="users">
         <p class="row users">
           <strong>Users</strong> <br/>
-          <%= text_field_tag :user_id , "" , :class=>"complete"%>
+          <select id="column_type" name="column_type">
+            <option value="email">Email</option>
+            <option value="username">User name</option>
+            <option value="telephone_number">Telephone number</option>
+          </select>
+          <%= text_field_tag :user_id , "" , :class=>"complete title"%>
           <p class="row">
             <%= submit_tag "Submit" %>
           </p>
@@ -134,10 +166,7 @@ $(function(){
           <%= submit_tag "Submit" %>
         </p>
   </div>
-  <div style="clear:both">
+  <div style="clear:both"></div>
   </div>
-  </div>
-    </div>
-
-
-  <% end %>
+</div>
+<% end %>

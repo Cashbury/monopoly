@@ -1,0 +1,50 @@
+<% title "Campaign | #{@campaign.name}" %>
+<p id="notice"><%= notice %></p>
+<p>
+  <b>The Offer:</b>
+  <%@rewards.each do |reward| %>
+  <p><%= reward.try(:heading2) %></p>
+  <%end%>
+</p>
+
+<p>
+  <b>Assigned Places:</b>
+  <ul>
+  <%@campaign.places.each do |place|%>
+    <li><%= place.name %></li>
+  <%end%>
+  </ul>
+</p>
+
+<p>
+  <b>Targeted to:</b>
+  <%unless @campaign.targets.empty?%>
+    <%= Target::TARGETS_LABELS[@campaign.targets.first.try(:name)] %>
+  <%else%>
+    Everyone
+  <%end%>
+</p>
+  
+<p>
+  <b>Launch Date:</b>
+  <%=@campaign.start_date%>
+</p>
+
+<p>
+  <b>End Date:</b>
+  <%=@campaign.end_date%>
+</p>
+
+<p>
+  <b>Initial User Account Amount:</b>
+  <%=@campaign.initial_amount%>
+</p>
+
+<p>
+  <b>Initial Business Account Amount:</b>
+  <%=@campaign.initial_biz_amount%>
+</p>
+
+<p><%= link_to 'Edit Offer', edit_business_spend_campaign_path(@business) %></p>
+<p><%= link_to 'Back to business', business_path(@business) %></p>
+<p><%= link_to 'List Offers', business_campaigns_path(@business) %></p>

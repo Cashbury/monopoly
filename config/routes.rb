@@ -1,15 +1,19 @@
 Kazdoor::Application.routes.draw do
-  resources :states
 
-  get "invite/friends"
-
-  get "friends/invite"
 
   get "primary_user/new"
   get "primary_user/show"
 
+  resources :invites , :only=>[:show, :index] do
+    get "share_link" , :on=>:collection
+  end
+
+  resources :like
+
+  resources :states
   resources :countries
   resources :cities
+
   resources :neighborhoods
 
   resources :transaction_types
@@ -44,6 +48,7 @@ Kazdoor::Application.routes.draw do
       get  '/check_role.:format',:action=>:check_user_role, :on =>:collection
       get  '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
       post '/ring_up.:format', :action=>:ring_up, :on=>:collection
+      get  '/receipts-merchant.:format', :action=>:list_receipts_history, :on=>:collection
     end
     resource :businesses do
 			get  '/primary_place', :action=>:primary_place, :on =>:collection
@@ -91,9 +96,11 @@ Kazdoor::Application.routes.draw do
 	#       end
 	#     end
 	# end
-	resources :places
-	resources :places do
-		get '/for_businessid/:id' ,:action=>:for_businessid, :on =>:collection
+
+  resources :places do
+		get "/google/:reference_id" , :action =>:google,          :on=>:member,  :as =>"google"
+		get "/reset_google" ,         :action =>:reset_google ,   :on=>:member
+    get '/for_businessid/:id' ,   :action=>:for_businessid,   :on =>:collection, :as=>"for_businessid"
 	end
 
 	resources :users
@@ -161,12 +168,12 @@ Kazdoor::Application.routes.draw do
     get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
-    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"    
+    post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"
     post "withdraw_account", :action=>:withdraw_account, :on=>:member, :as=>"withdraw_account"
     post "deposit_account", :action=>:deposit_account, :on=>:member, :as=>"deposit_account"
-    post "redeem_rewards", :action=>:redeem_reward_for_user, :on=>:member, :as=>"redeem_rewards"    
+    post "redeem_rewards", :action=>:redeem_reward_for_user, :on=>:member, :as=>"redeem_rewards"
     post "make_engagement", :action=>:make_engagement, :on=>:member, :as=>"make_engagement"
-    get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"    
+    get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"
     get  "list_campaigns/business/:business_id/programs/:program_id",:action=>:list_campaigns,:on =>:member ,:as =>"list_campaigns"
     get  "manage_user_accounts", :action=>:manage_user_accounts, :on=>:member, :as=>:manage_user_accounts
     get  "redeem_rewards", :action=>:redeem_rewards, :on=>:member, :as=>:redeem_rewards
@@ -185,6 +192,7 @@ Kazdoor::Application.routes.draw do
   match "/get_opening_hours.:format"      =>"places#get_opening_hours"
   match "/get_users.:format"              =>"businesses#get_users"
   match "/get_places.:format"             =>"businesses#get_places"
+
   match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"
 
   match "/show_code/:id"                  =>"qr_codes#show_code"
@@ -206,7 +214,30 @@ Kazdoor::Application.routes.draw do
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
   match "/users/:business_id/get_id.:format" =>"users/places#get_my_id"  
-#  match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
+
+
+
+  scope "api" do
+    scope "v1" do
+      get "users/:id/engage/:engagement_id" => "services#engage"
+    end
+  end
+
+  match "/v1/users/:column_type.:format"  =>"businesses#get_users" #pass term as query params
+  match "/v1/cities/:id/vote/:like"       => "cities#vote"
+  match "/v1/cities/:id/votes.:format"    => "cities#votes"
+  match "/v1/cities/:name.:format"        => "cities#index"
+  match "/v1/popular_cities.:format"      => "cities#popular"
+  match "/v1/users/:id/:status.:format"   => "users_snaps#update_user"
+  match "/v1/engagements/:id.:format"     => "businesses#get_engagement"
+
+
+
+  #match "/v1/countries.format"               =>"countries#index"
+  #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
+
+  #match "/select_partial/:eng_type/" => "businesses/campaigns#select_partial"
+
   #devise_for :users
 
   # The priority is based upon order of creation:

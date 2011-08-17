@@ -24,6 +24,8 @@ class Businesses::Programs::CampaignsController < ApplicationController
   def new
     @campaign = Campaign.new
     @campaign.places.build
+    @campaign.engagements.build
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @campaign }
@@ -43,13 +45,15 @@ class Businesses::Programs::CampaignsController < ApplicationController
         @campaign.targets.update_all(:target_id=>params[:target_id])
       else
         @campaign.targets << Target.find(params[:target_id])
-      end 
+      end
     else
-      @campaign.targets.delete_all    
-      @campaign.has_target=false   
-    end 
+      @campaign.targets.delete_all
+      @campaign.has_target=false
+    end
+
     if params[:measurement_name].present?
-      @campaign.measurement_type = MeasurementType.create!(:name=>params[:measurement_name], :business_id=>params[:business_id])
+      #MeasurementType.exists?(:name=>params[:measurement_name], :business_id=>params[:business_id])
+      @campaign.measurement_type_id = MeasurementType.create!(:name=>params[:measurement_name], :business_id=>params[:business_id]).id
     end
     respond_to do |format|
       if @campaign.save
@@ -65,6 +69,7 @@ class Businesses::Programs::CampaignsController < ApplicationController
   def update
     @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
+
     if params[:target_id].present?
       @campaign.has_target=true
       unless @campaign.targets.empty?
@@ -72,10 +77,10 @@ class Businesses::Programs::CampaignsController < ApplicationController
       else
         @campaign.targets << Target.find(params[:target_id])
       end
-    else    
+    else
       @campaign.targets.delete_all
       @campaign.has_target=false
-    end 
+    end
     if params[:measurement_name].present?
       @campaign.measurement_type_id = MeasurementType.create!(:name=>params[:measurement_name], :business_id=>params[:business_id]).id
     end
@@ -99,7 +104,7 @@ class Businesses::Programs::CampaignsController < ApplicationController
       format.xml  { head :ok }
     end
   end
- 
+
   private
   def find_business_and_program
     @business = Business.find(params[:business_id])

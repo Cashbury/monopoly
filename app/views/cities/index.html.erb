@@ -1,23 +1,70 @@
-<h1>Listing cities</h1>
+<script type="text/javascript" language="javascript" charset="utf-8">
+//<![CDATA[
+  jQuery(function(e){
+    jQuery("input#name").autocomplete({
+      source:"/businesses/update_cities/1.js",
+      select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+        jQuery("input#name").val(ui.item.label);
+        jQuery("form").submit();
+      }
+    });
+  });
+//]]>
+</script>
 
+<h1>Listing cities (<%= City.count %>)</h1>
+
+<%= form_tag("/cities", :method=>:GET, :class=>"left" , :style=>"width:230px; margin-top:4px") do %>
+  <%= text_field_tag "name" %>
+  <%= submit_tag "Search" %>
+<% end %>
+<%= link_to 'New City', new_city_path , :class=>" button positive"%>
 <table class="mono-table" border="0">
   <tr>
-    <th>Name</th>
-    <th></th>
-    <th></th>
+    <th><%= sortable "name" %></th>
+    <th>Country</th>
+    <th>Tel. Area code</th>
+    <th>Votes</th>
+    <th><%= sortable "is_live" %></th>
     <th></th>
   </tr>
 
 <% @cities.each do |city| %>
   <tr>
-    <td><%= city.name %></td>
-    <td><%= link_to 'Show', city %></td>
-    <td><%= link_to 'Edit', edit_city_path(city) %></td>
-    <td><%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to(raw(city.name), city) %></td>
+    <td><%= city.country.try :name %></td>
+    <td><%= city.phone_area_code %></td>
+    <td><%= city.flaggings.count %></td>
+    <td><%= status_icon city.is_live? %></td>
+    <td>
+      <%= link_to 'Edit', edit_city_path(city) , :class=>"button" %>
+      <%= link_to 'Destroy', city, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>
+    </td>
   </tr>
 <% end %>
 </table>
 
+
+<br />
+<%= will_paginate @cities %>
+
+<br />
 <br />
 
-<%= link_to 'New City', new_city_path %>
+<h2 id="heading">Popular cities</h2>
+<table class="mono-table">
+  <tr>
+    <th>Name</th>
+    <th>Votes</th>
+  </tr>
+
+  <% @flaggings.each do |flag| %>
+  <tr>
+    <td><%= flag[:name] %></td>
+    <td><%= flag[:count] %></td>
+  </tr>
+  <% end %>
+</table>
+

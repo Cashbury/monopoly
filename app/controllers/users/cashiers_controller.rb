@@ -81,6 +81,14 @@ class Users::CashiersController < Users::BaseController
     end
   end
   
+  def list_receipts_history
+    @all_receipts=current_user.list_cashier_receipts
+    @dates=[2.days.ago.to_date, 1.days.ago.to_date, Date.today]
+    respond_to do |format|
+      format.xml {}
+    end
+  end
+  
   def require_cashier
     unless current_user.role?(Role::AS[:cashier]) #|| current_user.role?(Role::AS[:admin])
       respond_to do |format|

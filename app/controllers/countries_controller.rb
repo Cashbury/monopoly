@@ -1,11 +1,14 @@
 class CountriesController < ApplicationController
   before_filter :authenticate_user!
 
+  helper_method :sort_column, :sort_direction
+
   # GET /countries
   # GET /countries.xml
   def index
-    @countries = Country.all
-
+    @countries = Country.paginate :page =>params[:page] ,
+                                  :order => "#{params[:sort]} #{params[:direction]}" ,
+                                  :conditions => search
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @countries }
@@ -81,5 +84,20 @@ class CountriesController < ApplicationController
       format.html { redirect_to(countries_url) }
       format.xml  { head :ok }
     end
+  end
+
+
+  private
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ?  params[:direction] : "asc"
+  end
+
+  def sort_column
+    Country.column_names.include?(params[:sort]) ? params[:sort] : "name"
+  end
+
+  def search
+    conditions=[]
+    conditions = ["name like ?", "%#{params[:name]}%"] unless params[:name].blank?
   end
 end

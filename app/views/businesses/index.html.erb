@@ -1,40 +1,81 @@
+<script type="text/javascript">
+//<![CDATA[
+$(function(){
+  $("input#name_country").autocomplete({
+    source: "/businesses/update_countries.js",
+      select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+        $("input#name_country").val(ui.item.label);
+        $("input#country_id").val(ui.item.id);
+        $("form").submit();
+      }
+  });
+  $("input#name_city").autocomplete({
+    source:"/businesses/update_cities/1.js",
+    select:function(e,ui){
+        //var path = window.location.pathname;
+        //console.log(path+"?name="+ui.item.label);
+      $("input#name_city").val(ui.item.label);
+      $("input#city_id").val(ui.item.id);
+      $("form").submit();
+    }
+  });
+});
+//]]>
+</script>
+
+
+<%= form_tag("/businesses", :method=>:GET, :class=>"left") do %>
+  <%= text_field_tag "name" ,         params[:name], :placeholder=> "Business name"%>
+  <%= text_field_tag "brand_name" ,   params[:brand_name] , :placeholder=>"Brand name"%>
+  <%= text_field_tag "name_country" , params[:name_country], :placeholder=> "Country"%>
+  <%= text_field_tag "name_city" ,    params[:name_city], :placeholder=>"City"%>
+  <%= hidden_field_tag "country_id" , params[:country_id]%>
+  <%= hidden_field_tag "city_id" ,    params[:city_id]%>
+  <%= submit_tag "Search" %>
+<% end %>
+<%= link_to "reset", businesses_path ,:class=>"button" , :style=>"margin-left:10px"%>
+<div class="clear"></div>
 <% title "Businesses" %>
 
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <th>Name</th>
+    <th><%= sortable "name" %></th>
     <th>Brand Image</th>
+    <th>Brand </th>
     <th>Address</th>
     <th>Principal</th>
     <th>Branches</th>
-    <th>Outstanding Balance</th>
-    <th colspan="3">&nbsp;</th>
+    <th></th>
   </tr>
   <% for business in @businesses %>
     <tr>
       <td><%= link_to business.name, business %></td>
       <td><%= image_tag business.try(:brand).try(:brand_image).try(:photo).url(:normal) unless business.try(:brand).try(:brand_image).nil? %></td>
+      <td><%= business.brand.try :name %></td>
       <td>
         <% maddress = business.mailing_address %>
         <% unless maddress.nil? %>
-        <%= "#{maddress.try(:street_address)} , #{maddress.try(:zipcode)} , #{maddress.try(:country).try(:name)}" %>
+          <%= display_address(maddress) %>
         <%end%>
       </td>
       <td>Rajib Ahmed</td>
       <td><%= link_to "(#{business.places.size})", business_places_path(business) %></td>
-      <td>&nbsp</td>
-      <td><%= link_to "Edit", edit_business_path(business) %></td>
-      <td><%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td>
+        <%= link_to "Edit", edit_business_path(business) , :class=> "button"%>
+        <%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete , :class=>"negative button " %>
+      </td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Business", new_business_path %></p>
+<p><%= link_to "New Business", new_business_path , :class=>"positive button" %></p>
 <!-- Testing Code-->
-<!--<form action="/users/cashiers/ring_up.xml?lat=31.211333&long=29.933538" method="POST">
+<form action="/users/cashiers/ring_up.xml?lat=31.211333&long=29.933538" method="POST">
 <input type="text" name="customer_identifier" value=""/>
 <input type="text" name="engagements[]" value=""/>
 <input type="text" name="engagements[]" value=""/>
 <input type="text" name="amount" value="10"/>
 <input type="submit">
-</form>-->
+</form>

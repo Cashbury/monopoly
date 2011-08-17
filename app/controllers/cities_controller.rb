@@ -1,14 +1,23 @@
 class CitiesController < ApplicationController
   before_filter :authenticate_user!
-
+  helper_method :sort_column , :sort_direction
   # GET /cities
   # GET /cities.xml
   def index
-    @cities = City.all
-
     respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @cities }
+
+      format.html{
+        @cities= City.order("#{sort_column} #{sort_direction}").paginate :page=>params[:page], :conditions=> search ,:per_page=>5
+        @flaggings = Flagging.popular
+      }
+      format.xml{
+        cities_by_name
+      }
+      format.js do
+        cities_by_name
+        @cities = @cities.map {|city| {:id=>city.id, :name=>city.name}}
+        render :json , @cities
+      end
     end
   end
 
@@ -19,7 +28,7 @@ class CitiesController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @city }
+      format.xml  { render :xml => @city.to_xml(:include=>:country) }
     end
   end
 
@@ -59,7 +68,6 @@ class CitiesController < ApplicationController
   # PUT /cities/1.xml
   def update
     @city = City.find(params[:id])
-
     respond_to do |format|
       if @city.update_attributes(params[:city])
         format.html { redirect_to(@city, :notice => 'City was successfully updated.') }
@@ -81,5 +89,45 @@ class CitiesController < ApplicationController
       format.html { redirect_to(cities_url) }
       format.xml  { head :ok }
     end
+  end
+
+
+  def vote
+    @city = City.find(params[:id])
+    if(params[:like].downcase =="down")
+      current_user.unflag(@city, "do not liked it")
+    else
+      current_user.flag(@city, "like it")
+    end
+    render :nothing=>true
+  end
+
+  def votes
+    @city = City.find(params[:id])
+    render :xml => [:id=>@city.id, :name=>@city.name,:like_count=>@city.flaggings.count ]
+  end
+
+  def popular
+    @popular = Flagging.popular
+    render :xml =>@popular
+  end
+
+  private #================
+
+  def cities_by_name
+    @cities = City.where(:name=>params[:name].capitalize).joins(:country) if params[:name].present?
+  end
+
+  def search
+    conditions = []
+    conditions = ["name like ?", "%#{params[:name]}%"] unless params[:name].blank?
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ?  params[:direction] : "asc"
+  end
+
+  def sort_column
+    City.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
 end

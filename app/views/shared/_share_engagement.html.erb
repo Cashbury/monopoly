@@ -1,0 +1,11 @@
+<%= hidden_field_tag "share[name]", "Share" %>
+<%= hidden_field_tag "share[engagement_type_id]", "4" %>
+<div class="row">
+  <%= label_tag  "Earn points by sharing" %><br />
+  <%= text_field_tag "share[amount]", @share_engagement.try(:amount) || "1" , :class=>"title basic_info_input" ,:style=>"width:540px"%><br/>
+</div>
+<div class="row">
+  <%= label_tag "Message prompt displayed on the reciept of the user" %><br />
+  <%= text_field_tag "share[fb_engagement_msg]", @share_engagement.try(:fb_engagement_msg) || "share on Facebook and earn +1 point(s)" , :class=>"title basic_info_input" ,:style=>"width:540px"%>
+</div>
+<%= hidden_field_tag "share[id]", @share_engagement.try(:id)  %>

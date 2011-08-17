@@ -6,6 +6,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 	def create
     respond_to do |format|
 			format.html {
+        if cookies[:origin_user_share].try(:present?)
+          referer = User.find_by_share_id(cookies[:origin_user_share])
+          referer.update_share_sign_up_count
+          cookies[:origin_user_share] = nil
+        end
 				super
 			}
 

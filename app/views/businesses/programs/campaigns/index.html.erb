@@ -1,6 +1,6 @@
 <% title "Listing Campaigns" %>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="0">
+<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Start date</th>
@@ -10,7 +10,7 @@
     <th>Initial user amount</th>
     <th>Initial biz amount</th>
     <th>Measurement Type</th>
-    <th></th>
+    <th>Sharing</th>
     <th></th>
     <th></th>
   </tr>
@@ -25,9 +25,9 @@
     <td><%= campaign.initial_amount %></td>
     <td><%= campaign.initial_biz_amount %></td>
     <td><%= campaign.measurement_type.try(:name) %></td>
-   
-    <td><%= link_to 'Show', business_program_campaign_path(@business,@program,campaign) %></td>
-    <td><%= link_to 'Edit', edit_business_program_campaign_path(@business,@program, campaign) %></td>
+    <td><%= status_icon campaign.is_fb_enabled?  %></td>
+
+    <td><%= link_to 'Edit', edit_business_program_campaign_path(@business,@program, campaign) , :class=>"button" %></td>
     <td><%= button_to "Destroy", business_program_campaign_path(@business,@program,campaign), :method=>:delete, :class=>:destroy,:confirm=>"Are you sure?" %></td>
   </tr>
 <% end %>
@@ -35,4 +35,4 @@
 
 <br />
 
-<%= link_to 'New Campaign', new_business_program_campaign_path %><br />
+<%= link_to 'New Campaign', new_business_program_campaign_path ,:class=>"button positive"%><br />

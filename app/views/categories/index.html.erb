@@ -1,6 +1,6 @@
 <% title "Categories" %>
 
-<table width="100%" border="1" cellspacing="0" cellpadding="0">
+<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
   <tr>
     <th>Name</th>
     <th>Description</th>
@@ -8,14 +8,13 @@
   </tr>
   <% for category in @categories %>
     <tr>
-      <td><%= category.name %></td>
+      <td><%= link_to category.name ,category %></td>
       <td><%= category.description %></td>
       <td><%= category.parent.try(:name) %></td>
-      <td><%= link_to "Show", category %></td>
-      <td><%= link_to "Edit", edit_category_path(category) %></td>
-      <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete %></td>
+      <td><%= link_to "Edit", edit_category_path(category) ,:class=>"button"%></td>
+      <td><%= link_to "Destroy", category, :confirm => 'Are you sure?', :method => :delete , :class=>"button negative"%></td>
     </tr>
   <% end %>
 </table>
 
-<p><%= link_to "New Category", new_category_path %></p>
+<p><%= link_to "New Category", new_category_path , :class=>"button positive" %></p>

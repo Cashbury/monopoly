@@ -265,7 +265,8 @@ class UsersManagementController < ApplicationController
   end
   
   def list_transactions
-    @user=User.find(params[:id])    
+    @user=User.find(params[:id]) 
+    @business=Business.find(params[:business_id])   
     pt=Program.find(params[:program_id]).program_type
     if pt.name==ProgramType::AS[:marketing]
       @transactions=Log.joins(:transaction=>:transaction_type)

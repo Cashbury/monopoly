@@ -152,11 +152,6 @@
 
         <%= f.fields_for :address, f.object.address do |address_form| %>
           <p>
-            <%= address_form.label :country %>
-            <%= address_form.text_field   :country , :value=>@country_name ,  :id=>"country_id",:class=>"title double"%>
-            <%= address_form.hidden_field :country_id,:id=>"country",   :class=>"title double"%>
-          </p>
-          <p>
             <%= address_form.text_field :city , :value=>@city_name, :id=>"city_id", :class=>"title double"%>
             <%= address_form.hidden_field :city_id,:id=>"city",   :class=>"title double"%>
           </p>

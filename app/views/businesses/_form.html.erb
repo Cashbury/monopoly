@@ -39,10 +39,6 @@
           <%= mailing_address_form.label :street_address %>
           <%= mailing_address_form.text_field :street_address , :class=>"title" %>
         </p>
-
-        <p>
-          <%= mailing_address_form.hidden_field :country_id %>
-        </p>
         <p>
           <%= mailing_address_form.label :city %>
           <%= mailing_address_form.hidden_field :city_id , :value=>"" %>
@@ -60,14 +56,6 @@
         <p>
           <%= billing_address_form.label :street_address %>
           <%= billing_address_form.text_field :street_address , :class=>"title" %>
-        </p>
-        <!--
-        <p>
-          <%= billing_address_form.label :neighborhood %>
-          <%= billing_address_form.text_field :neighborhood , :class=>"title" %>
-        </p>-->
-        <p>
-          <%= billing_address_form.hidden_field :country_id , :class=>"title" %>
         </p>
         <p>
           <%= billing_address_form.label :city %>

@@ -8,33 +8,57 @@
         $('#item_div').hide();
       }
   });
+
   $('#engagement_type_selection_list,#item_selection_list').blur(function(){
     var offer_type=$("#engagement_type_selection_list :selected").text().toLowerCase();
     var item_name=$("#item_selection_list :selected").text();
     var no_of_times=($("#needed_amount_id")[0]==null) ? 1 : $("#needed_amount_id")[0].val();
     var brand_name=$("#brand_name_id").val();
     if (item_name!="" && offer_type.match(/buy/)!=null){
+      hide_non_buy_elements();
       $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
     }else if (offer_type.match(/visit/)!=null){
+      hide_non_buy_elements();
       $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
     }else if (offer_type.match(/spend/)!=null) {
+      hide_non_buy_elements();
       $("#fb_engagement_msg").val("earned {spend} points @ "+brand_name+" when the engagement is completed.");               
+    }else if(offer_type.match(/[S|s]hare/)){
+      hide_non_share_elements(no_of_times)
     }
   });
   
   if ($("#engagement_type_selection_list :selected").text().toLowerCase().match(/spend/)!=null){
     $("#fb_engagement_msg").val("earned {spend} points @ "+$("#brand_name_id").val()+" when the engagement is completed.");               
   }
+
+  function hide_non_share_elements(no_of_times){
+    $("#engagement_description").closest("p").hide();
+    $("#engagement_name").val("Share on facebook").closest("p").hide();
+    $("#item_selection_list").closest("p").hide();
+    $("#engagement_fb_engagement_msg").hide();
+    $("#share_fb_engagement_label").show();
+    $("#fb_engagement_msg").val("share on Facebook and earn +"+no_of_times+" point(s)");
+  }
+
+  function hide_non_buy_elements(no_of_times, brand_name, item_name){
+    $("#engagement_description").closest("p").show();
+    $("#engagement_name").closest("p").show();
+    $("#item_selection_list").closest("p").show();
+    $("#engagement_fb_engagement_msg").show();
+    $("#share_fb_engagement_label").hide();
+  }
+
 });
 </script>
-<%= form_for [@business,@program ,@campaign, @engagement] do |f| %>
+<%= form_for [@business,@program ,@campaign, @engagement], :html=>{:class=>"mono-form"} do |f| %>
   <%= f.error_messages %>
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <p>
     <%= f.label :name %><br />
-    <%= f.text_field :name  %>
+    <%= f.text_field :name , :class=>"title" %>
   </p>
-  
+
   <p>
     <%= f.label :engagement_type_id, "Engagement Type" %><br />
     <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {:selected => @campaign.spend_campaign? ? EngagementType.where(:eng_type=>EngagementType::ENG_TYPE[:spend]).first.try(:id) : ""}, {:id=>"engagement_type_selection_list"}%>
@@ -52,16 +76,18 @@
   <%if  @campaign.measurement_type.business.nil?%>
     <p>
       <%= f.label :amount %><br />
-      <%= f.text_field :amount,"1",:id=>"needed_amount_id" %>
+      <%= f.text_field :amount, :value=>"1", :id=>"needed_amount_id",  :class=>"title"%>
     </p>
   <%elsif @campaign.spend_campaign? %>
     <p>
       <%= f.label "Setting The rule" %><br />
-    1 <%=ISO4217::Currency.from_code(@business.currency_code).try(:symbol) || "$" %>=<%= f.text_field :amount,:value=>"1"%> points
+    1 <%=@business.currency_code %>=<%= f.text_field :amount,:value=>"1"%> points
     </p>
-  <%end%> 
+  <%end%>
   <p>
-    <%= f.label :fb_engagement_msg, "Facebook msg when user makes an engagement" %><br />
+    <%= f.label :fb_engagement_msg, "Facebook msg when user makes an engagement", :id=>"engagement_fb_engagement_msg" %>    <%= f.label :fb_engagement_msg, "Message prompt displayed on the reciept of the user",
+      :id=>"share_fb_engagement_label", :style=>"display:none" %><br />
+
     <%= f.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :style=>"float:none;width: 540px;",:id=>"fb_engagement_msg"%>
   </p>
   <p>

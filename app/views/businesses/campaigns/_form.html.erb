@@ -19,7 +19,11 @@
     <legend class="section_title">Make an Offer</legend>
     <div class="form_item_div">
     <%= f.fields_for :engagements do |engagement|%>
-      <%= engagement.select :engagement_type_id, EngagementType.order("name ASC").collect{ |eng_type| [eng_type.display_name,eng_type.id]} , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
+
+    <% if  engagement.object.engagement_type_id !=EngagementType::ENG_TYPE[:share]  %>
+      <% #the if statement is here because the share engagmements is also iterated %>
+
+      <%= engagement.select :engagement_type_id, EngagementType.list.collect{ |eng_type| [eng_type.display_name,eng_type.id]  } , {}, {:id=>"engagement_type_selection_list",:style=>"width:170px", :class=>"left"}%>
       <%= engagement.hidden_field :amount, :value=>1%>
       <%= f.fields_for :rewards do |reward|%>
         <%= reward.text_field :needed_amount, {:class=>"basic_info_caption1 inst left", :style=>"width:45px;margin:0 0 0",:title=>"10", :id=>"needed_amount_id"} %>
@@ -47,16 +51,22 @@
   <fieldset >
     <legend class="section_title">Setting Facebook Messages</legend>
     <div class="row">
-      <%= engagement.label "When user makes an engagement" %><br />
-      <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 670px;" %>
+      <%= f.check_box :is_fb_enabled %>
+      <%= f.label :is_fb_enabled, "Enable Share on Facebook" %>
     </div>
-    <div class="row">
-      <%= reward.label "When user unlocks a reward" %><br />
-      <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 670px;" %>
-    </div>
-    <div class="row">
-      <%= reward.label "When user enjoys a reward" %><br />
-      <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_enjoy_msg", :style=>"width: 670px;" %>
+    <div class="face_book_message">
+      <div class="row">
+        <%= reward.label "When user unlocks a reward" %><br />
+        <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 540px;" %>
+      </div>
+      <div class="row">
+        <%= reward.label "When user enjoys a reward" %><br />
+        <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_enjoy_msg", :style=>"width: 540px;" %>
+      </div>
+      <div class="row">
+        <%= engagement.label "When user makes an engagement" %><br />
+        <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 540px;" %>
+      </div>
     </div>
   </fieldset>
   <p><a id="add_details_link" href="javascript:void(0)"><%=@campaign.new_record? ? "Add More Details" : "Edit Details"%></a></p>
@@ -110,11 +120,12 @@
           <%= image.label "Reward Image" %><br />
           <%= image.file_field :photo%><br />
           <small>supported image types: <strong>JPEG, JPG, PNG, BMP</strong></small>
-        <%- end -%>
+        <% end %>
       </div>
     <br /><br />
   </fieldset>
   <%end%>
+  <%end%> <!--ifends engaggement !=4 -->
   <%end%>
   <div class="actions">
     <p><%= f.submit @campaign.new_record? ? "Make Offer" : "Update Offer"%></p>
@@ -158,6 +169,25 @@ $(document).ready(function(){
       $('#counter_field').val(84 - desc_text.length);
     }
   });
+  
+  $("#campaign_is_fb_enabled").click(function(e){
+    var $cb = $(this);
+    if($cb.is(":checked")){
+      update_fb_msg();
+      enable_fields();
+    }else{
+      //engagement_type =jQuery("#engagement_type_id").val();
+      disable_fields();
+    }
+  });
+
+
+  <% unless @campaign.is_fb_enabled? %>
+    disable_fields();
+  <% end %>
+
+  update_select_item_list_display($("#engagement_type_selection_list"));
+  
   $('#reward_name_field_id,#needed_amount_id,#engagement_type_selection_list,#item_text_field').blur(function(){
     var offer_type=$("#engagement_type_selection_list :selected").text();
     var item_name=$("#item_text_field").val();
@@ -191,4 +221,21 @@ $(document).ready(function(){
   }
 
 });
+
+  function enable_fields(){
+    $(".face_book_message").show();
+  }
+
+  function disable_fields(){
+    $(".face_book_message").hide();
+  }
+  function update_fb_msg(){
+      var amount = $("#share_amount").val();
+      if(amount =="") {
+        amount=1;
+        $("#share_amount").val(1);
+      }
+      $("#share_fb_engagement_msg").val("share on Facebook and earn +"+amount+" point(s)");
+  }
+
 </script>

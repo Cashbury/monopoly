@@ -24,7 +24,7 @@ body { font: normal 11px Verdana; color: #777; background-color: #fdf800; }
 .qr_outer { background-color: #e93a22; padding: 35px; }
 .qr_code {background-color: #fff; }*/
 .qr_hold{ text-align:center; margin:0 auto;}
-.qr_table_small{ margin-left:343px;}
+.qr_table_small{ margin-left:278px;}
 .qr_table_large{ margin-left:250px;}
 .qr_image{ border:35px solid #E93A22;}
 .qr_text .qr_phone{ margin-left:-67px; margin-top:60px;}

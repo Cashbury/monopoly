@@ -55,16 +55,16 @@ class Place < ActiveRecord::Base
 
   validates_associated :address
 
-  scope :with_address,joins(:address=>[:city,:country])
+  scope :with_address,joins(:address=>[:city=>:country])
                       .select("places.id,places.name,places.long,places.lat,places.description,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
                                addresses.zipcode,addresses.cross_street,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")
-  before_save :add_amenities_name_and_place_name_to_place_tag_lists  
+  before_save :add_amenities_name_and_place_name_to_place_tag_lists
   after_save :update_items
   before_validation :clear_photos
-  
+
   DISTANCE_UNIT="km"
-  
+
   def clear_photos
     self.tmp_images.each do |tmp_image|
       tmp_image.upload_type="PlaceImage"
@@ -73,7 +73,7 @@ class Place < ActiveRecord::Base
       image.destroy if image.delete_photo? && !image.photo.dirty?
     end
   end
-  
+
   def self.closest(options = {})
     geo_scope(options).order("#{distance_column_name} asc").limit(1)
   end
@@ -105,7 +105,7 @@ class Place < ActiveRecord::Base
     self.open_hours.delete_all
     OpenHour::DAYS.each_with_index do |(key,value),index|
       i = index.to_s
-      if !open_hours_params.nil? && open_hours_params[i].present?
+      if !open_hours_params.nil? && open_hours_params[i]["from"].present? && open_hours_params[i]["to"].present?
         add_one_open_hour_to_place(open_hours_params[i],"from","to","closed")
         if open_hours_params[i]["from2"].present? and open_hours_params[i]["to2"].present?
           add_one_open_hour_to_place(open_hours_params[i],"from2","to2","closed")
@@ -128,11 +128,11 @@ class Place < ActiveRecord::Base
   def self.save_place_by_geolocation(location,user)
     address = Geokit::Geocoders::GoogleGeocoder.geocode(location[:location])
 
-    country = Country.find_or_create_by_name_and_abbr(:name=>address.country, :abbr=>address.country_code)
+    country = Country.find_by_name(:name=>address.country )
     city = City.find_or_create_by_name_and_country_id(:name=>address.city, :country_id=>country.id)
 
     a = Address.new
-    a.country_id = country.id
+    #a.country_id = country.id
     a.city_id = city.id
     a.street_address=location[:street_address]
     a.cross_street = location[:cross_street]
@@ -191,7 +191,30 @@ class Place < ActiveRecord::Base
                       )
     end
   end
-  private
+
+
+  def full_address
+    [address.street_address, address.city.try(:name), address.city.try(:country).try(:name)].compact.join(", ")
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  private #=============================================
+
   def add_amenities_name_and_place_name_to_place_tag_lists
     self.amenities.each do |amenity|
       self.tag_list << amenity.name
@@ -234,4 +257,5 @@ class Place < ActiveRecord::Base
     hour, min = parse_date(hour_txt)
     datetime = DateTime.civil(DateTime.now.year ,DateTime.now.month, DateTime.now.day, hour.to_i , min.to_i)
   end
+
 end

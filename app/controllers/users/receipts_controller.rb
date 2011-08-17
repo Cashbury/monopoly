@@ -1,7 +1,7 @@
 class Users::ReceiptsController < Users::BaseController
   after_filter :delete_all_receipts, :only=>[:index]
   def index
-    all_receipts=current_user.list_receipts
+    all_receipts=current_user.list_customer_receipts
     result={}
     result[:receipts]=[]
     all_receipts.each_with_index do |receipt,index|

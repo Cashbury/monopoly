@@ -48,7 +48,7 @@
 <h3>Mailing Address</h3>
 <ul>
   <li><strong>Street Address: </strong><%= @business.mailing_address.street_address %></li>
-  <li><strong>Country: </strong><%= @business.mailing_address.country.try(:name) %></li>
+  <li><strong>Country: </strong><%= @business.mailing_address.city.try(:country).try(:name) %></li>
   <li><strong>City: </strong><%= @business.mailing_address.city.try(:name) %></li>
   <li><strong>Neighborhood: </strong><%= @business.mailing_address.neighborhood %></li>
   <li><strong>ZipCode: </strong><%= @business.mailing_address.zipcode %></li>
@@ -58,7 +58,7 @@
 <h3>Billing Address</h3>
 <ul>
   <li><strong>Street Address: </strong><%= @business.billing_address.street_address %></li>
-  <li><strong>Country: </strong><%= @business.billing_address.country.try(:name) %></li>
+  <li><strong>Country: </strong><%= @business.billing_address.city.try(:country).try(:name) %></li>
   <li><strong>City: </strong><%= @business.billing_address.city.try(:name) %></li>
   <li><strong>Neighborhood: </strong><%= @business.billing_address.neighborhood %></li>
   <li><strong>ZipCode: </strong><%= @business.billing_address.zipcode %></li>
@@ -82,7 +82,7 @@
     <td><%= place.try(:address).try(:neighborhood) %>     </td>
     <td><%= place.phone %>                                </td>
     <td><%= place.try(:address).try(:city).try(:name) %>  </td>
-    <td><%= place.try(:address).try(:country).try(:name) %></td>
+    <td><%= place.try(:address).try(:city).try(:country).try(:name) %></td>
     <td><%= place.try(:address).try(:zipcode) %></td>
   </tr>
   <% end %>

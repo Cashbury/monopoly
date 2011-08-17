@@ -47,9 +47,11 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,:confirmable
 
 
+  make_flagger :flag_once => true
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :role_id, :home_town, :mailing_address_id, :billing_address_id
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :role_id, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled
 
   attr_accessor :role_id
   has_many :templates
@@ -58,7 +60,7 @@ class User < ActiveRecord::Base
   has_many :followers
   has_many :businesses, :through=>:followers
   has_many :invitations, :foreign_key=>"from_user_id"
-  has_many :receipts,:dependent=>:destroy
+  has_many :receipts, :dependent=>:destroy
   has_many :employees #same user with different positions
   has_many :roles, :through=>:employees
   has_many :logs
@@ -74,6 +76,7 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
+  has_and_belongs_to_many :pending_receipts, :class_name=>"Receipt" , :join_table => "users_pending_receipts"
   has_and_belongs_to_many :places
   
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
@@ -91,6 +94,8 @@ class User < ActiveRecord::Base
   scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
   scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code").group("users.id")
 
+
+
   validates_format_of :telephone_number, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
   cattr_reader :per_page
   @@per_page = 20
@@ -105,7 +110,7 @@ class User < ActiveRecord::Base
   end
   
   def initiate_user_code
-    issue_qrcode(0, 1, QrCode::SINGLE_USE)
+    issue_qrcode(0, 0, QrCode::SINGLE_USE)
   end
   
   def set_default_role
@@ -292,6 +297,30 @@ class User < ActiveRecord::Base
                     :lng            =>lng,
                     :created_on     =>date,
                     :issued_by      =>issued_by)
+          [user_account,campaign,campaign.program,after_fees_amount]
+        end
+      elsif associatable.class.to_s=="User"
+        date=Date.today.to_s
+        action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
+        Account.transaction do
+          qr_code.scan
+          QrCode.create(:code_type => QrCode::SINGLE_USE,:status=>1,:associatable_id=>associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>qr_code.size)
+          log_group=LogGroup.create!(:created_on=>date)
+          if place_id.blank?
+            unless lat.blank? || lng.blank?
+              place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
+            end
+          end
+          Log.create!(:user_id        =>self.id,
+                      :action_id      =>action.id,
+                      :log_group_id   =>log_group.id,
+                      :engagement_id  =>associatable.id,
+                      :qr_code_id     =>qr_code.id,
+                      :place_id       =>place_id,
+                      :lat            =>lat,
+                      :lng            =>lng,
+                      :created_on     =>date)
+
       end
     end
 	end
@@ -302,7 +331,10 @@ class User < ActiveRecord::Base
         engagement=spend_campaign.engagements.first
         result=engaged_with(engagement,ringup_amount * engagement.amount,qr_code,nil,lat,lng,"User made a spend based engagement through cashier",1,log_group, issued_by) 
         #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)
-        self.receipts.create(:receipt_text=>"", :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
+        receipt=Receipt.create(:user_id=>self.id, :cashier_id=>issued_by, :receipt_text=>"", :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
+        self.receipts << receipt
+        self.pending_receipts << receipt
+        save
       end
     #rescue Exception=>e
     #  logger.error "Exception #{e.class}: #{e.message}"
@@ -339,7 +371,7 @@ class User < ActiveRecord::Base
     QrCode.create(:issued_by=>issued_by, :size=>size, :code_type=>code_type, :associatable_id=>self.id, :associatable_type=>QrCode::USER_TYPE, :status=>true)
   end
 
-  # new function to set the password without knowing the current password used in our confirmation controller. 
+  # new function to set the password without knowing the current password used in our confirmation controller.
   def attempt_set_password(params)
     p = {}
     p[:password] = params[:password]
@@ -355,21 +387,48 @@ class User < ActiveRecord::Base
   def only_if_unconfirmed
     unless_confirmed {yield}
   end
-  
+
   def password_required?
     # Password is required if it is being set, but not for new records
-    if !persisted? 
+    if !persisted?
       false
     else
       !password.nil? || !password_confirmation.nil?
     end
   end
 
-  def list_receipts
+
+  def list_customer_receipts
     self.receipts
         .joins([:transaction,:log_group=>[:logs=>[[:business=>:brand], [:campaign=>:engagements]]]])
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
         .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
         .where("logs.transaction_id = receipts.transaction_id")
   end
+  
+  def list_cashier_receipts
+    Receipt.joins([:transaction,:log_group=>[:logs=>[[:business=>:brand],:user, [:campaign=>:engagements]]]])
+           .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
+           .select("users.id as customer_id, businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+           .where("receipts.created_at #{(2.days.ago.utc...Time.now.utc).to_s(:db)} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
+  end
+
+  def engaged(engagement)
+    #depending on the type do
+  end
+
+
+  def share_link
+    self.id.alphadecimal
+  end
+
+  def self.find_by_share_id(short_id)
+    where(:id=>short_id.alphadecimal).limit(1).first
+  end
+
+  def update_share_sign_up_count
+    self.sign_up_count +=1
+    self.save!
+  end
+
 end

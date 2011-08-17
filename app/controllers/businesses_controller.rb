@@ -4,9 +4,17 @@ class BusinessesController < ApplicationController
   before_filter :prepare_business, :only=> [:show, :edit, :update, :destroy, :list_campaign_transactions, :list_enrolled_customers, :list_all_enrolled_customers ]
   skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
   @@per_page=20
-  
+
+  helper_method :sort_column , :sort_direction
+
   def index
-    @businesses = Business.all
+    @businesses ||= Business.search_by_name(params[:name]).
+                          search_by_brand_name(params[:brand_name]).
+                          search_by_address("country_id",params[:country_id]).
+                          search_by_address("city_id", params[:city_id]).
+                          order("#{params[:sort]} #{params[:direction]}").
+                          paginate  :page=>params[:page]
+
     respond_to do |format|
       format.html
       format.xml { render :xml => @businesses }
@@ -115,9 +123,9 @@ class BusinessesController < ApplicationController
   end    
   
   def update_cities
-    @cities = City.where(:country_id=> params[:id] )
-                  .where(['name LIKE ?', "#{params[:term]}%"])
-                  .map{|city| {:id=>city.id, :label=>city.name }}
+    @cities = City.where(['name LIKE ?', "#{params[:term]}%"]).
+                  limit(20).
+                  map{|city| {:id=>city.id, :label=>city.name }}
 
     @selector_id=params[:selector_id]
     respond_to do |format|
@@ -139,12 +147,15 @@ class BusinessesController < ApplicationController
     end
   end
 
-
   def get_users
-    @users1 = User.where(['username LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.username }}
-    #@users2 = User.where(['first_name LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.first_name }}
-    render :json => @users1 #| @users2
+    valid_keys=[:email, :username, :telephone_number]
+    term = "%#{params[:term]}%"
+    params.select{|key,value| valid_keys.include? key.to_sym }
+    column_type = params[:column_type] || "email"
+    @users = User.where([ " #{column_type} like ?", term ]).map{|con| {:id=>con.id, :label=>con.send(column_type) }}
+    render :json => @users #| @users2
   end
+  
   def get_places
     @places = Place.where(['name LIKE ? ', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }}
     render :json => @places
@@ -157,6 +168,14 @@ class BusinessesController < ApplicationController
     end
   end
 
+
+  def get_engagement
+    @engagement = Engagement.find(params[:id])
+    respond_to do |f|
+      f.xml{render :xml=>@engagement}
+      f.json{render :json=>@engagement}
+    end
+  end
 
   def auto_business
     if current_user.role? Role::AS[:owner] || true
@@ -180,18 +199,13 @@ class BusinessesController < ApplicationController
     end
   end
 
-  # Please ... use models !!
-  def prepare_hours
-    @hours = []
-    12.downto(1) do | i |
-       @hours << "#{i}:00 AM"
-       @hours << "#{i}:30 AM"
-    end
-    12.downto(1) do | i |
-       @hours << "#{i}:00 PM"
-       @hours << "#{i}:30 PM"
-    end
-    return @hours
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ?  params[:direction] : "asc"
+  end
+
+  def sort_column
+    Business.column_names.include?(params[:sort]) ? params[:sort] : "name"
   end
   
   def prepare_business

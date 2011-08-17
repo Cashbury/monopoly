@@ -30,8 +30,12 @@ class QrCode < ActiveRecord::Base
   #                   :path => "qrcodes/:id/:filename"
   PRE_PRINTED_SIZE= 1
   WEB_SIZE=2
+  
   USER_TYPE="User"
   ENGAGEMENT_TYPE="Engagement"
+  
+  SINGLE_USE_PRE_PRINTED_SIZE = "240x240"
+  MULTI_USE_OR_WEB_SIZE       = "300x300"
   
   attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type, :size
   before_create :encrypt_code
@@ -73,8 +77,8 @@ class QrCode < ActiveRecord::Base
   end
 
   def qr_image
-    qr_dimension = "100x100" if !size && !code_type
-    qr_dimension = "300x300" if size || code_type #true means multiUse  
+    qr_dimension = SINGLE_USE_PRE_PRINTED_SIZE if !size && !code_type
+    qr_dimension = MULTI_USE_OR_WEB_SIZE if size || code_type #true means multiUse  
    "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code   
   end
 

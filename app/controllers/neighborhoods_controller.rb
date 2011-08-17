@@ -2,7 +2,8 @@ class NeighborhoodsController < ApplicationController
   # GET /neighborhoods
   # GET /neighborhoods.xml
   def index
-    @neighborhoods = Neighborhood.all
+    @neighborhoods = Neighborhood.paginate :page=>params[:page], :order => "name asc" , :conditions=> search
+
 
     respond_to do |format|
       format.html # index.html.erb
@@ -79,5 +80,10 @@ class NeighborhoodsController < ApplicationController
       format.html { redirect_to(neighborhoods_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def search
+    conditions = []
+    conditions = ["name like ?", "%#{params[:name]}%"] unless params[:name].blank?
   end
 end

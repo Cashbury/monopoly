@@ -1,5 +1,42 @@
-<p id="notice"><%= notice %></p>
+<p>
+  Name:  <%= @country.name %>
+</p>
+<p>
+  iso2:<%= @country.iso2%>
+</p>
+<p>
+  iso3<%= @country.iso3 %>
+</p>
+<p>
+  ison:<%= @country.ison %>
+</p>
+<p>
+  nationality singular:<%= @country.nationality_singular %>
+</p>
+<p>
+  nationality plural:<%= @country.nationality_plural %>
+</p>
+<p>
+  Phone country code:<%= @country.phone_country_code %>
+</p>
+<p>
+  Currency Icon : <%= image_tag @country.currency_icon.url(:small) if @country.currency_icon.present? %>
+</p>
+<p>
+  Currency symbol :<%= @country.currency_symbol %>
+</p>
+<p>
+  Currency Code :<%= @country.currency_code %>
+</p>
+<p>
+  Currency :<%= @country.currency %>
+</p>
+<p>
+  Internet :<%= @country.internet %>
+</p>
 
-
+<p>
+  <%= raw live?(@country) %>
+</p>
 <%= link_to 'Edit', edit_country_path(@country) %> |
 <%= link_to 'Back', countries_path %>

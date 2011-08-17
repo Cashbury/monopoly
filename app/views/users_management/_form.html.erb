@@ -10,7 +10,7 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
 });
 </script>
 <style type="text/css">
-.birthday-picker select{width:auto;margin-right: 5px;}         
+.birthday-picker select{width:auto;margin-right: 5px;}
 #datepicker fieldset {border:none;padding:0;}
 .legals_div select{width:auto;margin:0 10px 0 0;}
 .legals_div input {width:150px;padding-top:2px;}
@@ -70,7 +70,7 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
       <%= f.label "Date of birth" %>
       <div class="picker" id="datepicker" ></div>
     </p>
-    
+
     <p>
       <%= f.label :home_town %>
       <%= f.select :home_town, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,f.object.try(:home_town))%>
@@ -105,7 +105,7 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
     <p>
       <%= f.label :username %>
       <%= f.text_field :username , :class=>"title U_username" %>
-      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
+      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:username) %>
       </span>
@@ -114,7 +114,7 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
     <p>
       <%= f.label :email %>
       <%= f.text_field :email , :class=>"title U_email" %>
-      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />      
+      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:email) %>
       </span>
@@ -129,10 +129,6 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
     <div id="mailing">
       <fieldset style="border:none">
         <%= f.fields_for :mailing_address,@user.try(:mailing_address) do |mailing_address_form| %>
-          <p>
-            <%= mailing_address_form.label :country %>
-            <%= mailing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name, mailing_address_form.object.try(:country_id))%>
-          </p>
           <p>
             <%= mailing_address_form.label :city %>
             <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name, mailing_address_form.object.try(:city_id))%>
@@ -152,17 +148,13 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
       <fieldset style="border:none">
         <%= f.fields_for :billing_address,@user.try(:billing_address) do |billing_address_form| %>
           <p>
-            <%= billing_address_form.label :country %>
-            <%= billing_address_form.select :country_id, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,billing_address_form.object.try(:country_id))%>
-          </p>
-          <p>
             <%= billing_address_form.label :city %>
             <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.try(:city_id))%>
           </p>
           <p>
             <%= billing_address_form.label :street_address %>
             <%= billing_address_form.text_field :street_address, :class=>"title" %>
-          </p> 
+          </p>
           <p>
             <%= billing_address_form.label :zipcode %>
             <%= billing_address_form.text_field :zipcode, :class=>"title" %>
@@ -171,7 +163,19 @@ $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
       </fieldset>
     </div>
   </div>
+  <%= toggle_fb_link(@user) %>
   <div class="actions">
     <%= f.submit @user.new_record? ? "Add" : "Update" %>
   </div>
 <% end %>
+
+<script type="text/javascript">
+//  jQuery(function(){
+//    jQuery("#activate").live("click",function(e){
+//      jQuery.post("/v1/users/<%= @user.id %>/on");
+//    });
+//    jQuery("#deactivate").live("click",function(e){
+//      jQuery.post("/v1/users/<%= @user.id %>/off");
+//    });
+//  });
+</script>

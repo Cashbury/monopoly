@@ -1,4 +1,6 @@
-<% title "#{@business.name} \ Make an offer" %>
+<% title raw("#{@business.name} &rarr; Edit offer") %>
+
 <%= render 'form' %>
+
 <%= link_to 'Current Offers', business_campaigns_path(@business) %> |
 <%= link_to 'Back to business', business_path(@business) %>

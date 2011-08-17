@@ -11,11 +11,14 @@
 #
 
 class City < ActiveRecord::Base
+  attr_accessible :name, :country_id, :lat, :lng, :area_code, :is_live
+
   belongs_to :country
   has_many :addresses
+
   acts_as_mappable
-  
-  
+  make_flaggable
+
   def closest(options = {})
     geo_scope(options).order("#{distance_column_name} asc").limit(1)
   end

@@ -40,6 +40,7 @@ class ApplicationController < ActionController::Base
     elsif (current_user.role? Role::AS[:admin])
       businesses_url
     elsif current_user.role? Role::AS[:consumer]
+      #check here for he state of the application
       invite_friends_url
     else
       root_url
@@ -60,8 +61,9 @@ class ApplicationController < ActionController::Base
   end
 
 
+
   protected
-	def require_admin
+  def require_admin
    #unless current_user.nil? || current_user.admin?
       #sign_out current_user
       #redirect_to new_user_session_path, :alert => t(:not_authorized)
@@ -70,5 +72,6 @@ class ApplicationController < ActionController::Base
       #return true
     #end
     true
-	end
-end
+  end
+
+ end

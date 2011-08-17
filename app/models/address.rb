@@ -15,12 +15,12 @@
 
 class Address < ActiveRecord::Base
   belongs_to :city
-  belongs_to :country
+  #belongs_to :country
   has_many :places
-  validates_presence_of :city_id, :country_id
-  attr_accessible :zipcode, :city_id, :country_id, :neighborhood, :street_address, :cross_street
+  validates_presence_of :city_id#, :country_id
+  attr_accessible :zipcode, :city_id, :neighborhood, :street_address, :cross_street#, :country_id
   
   def common_address
-    "#{self.try(:street_address)} , #{self.try(:zipcode)} , #{self.try(:country).try(:name)}"
+    "#{self.try(:street_address)} , #{self.try(:zipcode)} , #{self.try(:city).try(:country).try(:name)}"
   end
 end

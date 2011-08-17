@@ -26,34 +26,36 @@
 
 class Reward < ActiveRecord::Base
   belongs_to :campaign
-  
+
   has_many :logs
   has_and_belongs_to_many :items
   has_and_belongs_to_many :users
   has_and_belongs_to_many :enjoyed_users, :class_name=>"User" , :join_table => "users_enjoyed_rewards"
-  
+
   has_one :reward_image, :as => :uploadable, :dependent => :destroy
   accepts_nested_attributes_for :reward_image
   #attr_accessor :places_list
+
   attr_accessor :end_date
   #after_save :update_categories
   validates_presence_of :name, :needed_amount #, :fb_unlock_msg, :fb_enjoy_msg
   validates_numericality_of :needed_amount, :greater_than => 0
   validates_numericality_of :max_claim , :allow_nil=>true
   validates_length_of :name, :maximum => 25#16
+
   validates_length_of :heading1, :maximum => 40
   validates_length_of :heading2, :maximum => 150 #84
   after_update :reprocess_photo
-  
+
   cattr_reader :per_page
   @@per_page = 20
-  
-  def reprocess_photo  
+
+  def reprocess_photo
     if !self.reward_image.nil? and self.reward_image.cropping?
       self.reward_image.photo.reprocess!
       self.reward_image.save!
     end
-  end  
+  end
   #  private
   # def update_categories
   #   places.delete_all
@@ -69,7 +71,7 @@ class Reward < ActiveRecord::Base
     # end
     # return @items
   end
-  
+
   def is_claimed_by(user,user_account,place_id,lat,lng)
     business_account=self.campaign.business_account
     date=Date.today.to_s
@@ -81,14 +83,14 @@ class Reward < ActiveRecord::Base
       transaction_type=action.transaction_type
       after_fees_amount=transaction_type.fee_amount.nil? ? self.needed_amount : self.needed_amount-transaction_type.fee_amount
       after_fees_amount=transaction_type.fee_percentage.nil? ? after_fees_amount : (after_fees_amount-(after_fees_amount * transaction_type.fee_percentage/100))
-      
+
       user_account_before_balance=user_account.amount
       user_account.decrement!(:amount,self.needed_amount)
-      
+
       business_account_before_balance=business_account.amount
       business_account.increment(:amount,after_fees_amount)
       business_account.increment(:cumulative_amount,after_fees_amount)
-      
+
       #save the transaction record
       transaction=Transaction.create!(:from_account=>user_account.id,
                                       :to_account=>business_account.id,
@@ -104,7 +106,7 @@ class Reward < ActiveRecord::Base
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
                                       :transaction_fees=>transaction_type.fee_amount)
-                                      
+
 			log_group=LogGroup.create!(:created_on=>date)
 			Log.create!(:user_id        =>user.id,
                   :action_id      =>action.id,

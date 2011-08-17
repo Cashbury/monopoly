@@ -1,6 +1,7 @@
 class PlacesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update, :get_opening_hours]
+  before_filter :set_place , :only =>[:google, :reset_google]
   def index
     @places = search_places
 
@@ -13,6 +14,11 @@ class PlacesController < ApplicationController
 
   def show
     @place = Place.find(params[:id])
+    client = Places::Client.new(:api_key => APP_CONFIG["google_api_key"])
+    @gplaces =  client.search(:lat=>@place.lat.to_f, :lng=>@place.long.to_f, :name=>@place.name)
+    unless @place.google_reference.blank?
+      @gplace = client.details(:reference=>@place.google_reference)
+    end
     respond_to do |format|
       format.html
       format.xml { render :xml => @places }
@@ -52,6 +58,7 @@ class PlacesController < ApplicationController
     @place.tag_list = params[:place][:tag_list]  unless params[:place][:tag_list].nil? || params[:place][:tag_list].empty?
     @place.add_open_hours(params[:open_hour])
     if @place.update_attributes(params[:place])
+
       flash[:notice] = "Successfully updated place."
       redirect_to place_url(@place)
     else
@@ -86,29 +93,31 @@ class PlacesController < ApplicationController
     render :json => @users
   end
 
-  def prepare_hours
-    @hours = []
-    7.upto(11) do | i |
-      @hours << "#{i}:00 AM"
-      @hours << "#{i}:30 AM"
-    end
-    @hours << "12:00 PM"
-    @hours << "12:30 PM"
-    1.upto(11) do | i |
-      @hours << "#{i}:00 PM"
-      @hours << "#{i}:30 PM"
-    end
-    @hours << "12:00 AM"
-    @hours << "12:30 AM"
-    return @hours
+
+  def google
+    @place.google_reference = params[:reference_id]
+    @place.save!
+    redirect_to place_url(@place) , :notice=>"Linked a google place"
+  end
+
+  def reset_google
+    @place.google_reference = nil
+    @place.save!
+    redirect_to place_url(@place) , :notice=>"unlinked google place"
   end
 
   private
+
+  def set_place
+    @place ||= Place.where(:id=>params[:id]).limit(1).first
+  end
 
   def search_places
     search_params ={}
     valid_keys = ["country_id", "city_id"]
     #params = params.select{|key,value| valid_keys.include? key } unless params.blank?
+    @city     = City.find(params[:city_id])                   unless params[:city_id].blank?
+    @country  = Country.find(params[:country_id])             unless params[:country_id].blank?
     search_params.merge!({:country_id=> params[:country_id]}) unless params[:country_id].blank?
     search_params.merge!({:city_id=>params[:city_id]}) unless params[:city_id].blank?
     address = Address.where search_params

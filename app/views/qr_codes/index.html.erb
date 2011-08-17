@@ -1,38 +1,10 @@
 <% title "Manage QrCodes" %>
 <style type="text/css" media="screen">
-  table {
-    margin-top:10px;
-    border:1px #ccc solid;
-  }
-  th,td{
-    border-right:1px #ccc solid;
-    border-bottom:1px #ccc solid;
-    text-align:center;
-    padding:3px;
-  }
-  th{
-    background:#d2d2d2;
-  }
-  select#template_id,select.filter{
-    width:150px;
-  }
-
-  a{
-    padding:3px;
-    text-decoration:none;
-  }
-  a:hover{
-    background:#9BE1FB;
-  }
-  #test{
-    margin-bottom:10px;
-  }
-  .efilter{
-    width:140px;
-  }
-  #filters{
-  }
-
+  select#template_id,select.filter{ width:150px;}
+  #test{margin-bottom:10px;}
+  .efilter{width:140px;}
+  #filters{}
+  .mono-table .less_fat{ padding: 0 2px}
 </style>
 
 <script type="text/javascript" language="javascript" charset="utf-8">
@@ -68,6 +40,7 @@ $(function(){
     var campaign_id = $(":selected", this).val();
     $.getScript("/qr_codes/update_engagements/"+campaign_id);
   });
+  
   $('#filter_users').bind('change',function(){
    if (jQuery(this).is(":checked")){
     $('#engegement_details').hide();
@@ -80,11 +53,29 @@ $(function(){
     $('#engegement_details').show();
    } 
   });
+  
   $("#user_id").autocomplete({
     source:"/get_users.json",
     select:function(e,ui){
       $("#associatable_user_id.associate").val(ui.item.id);
     }
+  });
+  
+  $("#user_id").autocomplete({
+      source:"/v1/users/email.json",
+      select:function(e,ui){
+        $("#associatable_user_id.associate").val(ui.item.id);
+      }
+  });
+
+  $("#column_type").change(function(e){
+    var $select= $(this);
+    $("#user_id").autocomplete({
+        source:"/v1/users/"+$select.val()+".json",
+        select:function(e,ui){
+          $("#associatable_user_id.associate").val(ui.item.id);
+        }
+    });
   });
   $("#list_all_users").bind('change',function(){
     if ($(this).is(":checked")){
@@ -96,7 +87,6 @@ $(function(){
       window.location="/qr_codes?all_engs=1";
     } 
   });
-
 })
 //]]>
 </script>
@@ -110,8 +100,13 @@ $(function(){
   <%else%>
     <div id="user_details" style="display:none">
   <%end%>
-    <%=label_tag "Username" %><br/>
-    <%= text_field_tag :user_id , "" , :class=>"complete"%>
+    <%=label_tag "Filter by" %><br/>
+    <select id="column_type" name="column_type" style="width:150px;">
+      <option value="email">Email</option>
+        <option value="username">User name</option>
+        <option value="telephone_number">Telephone number</option>
+    </select>
+    <%= text_field_tag :user_id , "" , :class=>"complete title"%>
     <%= hidden_field_tag :associatable_user_id , nil , :class=>"associate" %>
     Or <%= check_box_tag :list_all_users%><%=label_tag "List all" %>
    </div>
@@ -133,7 +128,7 @@ $(function(){
 
    <%=  select_tag :code_type , options_for_select( {"..Type .."=>"","OneTime Use"=>0, "MultipleTimes Use"=>1 },params[:code_type].to_s),:class=>"efilter filter" %>
     Or <%= check_box_tag :list_all_engagements%><%=label_tag "List all" %>
-   </div>    
+   </div>
  <!--<%= submit_tag "Export to template" %>-->
   <% end %>
 </fieldset>
@@ -143,7 +138,7 @@ $(function(){
   <%= will_paginate @qr_codes %>
 <br/>
 <% unless @users_listing %>
-<table cellpadding="0" cellspacing="0">
+<table class="mono-table" cellpadding="0" cellspacing="0">
   <tr>
     <th>Code</th>
     <th>Associated to</th>
@@ -155,8 +150,6 @@ $(function(){
     <th>Business</th>
     <th>Brand</th>
     <th>Issue Date</th>
-    <th></th>
-    <th></th>
     <th></th>
   </tr>
 
@@ -170,7 +163,7 @@ $(function(){
         <%= qr_code.engagement.name %>
       <% end %>
     </td>
-    <td><%= qr_code.hash_code %></td>
+    <td><%= link_to qr_code.hash_code , qr_code  %></td>
     <td><%= image_tag qr_code.status ?  "on.png" : "off.png" %></td>
     <td>
       <% if (qr_code.code_type) %>
@@ -198,14 +191,15 @@ $(function(){
       <td>
         <%= qr_code.created_at.to_formatted_s(:long) %>
       </td>
-    <td><%= link_to 'View', qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
+      <td class="less_fat">
+        <%= link_to 'Edit', edit_qr_code_path(qr_code) ,:class=>"button" %>
+        <%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %>
+      </td>
   </tr>
 <% end %>
 </table>
 <%else%>
-<table cellpadding="0" cellspacing="0">
+<table class="mono-table" cellpadding="0" cellspacing="0">
   <tr>
     <th>Code</th>
     <th>Associated to</th>
@@ -232,9 +226,9 @@ $(function(){
       <% end %>
     </td>
     <td><%= qr_code.created_at.to_formatted_s(:long) %></td>
-    <td><%= link_to 'View', qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Edit', edit_qr_code_path(qr_code) %></td>
-    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'View', qr_code_path(qr_code) ,     :class=>"button"%></td>
+    <td><%= link_to 'Edit', edit_qr_code_path(qr_code), :class=>"button" %></td>
+    <td><%= link_to 'Destroy', qr_code , :confirm => 'Are you sure?', :method => :delete , :class=>"button negative" %></td>
   </tr>
 <% end %>
 </table>

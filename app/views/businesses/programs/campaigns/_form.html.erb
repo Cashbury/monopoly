@@ -1,16 +1,53 @@
 <script type="text/javascript">
  $(document).ready(function(){ 
   $("#measurement_type_selection").change(function () {
-      other_option = $(":selected", this).text();
-      if(other_option == "Other")
-        $('#new_measurement_type_div').show();
-      else
-        $('#new_measurement_type_div').hide();
+    other_option = $(":selected", this).text();
+    if(other_option == "Other")
+      $('#new_measurement_type_div').show();
+    else
+      $('#new_measurement_type_div').hide();
   });
+
+  $("#campaign_is_fb_enabled").click(function(e){
+    var $cb = $(this);
+    if($cb.is(":checked")){
+      update_fb_msg();
+      enable_fields();
+    }else{
+    //engagement_type =jQuery("#engagement_type_id").val();
+      disable_fields();
+    }
+  });
+
+  $("#engagement_amount").blur(update_fb_msg);
+
+  update_fb_msg();
+
+  <% unless @campaign.is_fb_enabled? %>
+    disable_fields();
+  <% end %>
 });
+function enable_fields(){
+  $("#engagement_amount").attr("disabled",false).css({background:""});
+  $("#fb_share_msg").attr("disabled", false ).css({background: ""});
+}
+
+function disable_fields(){
+  $("#engagement_amount").attr("disabled",true).css({background:"#ccc"});
+  $("#fb_share_msg").attr("disabled", true ).css({background:"#ccc"});
+}
+
+function update_fb_msg(){
+  var amount = $("#engagement_amount").val();
+  if(amount =="") {
+    amount=1;
+    $("#engagement_amount").val(1);
+  }
+  $("#fb_share_msg").val("share on Facebook and earn +"+amount+" point(s)");
+}
 </script>
 
-<%= form_for([@business,@program,@campaign]) do |f| %>
+<%= form_for([@business,@program,@campaign], :html=>{:class=>"mono-form"}) do |f| %>
   <% if @campaign.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this campaign from being saved:</h2>
@@ -32,15 +69,15 @@
   </div>
   <div class="field">
     <%= f.label "Name #{mark_required(@campaign, :name)}" %>
-    <%= f.text_field :name %>
+    <%= f.text_field :name, :class=>"title" %>
   </div>
   <div class="field">
     <%= f.label :start_date %>
-    <%= f.text_field :start_date, :value=>Date.today, :id=>"datepicker" %>
+    <%= f.text_field :start_date, :value=>Date.today, :class=>"datepicker" %>
   </div>
   <div class="field">
     <%= f.label :end_date %>
-    <%= f.text_field :end_date, {:id=>"datepicker"} %>
+    <%= f.text_field :end_date, {:class=>"datepicker"} %>
   </div>
   <div class="field">
     <%= f.label "Measurement type #{mark_required(@campaign, :measurement_type_id)}" %>
@@ -59,6 +96,25 @@
   <div class="field">
     <%= f.label :initial_biz_amount %>
     <%= f.text_field :initial_biz_amount %>
+  </div><br />
+  <div class="field">
+    <fieldset>
+      <legend>Facebook Sharing Engagement</legend>
+      <%= f.check_box :is_fb_enabled , :class=>"left" %>
+      <%= f.label :is_fb_enabled, "Enable Facebook sharing engagment", :id=>"is_fb_enabled", :class=>"left" , :style=>"width:300px"%>
+      <div id="fb_settings">
+        <% f.fields_for :engagements do |engagement| %>
+          <% if  engagement.object.engagement_type_id ==4  %>
+            <%= engagement.hidden_field :name , :value=>"Share " %><br/>
+            <%= engagement.label :amount , "Earn points by sharing" %>
+            <%= engagement.text_field :amount  , :id=> "engagement_amount" , :class=>"title"%>
+            <%= engagement.label :fb_engagement_msg , "Message prompt displayed on the reciept of the user" %>
+            <%= engagement.text_field :fb_engagement_msg , :id=>"fb_share_msg" , :class=>"title" %>
+            <%= engagement.hidden_field :engagement_type_id , :value=>EngagementType.share_id.to_s, :id=>"engagement_type_id" %>
+          <% end %>
+        <% end %>
+      </div>
+    </fieldset>
   </div>
   <div class="field">
      <fieldset>

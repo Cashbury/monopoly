@@ -1,5 +1,26 @@
-<p id="notice"><%= notice %></p>
 
+<p>
+  Name:  <%= @city.name %>
+</p>
+<p>
+  Country:<%= @city.country.try :name %>
+</p>
+<p>
+  Area code:<%= @city.phone_area_code %>
+</p>
+<p>
+  TimeZone:<%= @city.time_zone %>
+</p>
+<p>
+  <%=raw live?(@city) %>
+</p>
+<p>
+  Votes count :<%= @city.flaggings.count %>
+</p>
 
+<%= image_tag "countries/#{@city.country.try(:iso2).to_s.downcase}.png" %><br/>
+<img src="http://maps.googleapis.com/maps/api/staticmap?zoom=12&size=400x400&maptype=roadmap
+&markers=color:red%7Clabel:S%7C<%=@city.lat%>,<%=@city.lng %>&sensor=true">
+<p>
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>

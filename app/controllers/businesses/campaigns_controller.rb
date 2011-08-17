@@ -1,17 +1,17 @@
 class Businesses::CampaignsController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_business#, :except=>[:select_partial]
-  
+
   def index
     program_type=ProgramType.find_or_create_by_name("Marketing")
     program=Program.where(:business_id=>@business.id,:program_type_id=>program_type.id).first
     @campaigns=program.nil? ? [] : program.campaigns.select {|c| c.ctype==Campaign::CTYPE[:spend] || (c.engagements.size==1 && c.rewards.size==1)}
-    
+
     respond_to do |format|
       format.html
     end
   end
-  
+
   def new
     @campaign=Campaign.new
     @campaign.engagements.build
@@ -24,18 +24,20 @@ class Businesses::CampaignsController < ApplicationController
     @program     =Program.find_or_create_by_business_id_and_program_type_id(:business_id=>@business.id,:program_type_id=>@program_type.id)
     eng_attrs    =params[:campaign][:engagements_attributes]["0"]
     reward_attrs =params[:campaign][:rewards_attributes]["0"]
+
+
     params[:campaign][:engagements_attributes]["0"]["name"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]}"
     params[:campaign][:engagements_attributes]["0"]["description"]="#{params[:item_name]!="" ? 'Buy' : EngagementType.find(eng_attrs[:engagement_type_id]).try(:name)} #{params[:item_name]} #{reward_attrs[:needed_amount]} times, Get a free #{reward_attrs[:name]}"
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
-    end 
+    end
     @campaign    =@program.campaigns.build(params[:campaign])
     if params[:target_id].present?
       @campaign.has_target=true
-      @campaign.targets << Target.find(params[:target_id])   
+      @campaign.targets << Target.find(params[:target_id])
     end
     eng_type =EngagementType.find(eng_attrs[:engagement_type_id])
-    if eng_type.eng_type==EngagementType::ENG_TYPE[:buy] 
+    if eng_type.eng_type==EngagementType::ENG_TYPE[:buy]
       @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"#{params[:item_name].try(:capitalize)} points",:business_id=>@business.id)
     elsif eng_type.eng_type==EngagementType::ENG_TYPE[:visit]
       @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>"Visit points",:business_id=>@business.id)
@@ -44,13 +46,15 @@ class Businesses::CampaignsController < ApplicationController
     end
     @campaign.name="#{reward_attrs[:name].capitalize} Campaign"
     respond_to do |format|
-      if @campaign.save!    
-        format.html { 
+      if @campaign.save!
+        format.html {
           @reward=@campaign.rewards.first
+          #save_share_engagement(params[:share])
+
           if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.need_cropping
-            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.') 
+            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully created.')
           else
-            render :action => 'crop'  
+            render :action => 'crop'
           end
         }
       else
@@ -74,21 +78,23 @@ class Businesses::CampaignsController < ApplicationController
       format.html
     end
   end
-  
+
   def edit
     @campaign  = Campaign.find(params[:id])
     @engagement=@campaign.engagements.first
     @reward    =@campaign.rewards.first
     @reward.build_reward_image unless @reward.reward_image.present?
-    @item_name =@engagement.name.gsub(/Buy\s+/,'') 
+    @item_name =@engagement.name.gsub(/Buy\s+/,'')
+    #@share_engagement = @campaign.engagements.where(:engagement_type_id=>4).first
   end
-  
+
   def update
     @campaign = Campaign.find(params[:id])
+
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
     if params[:campaign][:start_date]=="" || (params[:campaign][:start_date]=="" and params[:launch_today]=="1")
       params[:campaign][:start_date]=Date.today.to_s
-    end 
+    end
     eng_attrs=params[:campaign][:engagements_attributes]["0"]
     reward_attrs=params[:campaign][:rewards_attributes]["0"]
     @campaign.name="#{reward_attrs[:name].capitalize} Campaign"
@@ -99,7 +105,7 @@ class Businesses::CampaignsController < ApplicationController
       else
         @campaign.targets << Target.find(params[:target_id])
       end
-    else    
+    else
       @campaign.targets.delete_all
       @campaign.has_target=false
     end
@@ -116,11 +122,12 @@ class Businesses::CampaignsController < ApplicationController
     respond_to do |format|
       if @campaign.update_attributes!(params[:campaign])
         format.html {
+          #save_share_engagement(params[:share])
           @reward=@campaign.rewards.first
           if reward_attrs[:reward_image_attributes].blank? || !@reward.reward_image.needed_cropping?
-            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
+            redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.')
           else
-            render :action => 'crop'  
+            render :action => 'crop'
           end
         }
       else
@@ -141,10 +148,10 @@ class Businesses::CampaignsController < ApplicationController
     @campaign=Campaign.find(params[:campaign_id])
     @reward=Reward.find(params[:reward_id])
     if @reward.update_attributes!(params[:reward])
-      redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.') 
-    else    
+      redirect_to(business_campaign_path(@business,@campaign), :notice => 'Campaign was successfully updated.')
+    else
       render :action=>"crop"
-    end    
+    end
   end
   def destroy
     @campaign = Campaign.find(params[:id])
@@ -154,7 +161,7 @@ class Businesses::CampaignsController < ApplicationController
       format.html { redirect_to(business_campaigns_url(@business)) }
     end
   end
-  
+
   #def select_partial
   #  engagement_type=EngagementType.find(params[:eng_type])
   #  if engagement_type.eng_type==EngagementType::ENG_TYPE[:buy]
@@ -165,8 +172,17 @@ class Businesses::CampaignsController < ApplicationController
   #    render :partial=>"spend_formula"
   #  end
   #end
-  
-  private 
+
+  private
+  def save_share_engagement(share)
+    if share[:id].blank?
+      share = share.delete_if {|n| n=="id"}
+      @share_engagement= @campaign.engagements.create!(share)
+    else
+      @share_engagement = Engagement.find(share[:id])
+      @share_engagement.update_attributes!(:amount=>share[:amount], :fb_engagement_msg=>share[:fb_engagement_msg])
+    end
+  end
   def prepare_business
     @business = Business.find(params[:business_id])
   end

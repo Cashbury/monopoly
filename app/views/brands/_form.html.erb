@@ -21,7 +21,7 @@
   </p>
   <br />
   <%unless @brand.brand_image.nil? || @brand.brand_image.new_record? %>
-  <div class="field">
+  <div>
     <%= f.label :image %>
     <%= image_tag @brand.brand_image.photo.url(:normal) %>
   </div>
