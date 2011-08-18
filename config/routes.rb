@@ -40,7 +40,10 @@ Kazdoor::Application.routes.draw do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection
 		end
 		resources :places
-		resources :receipts
+		resources :receipts do
+      get  '/receipts-customer.:format', :action=>:list_receipts_history, :on=>:collection
+      get  '/pending-receipts.:format', :action=> :index, :on=>:collection
+    end
 		resources :rewards do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
