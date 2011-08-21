@@ -269,7 +269,7 @@ class User < ActiveRecord::Base
                   :lng            =>lng,
                   :created_on     =>date,
                   :issued_by      =>issued_by)
-      {:log_group=>log_group,:user_account=>user_account,:campaign=>campaign, :program=>campaign.program, :after_fees_amount=> after_fees_amount, :transaction=> transaction, :place_id=> place_id}
+      {:log_group=>log_group,:user_account=>user_account,:campaign=>campaign, :program=>campaign.program, :after_fees_amount=> after_fees_amount, :transaction=> transaction, :place_id=> place_id, :frequency=>freq}
     end  
   end
   
@@ -414,11 +414,11 @@ class User < ActiveRecord::Base
         .where("logs.transaction_id = receipts.transaction_id")
   end
   
-  def list_cashier_receipts
+  def list_cashier_receipts(collected_dates)
     Receipt.joins([:transaction,:log_group=>[:logs=>[[:business=>:brand],:user, [:campaign=>:engagements]]]])
            .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
            .select("users.id as customer_id, businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
-           .where("receipts.created_at #{(2.days.ago.utc...Time.now.utc).to_s(:db)} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
+           .where("Date(receipts.created_at) IN #{collected_dates} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
   end
 
   def engaged(engagement)
@@ -438,5 +438,26 @@ class User < ActiveRecord::Base
     self.sign_up_count +=1
     self.save!
   end
-
+  
+  def all_transactions(options)
+    filters = []
+    params  = []
+    #filters << "businesses.id = ?"             and @params << options[:business_id] unless options[:business_id].nil?
+    #filters << "places.id = ?"                 and @params << options[:place_id]    unless options[:place_id].nil?
+    if !options[:from_date].nil? and !options[:to_date].nil?
+      filters << "Date(logs.created_at) >= ?"  and params << options[:from_date]
+      filters << "Date(logs.created_at) <= ?"  and params << options[:to_date]
+    elsif options[:from_date]
+      filters << "Date(logs.created_at) = ?"  and params << options[:from_date]
+    elsif options[:to_date]
+      filters << "Date(logs.created_at) = ?"  and params << options[:to_date]
+    end
+    params.insert(0, filters.join(" AND ")) 
+    self.logs.joins(:transaction)
+             .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id LEFT OUTER JOIN users ON logs.issued_by=users.id LEFT OUTER JOIN qr_codes ON logs.qr_code_id=qr_codes.id")             
+             .select("businesses.id as business_id, logs.issued_by as issued_by, logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, CONCAT(users.first_name,' ', users.last_name) as scanned_by, logs.gained_amount, users.id as user_id")
+             .order("logs.created_at DESC")  
+             .where(params)
+               
+  end
 end

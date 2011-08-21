@@ -441,6 +441,15 @@ class UsersManagementController < ApplicationController
     render :template=>"transactions"
   end
   
+  def aggregate_transactions_report
+    @user = User.find(params[:id])
+    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @from_date=params[:from_date].to_i.zero? ? nil : params[:from_date]
+		@to_date=params[:to_date].to_i.zero? ? nil : params[:to_date]
+    @all_transactions= @user.all_transactions(:from_date=>@from_date, :to_date=>@to_date)
+                            .paginate(:page => @page,:per_page =>@@per_page )
+  end
+  
   def check_txs_updates
     @qr_code= QrCode.find(params[:qr_code_id])
     @latest_transactions= Log.latest_qrcode_transactions(@qr_code.id)

@@ -56,16 +56,16 @@
     </div>
     <div class="face_book_message">
       <div class="row">
+        <%= engagement.label "When user makes an engagement" %><br />
+        <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 540px;" %>
+      </div>
+      <div class="row">
         <%= reward.label "When user unlocks a reward" %><br />
         <%= reward.text_field :fb_unlock_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_unlock_msg", :style=>"width: 540px;" %>
       </div>
       <div class="row">
         <%= reward.label "When user enjoys a reward" %><br />
         <%= reward.text_field :fb_enjoy_msg, :class=>"basic_info_input", :maxlength=>100, :id=>"fb_enjoy_msg", :style=>"width: 540px;" %>
-      </div>
-      <div class="row">
-        <%= engagement.label "When user makes an engagement" %><br />
-        <%= engagement.text_field :fb_engagement_msg, :class=>"basic_info_input", :maxlength=>150, :id=>"fb_engagement_msg", :style=>"width: 540px;" %>
       </div>
     </div>
   </fieldset>

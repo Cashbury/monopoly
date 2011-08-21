@@ -44,7 +44,8 @@ class Campaign < ActiveRecord::Base
 	CTYPE={
 	  :spend=>1,
 	  :share=>2,
-	  :other=>3
+	  :buy=>3,
+	  :visit=>4
 	}
 	
 	def validate
@@ -59,6 +60,10 @@ class Campaign < ActiveRecord::Base
   
 	def spend_campaign?
 	  self.ctype==CTYPE[:spend]
+  end
+  
+  def buy_campaign?
+    self.ctype==CTYPE[:buy]
   end
   
 	def is_running?

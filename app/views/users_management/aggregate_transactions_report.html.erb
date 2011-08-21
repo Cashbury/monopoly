@@ -1,0 +1,110 @@
+<% title "Transactions History for #{@user.full_name}" %>
+<% content_for(:head) do %>
+<style type="text/css" media="screen">
+  .tmp_link{ background: url("/images/tmp_link.png") no-repeat scroll 0 0 transparent;height:52px;width:52px;float:left;text-indent: -10000px;}
+  .tmp_link:hover{background: url("/images/tmp_link_hover.png") no-repeat scroll 0 0 transparent;}
+  .tmp_link.selected{background: url("/images/tmp_link_hover.png") no-repeat scroll 0 0 transparent;}
+</style>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script>
+$(document).ready(function () {
+  var map;
+  var marker;
+  $('.tmp_link').live("click",function(){
+    var canvas=$(this).closest(".tx_row").next().children().find(".map_canvas");
+    elements = $('.map_canvas');
+    elements.each(function(index, domEle) {
+      if($(domEle).get(0) != canvas.get(0)){
+        $(domEle).hide();
+        $(domEle).closest("td").replaceWith("<td colspan=7><div class=\"map_canvas\" style=\"width:1000px; height:300px; display:none\"></div></td>");
+      }
+    });
+    if (canvas.is(":hidden")){
+      canvas.toggle();
+      var lat=$(this).siblings(".lat").val();
+      var lng=$(this).siblings(".lng").val();
+      var geocoder = new google.maps.Geocoder();
+      var latlng = new google.maps.LatLng(lat, lng);
+      var myOptions = {
+        zoom: 20,
+        center: latlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      }
+      map = new google.maps.Map(canvas.get(0), myOptions);
+      marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        title: "Coordinates: " + lat + " , " + lng
+      });
+      var infowindow = new google.maps.InfoWindow();
+      google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent("Coordinates: " + lat + " , " + lng);
+        infowindow.open(map, this);
+      });
+    }else{canvas.toggle();}
+  });
+});
+var submitUserTransactionsSearch = function(form,page){
+	fromDate  = ($('#filters_from_date').val()=="") ? 0 : $('#filters_from_date').val();
+	toDate    = ($('#filters_to_date').val()=="")? 0 : $('#filters_to_date').val();
+	window.location = "/users_management/" + <%=@user.id%> + "/transactions_report?from_date=" + fromDate + "&to_date="+ toDate;
+}
+</script>
+<%end%>
+<%= field_set_tag do %>
+	<legend>Filter By</legend>
+	<form id="filter_form">
+		<p><label style="margin:10px;">From Date</label><%= text_field_tag "filters_from_date", @from_date, :class=>"datepicker" %></p>
+    <p><label style="margin:10px;">To Date</label><%= text_field_tag "filters_to_date", @to_date, :class=>"datepicker" %> </p>
+		<p><a href="javascript:void(0)" onclick="submitUserTransactionsSearch($('#filter_form'), 1)" class="button" style="float:right">Filter</a></p>
+	</form>
+<%end%>
+<h3><strong>Total: <strong class="total_entries"><%=@all_transactions.total_entries%></strong></strong></h3>    
+<br />
+  <%= will_paginate @all_transactions %>
+<br/>
+<%=link_to "Back", users_management_path(@user)%>
+<br/>
+<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <th colspan=2>How</th>
+    <th>What</th>
+    <th>When</th>
+    <th>Where</th>
+    <th>Scanned by</th>
+    <th>View Tx Details</th>
+  </tr>
+  <% @all_transactions.each do |transaction| %>
+      <tr class="tx_row">    
+        <% qr_code=QrCode.where(:id=>transaction.qr_code_id).first %>
+        <% if qr_code.present? %>
+        <td><%= qr_code.associatable == @user ? "Used Digital ID" : "Scanned Code"%></td>
+        <td><%= link_to (image_tag qr_code.qr_image, :width=>"50px", :height=>"50px"), qr_code_path(qr_code)  %></td>
+        <%else%>
+        <td></td>
+        <td></td>
+        <%end%>
+        <td>Earned <%= transaction.gained_amount%> points @ <%=transaction.bname%></td>
+        <td><%= "Scanned on #{transaction.created_at.strftime("%b %d , %Y")} @ #{transaction.created_at.strftime("%I:%M %p")}"  %></td>
+        <td>
+          <%=link_to "tmp_link", "javascript:void(0)", :class=>"tmp_link"%>
+          <%=hidden_field_tag :lng, transaction.lng , {:class=>"lng"} %>
+          <%=hidden_field_tag :lat, transaction.lat , {:class=>"lat"} %>
+        </td>
+        <td>
+          Scanned by <%=link_to "#{transaction.scanned_by}",  users_management_path(transaction.user_id)%> 
+          <% user=User.find(transaction.user_id) %>
+          <% if qr_code.present? and qr_code.associatable == @user %>
+          <p style="margin-top:5px;"><%="Cashier @ "%><%= link_to transaction.bname, business_path(transaction.business_id) %></p>
+          <%else%>
+          <p style="margin-top:5px;"><%="@ "%><%= link_to transaction.bname, business_path(transaction.business_id) %></p>
+          <%end%>
+        </td>
+        <td><%= link_to "View details", view_tx_details_users_management_path(@user,transaction.log_id) %></td>
+      </tr>
+      <tr><td colspan=7><div class="map_canvas" style="width:1000px; height:300px; display:none"></div></td></tr>
+  <% end %>
+ </table>
+<br />
+  <%= will_paginate @all_transactions %>
+<br/>

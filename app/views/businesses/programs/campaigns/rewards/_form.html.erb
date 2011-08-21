@@ -103,8 +103,8 @@ $(function(){
   <fieldset>
     <legend>Settings</legend>
     <div class="row">  
-         <div class="basic_info_caption1">Item</div>
-         <%= select_tag "item_id", "<option value=''>...None...</option>".html_safe+ options_from_collection_for_select(@items , :id, :name, @reward.try(:items).try(:first).try(:id)) %><br /> 
+      <div class="basic_info_caption1">Item</div>
+      <%= select_tag "item_id", "<option value=''>...None...</option>".html_safe+ options_from_collection_for_select(@items , :id, :name, @reward.try(:items).try(:first).try(:id)) %><br /> 
     </div>
     <div class="row">
       <div class="basic_info_caption1">Sales Price</div>

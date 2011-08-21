@@ -26,13 +26,24 @@ class Users::CashiersController < Users::BaseController
         user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         #Loyalty collect campaigns
         result={}
+        engagements=[]
         unless params[:engagements].blank?
           params[:engagements].each do |record| 
             if record.present?
               records= record.split(',')
               engagement_id= records.first;quantity=records.second
               engagement= Engagement.find(engagement_id)
-              result= user.engaged_with(engagement,engagement.amount,nil,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
+              result= user.engaged_with(engagement,engagement.amount,qr_code,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
+              engagement_data={:current_balance=>result[:user_account].amount, :campaign_id=> result[:campaign].id, :amount=> result[:after_fees_amount], :title=> engagement.name, :quantity=> result[:frequency] }
+              engagements.map!{ |x| 
+                if x[:campaign_id]==result[:campaign].id
+                  x[:current_balance]=result[:user_account].amount
+                  x
+                else
+                  x
+                end
+              }
+              engagements << engagement_data
             end
           end
         end
@@ -50,6 +61,7 @@ class Users::CashiersController < Users::BaseController
 		    s.merge!({:customer_type      => user_type})
 		    user_uid=user.email.split("@facebook").first
         s.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
+        s.merge!({:engagements        =>engagements})
         respond_to do |format|     
           format.xml {render :xml => s , :status => 200}
         end
@@ -82,8 +94,11 @@ class Users::CashiersController < Users::BaseController
   end
   
   def list_receipts_history
-    @all_receipts=current_user.list_cashier_receipts
-    @dates=[2.days.ago.to_date, 1.days.ago.to_date, Date.today]
+    required_dates= Receipt.select("DISTINCT Date(created_at) as date").order("created_at DESC").limit(params[:no_of_days].to_i)
+    @required_dates_array=required_dates.collect{|d| "'#{d.date.to_s(:db)}'"}
+    collected_dates= "("+@required_dates_array.join(',')+")"
+    @all_receipts=current_user.list_cashier_receipts(collected_dates)
+    
     respond_to do |format|
       format.xml {}
     end

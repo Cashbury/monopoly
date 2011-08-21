@@ -9,7 +9,7 @@
       }
   });
 
-  $('#engagement_type_selection_list,#item_selection_list').blur(function(){
+  $('#engagement_type_selection_list, #item_selection_list, #engagement_name').blur(function(){
     var offer_type=$("#engagement_type_selection_list :selected").text().toLowerCase();
     var item_name=$("#item_selection_list :selected").text();
     var no_of_times=($("#needed_amount_id")[0]==null) ? 1 : $("#needed_amount_id")[0].val();
@@ -18,10 +18,8 @@
       hide_non_buy_elements();
       $("#fb_engagement_msg").val("enjoyed a/an "+item_name+" @ "+brand_name+" and scored "+no_of_times+" point(s) by going out with Cashbury");        
     }else if (offer_type.match(/visit/)!=null){
-      hide_non_buy_elements();
       $("#fb_engagement_msg").val("received a visit stamp and scored "+no_of_times+" point(s) @ "+brand_name+" by going out with Cashbury");         
     }else if (offer_type.match(/spend/)!=null) {
-      hide_non_buy_elements();
       $("#fb_engagement_msg").val("earned {spend} points @ "+brand_name+" when the engagement is completed.");               
     }else if(offer_type.match(/[S|s]hare/)){
       hide_non_share_elements(no_of_times)
@@ -56,12 +54,12 @@
   <%=hidden_field_tag :brand_name,@business.try(:brand).try(:name), :id=>"brand_name_id"%>
   <p>
     <%= f.label :name %><br />
-    <%= f.text_field :name , :class=>"title" %>
+    <%= f.text_field :name , :class=>"title", :id=>"engagement_name" %>
   </p>
 
   <p>
     <%= f.label :engagement_type_id, "Engagement Type" %><br />
-    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {:selected => @campaign.spend_campaign? ? EngagementType.where(:eng_type=>EngagementType::ENG_TYPE[:spend]).first.try(:id) : ""}, {:id=>"engagement_type_selection_list"}%>
+    <%= f.select :engagement_type_id, @engagement_types.collect {|et| [et.name, et.id]} , {:selected => EngagementType.where(:eng_type=>EngagementType::ENG_TYPE[Campaign::CTYPE.key(@campaign.ctype)]).first.try(:id)}, {:id=>"engagement_type_selection_list"}%>
   </p>
   <%unless @campaign.spend_campaign? %>
   <p id="item_div">
@@ -73,15 +71,15 @@
     <%= f.label :description %><br />
     <%= f.text_area :description %>
   </p>
-  <%if  @campaign.measurement_type.business.nil?%>
+  <%if @campaign.spend_campaign? %>
+    <p>
+      <%= f.label "Setting The rule" %><br />
+    1 <%=@business.currency_symbol %>=<%= f.text_field :amount,:value=>"1",  :class=>"title", :style=>"width:40px;"%> points
+    </p>
+  <%elsif  @campaign.measurement_type.business.nil?%>
     <p>
       <%= f.label :amount %><br />
       <%= f.text_field :amount, :value=>"1", :id=>"needed_amount_id",  :class=>"title"%>
-    </p>
-  <%elsif @campaign.spend_campaign? %>
-    <p>
-      <%= f.label "Setting The rule" %><br />
-    1 <%=@business.currency_code %>=<%= f.text_field :amount,:value=>"1"%> points
     </p>
   <%end%>
   <p>

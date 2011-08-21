@@ -15,7 +15,13 @@ class Engagement < ActiveRecord::Base
   validates_presence_of :engagement_type_id, :amount#, :fb_engagement_msg
   #validates_presence_of :item_id, :if=>Proc.new{|eng| eng.engagement_type.eng_type==EngagementType::ENG_TYPE[:buy]}
   validates_numericality_of :amount
-
+  
+  def validate
+    if self.new_record? and self.engagement_type_id== EngagementType.where(:name=>"spend").first.try(:id) and self.campaign.present? and self.campaign.engagements.any? 
+      errors.add_to_base "There is an already created Spend Engagement under this Campaign"
+    end
+  end
+  
   def engagement_types
     ["check-in", QrCode::STAMP , "question", "spend"]
   end

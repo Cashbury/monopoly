@@ -185,6 +185,7 @@ Kazdoor::Application.routes.draw do
     get  "all_qr_codes_transactions",:action=>:all_qr_codes_transactions, :on=>:member, :as=>"all_qr_codes_transactions"
     get  "view_tx_details/log/:log_id", :action=>:view_tx_details, :on=>:member, :as=>"view_tx_details"
     get  "check_txs_updates/:qr_code_id", :action=> :check_txs_updates, :on=>:member, :as=>"check_txs_updates"
+    get  "transactions_report", :action=> :aggregate_transactions_report, :on=>:member, :as=>"aggregate_transactions_report"
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}

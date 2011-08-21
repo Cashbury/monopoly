@@ -1,9 +1,9 @@
 xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8" 
 xml.cashier_receipts do
-  @dates.each do |date|
+  @required_dates_array.each do |date|
     xml.day do
       xml.date date
-      sub_receipts=@all_receipts.select {|r| r.date_time.to_date == date}
+      sub_receipts=@all_receipts.select {|r| r.date_time.to_date == date.to_date}
       xml.receipts do
         sub_receipts.each do |receipt|
           xml.receipt do
