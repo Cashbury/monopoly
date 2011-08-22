@@ -444,6 +444,7 @@ class UsersManagementController < ApplicationController
   def aggregate_transactions_report
     @user = User.find(params[:id])
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @business_id = params[:business_id].to_i.zero? ? nil : params[:business_id].to_i
     @from_date=params[:from_date].to_i.zero? ? nil : params[:from_date]
 		@to_date=params[:to_date].to_i.zero? ? nil : params[:to_date]
     @all_transactions= @user.all_transactions(:from_date=>@from_date, :to_date=>@to_date)

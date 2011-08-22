@@ -56,6 +56,7 @@ var submitUserTransactionsSearch = function(form,page){
 	<form id="filter_form">
 		<p><label style="margin:10px;">From Date</label><%= text_field_tag "filters_from_date", @from_date, :class=>"datepicker" %></p>
     <p><label style="margin:10px;">To Date</label><%= text_field_tag "filters_to_date", @to_date, :class=>"datepicker" %> </p>
+    <p><label style="margin:10px;">Business</label><%= select_tag "filters_business_id", options_for_select(Business.all.collect {|b| [ b.name, b.id ] },@business_id),{:include_blank=>true} %></p>
 		<p><a href="javascript:void(0)" onclick="submitUserTransactionsSearch($('#filter_form'), 1)" class="button" style="float:right">Filter</a></p>
 	</form>
 <%end%>

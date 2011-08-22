@@ -442,7 +442,7 @@ class User < ActiveRecord::Base
   def all_transactions(options)
     filters = []
     params  = []
-    #filters << "businesses.id = ?"             and @params << options[:business_id] unless options[:business_id].nil?
+    filters << "businesses.id = ?"             and params << options[:business_id] unless options[:business_id].nil?
     #filters << "places.id = ?"                 and @params << options[:place_id]    unless options[:place_id].nil?
     if !options[:from_date].nil? and !options[:to_date].nil?
       filters << "Date(logs.created_at) >= ?"  and params << options[:from_date]

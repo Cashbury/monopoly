@@ -128,9 +128,12 @@ class Reward < ActiveRecord::Base
   def is_unlocked?(user)
     self.campaign.user_account(user).amount >= self.needed_amount
   end
+  
   def money_amount
-    "%0.2f" % self[:money_amount]
+    #"%0.2f" % self[:money_amount]
+    self[:money_amount].round(2) if self[:money_amount].present?
   end
+  
   def is_available_to?(user)
     eng=self.campaign.engagements.first
     (eng.end_date.nil? and self.expiry_date.nil?) || (eng.end_date.present? and Date.today <= eng.end_date.to_date) || (self.expiry_date.present? and Date.today <= self.expiry_date.to_date and is_unlocked?(user))
