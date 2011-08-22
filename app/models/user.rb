@@ -439,25 +439,35 @@ class User < ActiveRecord::Base
     self.save!
   end
   
+  ALL=3
+  USER_IDS_BASED=1
+  NON_USER_IDS_BASED=2
+  
   def all_transactions(options)
     filters = []
     params  = []
     filters << "businesses.id = ?"             and params << options[:business_id] unless options[:business_id].nil?
-    #filters << "places.id = ?"                 and @params << options[:place_id]    unless options[:place_id].nil?
     if !options[:from_date].nil? and !options[:to_date].nil?
       filters << "Date(logs.created_at) >= ?"  and params << options[:from_date]
       filters << "Date(logs.created_at) <= ?"  and params << options[:to_date]
     elsif options[:from_date]
-      filters << "Date(logs.created_at) = ?"  and params << options[:from_date]
+      filters << "Date(logs.created_at) >= ?"   and params << options[:from_date]
     elsif options[:to_date]
-      filters << "Date(logs.created_at) = ?"  and params << options[:to_date]
+      filters << "Date(logs.created_at) <= ?"   and params << options[:to_date]
     end
     params.insert(0, filters.join(" AND ")) 
+    conditions=""
+    if options[:filters]==USER_IDS_BASED
+      conditions = "qr_codes.associatable_type = 'User'"
+    elsif options[:filters]==NON_USER_IDS_BASED
+      conditions = "qr_codes.associatable_type != 'User'"
+    end
     self.logs.joins(:transaction)
-             .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id LEFT OUTER JOIN users ON logs.issued_by=users.id LEFT OUTER JOIN qr_codes ON logs.qr_code_id=qr_codes.id")             
+             .joins("LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN businesses ON businesses.id=logs.business_id LEFT OUTER JOIN users ON logs.issued_by=users.id INNER JOIN qr_codes ON logs.qr_code_id=qr_codes.id")             
              .select("businesses.id as business_id, logs.issued_by as issued_by, logs.lat, logs.lng, logs.id as log_id, qr_codes.id as qr_code_id, qr_codes.hash_code, logs.created_at, businesses.name as bname, places.name as pname, CONCAT(users.first_name,' ', users.last_name) as scanned_by, logs.gained_amount, users.id as user_id")
              .order("logs.created_at DESC")  
              .where(params)
+             .where(conditions)
                
   end
 end

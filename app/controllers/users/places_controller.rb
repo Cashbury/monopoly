@@ -23,7 +23,7 @@ class Users::PlacesController < Users::BaseController
                                   .order("distance ASC") if @places.empty?
       is_my_city=!city.nil?
     else #default is San Fransisco all places
-      city   =City.find_by_name("San Francisco")
+      city   =City.default.first
       @places=Place.with_address.where("cities.id=#{city.id}").order("places.name ASC")
     end
     unless params[:keywords].blank?
