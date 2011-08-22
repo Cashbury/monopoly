@@ -5,8 +5,15 @@ class Users::CashiersController < Users::BaseController
       cashier_role = Role.find_by_name(Role::AS[:cashier])
       employee = Employee.where(:user_id=>current_user.id, :role_id=>cashier_role.id).first
       result={}
-      result["is_cashier"]= employee.present?
-      result["business-id"]= employee.present? ? employee.business_id : nil
+      result["is_cashier"]   = employee.present?
+      if employee.present? 
+        result["business_id"]  = employee.business_id
+        business= employee.business_id.present? ? Business.find(employee.business_id) : nil
+        if business.present?
+          result["flag_url"]     = business.country.present? ? "http://#{request.host_with_port}/images/countries/#{business.country.iso2.to_s.downcase}.png" : nil
+          result["currency_code"]= business.currency_code
+        end
+      end
       respond_to do |format|
         format.xml { render :xml =>result,:status=>200 }
       end
