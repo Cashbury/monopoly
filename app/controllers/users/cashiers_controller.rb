@@ -7,7 +7,7 @@ class Users::CashiersController < Users::BaseController
       result={}
       result["is_cashier"]   = employee.present?
       if employee.present? 
-        result["business_id"]  = employee.business_id
+        result["business_id"]   = employee.business_id
         business= employee.business_id.present? ? Business.find(employee.business_id) : nil
         if business.present?
           result["flag_url"]     = business.country.present? ? "http://#{request.host_with_port}/images/countries/#{business.country.iso2.to_s.downcase}.png" : nil
