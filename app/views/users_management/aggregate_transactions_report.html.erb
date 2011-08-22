@@ -101,7 +101,6 @@ var submitUserTransactionsSearch = function(form,page){
         </td>
         <td>
           Scanned by <%=link_to "#{transaction.scanned_by}",  users_management_path(transaction.user_id)%> 
-          <% user=User.find(transaction.user_id) %>
           <% if qr_code.present? and qr_code.associatable == @user %>
           <p style="margin-top:5px;"><%="Cashier @ "%><%= link_to transaction.bname, business_path(transaction.business_id) %></p>
           <%else%>
