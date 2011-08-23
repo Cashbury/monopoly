@@ -99,6 +99,10 @@ class Business < ActiveRecord::Base
     self.currency_code.present? ? ISO4217::Currency.from_code(self.currency_code).try(:symbol) : "$"
   end
   
+  def country_flag
+    "#{COUNTRIES_FLAGS_PATH}#{self.country.iso2.to_s.downcase}.png" if self.country.present?
+  end
+  
   def list_campaigns
     self.programs
         .joins([:program_type,[:campaigns=>[:accounts=>:account_holder]]])

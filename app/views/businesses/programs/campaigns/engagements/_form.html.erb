@@ -73,8 +73,8 @@
   </p>
   <%if @campaign.spend_campaign? %>
     <p>
-      <%= f.label "Setting The rule" %><br />
-    1 <%=@business.currency_symbol %>=<%= f.text_field :amount,:value=>"1",  :class=>"title", :style=>"width:40px;"%> points
+      <%= f.label "Setting The Exchange Rule" %><br />
+    1 <%=image_tag @business.country_flag %> <%=@business.currency_code%> = <%= f.text_field :amount,:value=>"1",  :class=>"title", :style=>"width:40px;"%> points
     </p>
   <%elsif  @campaign.measurement_type.business.nil?%>
     <p>

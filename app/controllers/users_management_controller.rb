@@ -85,6 +85,8 @@ class UsersManagementController < ApplicationController
       if params[:place_id].present?
         @user.places.delete_all
         @user.places << Place.find(params[:place_id])
+      else
+        @user.places.delete_all
       end
     end
     if params[:user][:mailing_address_attributes].present?      

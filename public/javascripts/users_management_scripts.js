@@ -29,6 +29,8 @@ $(document).ready(function(){
             $('.businesses_list').show();
             $('.places_list').show();
           }else{
+            $('#business_id').val("");
+            $('#place_id').val("");
             $('.businesses_list').hide();
             $('.places_list').hide();
           }
@@ -180,10 +182,12 @@ $(document).ready(function(){
       legal_index=legal_index+1;
     }
   });
+  
   $('.remove_link').live('click',function(){
     $(this).parent('.legals_div').remove();
     legal_index=legal_index-1;
   });
+  
   $("#datepicker").birthdaypicker({
     dateFormat: "bigEndian",
     monthFormat: "long",

@@ -45,8 +45,8 @@ $(document).ready(function(){
   </fieldset>
   <%= f.fields_for :engagements do |engagement| %>
     <fieldset>
-      <legend class="section_title">Setting The rule</legend>
-      1 <%=@business.currency_symbol %>=<%= engagement.text_field :amount,{:value=> @engagement.try(:amount) || 1,:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none"}%> points
+      <legend class="section_title">Setting The Exchange Rule</legend>
+      1 <%=image_tag @business.country_flag %> <%=@business.currency_code%> = <%= engagement.text_field :amount,{:value=> @engagement.try(:amount) || 1,:maxlength=>16,:class=>"basic_info_caption1",:style=>"width:35px;margin:0 0 0;float:none"}%> points
     </fieldset>
     <%= engagement.hidden_field :end_date,{:id=>"engagement_end_date"} %>
     <%= engagement.label "Facebook msg when user makes an engagement" %><br />
