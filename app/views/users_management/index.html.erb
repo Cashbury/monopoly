@@ -1,3 +1,9 @@
+<% content_for(:head) do %>
+<style type="text/css" media="screen">
+.mono-table td,.mono-table th{ padding:7px 5px;}
+table {width: 1031px;}
+</style>
+<% end %>
 <% if params[:title].present? %>
  <% title_txt= "Users- Search - #{params[:title]}"%>
 <%else%>
@@ -16,7 +22,7 @@
 <br />
   <%= will_paginate @users %>
 <br/>
-<table class="mono-table" width="600px"  border="0" cellspacing="0" cellpadding="0">
+<table class="mono-table" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <th>Photo</th>
     <th>Full Name</th>
@@ -30,14 +36,16 @@
     <th>Admin?</th>
     <th>FB status</th>
     <th></th>
+    <th></th>
+    <th></th>
   </tr>
 
 <% @users.each do |user| %>
   <tr>
     <% user_uid=user.email.split("@facebook").first %>
-    <td width="77"><%=image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg" %></td>
-    <td width="100"><%= user.full_name%></td>
-    <td width="120"><%= link_to user.email, users_management_path(user) %></td>
+    <td><%= link_to (image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg"), users_management_path(user) %></td>
+    <td><%= user.full_name%></td>
+    <td><%= user.email %></td>
     <td><%= user.telephone_number %></td>
     <td><%= user.created_at.to_formatted_s(:long)%></td>
     <td><%= user.sign_in_count %></td>
@@ -46,10 +54,9 @@
     <td><%= status_icon user.confirmed_at.nil? %></td>
     <td><%= status_icon user.admin? %></td>
     <td><%= status_icon user.is_fb_enabled %></td>
-    <td class="fat">
-      <%= link_to 'Edit', edit_users_management_path(user) ,:class=>"button"%>
-      <%= link_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete ,:class=>"button negative" %>
-    </td>
+    <td><%= link_to 'Show', users_management_path(user) ,:class=>"button"%></td>
+    <td><%= link_to 'Edit', edit_users_management_path(user) ,:class=>"button"%></td>
+    <td><%= link_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete ,:class=>"button negative" %></td>
   </tr>
 <% end %>
 </table>

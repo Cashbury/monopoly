@@ -101,11 +101,9 @@ class Users::CashiersController < Users::BaseController
   end
   
   def list_receipts_history
-    required_dates= Receipt.select("DISTINCT Date(created_at) as date").order("created_at DESC").limit(params[:no_of_days].to_i)
-    @required_dates_array=required_dates.collect{|d| "'#{d.date.to_s(:db)}'"}
-    collected_dates= "("+@required_dates_array.join(',')+")"
-    @all_receipts=current_user.list_cashier_receipts(collected_dates)
-    
+    @all_receipts=current_user.list_cashier_receipts(params[:no_of_days].to_i)
+    @dates=[Date.today]
+    (1..params[:no_of_days].to_i-1).each{|i| @dates << i.days.ago.to_date}
     respond_to do |format|
       format.xml {}
     end

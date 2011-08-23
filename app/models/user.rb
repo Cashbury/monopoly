@@ -414,13 +414,13 @@ class User < ActiveRecord::Base
         .where("logs.transaction_id = receipts.transaction_id")
   end
   
-  def list_cashier_receipts(collected_dates)
+  def list_cashier_receipts(no_of_days)
     Receipt.joins([:transaction,:log_group=>[:logs=>[[:business=>:brand],:user, [:campaign=>:engagements]]]])
            .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
            .select("users.id as customer_id, businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
-           .where("Date(receipts.created_at) IN #{collected_dates} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
+           .where("receipts.created_at #{((no_of_days-1).days.ago.utc...Time.now.utc).to_s(:db)} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
   end
-
+  
   def engaged(engagement)
     #depending on the type do
   end

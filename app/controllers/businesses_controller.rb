@@ -1,5 +1,5 @@
 class BusinessesController < ApplicationController
-  before_filter :authenticate_user!, :require_admin
+  #before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
   before_filter :prepare_business, :only=> [:show, :edit, :update, :destroy, :list_campaign_transactions, :list_enrolled_customers, :list_all_enrolled_customers ]
   skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
