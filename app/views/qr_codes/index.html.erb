@@ -18,7 +18,9 @@ $(function(){
   $("input.complete").keyup(function(event){
     if(event.keyCode == 13){
       var url = $(this).closest('form').serialize();
-      window.location="/qr_codes?user_id="+$('.associate').val();
+      var searchText=$("#user_id").val();
+      var searchType=$("#column_type").val();
+      window.location="/qr_codes?user_id="+$('.associate').val()+"&search_text="+searchText+"&search_type="+searchType;
     }
   });
   $('select#brand_id').bind('change',function(){
@@ -101,12 +103,8 @@ $(function(){
     <div id="user_details" style="display:none">
   <%end%>
     <%=label_tag "Filter by" %><br/>
-    <select id="column_type" name="column_type" style="width:150px;">
-      <option value="email">Email</option>
-        <option value="username">User name</option>
-        <option value="telephone_number">Telephone number</option>
-    </select>
-    <%= text_field_tag :user_id , "" , :class=>"complete title"%>
+    <%=  select_tag :column_type , options_for_select( {"Email"=>"email", "User name"=>"username", "Telephone number"=>"telephone_number" },@search_type),{:id=>"column_type", :style=>"width:150px;" }%>
+    <%= text_field_tag :user_id , @search_text , :class=>"complete title"%>
     <%= hidden_field_tag :associatable_user_id , nil , :class=>"associate" %>
     Or <%= check_box_tag :list_all_users%><%=label_tag "List all" %>
    </div>

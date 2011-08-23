@@ -32,7 +32,7 @@ class Campaign < ActiveRecord::Base
 	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy-mm-dd",:allow_nil=>true
 	validates_numericality_of :initial_amount
 	validates_with DatesValidator, :start => :start_date, :end => :end_date,:unless=>Proc.new{|r| r.start_date.nil? || r.end_date.nil?}
-
+  validate :check_if_campaign_exist
 	after_create :create_campaign_business_account
 	before_create :init
 	after_save :update_places
@@ -48,7 +48,7 @@ class Campaign < ActiveRecord::Base
 	  :visit=>4
 	}
 	
-	def validate
+	def check_if_campaign_exist
     if self.new_record? and self.ctype==Campaign::CTYPE[:spend] and Campaign.joins(:program=>:business).where("ctype=#{Campaign::CTYPE[:spend]} and ((end_date IS NOT null AND '#{Date.today}' BETWEEN start_date AND end_date) || '#{Date.today}' >= start_date) and businesses.id=#{self.program.business.id}").any? 
       errors.add_to_base "There is already a spend based campaign running at the business, You could edit it or remove from the system"
     end

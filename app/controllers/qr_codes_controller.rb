@@ -20,6 +20,8 @@ class QrCodesController < ApplicationController
       @qr_codes=search_qrs(@page)
     end
     @templates = Template.all
+    @search_text=params[:search_text]
+    @search_type=params[:search_type]
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @qr_codes }

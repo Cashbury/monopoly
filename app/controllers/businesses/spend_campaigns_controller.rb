@@ -39,11 +39,11 @@ class Businesses::SpendCampaignsController < ApplicationController
        end
       format.html{ redirect_to(business_spend_campaign_path(@business,@campaign), :notice => 'Offer was successfully created.')}
     end
-  #rescue
-  #  respond_to do |format|
-  #    format.html { render :action => "new" }
-  #    format.xml { render :xml => @campaign.errors, :status => :unprocessable_entity }
-  #  end
+  rescue
+    respond_to do |format|
+      format.html { render :action => "new" }
+      format.xml { render :xml => @campaign.errors, :status => :unprocessable_entity }
+    end
   end
   
   def show
@@ -84,6 +84,9 @@ class Businesses::SpendCampaignsController < ApplicationController
       @campaign.has_target=false
     end
     engagement_attrs=params[:campaign][:engagements_attributes]["0"]
+    uniq_entries={}
+    params[:campaign][:rewards_attributes].each_pair{|k,v| uniq_entries[k]=v unless uniq_entries.has_value?(v)}
+    params[:campaign][:rewards_attributes]=uniq_entries
     reward_attrs=params[:campaign][:rewards_attributes]
     if reward_attrs["0"]["expiry_date"].present?
       if reward_attrs["0"]["expiry_date"].match(/\//).present?
@@ -153,6 +156,9 @@ class Businesses::SpendCampaignsController < ApplicationController
       campaign_params[:start_date]=Date.today.to_s
     end
     @engagement_attrs=campaign_params[:engagements_attributes]["0"]
+    uniq_entries={}
+    campaign_params[:rewards_attributes].each_pair{|k,v| uniq_entries[k]=v unless uniq_entries.has_value?(v)}
+    campaign_params[:rewards_attributes]=uniq_entries
     @reward_attrs=campaign_params[:rewards_attributes]
     if @reward_attrs["0"]["expiry_date"].present?
       if @reward_attrs["0"]["expiry_date"].match(/\//).present?
