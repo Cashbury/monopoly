@@ -114,14 +114,17 @@ class PlacesController < ApplicationController
 
   def search_places
     search_params ={}
+    places=[]
     valid_keys = ["country_id", "city_id"]
     #params = params.select{|key,value| valid_keys.include? key } unless params.blank?
     @city     = City.find(params[:city_id])                   unless params[:city_id].blank?
     @country  = Country.find(params[:country_id])             unless params[:country_id].blank?
-    search_params.merge!({:country_id=> params[:country_id]}) unless params[:country_id].blank?
+    #search_params.merge!({:country_id=> params[:country_id]}) unless params[:country_id].blank?
     search_params.merge!({:city_id=>params[:city_id]}) unless params[:city_id].blank?
-    address = Address.where search_params
-    places = Place.where :address_id=> address.map(&:id)
-    #Place.all if places.blank?
+    address = Address.joins(:city=>:country).where(search_params)
+                                            .where("cities.country_id=#{params[:country_id]}") unless params[:country_id].blank?
+    places = Place.where :address_id=> address.map(&:id) if address.present?
+    places = Place.all if places.empty?
+    places
   end
 end

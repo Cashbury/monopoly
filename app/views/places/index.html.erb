@@ -1,6 +1,6 @@
+<% content_for(:head) do %>
 <style type="text/css" media="screen">
   select{width:200px;}
-
 </style>
 <script type="text/javascript">
 //<![CDATA[
@@ -26,7 +26,7 @@ $(function(){
 });
 //]]>
 </script>
-
+<%end%>
 
 <%= form_tag("/places", :method=>:GET) do %>
   <%= text_field_tag "name_country" , @country.try(:name), :placeholder=> "Country"%>
