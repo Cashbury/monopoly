@@ -88,22 +88,8 @@ class Businesses::SpendCampaignsController < ApplicationController
     params[:campaign][:rewards_attributes].each_pair{|k,v| uniq_entries[k]=v unless uniq_entries.has_value?(v)}
     params[:campaign][:rewards_attributes]=uniq_entries
     reward_attrs=params[:campaign][:rewards_attributes]
-    if reward_attrs["0"]["expiry_date"].present?
-      if reward_attrs["0"]["expiry_date"].match(/\//).present?
-        date_details=reward_attrs["0"]["expiry_date"].split("/").reverse
-        expiry_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
-      else
-        expiry_date=reward_attrs["0"]["expiry_date"]
-      end
-    end
-    if engagement_attrs["end_date"].present?
-      if engagement_attrs["end_date"].match(/\//).present?
-        date_details=engagement_attrs["end_date"].split("/").reverse
-        end_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
-      else
-        end_date=engagement_attrs["end_date"]
-      end
-    end
+    expiry_date=reward_attrs["0"]["expiry_date"]
+    end_date=engagement_attrs["end_date"]   
     params[:campaign][:engagements_attributes]["0"]["end_date"]=end_date if end_date.present?
     @campaign.end_date=expiry_date if expiry_date.present?
     reward_attrs.each_with_index do |(key,value),index|
@@ -160,22 +146,8 @@ class Businesses::SpendCampaignsController < ApplicationController
     campaign_params[:rewards_attributes].each_pair{|k,v| uniq_entries[k]=v unless uniq_entries.has_value?(v)}
     campaign_params[:rewards_attributes]=uniq_entries
     @reward_attrs=campaign_params[:rewards_attributes]
-    if @reward_attrs["0"]["expiry_date"].present?
-      if @reward_attrs["0"]["expiry_date"].match(/\//).present?
-        date_details=@reward_attrs["0"]["expiry_date"].split("/").reverse
-        expiry_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
-      else
-        expiry_date=@reward_attrs["0"]["expiry_date"]
-      end
-    end
-    if @engagement_attrs["end_date"].present?
-      if @engagement_attrs["end_date"].match(/\//).present?
-        date_details=@engagement_attrs["end_date"].split("/").reverse
-        end_date="#{date_details[0]}-#{date_details[2]}-#{date_details[1]}"
-      else
-        end_date=@engagement_attrs["end_date"]
-      end
-    end
+    expiry_date=@reward_attrs["0"]["expiry_date"]
+    end_date=@engagement_attrs["end_date"]
     campaign_params[:end_date]=expiry_date.to_date if expiry_date.present?
     campaign_params[:engagements_attributes]["0"]["engagement_type_id"]=EngagementType.find_by_eng_type(EngagementType::ENG_TYPE[:spend]).id
     campaign_params[:engagements_attributes]["0"]["name"]="Spend Engagement"

@@ -42,14 +42,21 @@ class Reward < ActiveRecord::Base
   validates_numericality_of :needed_amount, :greater_than => 0
   validates_numericality_of :max_claim , :allow_nil=>true
   validates_length_of :name, :maximum => 25#16
-
   validates_length_of :heading1, :maximum => 40
   validates_length_of :heading2, :maximum => 150 #84
+  validate :spend_campaign_dates
+  
   after_update :reprocess_photo
 
   cattr_reader :per_page
   @@per_page = 20
-
+  
+  def spend_campaign_dates
+    if self.new_record? and self.end_date.present? and self.expiry_date.present? and self.end_date.to_date > self.expiry_date.to_date
+      errors.add_to_base "Spend until date should be less that or equal the offer availability date"
+    end
+  end
+  
   def reprocess_photo
     if !self.reward_image.nil? and self.reward_image.cropping?
       self.reward_image.photo.reprocess!
@@ -130,7 +137,6 @@ class Reward < ActiveRecord::Base
   end
   
   def money_amount
-    #"%0.2f" % self[:money_amount]
     self[:money_amount].round(2) if self[:money_amount].present?
   end
   

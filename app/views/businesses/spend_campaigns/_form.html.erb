@@ -8,7 +8,7 @@
 <script type="text/javascript">
 var counter=<%= @rewards.present? and @rewards.size > 0 ? @rewards.size-1 : 0  %>;
 $(document).ready(function(){
-  $(".reward_exp_date").datepicker().live("change",function () {
+  $(".reward_exp_date").live("change",function () {
     $(".reward_exp_date").val($(this).val());
   });
   $("#add_details_link").click(function(){
@@ -18,10 +18,12 @@ $(document).ready(function(){
       $(this).html("Settings +");
     $("#details_box").slideToggle();
   });
-  $(".reward_end_date").datepicker().live("change",function(){
+  
+  $(".reward_end_date").live("change",function(){
     $("#engagement_end_date").val($(this).val());
     $(".reward_end_date").val($(this).val());
   });
+  
   $('.money_amount').live("blur",function(){
     var money_amount=$(this).val();
     var brand_name=$("#brand_name_id").val();
