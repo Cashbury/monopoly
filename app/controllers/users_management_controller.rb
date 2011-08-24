@@ -39,16 +39,8 @@ class UsersManagementController < ApplicationController
       if @user.save
         @user.send_confirmation_instructions if @user.persisted? 
         unless params[:legal_ids].empty? || params[:legal_types].empty?
-          params[:legal_types].each_with_index do |legal_type_id, index|
-            if params[:legal_ids][index].present? and legal_type_id.present?
-              LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
-            end
-          end
+          @user.set_legal_ids(params[:legal_types], params[:legal_ids])
         end
-        #if params[:place_id].present?
-        #  @user.places << Place.find(params[:place_id]) 
-        #  @user.save!
-        #end
         format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully created.') }
         format.xml  { head :ok }
       else
@@ -110,20 +102,10 @@ class UsersManagementController < ApplicationController
     end
     respond_to do |format|
       if @user.update_attributes(params[:user])
-        LegalId.delete_all
+        LegalId.delete_all("associatable_id=#{@user.id} and associatable_type='User'")
         unless params[:legal_ids].empty? || params[:legal_types].empty?
-          params[:legal_types].each_with_index do |legal_type_id, index|            
-            if params[:legal_ids][index].present? and legal_type_id.present?
-              LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>params[:legal_ids][index],:associatable_id=>@user.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
-            end
-          end
+          @user.set_legal_ids(params[:legal_types], params[:legal_ids])
         end
-        #if params[:place_id].present?
-        #  if @user.places.where(:id=>params[:place_id]).empty?
-        #    @user.places << Place.find(params[:place_id]) 
-        #    @user.save!
-        #  end
-        #end
         format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully updated.') }
         format.xml  { head :ok }
       else

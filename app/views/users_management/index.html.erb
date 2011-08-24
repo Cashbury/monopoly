@@ -1,7 +1,8 @@
 <% content_for(:head) do %>
 <style type="text/css" media="screen">
 .mono-table td,.mono-table th{ padding:7px 5px;}
-table {width: 1031px;}
+table {width: 1000px;}
+
 </style>
 <% end %>
 <% if params[:title].present? %>
@@ -65,7 +66,3 @@ table {width: 1031px;}
 <br/>
 
 <%= link_to "Add new user", new_users_management_path , :class=>"button"  %>
-
-<style type="text/css" media="screen">
-  .mono-table .fat{width:130px; padding:0 0 0 8px;}
-</style>

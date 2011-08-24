@@ -247,7 +247,7 @@ $(document).ready(function(){
         error: function(data){
           loadingImage.hide();
         }
-      });   
+    });   
   });
   
   $('.U_email, .U_username').bind('change',function(){

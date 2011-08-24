@@ -1,5 +1,5 @@
 class BusinessesController < ApplicationController
-  #before_filter :authenticate_user!, :require_admin
+  before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
   before_filter :prepare_business, :only=> [:show, :edit, :update, :destroy, :list_campaign_transactions, :list_enrolled_customers, :list_all_enrolled_customers ]
   skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
@@ -43,6 +43,8 @@ class BusinessesController < ApplicationController
     end
     @business.build_mailing_address
     @business.build_billing_address
+    @total=LegalType.count
+    @legal_ids=[]
   end
 
   def create
@@ -53,6 +55,9 @@ class BusinessesController < ApplicationController
     @business.tag_list << @business.name
     set_tag_lists_for_business_places(@business)
     if @business.save
+      unless params[:legal_ids].empty? || params[:legal_types].empty?
+        @business.set_legal_ids(params[:legal_types], params[:legal_ids])
+      end
       flash[:notice] = "Successfully created business."
       redirect_to @business
     else
@@ -79,12 +84,17 @@ class BusinessesController < ApplicationController
     end
     @business.build_mailing_address if @business.mailing_address.nil?
     @business.build_billing_address if @business.billing_address.nil?
+    @legal_ids=@business.legal_ids
    end
 
   def update
     if @business.update_attributes(params[:business])
-       flash[:notice] = "Successfully updated business."
-       redirect_to @business
+      LegalId.delete_all("associatable_id=#{@business.id} and associatable_type='Business'")
+      unless params[:legal_ids].empty? || params[:legal_types].empty?
+        @business.set_legal_ids(params[:legal_types], params[:legal_ids])
+      end
+      flash[:notice] = "Successfully updated business."
+      redirect_to @business
     else
       @brands  = Brand.all
       @categories = Category.all
@@ -137,6 +147,13 @@ class BusinessesController < ApplicationController
     @cities = Country.where(['name LIKE ?', "#{params[:term]}%"]).map{|con| {:id=>con.id, :label=>con.name }}
     respond_to do |format|
       format.js
+    end
+  end
+  
+  def update_currencies
+    currency_code=Country.find(params[:country_id]).currency_code
+    respond_to do |format|
+      format.js {render :text=> currency_code}
     end
   end
 

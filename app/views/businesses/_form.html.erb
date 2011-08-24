@@ -1,5 +1,28 @@
+<% content_for (:head) do %>
 <%= render 'business_scripts'%>
-
+<script type="text/javascript">
+var total_legals=<%=@total%>;
+var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
+$(function(){
+  $("#business_country_id").change(function(){
+    var country_id = $(":selected", this).val();
+    $.ajax({
+        type: 'GET',
+        url: '/businesses/update_currencies/'+country_id,
+        success: function(data){
+          $('#business_currency_code').val(data);
+        }
+    });   
+  });
+});
+</script>
+<style type="text/css">
+  .legals_div select{width:auto;margin:0 10px 0 0;}
+  .legals_div input {width:150px;padding-top:2px;}
+  .legals_div {position:relative;}
+  .legals_div a {position:absolute;right:515px;top:10px}
+</style>
+<%end%>
 <%= form_for(@business,:html => { :multipart => true ,:class=>"mono-form" }) do |f| %>
   <%= f.error_messages %>
   <p>
@@ -17,36 +40,50 @@
     <%= f.text_field :name , :class=>"title" %>
   </p>
 
-  <p>
-    <%= f.label "Legal Business ID" %>
-    <%= f.text_field :legal_id , :class=>"title" %>
-  </p>
-  
+  <div class="legal_type_class">
+    <%= label_tag "Legal Business IDs" %>
+      <% if @legal_ids.empty? %>
+        <div class="legals_div">
+          <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), {:id=>"legal_types_0"}%><%=text_field_tag "legal_ids[]","",{:class=>"title",:id=>"legal_ids_0"}%>
+          <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+        </div>
+      <%else%>
+        <%@legal_ids.each_with_index do |legal_id,index| %>
+        <div class="legals_div">
+          <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",legal_id.legal_type.id), {:id=>"legal_types_#{index}"}%><%=text_field_tag "legal_ids[]",legal_id.id_number,{:class=>"title",:id=>"legal_ids_#{index}"}%>
+          <%if index==0%>
+            <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+          <%else%>
+            <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
+          <%end%>
+        </div>
+        <%end%>
+      <%end%>
+  </div>
   <p>
     <%= f.label "Activate Users ID" %>
-    <%= f.check_box :activate_users_id %>
+    <%= f.check_box :activate_users_id, :checked => true %>
   </p>
   
   <p>
     <%= f.label :currency %>
-    <%= f.select :currency_code, ISO4217::Currency.currencies.values.collect{|c| [c.name,c.code]} %>
+    <%= f.select :currency_code, ISO4217::Currency.currencies.values.uniq.collect{|c| ["#{c.name} [#{c.code}]",c.code]} %>
   </p>
 
   <fieldset>
     <legend>Business Mailing Address</legend>
       <%= f.fields_for :mailing_address,f.object.mailing_address do |mailing_address_form| %>
         <p>
-          <%= mailing_address_form.label :street_address %>
-          <%= mailing_address_form.text_field :street_address , :class=>"title" %>
+          <%= mailing_address_form.label :city %>
+          <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name, mailing_address_form.object.try(:city_id))%>
         </p>
         <p>
-          <%= mailing_address_form.label :city %>
-          <%= mailing_address_form.hidden_field :city_id , :value=>"" %>
-          <input type="text" name="city" value=""  class="title" id="mcity_id"/>
+          <%= mailing_address_form.label :street_address %>
+          <%= mailing_address_form.text_field :street_address, :class=>"title" %>
         </p>
         <p>
           <%= mailing_address_form.label :zipcode %>
-          <%= mailing_address_form.text_field :zipcode , :class=>"title" %>
+          <%= mailing_address_form.text_field :zipcode, :class=>"title" %>
         </p>
       <%end%>
     </fieldset>
@@ -54,17 +91,16 @@
       <legend>Business Billing Address</legend>
       <%= f.fields_for :billing_address,f.object.billing_address do |billing_address_form| %>
         <p>
-          <%= billing_address_form.label :street_address %>
-          <%= billing_address_form.text_field :street_address , :class=>"title" %>
+          <%= billing_address_form.label :city %>
+          <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name, billing_address_form.object.try(:city_id))%>
         </p>
         <p>
-          <%= billing_address_form.label :city %>
-          <%= billing_address_form.hidden_field :city_id , :value=>""%>
-          <input type="text" name="" value="" id="bcity_id" class="title" />
+          <%= billing_address_form.label :street_address %>
+          <%= billing_address_form.text_field :street_address, :class=>"title" %>
         </p>
         <p>
           <%= billing_address_form.label :zipcode %>
-          <%= billing_address_form.text_field :zipcode , :class=>"title" %>
+          <%= billing_address_form.text_field :zipcode, :class=>"title" %>
         </p>
       <%end%>
     </fieldset>

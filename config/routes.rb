@@ -85,6 +85,7 @@ Kazdoor::Application.routes.draw do
   resources :businesses do
 	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
 	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
+	  get '/update_currencies/:country_id', :action=>:update_currencies, :on=> :collection, :as=>"update_currencies"
 	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
 	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
 	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"

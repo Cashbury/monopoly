@@ -1,5 +1,5 @@
 <script type="text/javascript">
- jQuery(document).ready(function(){
+ $(document).ready(function(){
 
 
 
@@ -34,32 +34,48 @@
 
 
 <script type="text/javascript">
- jQuery(document).ready(function(){
-  jQuery('.apply').click(function(){
-    i = jQuery(this).val();
+ $(document).ready(function(){
+   $('.add_link').click(function(){
+      if (legal_index < total_legals-1){
+        var old_html=$('.legals_div').html();
+        var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
+        new_html2=new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
+        new_html3=new_html2.replace(/add.png/,"remove.png");
+        new_html4=new_html3.replace(/add_link/,"remove_link");
+        $('.legal_type_class').append("<div class=\"legals_div\">"+new_html4+"</div>");
+        legal_index=legal_index+1;
+      }
+    });
+  
+  $('.remove_link').live('click',function(){
+    $(this).parent('.legals_div').remove();
+    legal_index=legal_index-1;
+  });
+  $('.apply').click(function(){
+    i = $(this).val();
     alert('#open_hour_'+i+'_apply_to_all');
-    if( jQuery(this).is(':checked') ){
-      from_hour = jQuery('#open_hour_'+i+'_0_from').val(); // the selected value of the first day ( from hour)
+    if( $(this).is(':checked') ){
+      from_hour = $('#open_hour_'+i+'_0_from').val(); // the selected value of the first day ( from hour)
       alert(from_hour);
-      to_hour   =  jQuery('#open_hour_'+i+'_'+'0_to').val();  //  the selected value of the first day ( to hour)
-      from2_hour = jQuery('#open_hour_'+i+'_'+'0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
-      to2_hour   =  jQuery('#open_hour_'+i+'_'+'0_to2').val();  //  the selected value of the first day -  if user splits the time ( to2 hour)
+      to_hour   =  $('#open_hour_'+i+'_'+'0_to').val();  //  the selected value of the first day ( to hour)
+      from2_hour = $('#open_hour_'+i+'_'+'0_from2').val(); // the selected value of the first day - if user splits the time( from2 hour)
+      to2_hour   =  $('#open_hour_'+i+'_'+'0_to2').val();  //  the selected value of the first day -  if user splits the time ( to2 hour)
 
-      jQuery('.from_class_'+i).each(function(index, element){
-        jQuery(this).val(from_hour);
+      $('.from_class_'+i).each(function(index, element){
+        $(this).val(from_hour);
         if(from2_hour){
           if(index!=0){
              Split_hour(index,i);
-             x =jQuery('#open_hour_'+i+'_'+index+'_from2').val(from2_hour);
+             x =$('#open_hour_'+i+'_'+index+'_from2').val(from2_hour);
            }
         }// if from2_hour end
       }); // end of .each function
 
-      jQuery('.to_class_'+i).each(function(index, element){
-        jQuery(this).val(to_hour);
+      $('.to_class_'+i).each(function(index, element){
+        $(this).val(to_hour);
         if(to2_hour){
           if(index!=0){
-             x =jQuery('#open_hour_'+i+'_'+index+'_to2').val(to2_hour);
+             x =$('#open_hour_'+i+'_'+index+'_to2').val(to2_hour);
            }
         }// if from2_hour end
       }); // end of .each function
@@ -68,27 +84,27 @@
 });
 
   function Split_hour(index,i){
-    from_to_html = jQuery('#open_hour_'+i+'_'+index+'_from').parent().html();
+    from_to_html = $('#open_hour_'+i+'_'+index+'_from').parent().html();
 
     from_to_html = from_to_html.replace(/from/g, "from2");
     from_to_html = from_to_html.replace(/to/g, "to2");
     closed1_label ="<label> Closed? </label>";
     closed2_checkbox_html = "<input type='checkbox' value='1' name='open_hour"+"_"+i+"["+index+"][closed2]' />" ;
     final_html_part = from_to_html + closed1_label+closed2_checkbox_html ;
-    jQuery('#open_hour_div_'+i+'_'+index).append("<p>"+final_html_part+"</p>");
+    $('#open_hour_div_'+i+'_'+index).append("<p>"+final_html_part+"</p>");
   };
 
-jQuery(function(){
+$(function(){
 
-     jQuery('select#business_country_id').change(function(e){
-       var $bselect = jQuery(this).attr('selected',true).val();
-       jQuery('#business_billing_address_attributes_country_id').val($bselect);
-       jQuery('#business_mailing_address_attributes_country_id').val($bselect);
-        jQuery('#mcity_id,#bcity_id').autocomplete({
+     $('select#business_country_id').change(function(e){
+       var $bselect = $(this).attr('selected',true).val();
+       $('#business_billing_address_attributes_country_id').val($bselect);
+       $('#business_mailing_address_attributes_country_id').val($bselect);
+        $('#mcity_id,#bcity_id').autocomplete({
             source: "/businesses/update_cities/"+ $bselect +".js",
             dataType:"jsonp",
             select:function(e,ui){
-              jQuery(this).prev('input').val(ui.item.id);
+              $(this).prev('input').val(ui.item.id);
             }
         });
       });

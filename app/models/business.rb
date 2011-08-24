@@ -171,7 +171,14 @@ class Business < ActiveRecord::Base
       scoped
     end
   end
-
+  
+  def set_legal_ids(legal_types, legal_ids)
+    legal_types.each_with_index do |legal_type_id, index|
+      if legal_ids[index].present? and legal_type_id.present?
+        LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>legal_ids[index],:associatable_id=>self.id,:associatable_type=>"Business",:legal_type_id=>legal_type_id)
+      end
+    end
+  end
   #====================================================================
   private
   #====================================================================

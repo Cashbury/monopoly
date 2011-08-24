@@ -37,6 +37,13 @@
   <%= @business.country.try(:name) %>
 </p>
 <p>
+  <strong>Business Legal Ids:</strong>
+  <% @business.legal_ids.each do |legal| %>
+    <p><%=LegalType.find(legal.legal_type_id).displayed_type%> : <%= legal.id_number %></p>
+  <%end%>
+</p>
+
+<p>
   <strong>Users IDs Activated?</strong>
   <%= @business.activate_users_id ? "Active" : "In-active" %>
 </p>
@@ -50,7 +57,6 @@
   <li><strong>Street Address: </strong><%= @business.mailing_address.street_address %></li>
   <li><strong>Country: </strong><%= @business.mailing_address.city.try(:country).try(:name) %></li>
   <li><strong>City: </strong><%= @business.mailing_address.city.try(:name) %></li>
-  <li><strong>Neighborhood: </strong><%= @business.mailing_address.neighborhood %></li>
   <li><strong>ZipCode: </strong><%= @business.mailing_address.zipcode %></li>
 </ul>
 <%end%>
@@ -60,7 +66,6 @@
   <li><strong>Street Address: </strong><%= @business.billing_address.street_address %></li>
   <li><strong>Country: </strong><%= @business.billing_address.city.try(:country).try(:name) %></li>
   <li><strong>City: </strong><%= @business.billing_address.city.try(:name) %></li>
-  <li><strong>Neighborhood: </strong><%= @business.billing_address.neighborhood %></li>
   <li><strong>ZipCode: </strong><%= @business.billing_address.zipcode %></li>
 </ul>
 <%end%>
