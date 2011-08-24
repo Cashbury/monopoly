@@ -121,9 +121,13 @@ class PlacesController < ApplicationController
     @country  = Country.find(params[:country_id])             unless params[:country_id].blank?
     #search_params.merge!({:country_id=> params[:country_id]}) unless params[:country_id].blank?
     search_params.merge!({:city_id=>params[:city_id]}) unless params[:city_id].blank?
-    address = Address.joins(:city=>:country).where(search_params)
-                                            .where("cities.country_id=#{params[:country_id]}") unless params[:country_id].blank?
-    places = Place.where :address_id=> address.map(&:id) if address.present?
+    unless params[:country_id].blank?
+      addresses = Address.joins(:city=>:country).where(search_params)
+                                                .where("cities.country_id=#{params[:country_id]}") 
+    else
+      addresses = Address.joins(:city=>:country).where(search_params)                                          
+    end
+    places = Place.where :address_id=> addresses.map(&:id) if addresses.present?
     places = Place.all if places.empty?
     places
   end

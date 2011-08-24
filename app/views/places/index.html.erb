@@ -12,6 +12,7 @@ $(function(){
         //console.log(path+"?name="+ui.item.label);
       $("input#country_id").val(ui.item.id);
       $("form").submit();
+      $("input#country_id").val("");
     }
   });
   $("input#name_city").autocomplete({
@@ -21,6 +22,7 @@ $(function(){
         //console.log(path+"?name="+ui.item.label);
       $("input#city_id").val(ui.item.id);
       $("form").submit();
+      $("input#city_id").val("");
     }
   });
 });
@@ -29,8 +31,8 @@ $(function(){
 <%end%>
 
 <%= form_tag("/places", :method=>:GET) do %>
-  <%= text_field_tag "name_country" , @country.try(:name), :placeholder=> "Country"%>
-  <%= text_field_tag "name_city" ,    @city.try(:name) , :placeholder=>"City"%>
+  <%= text_field_tag "name_country" , @country.try(:name), :placeholder=> "Country" %>
+  <%= text_field_tag "name_city" ,    @city.try(:name) , :placeholder=>"City" %>
   <%= hidden_field_tag "country_id" , @country.try(:id)%>
   <%= hidden_field_tag "city_id" ,    @city.try(:id)%>
   <%= submit_tag "Search" %>
