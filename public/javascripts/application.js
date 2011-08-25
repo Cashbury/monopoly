@@ -94,8 +94,6 @@ function remove_fields(link) {
   $(link).closest(".fields").hide();
   counter=counter-1;
   
-//  for(i=1; i<=counter; i++ )
-//    $(".counter_label").get(i).html(i);  
   var elements=$(".counter_label:visible");  
   elements.each(function(index, domEle) {
     $(domEle).html(index+1);
