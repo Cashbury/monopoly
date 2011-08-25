@@ -92,13 +92,21 @@ var submitLoyalCustomersSearch = function(form,page){
 function remove_fields(link) {
   $(link).prev("input[type=hidden]").val("1");
   $(link).closest(".fields").hide();
+  counter=counter-1;
+  
+//  for(i=1; i<=counter; i++ )
+//    $(".counter_label").get(i).html(i);  
+  var elements=$(".counter_label:visible");  
+  elements.each(function(index, domEle) {
+    $(domEle).html(index+1);
+  });
 }
 
 function add_fields(link, association, content) {
   var new_id = new Date().getTime();
   var regexp = new RegExp("new_" + association, "g")
   counter=counter+1;
-  new_content=content.replace(/Offer Level [0-9]/,"Offer Level "+(counter+1));
+  new_content=content.replace(/[0-9]<\/span>/,(counter+1)+"</span>");
   $(link).parent().before(new_content.replace(regexp, new_id));
   $(".reward_end_date").datepicker().trigger("change");
   $(".reward_exp_date").datepicker().trigger("change");

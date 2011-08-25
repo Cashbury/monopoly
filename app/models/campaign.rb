@@ -41,7 +41,7 @@ class Campaign < ActiveRecord::Base
 	scope :running_campaigns, where("#{Date.today} >= start_date && #{Date.today} < end_date")
 	attr_accessor   :places_list,:item_name
 	accepts_nested_attributes_for :engagements
-	accepts_nested_attributes_for :rewards
+	accepts_nested_attributes_for :rewards,:allow_destroy => true
 
 	CTYPE={
 	  :spend=>1,
