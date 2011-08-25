@@ -336,6 +336,7 @@ class User < ActiveRecord::Base
         self.pending_receipts << receipt
         save
       end
+      result
     #rescue Exception=>e
     #  logger.error "Exception #{e.class}: #{e.message}"
     #end
