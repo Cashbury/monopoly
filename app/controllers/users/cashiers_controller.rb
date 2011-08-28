@@ -65,6 +65,7 @@ class Users::CashiersController < Users::BaseController
 		    s.merge!({:amount             => params[:amount]})
 		    s.merge!({:transaction_id     => result[:transaction].try(:id)})
 		    s.merge!({:currency_symbol    => business.currency_symbol})
+		    s.merge!({:currency_code      => business.currency_code})
 		    s.merge!({:customer_name      => user.full_name})
 		    s.merge!({:customer_type      => user_type})
 		    user_uid=user.email.split("@facebook").first

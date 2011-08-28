@@ -18,4 +18,9 @@ class Country < ActiveRecord::Base
                                         :medium=>"16x16",
                                         :large=>"32x32"
                                       }
+                                      
+  def flag_url
+    "#{COUNTRIES_FLAGS_PATH}#{self.iso2.to_s.downcase}.png" if self.iso2.present?
+  end
+  
 end

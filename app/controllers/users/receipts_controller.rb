@@ -5,9 +5,11 @@ class Users::ReceiptsController < Users::BaseController
     result={}
     result[:receipts]=[]
     all_receipts.each_with_index do |receipt,index|
-      brand=Brand.find(receipt.brand_id)
+      brand= Brand.find(receipt.brand_id)
+      business= Business.find(receipt.business_id)
       result[:receipts][index]= receipt.attributes
-      result[:receipts][index][:currency_symbol] = Business.find(receipt.business_id).currency_symbol
+      result[:receipts][index][:currency_symbol] = business.currency_symbol
+      result[:receipts][index][:currency_code] = business.currency_code
       result[:receipts][index][:brand_image_fb]  = brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))
       log_group=LogGroup.where(:id=>receipt.log_group_id).first
       if log_group.present?
@@ -24,7 +26,7 @@ class Users::ReceiptsController < Users::BaseController
   end
   
   def list_receipts_history
-    @all_receipts=current_user.list_customer_all_receipts
+    @all_receipts=current_user.list_customer_all_receipts(params[:business_id])
     respond_to do |format|
       format.xml {}
     end

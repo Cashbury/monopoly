@@ -43,7 +43,7 @@ class Users::PlacesController < Users::BaseController
   def list_all_cities
     @cities=City.order("name ASC").select("cities.name,cities.id")
     respond_to do |format|
-      format.xml { render :xml => @cities }
+      format.xml
     end
   end
   
@@ -53,6 +53,7 @@ class Users::PlacesController < Users::BaseController
     if city
       @result["city-id"]  =city.id
       @result["city-name"]=city.name
+      @result["flag-url"]=URI.escape("http://#{request.host_with_port}#{city.country.flag_url}") if city.country.flag_url.present?
     end
     @result["places"]=[]
     places.each_with_index do |place,index|
@@ -66,8 +67,9 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["brand-name"]    =business.try(:brand).try(:name)
         @result["places"][index]["brand-image"]   =business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:normal)) 
         @result["places"][index]["brand-image-fb"]=business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:thumb))
-        @result["places"][index]["is_open"]       =place.is_open?
-        @result["places"][index]["currency_symbol"]=currency_symbol
+        @result["places"][index]["is-open"]       =place.is_open?
+        @result["places"][index]["currency-symbol"]=currency_symbol
+        @result["places"][index]["currency-code"]  =business.currency_code
         @result["places"][index]["open-hours"]    =place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
         @result["places"][index]["business_has_user_id_card"]    =business.try(:activate_users_id)
         @result["places"][index]["images"]        =[]
@@ -96,6 +98,7 @@ class Users::PlacesController < Users::BaseController
                   if reward_campaign.spend_campaign?
                     @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.money_amount * result.spend_exchange_rule.to_f if reward_obj.money_amount.present?
                     @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
+                    @result["places"][index]["rewards"][i]["reward_currency_code"]  =business.currency_code
                   end
                   @result["places"][index]["rewards"][i]["is_spend"]=reward_campaign.spend_campaign?
                   how_to_get_amount_text=""  
