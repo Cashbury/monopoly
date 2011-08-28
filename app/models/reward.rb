@@ -52,7 +52,7 @@ class Reward < ActiveRecord::Base
   @@per_page = 20
   
   def spend_campaign_dates
-    if self.new_record? and self.end_date.present? and self.expiry_date.present? and self.end_date.to_date > self.expiry_date.to_date
+    if self.end_date.present? and self.expiry_date.present? and self.end_date.to_date > self.expiry_date.to_date
       errors.add_to_base "Spend until date should be less that or equal the offer availability date"
     end
   end
