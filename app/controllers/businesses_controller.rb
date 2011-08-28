@@ -118,17 +118,18 @@ class BusinessesController < ApplicationController
   end
   
   def list_enrolled_customers
-    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @page     = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @campaign = Campaign.find(params[:c_id])
-    @result = Log.list_enrolled_customers(params[:c_id], params[:place_id])
-                       .paginate(:page => @page,:per_page => @@per_page )
+    @result   = Log.list_enrolled_customers(params[:c_id], params[:place_id])
+                   .paginate(:page => @page,:per_page => @@per_page )
   end  
     
     
   def list_all_enrolled_customers
-    @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
+    @page   = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @type_id= params[:type_id].to_i.zero? ? 0 : params[:type_id].to_i
-    @result = @business.list_all_enrolled_customers(@type_id)
+    @place_id= params[:p_id].to_i.zero? ? 0 : params[:p_id].to_i
+    @result = @business.list_all_enrolled_customers(@type_id, @place_id)
                        .paginate(:page => @page,:per_page => @@per_page )
   end    
   

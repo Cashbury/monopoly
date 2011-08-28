@@ -23,8 +23,8 @@ class Business < ActiveRecord::Base
   has_many :programs,:dependent => :destroy
   has_many :measurement_types
   has_many :engagement_types
-  has_many :followers, :as=>:followed
-  has_many :users, :through=>:followers
+  #has_many :followers, :as=>:followed
+  #has_many :users, :through=>:followers
   has_many :business_customers
   has_many :users, :through=> :business_customers
   has_many :announcements
@@ -113,25 +113,29 @@ class Business < ActiveRecord::Base
   NEW_CUSTOMER=1
   RETURNING_CUSTOMER=2
  
-  def list_all_enrolled_customers(type_id)
+  def list_all_enrolled_customers(type_id, p_id)
     case type_id
       when NEW_CUSTOMER #new customers are those who are enrolled (have accounts @biz) but not engaged yet
         ids=self.users.collect{|u| u.id}.join(',') if self.users.any?
         filters=[] ; params = []
-        filters << "users.id NOT IN (#{ids})" if ids.present?
+        filters << "users.id NOT IN (#{ids})" if ids.present?        
         params.insert(0, filters.join(" AND ")) if filters.present?
         self.programs.joins(:campaigns=>[:accounts=>:account_holder]) 
                      .joins("INNER JOIN users ON account_holders.model_id=users.id")
                      .where("account_holders.model_type='User'")                     
                      .where(params)
                      .group("users.id")
-                     .select("0 as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+                     .select("0 as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
                      .order("total DESC")
       when RETURNING_CUSTOMER #customers that have been engaged with the biz before
+        filters=[] ; params = []
+        filters << "places.id = ?" and params << p_id  if p_id.present?
+        params.insert(0, filters.join(" AND ")) if filters.present?
         self.users
-        .joins(:logs)
+        .joins(:logs=>:place)
         .group("logs.user_id")
-        .select("count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+        .select("business_customers.created_at as engaged_time, places.name as p_name, count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
+        .where(params)
         .order("total DESC")
     else
       ids=self.users.collect{|u| u.id}.join(',') if self.users.any?
@@ -143,12 +147,16 @@ class Business < ActiveRecord::Base
                                  .where("account_holders.model_type='User'")                     
                                  .where(params)
                                  .group("users.id")
-                                 .select("0 as total,users.id as user_id,(CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+                                 .select("0 as total,users.id as user_id,(CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
                                  .order("total DESC")
+      filters=[] ; params=[]                          
+      filters << "places.id = ?" and params << p_id  unless p_id.zero?
+      params.insert(0, filters.join(" AND ")) if filters.present?                           
       returning_customers=self.users
-                              .joins(:logs)
+                              .joins(:logs=>:place)
                               .group("logs.user_id")
-                              .select("users.id as user_id, count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
+                              .select("business_customers.created_at as engaged_time, places.name as p_name, users.id as user_id, count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
+                              .where(params)
                               .order("total DESC")                         
       result=(new_customers | returning_customers).uniq_by { |i| i.user_id }
     end            

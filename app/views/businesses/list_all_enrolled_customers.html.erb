@@ -2,16 +2,20 @@
 <% content_for (:head) do %>
 <script type="text/javascript">
   $(function(){
-    $("#type_id").change(function(){
-      var type_id=$(this).val();
-      window.location="<%=list_all_enrolled_customers_business_path(@business)%>?type_id="+type_id;
+    $("#p_id, #type_id").change(function(){
+      var type_id=$("#type_id").val();
+      var p_id= $("#p_id").val(); 
+	    window.location="<%=list_all_enrolled_customers_business_path(@business)%>?type_id="+type_id+"&p_id="+p_id;
     });
   });
 </script>
 <% end %>
 <p>
-  <strong>Users Type:</strong> <br/>
+  <p><strong>Users Type:</strong></p>
   <%= select_tag :type_id , options_for_select( {"....Select Type...."=>0, "New Customers"=>1, "Returning Customers"=>2 }, @type_id) %>
+  <br/>
+  <p><strong>Branch:</strong></p>
+  <%= select_tag :p_id, "<option value=''>....Select Branch....</option>".html_safe+ options_for_select(@business.places.collect {|p| [ p.name, p.id ] },@place_id) %>
 </p>
 
 <p><h2><b>Total: <%=@result.total_entries%></b></h2></p>
@@ -20,15 +24,23 @@
 <br/>
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
+    <th>Customer Image</th>
     <th>Customer Name</th>
-    <th>Email</th>
+    <th>Branch</th>
+    <th>Customer Engaged Since</th>
     <th>Total # of engagements</th>
+    <th>Total # of share engagements</th>
   </tr>
 <% @result.each do |result| %>
   <tr>   
+    <% user= User.where(:id=>result.user_id).first%>
+    <% user_uid=user.email.split("@facebook").first if user.present?%>
+    <td><%= link_to (image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg"), users_management_path(user) %></td>
     <td><%= result.full_name %></td>
-    <td><%= result.email %></td>
+    <td><%= result.p_name %></td>
+    <td><%= "#{result.engaged_time.strftime("%b %d , %Y")} @ #{result.engaged_time.strftime("%I:%M %p")} #{Time.zone}" %></td>
     <td><%= result.total || 0 %></td>
+    <td></td>
   </tr>
 <% end %>
 </table>
