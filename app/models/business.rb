@@ -116,10 +116,14 @@ class Business < ActiveRecord::Base
   def list_all_enrolled_customers(type_id)
     case type_id
       when NEW_CUSTOMER #new customers are those who are enrolled (have accounts @biz) but not engaged yet
-        ids=self.users.collect{|u| u.id}.join(',')
+        ids=self.users.collect{|u| u.id}.join(',') if self.users.any?
+        filters=[] ; params = []
+        filters << "users.id NOT IN (#{ids})" if ids.present?
+        params.insert(0, filters.join(" AND ")) if filters.present?
         self.programs.joins(:campaigns=>[:accounts=>:account_holder]) 
                      .joins("INNER JOIN users ON account_holders.model_id=users.id")
-                     .where("account_holders.model_type='User' and users.id NOT IN (#{ids})")                     
+                     .where("account_holders.model_type='User'")                     
+                     .where(params)
                      .group("users.id")
                      .select("0 as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
                      .order("total DESC")
@@ -130,10 +134,14 @@ class Business < ActiveRecord::Base
         .select("count(*) as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
         .order("total DESC")
     else
-      ids=self.users.collect{|u| u.id}.join(',')
+      ids=self.users.collect{|u| u.id}.join(',') if self.users.any?
+      filters=[] ; params = []
+      filters << "users.id NOT IN (#{ids})" if ids.present?
+      params.insert(0, filters.join(" AND ")) if filters.present?
       new_customers=self.programs.joins(:campaigns=>[:accounts=>:account_holder]) 
                                  .joins("INNER JOIN users ON account_holders.model_id=users.id")
-                                 .where("account_holders.model_type='User' and users.id NOT IN (#{ids})")                     
+                                 .where("account_holders.model_type='User'")                     
+                                 .where(params)
                                  .group("users.id")
                                  .select("0 as total,users.id as user_id,(CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.email")
                                  .order("total DESC")
