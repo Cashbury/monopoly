@@ -12,7 +12,7 @@ module ApplicationHelper
 	end
 	
 	def link_to_remove_fields(name, f)
-    f.hidden_field(:_destroy) + link_to_function(image_tag("remove.png"), "remove_fields(this)", {:class=>"remove_reward_level",:href=>"javascript:void(0)"})
+    f.hidden_field(:_destroy) + link_to_function(image_tag("remove.png"), "if (confirm('Are you sure you want to delete this offer Level?')) remove_fields(this)", {:class=>"remove_reward_level",:href=>"javascript:void(0)"})
   end
   
   def link_to_add_fields(name, f, association)

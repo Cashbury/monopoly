@@ -72,6 +72,7 @@ $(function(){
 
   $("#column_type").change(function(e){
     var $select= $(this);
+    $("#user_id").val("");
     $("#user_id").autocomplete({
         source:"/v1/users/"+$select.val()+".json",
         select:function(e,ui){
