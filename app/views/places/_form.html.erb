@@ -6,7 +6,7 @@
 %>
 
 <style type="text/css">
-  select[disabled] { background-color: #E6E6FA; }
+  input[type=text][disabled] { background-color: #E6E6FA; }
   .times{width:auto}
   .slide_input{width:180px;}
   .slide_input input{width:170px;}
@@ -25,26 +25,29 @@
     $('form.mono-form').submit();
   });
 
-
-
-  $('#split_hours').click(function(){
-   if($('#split_hours').is(':checked')){
-    for(index=0;index < 7;index++){
-      from_to_html = jQuery('#open_hour_'+index+'_from').closest(".times").html();
+  $('.split_button').click(function(){
+    var index= $(this)[0].id.split(/_/)[2];
+    if ($(this).hasClass("revert_split")){
+      $('#open_hour_'+index+'_from2').parents(".slide_input").remove();
+      $('#open_hour_'+index+'_to2').parents(".slide_input").remove();
+      $(this).removeClass("revert_split");
+      $(this).val("Split Hours");
+    }else{
+      rom_to_html="";
+      from_to_html = $('#open_hour_'+index+'_from').closest("div.input_set").html();
       from_to_html = from_to_html.replace(/from/g, "from2");
       from_to_html = from_to_html.replace(/to/g, "to2");
-      console.log(from_to_html);
-      $('#open_hour_div_'+index).append("<p id=open_hour_p_"+index+">"+from_to_html+"</p>");
+      $('#open_hour_div_'+index).append(from_to_html);
+      $('input.complete').autocomplete({source:sHours});
+      $(this).addClass("revert_split");
+      $(this).val("Revert Split");
     }
-   }else{
-    for(index=0;index < 7;index++)
-     $('#open_hour_p_'+index).remove();
-   }
   });
+ 
   $('.close_box').click(function(){
-    var ele=jQuery(this)
+    var ele=$(this)
     if(ele.is(':checked')){
-      var i=ele.parent()[0].id.split(/_/)[3];
+      var i=ele[0].id.split(/_/)[2];
       $('#open_hour_'+i+'_from').attr('disabled',true);
       $('#open_hour_'+i+'_to').attr('disabled',true);
       if ($('#open_hour_'+i+'_from2')!=null && $('#open_hour_'+i+'_to2')!=null){
@@ -52,7 +55,7 @@
         $('#open_hour_'+i+'_to2').attr('disabled',true);
       }
     }else{
-      var i=ele.parent()[0].id.split(/_/)[3];
+      var i=ele[0].id.split(/_/)[2];
       $('#open_hour_'+i+'_from').attr('disabled',false);
       $('#open_hour_'+i+'_to').attr('disabled',false);
       if ($('#open_hour_'+i+'_from2')!=null && $('#open_hour_'+i+'_to2')!=null){
@@ -101,12 +104,10 @@
   div#map_canvas{
     border:none;
   }
-.ui-tabs .ui-tabs-hide {
+  .ui-tabs .ui-tabs-hide {
     position: absolute;
     left: -10000px;
-}
-
-
+  }
 </style>
 
 <% set_variables(@place) %>
@@ -225,66 +226,124 @@
 
     <% if @place.new_record?%>
       <fieldset>
-      <legend>
-        Open Signs
-      </legend>
+      <legend>Open Signs</legend>
      <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
-
-<div class="slide_box">
-    <div class="slide_box_content">
-    <div class="slide_box_shadow">
-      <div class="box_content round shadow">
-
-       <h3 class="days left"><%=key%></h3>
-       <div id="open_hour_div_<%=index%>" class="times left">
-         <div class="input_set">
-         <div class="slide_input left">
-           <label for="from">from:</label>
-           <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete title from_class" %>
-           </div>
-        <div class="slide_input left ma">
-           <label for="id">to</label>
-           <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete title to_class" %>
-         </div>
-         </div>
-         <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
-         <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
-           <% if index == 0 %>
-             <div style="display:none">
-                <label> Apply To All</label>
-                <%= check_box_tag "open_hour[apply_to_all]" %>
-             </div>
-         <%end%>
-     </div>
-         <div class="clear"></div>
+          <div class="slide_box">
+            <div class="slide_box_content">
+              <div class="slide_box_shadow">
+                <div class="box_content round shadow">
+                  <h3 class="days left"><%=key%></h3>
+                  <div id="open_hour_div_<%=index%>" class="times left">
+                    <div class="input_set">
+                      <div class="slide_input left">
+                        <label for="from">from:</label>
+                        <%= text_field_tag "open_hour[#{index}][from]",nil,:class=>"complete title from_class" %>
+                      </div>
+                      <div class="slide_input left ma">
+                        <label for="id">to</label>
+                        <%= text_field_tag "open_hour[#{index}][to]",nil,:class=>"complete title to_class" %>
+                      </div>
+                  </div>
+                  <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
+                  <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+                  <% if index == 0 %>
+                    <div style="display:none">
+                      <label> Apply To All</label>
+                      <%= check_box_tag "open_hour[apply_to_all]" %>
+                    </div>
+                  <%end%>
+              </div>
+             <div class="clear"></div>
+          </div>
+        </div>
+        </div>
+        <div class="slide_box_slider">
+          <div class="slide_box_shadow">
+            <div class="box_slider round shadow">
+              <p class="hide" >
+                <%= label_tag "Closed?"%>
+               <%= check_box_tag "open_hour[#{index}][closed]","",@open_hours[index.to_s].present? && @open_hours[index.to_s]["closed"].present?, {:class=>"close_box"} %>
+               <input type="button" class="button positive split_button" id="split_hour_<%=index%>" value="Split Hours" />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="slide_box_eject">
+        		<div class="box_eject round"><a href="javascript:void(0)"></a></div>
+        </div>
       </div>
-    </div>
-    </div>
-    <div class="slide_box_slider">
-    <div class="slide_box_shadow">
-      <div class="box_slider round shadow">
-        <p class="hide" >
-          <%= label_tag "Closed?"%>
-         <%= check_box_tag "open_hour[#{index}][closed]" %>
-         <input type="button" class="button positive" id="split_hour_<%=index%>" value="Split Hours" onclick="Split_hour_admin(<%=index%>)" />
-        </p>
-   </div>
-    </div>
-    </div>
-    <div class="slide_box_eject">
-    		<div class="box_eject round"><a href="#"></a></div>
-    </div>
-</div>
-
-
-
-     <% end %>
-       <p><label>Are your hours split during a single day, such as 9-11am and 7-10pm? </label></p>
-       <p><%= check_box_tag "split_hours","",OpenHour.has_two_hour_for_same_day(@place,"0")%><label>I'd like to enter two sets of hours for a single day.</label></p>
+     <% end %> 
+    </fieldset>
+    <%else%>
+    <fieldset>
+      <legend>Open Signs</legend>
+     <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+          <div class="slide_box">
+            <div class="slide_box_content">
+              <div class="slide_box_shadow">
+                <div class="box_content round shadow">
+                  <h3 class="days left"><%=key%></h3>
+                  <div id="open_hour_div_<%=index%>" class="times left">
+                    <div class="input_set">
+                      <div class="slide_input left">
+                        <label for="from">from:</label>
+                        <%= text_field_tag "open_hour[#{index}][from]",@place.get_hour(index,:from,false), :class=>"complete title from_class", :disabled=>@place.is_closed(index) %>
+                      </div>
+                      <div class="slide_input left ma">
+                        <label for="id">to:</label>
+                        <%= text_field_tag "open_hour[#{index}][to]",@place.get_hour(index,:to,false), :class=>"complete title to_class", :disabled=>@place.is_closed(index) %>
+                      </div>
+                    </div>
+                    <input type="hidden" name="open_hour[<%=index%>][place_id]" value="<%=@place.id%>" />
+                    <input type="hidden" name="open_hour[<%=index%>][day_no]"    value="<%=value%>"    />
+                    <% if index == 0 %>
+                      <div style="display:none">
+                        <label> Apply To All</label>
+                        <%= check_box_tag "open_hour[apply_to_all]" %>
+                      </div>
+                    <%end%>
+                    <% if OpenHour.has_two_hour_for_same_day(@place,index)%>                     
+                      <div class="slide_input left">
+                        <label for="from">from2:</label>
+                        <%= text_field_tag "open_hour[#{index}][from2]",@place.get_hour(index,:from, true),:class=>"complete title from_class" %>
+                      </div>
+                      <div class="slide_input left ma">
+                        <label for="to">to2:</label>
+                        <%= text_field_tag "open_hour[#{index}][to2]",@place.get_hour(index,:to,true),:class=>"complete title to_class" %>
+                      </div>
+                    <%elsif @place.is_closed(index) && OpenHour.has_two_hour_at_any_day(@place)%>                      
+                      <div class="slide_input left">
+                        <label for="from">from2:</label>
+                        <%= text_field_tag "open_hour[#{index}][from2]",@place.get_hour(index,:from, true),:class=>"complete title from_class",:disabled=>true %>
+                      </div>
+                      <div class="slide_input left ma">
+                        <label for="to">to2:</label>
+                        <%= text_field_tag "open_hour[#{index}][to2]",@place.get_hour(index,:to,true),:class=>"complete title to_class",:disabled=>true %>
+                      </div>
+                    <% end %>
+                </div>
+              <div class="clear"></div>
+          </div>
+        </div>
+        </div>
+        <div class="slide_box_slider">
+          <div class="slide_box_shadow">
+            <div class="box_slider round shadow">
+              <p class="hide" >
+                <%= label_tag "Closed?"%>
+               <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index), {:class=>"close_box"}%>
+               <input type="button" class="button positive split_button" id="split_hour_<%=index%>" value="Split Hours" />
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="slide_box_eject">
+        		<div class="box_eject round"><a href="javascript:void(0)"></a></div>
+        </div>
+      </div>
+     <% end %> 
     </fieldset>
     <%end%>
-
-
 
     <fieldset>
       <legend>Place Images</legend>
