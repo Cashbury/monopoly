@@ -311,15 +311,6 @@
                         <label for="to">to2:</label>
                         <%= text_field_tag "open_hour[#{index}][to2]",@place.get_hour(index,:to,true),:class=>"complete title to_class" %>
                       </div>
-                    <%elsif @place.is_closed(index) && OpenHour.has_two_hour_at_any_day(@place)%>                      
-                      <div class="slide_input left">
-                        <label for="from">from2:</label>
-                        <%= text_field_tag "open_hour[#{index}][from2]",@place.get_hour(index,:from, true),:class=>"complete title from_class",:disabled=>true %>
-                      </div>
-                      <div class="slide_input left ma">
-                        <label for="to">to2:</label>
-                        <%= text_field_tag "open_hour[#{index}][to2]",@place.get_hour(index,:to,true),:class=>"complete title to_class",:disabled=>true %>
-                      </div>
                     <% end %>
                 </div>
               <div class="clear"></div>
@@ -331,8 +322,12 @@
             <div class="box_slider round shadow">
               <p class="hide" >
                 <%= label_tag "Closed?"%>
-               <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index), {:class=>"close_box"}%>
+               <%= check_box_tag "open_hour[#{index}][closed]" , "1" , @place.is_closed(index), {:class=>"close_box"}%>               
+               <% if OpenHour.has_two_hour_for_same_day(@place,index) %>
+               <input type="button" class="button positive split_button revert_split" id="split_hour_<%=index%>" value="Revert Split" />
+               <%else%>
                <input type="button" class="button positive split_button" id="split_hour_<%=index%>" value="Split Hours" />
+               <%end%>
               </p>
             </div>
           </div>
@@ -379,11 +374,10 @@
 </div>
 <div class="clear"></div>
     </div>
-
     <div id="owner_view">
       <%= render :template=>"users/businesses/primary_place" %>
       <div class="clear"></div>
     </div>
 </div>
 
-<input type="button" class="button positive" name="new_place" value="Save" id="place_update"/>
+<input type="button" class="button positive" name="new_place" value="<%=@place.new_record? ? 'Create' : 'Update'%>" id="place_update"/>

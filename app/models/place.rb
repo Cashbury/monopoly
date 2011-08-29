@@ -64,7 +64,16 @@ class Place < ActiveRecord::Base
   before_validation :clear_photos
 
   DISTANCE_UNIT="km"
-
+  validate :validate_time_ranges
+	
+	def validate_time_ranges
+	  self.open_hours.each do |open_hour|
+      if open_hour.from > open_hour.to
+        errors.add_to_base "Invalid Time Range From: #{OpenHour.format_time(open_hour.from)}, To: #{OpenHour.format_time(open_hour.to)}"
+      end
+    end
+  end
+  
   def clear_photos
     self.tmp_images.each do |tmp_image|
       tmp_image.upload_type="PlaceImage"
@@ -196,21 +205,6 @@ class Place < ActiveRecord::Base
   def full_address
     [address.street_address, address.city.try(:name), address.city.try(:country).try(:name)].compact.join(", ")
   end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   private #=============================================

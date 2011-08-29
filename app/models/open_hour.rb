@@ -35,6 +35,8 @@ class OpenHour < ActiveRecord::Base
   }
   validates_presence_of :day_no,:from,:to
 	validates_uniqueness_of :place_id,:scope=>[:day_no,:from,:to]
+	
+  
   def self.format_time(datetime)
    #datetime.strftime("%I:%M %p").upcase
     return_hour = ""
@@ -49,6 +51,7 @@ class OpenHour < ActiveRecord::Base
     end
     return return_hour
   end
+  
   def self.has_two_hour_for_same_day(place, day_num)
    open_hours = OpenHour.where(:place_id=>place.id,:day_no=>day_num)
    open_hours.size == 2
