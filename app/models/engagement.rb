@@ -17,8 +17,8 @@ class Engagement < ActiveRecord::Base
   validates_numericality_of :amount
   
   def validate
-    if self.new_record? and self.engagement_type_id== EngagementType.where(:name=>"spend").first.try(:id) and self.campaign.present? and self.campaign.engagements.any? 
-      errors.add_to_base "There is an already created Spend Engagement under this Campaign"
+    if self.new_record? and self.engagement_type_id== EngagementType.where(:name=>"spend").first.try(:id) and self.campaign.present? and self.campaign.engagements.any? and self.campaign.engagements.first.is_started 
+      errors.add_to_base "There is an already created and running Spend Engagement under this Campaign"
     end
   end
   
