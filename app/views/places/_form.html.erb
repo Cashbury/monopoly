@@ -1,3 +1,4 @@
+<% content_for(:head) do %>
 <%= stylesheet_link_tag "biz_application" %>
 
 <%= javascript_include_tag      "businessend",
@@ -69,10 +70,12 @@
     var $pb =$(this).val();
     $.getScript('/businesses/check_primary_place/'+ $pb +'.js');
   });
+  
   $('select#place_address_attributes_country_id').bind('change',function(){
     var country_id = $(":selected", this).val();
     $.getScript("/businesses/update_cities/"+country_id+"?selector_id=place_address_attributes_city_id");
   });
+  
   $('#open_hour_apply_to_all').click(function(){
   if( $(this).is(':checked') ){
       from_hour = $('#open_hour_0_from').val(); // the selected value of the first day ( from hour)
@@ -109,24 +112,16 @@
     left: -10000px;
   }
 </style>
-
+<%end%>
 <% set_variables(@place) %>
 
 <div class="tabs">
   <ul>
-      <li>
-	<a href="#admin_view">Admin View</a>
-      </li>
-      <li>
-        <a href="#owner_view">Owner View</a>
-      </li>
-    </ul>
-    <div id="admin_view">
-
+    <li><a href="#admin_view">Admin View</a></li>
+    <li><a href="#owner_view">Owner View</a></li>
+  </ul>
+  <div id="admin_view">
     <div id="step3" class="mono-business-register span-20" >
-
-
-
     <%= form_for(@place,:html => { :multipart => true ,:class=>"mono-form"}) do |f| %>
     <%= f.error_messages %>
     <fieldset>

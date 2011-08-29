@@ -125,7 +125,7 @@ class Business < ActiveRecord::Base
                      .where("account_holders.model_type='User'")                     
                      .where(params)
                      .group("users.id")
-                     .select("0 as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
+                     .select("'' as engaged_time, 0 as total, (CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
                      .order("total DESC")
       when RETURNING_CUSTOMER #customers that have been engaged with the biz before
         filters=[] ; params = []
@@ -147,7 +147,7 @@ class Business < ActiveRecord::Base
                                  .where("account_holders.model_type='User'")                     
                                  .where(params)
                                  .group("users.id")
-                                 .select("0 as total,users.id as user_id,(CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
+                                 .select(" '' as engaged_time, 0 as total,users.id as user_id,(CONCAT(users.first_name, ' ', users.last_name )) as full_name, users.id as user_id")
                                  .order("total DESC")
       filters=[] ; params=[]                          
       filters << "places.id = ?" and params << p_id  unless p_id.zero?
