@@ -38,7 +38,7 @@
     <td><%= link_to (image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg"), users_management_path(user) %></td>
     <td><%= result.full_name %></td>
     <td><%= @place_id.zero? ? "ALL" : result.p_name %></td>
-    <td><%= "#{result.engaged_time.strftime("%b %d , %Y")} @ #{result.engaged_time.strftime("%I:%M %p")} #{Time.zone}" %></td>
+    <td><%= "#{result.engaged_time.strftime("%b %d , %Y")} @ #{result.engaged_time.strftime("%I:%M %p")} #{Time.zone}" if result.engaged_time.present? %></td>
     <td><%= result.total || 0 %></td>
     <td></td>
   </tr>
