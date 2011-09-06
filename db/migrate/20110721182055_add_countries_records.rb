@@ -1,6 +1,6 @@
 class AddCountriesRecords < ActiveRecord::Migration
   def self.up
-=begin    Country.delete_all
+    Country.delete_all
 
      Country.create(:name=>'Afghanistan ', :nationality_singular=>'Afghan', :nationality_plural=>'Afghans', :capital=>'Kabul ',:currency=>'Afghani ', :currency_code=>'AFA', :iso2=>'AF', :iso3=>'AFG', :ison=>'4')
      Country.create(:name=>'Albania ', :nationality_singular=>'Albanian', :nationality_plural=>'Albanians', :capital=>'Tirana ',:currency=>'Lek ', :currency_code=>'ALL', :iso2=>'AL', :iso3=>'ALB', :ison=>'8')
@@ -276,8 +276,7 @@ class AddCountriesRecords < ActiveRecord::Migration
      Country.create(:name=>'Yugoslavia', :nationality_singular=>'Serbian', :nationality_plural=>'Serbs', :capital=>'Belgrade ',:currency=>'Yugoslavian Dinar ', :currency_code=>'YUM', :iso2=>'YU', :iso3=>'YUG', :ison=>'891')
      Country.create(:name=>'Zaire', :nationality_singular=>'', :nationality_plural=>'', :capital=>'',:currency=>'', :currency_code=>'', :iso2=>'--', :iso3=>'-- ', :ison=>'--')
      Country.create(:name=>'Zambia', :nationality_singular=>'Zambian', :nationality_plural=>'Zambians', :capital=>'Lusaka ',:currency=>'Kwacha', :currency_code=>'ZMK', :iso2=>'ZM', :iso3=>'ZWB', :ison=>'894')
-     Country.create(:name=>'Zimbabwe', :nationality_singular=>'Zimbabwean', :nationality_plural=>'Zimbabweans', :capital=>'Harare ',:currency=>'Zimbabwe Dollar', :currency_code=>'ZWD', :iso2=>'ZW', :iso3=>'ZWE', :ison=>'716')
-=end     
+     Country.create(:name=>'Zimbabwe', :nationality_singular=>'Zimbabwean', :nationality_plural=>'Zimbabweans', :capital=>'Harare ',:currency=>'Zimbabwe Dollar', :currency_code=>'ZWD', :iso2=>'ZW', :iso3=>'ZWE', :ison=>'716')     
   end
 
   def self.down
