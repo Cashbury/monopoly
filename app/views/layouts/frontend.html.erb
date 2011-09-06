@@ -7,46 +7,55 @@
     <%= stylesheet_link_tag "home"   %>
     <%= javascript_include_tag :defaults, "cufon-yui" , "z_Arista_Light_300.font" %>
     <!-- Start of Woopra Code -->
-      <script type="text/javascript">
-        var woo_settings = {idle_timeout:'60000', domain:'cashbury.com'};
-        (function(){
-        var wsc = document.createElement('script');
-        wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';
-        wsc.type = 'text/javascript';
-        wsc.async = true;
-        var ssc = document.getElementsByTagName('script')[0];
-        ssc.parentNode.insertBefore(wsc, ssc);
-        })();
-      </script>
+    <script type="text/javascript">
+      var woo_settings = {idle_timeout:'60000', domain:'cashbury.com'};
+      (function(){
+      var wsc = document.createElement('script');
+      wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';
+      wsc.type = 'text/javascript';
+      wsc.async = true;
+      var ssc = document.getElementsByTagName('script')[0];
+      ssc.parentNode.insertBefore(wsc, ssc);
+      })();
+    </script>
     <!-- End of Woopra Code -->
     <%= csrf_meta_tag %>
     <%= yield(:head) %>
   </head>
   <body>
     <div class="container">
-				<div class="home-menu">
-					<ul class="home right">
-            <li><%= link_to "for you" , foryou_path ,:class=>"for-you"%></li>
-            <li><%= link_to "for your biz",foryourbiz_path,:class=>"for-your-business" %></li>
-					</ul>
-				</div>
-				<div class="clear"></div>
-      	<div id="content-section" class="">					
-
-				<div id="content" class="bo clearfix">
-					<div class="iphone span-9 bo">
+		  <div class="home-menu">
+			  <ul class="home right">
+          <li><%= link_to "for you" , foryou_path ,:class=>"for-you"%></li>
+          <li><%= link_to "for your biz",foryourbiz_path,:class=>"for-your-business" %></li>
+			  </ul>
+		  </div>
+			<div class="clear"></div>
+    	<div id="content-section" class="">					
+			  <div id="content" class="bo clearfix">
+				  <div class="iphone span-9 bo">
             <%= image_tag "home/iphone.1.png" %>
-					</div>
+				  </div>
           <div class="right-column span-16 last bo">
                 <%= yield %>
           </div>
         </div>
-      <div>
-    </div>
-    </div>
+      </div>
       <div class="footer span-24 last">
         <p> Copyrights &copy 2010, kazdoor Inc. Contact us at <a href="mailto:hello@cashbury.com">hello@cashbury.com</a></p>
-			</div>
+		  </div>
     </div>
+    <!-- Google Analytics Code -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-25564659-1']);
+      _gaq.push(['_setDomainName', '.cashbury.com']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s  = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </body>
 </html>
