@@ -86,11 +86,26 @@ class Place < ActiveRecord::Base
   def self.closest(options = {})
     geo_scope(options).order("#{distance_column_name} asc").limit(1)
   end
+  
+  def current_open_hour
+    current_datetime=DateTime.now.in_time_zone(self.time_zone)
+    self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).first
+  end
 
   def is_open?
-    current_datetime=DateTime.now.in_time_zone(self.time_zone)
-    !self.open_hours.where(["open_hours.day_no= ? and open_hours.from <= ? and open_hours.to >= ?",current_datetime.wday,current_datetime, current_datetime]).empty?
+    current_open_hour.nil?
   end
+
+  def status
+    return 'Not specified' if self.open_hours.count ==0
+    open_hour = current_open_hour
+    if !open_hour
+      'Closed'
+    else
+      "Open until #{open_hour.to.strftime('%I:%M %p')}"
+    end
+  end
+
   def get_city_given_geoloacation(lat,lng)
     res=Geokit::Geocoders::MultiGeocoder.reverse_geocode([lat,lng])
     if res.city

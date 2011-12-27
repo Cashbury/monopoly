@@ -2,13 +2,14 @@ class PlacesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update, :get_opening_hours]
   before_filter :set_place , :only =>[:google, :reset_google]
+
   def index
     @places = search_places
 
     respond_to do |format|
       format.html
-      format.xml { render :xml => @places }
-      format.json { render :text => @places.to_json }
+      format.xml { render :xml => @places.to_xml(:methods => [:status]) }
+      format.json { render :text => @places.to_xml(:methods => [:status]) }
     end
   end
 
@@ -21,8 +22,8 @@ class PlacesController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.xml { render :xml => @places }
-      format.json { render :text => @places.to_json}
+      format.xml { render :xml => @place.to_xml(:include => :open_hours) }
+      format.json { render :text => @place.to_json(:include => :open_hours)}
     end
   end
 
