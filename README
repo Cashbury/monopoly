@@ -127,7 +127,7 @@
 				</engagements>
 	
 	2. places
-		3. Display a place fetched by coordinates
+		2.1. Display a place fetched by coordinates
 			request:
 				http://spinninghats.com/places/33,896499/35,480575 [xml]
 			request type:
@@ -151,7 +151,7 @@
 				  <long>33,896499</long>
 				</place>
 				
-		3. Display a list of places
+		2.2. Display a list of places
 			request:
 				http://spinninghats.com/places [xml]
 			request type:
@@ -160,22 +160,84 @@
 				<?xml version="1.0" encoding="UTF-8"?>
 				<places type="array">
 				  <place>
-				    <address1 nil="true"></address1>
-				    <city nil="true"></city>
-				    <name>Hamra</name>
-				    <address2 nil="true"></address2>
-				    <created-at type="datetime">2011-01-23T13:49:39Z</created-at>
-				    <country nil="true"></country>
-				    <updated-at type="datetime">2011-01-23T13:49:39Z</updated-at>
-				    <zipcode nil="true"></zipcode>
-				    <id type="integer">1</id>
-				    <business-id type="integer">1</business-id>
-				    <neighborhood nil="true"></neighborhood>
-				    <description>Makdessi Street</description>
-				    <lat>35,480575</lat>
-				    <long>33,896499</long>
+				    <address-id type="integer">1</address-id>
+				    <business-id type="integer">9</business-id>
+				    <created-at type="datetime">2011-05-30T15:10:00Z</created-at>
+				    <description>Some description</description>
+				    <foursquare-reference nil="true"/>
+				    <google-reference>
+				      CnRiAAAAyacZ9xcMdwb30jhW6-gtu1IFBwPpT4m8fshrRRQHwu0eDMJKBCvRhDyE-cpDrQK3WVJgDiCDNhWsfemeWTMWJqx7HAtZdLnUS_uqCgb6Xrg1PtntO1Sui-z2hOVM7iTszm8RpvpuZXtjMD_lcxG7JxIQc4M3LKB23ezdZyH7B5O9iRoUzebDr8MNSCDBhYdsEJba_lmDJhA
+				    </google-reference>
+				    <id type="integer">10</id>
+				    <is-primary type="boolean">false</is-primary>
+				    <is-user-defined type="boolean" nil="true"/>
+				    <lat type="decimal">31.2135</lat>
+				    <long type="decimal">29.9443</long>
+				    <name>San Stefano</name>
+				    <phone>0020101664281</phone>
+				    <place-type-id type="integer" nil="true"/>
+				    <time-zone>Cairo</time-zone>
+				    <updated-at type="datetime">2011-12-27T20:11:40Z</updated-at>
+				    <user-id type="integer" nil="true"/>
+				    <status>Closed</status>
 				  </place>
 				</places>
+
+		2.3. Get information about a place
+			request:
+				http://spinninghats.com/places/1 [xml]
+			request type:
+				GET
+			response:
+				<?xml version="1.0" encoding="UTF-8"?>
+				<place>
+				  <address-id type="integer">1</address-id>
+				  <business-id type="integer">9</business-id>
+				  <created-at type="datetime">2011-05-30T15:10:00Z</created-at>
+				  <description>Some description</description>
+				  <foursquare-reference nil="true"></foursquare-reference>
+				  <google-reference>CnRiAAAAyacZ9xcMdwb30jhW6-gtu1IFBwPpT4m8fshrRRQHwu0eDMJKBCvRhDyE-cpDrQK3WVJgDiCDNhWsfemeWTMWJqx7HAtZdLnUS_uqCgb6Xrg1PtntO1Sui-z2hOVM7iTszm8RpvpuZXtjMD_lcxG7JxIQc4M3LKB23ezdZyH7B5O9iRoUzebDr8MNSCDBhYdsEJba_lmDJhA</google-reference>
+				  <id type="integer">10</id>
+				  <is-primary type="boolean">false</is-primary>
+				  <is-user-defined type="boolean" nil="true"></is-user-defined>
+				  <lat type="decimal">31.2135</lat>
+				  <long type="decimal">29.9443</long>
+				  <name>San Stefano</name>
+				  <phone>0020101664281</phone>
+				  <place-type-id type="integer" nil="true"></place-type-id>
+				  <time-zone>Cairo</time-zone>
+				  <updated-at type="datetime">2011-12-27T20:11:40Z</updated-at>
+				  <user-id type="integer" nil="true"></user-id>
+				  <open-hours type="array">
+				    <open-hour>
+				      <created-at type="datetime">2011-12-28T04:03:26Z</created-at>
+				      <day-no type="integer">0</day-no>
+				      <from type="datetime">2000-01-01T09:00:00Z</from>
+				      <id type="integer">85</id>
+				      <place-id type="integer">10</place-id>
+				      <to type="datetime">2000-01-01T11:00:00Z</to>
+				      <updated-at type="datetime">2011-12-28T04:03:26Z</updated-at>
+				    </open-hour>
+				    <open-hour>
+				      <created-at type="datetime">2011-12-28T04:03:26Z</created-at>
+				      <day-no type="integer">0</day-no>
+				      <from type="datetime">2000-01-01T16:00:00Z</from>
+				      <id type="integer">86</id>
+				      <place-id type="integer">10</place-id>
+				      <to type="datetime">2000-01-01T18:00:00Z</to>
+				      <updated-at type="datetime">2011-12-28T04:03:26Z</updated-at>
+				    </open-hour>
+				    <open-hour>
+				      <created-at type="datetime">2011-12-28T04:03:26Z</created-at>
+				      <day-no type="integer">1</day-no>
+				      <from type="datetime">2000-01-01T13:00:00Z</from>
+				      <id type="integer">87</id>
+				      <place-id type="integer">10</place-id>
+				      <to type="datetime">2000-01-01T20:00:00Z</to>
+				      <updated-at type="datetime">2011-12-28T04:03:26Z</updated-at>
+				    </open-hour>
+				  </open-hours>
+				</place>
 
 	2. Engagements
 		3. Display an engagement
