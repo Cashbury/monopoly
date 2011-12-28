@@ -185,7 +185,7 @@ class Place < ActiveRecord::Base
     else
      open_hour = OpenHour.where(:place_id => self.id , :day_no => day_num)[0]
     end
-    return_hour = "12:00 AM"
+    return_hour = (hour_type == :from ? '8:00 AM' : '10:00 PM')
     if open_hour
       datetime    = open_hour.from if hour_type == :from
       datetime    =  open_hour.to if hour_type == :to

@@ -1,10 +1,10 @@
 <p>
-  <label><input type="radio" name="working_hours" value="unknown" class="radio" <%= @open_hours.empty? ? "checked" : ""%>/> Hours are unknown or should not be shown
+  <label><input type="radio" name="working_hours" value="unknown" class="radio" <%= @open_hours.empty? ? "checked" : ""%>/> Disabled
   </label>
 </p>
 <p>
   <label>
-    <input type="radio" name="working_hours" value="defined"  class="radio" <%= @open_hours.empty? ? "" : "checked" %>/> Show business hours:
+    <input type="radio" name="working_hours" value="defined"  class="radio" <%= @open_hours.empty? ? "" : "checked" %>/> Enabled:
   </label>
 </p>
 <div class="business_hours" style="<%= @open_hours.empty? ? 'display:none;' : ''%>">

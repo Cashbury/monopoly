@@ -4,6 +4,9 @@ jQuery(function($) {
         var target = e.target;
         if (target.value == 'defined') {
             $('.business_hours').show();
+            $('.close').each(function(i, close) {
+                set_day_closed(close, false);
+            } );
         }
         else {
             $('.business_hours').hide();
