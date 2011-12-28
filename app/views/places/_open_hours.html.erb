@@ -1,0 +1,31 @@
+<p>
+  <label><input type="radio" name="working_hours" value="unknown" class="radio" <%= @open_hours.empty? ? "checked" : ""%>/> Hours are unknown or should not be shown
+  </label>
+</p>
+<p>
+  <label>
+    <input type="radio" name="working_hours" value="defined"  class="radio" <%= @open_hours.empty? ? "" : "checked" %>/> Show business hours:
+  </label>
+</p>
+<div class="business_hours" style="<%= @open_hours.empty? ? 'display:none;' : ''%>">
+  <% OpenHour::DAYS.each_with_index do |(key,value) , index| %>
+  <div class="dow">
+    <div class="day_caption"><%= key %></div>
+    <%= select_tag("open_hour[#{index}][from]", options_for_select(@hours, @place.get_hour(index, :from, false)), :class => 'time_select', :disabled => day_closed(value) )%>
+    <%= select_tag("open_hour[#{index}][to]", options_for_select(@hours, @place.get_hour(index, :to, false)), :class => 'time_select', :disabled => day_closed(value) )%>
+    <input type="hidden" name="open_hour[<%=index %>][place_id]" value="<%=@place.id%>" />
+    <input type="hidden" name="open_hour[<%=index %>][day_no]"    value="<%= value %>"    />
+    
+    <label class="hours_action"><input type="checkbox" <%= split_hours_disabled(value) ? "" : "checked" %> class="split" >Split</label>
+    <label class="hours_action">
+      <input type="checkbox" name="open_hour[<%= index %>][closed]" <%= day_closed(value) ? "checked" : ""%> class="close" >
+      Closed
+    </label>
+
+    <div class="split_time" style="<%= split_hours_disabled(value) ? 'display:none' : ''%>">
+      <%= select_tag("open_hour[#{index}][from2]", options_for_select(@hours, @place.get_hour(index, :from, true)), :class => 'time_select', :disabled => split_hours_disabled(value))%>
+      <%= select_tag("open_hour[#{index}][to2]", options_for_select(@hours, @place.get_hour(index, :to, true)), :class => 'time_select', :disabled => split_hours_disabled(value))%>
+    </div>
+  </div>
+  <% end %>
+</div>

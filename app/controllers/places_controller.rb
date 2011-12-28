@@ -51,6 +51,7 @@ class PlacesController < ApplicationController
 
   def edit
     @place = Place.find(params[:id])
+    @open_hours = @place.open_hours
     ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
 
@@ -64,6 +65,7 @@ class PlacesController < ApplicationController
       redirect_to place_url(@place)
     else
       ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
+      @open_hours = @place.open_hours
       render :action => 'edit'
     end
   end

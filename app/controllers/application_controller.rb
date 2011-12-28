@@ -50,12 +50,12 @@ class ApplicationController < ActionController::Base
   def prepare_hours
     @hours = []
     12.downto(1) do | i |
-       @hours << "#{i}:00 AM"
        @hours << "#{i}:30 AM"
+       @hours << "#{i}:00 AM"
     end
     12.downto(1) do | i |
-       @hours << "#{i}:00 PM"
        @hours << "#{i}:30 PM"
+       @hours << "#{i}:00 PM"
     end
     return @hours
   end

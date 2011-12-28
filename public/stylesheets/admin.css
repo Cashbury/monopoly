@@ -26,3 +26,28 @@ background: linear-gradient(top, #eeeeee 0%,#cccccc 67%); /* W3C */}
 #leftContainer { padding:30px;}
 
 tbody tr:nth-child(2n) td, tbody tr.even td { background: none repeat scroll 0 0 #F6F6F6; }
+
+input.radio {
+    width: auto;
+}
+
+select.time_select {
+    width: 100px;
+}
+
+label.hours_action {
+    display: inline-block;
+}
+
+label.hours_action, label.hours_action input {
+    width: auto;
+}
+
+.day_caption {
+    display: inline-block;
+    width: 70px;
+}
+
+div.split_time {
+    margin-left: 74px;
+}
