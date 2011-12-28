@@ -163,7 +163,7 @@
 				    <address-id type="integer">1</address-id>
 				    <business-id type="integer">9</business-id>
 				    <created-at type="datetime">2011-05-30T15:10:00Z</created-at>
-				    <description>Some description</description>
+				    <about>Some description</about>
 				    <foursquare-reference nil="true"/>
 				    <google-reference>
 				      CnRiAAAAyacZ9xcMdwb30jhW6-gtu1IFBwPpT4m8fshrRRQHwu0eDMJKBCvRhDyE-cpDrQK3WVJgDiCDNhWsfemeWTMWJqx7HAtZdLnUS_uqCgb6Xrg1PtntO1Sui-z2hOVM7iTszm8RpvpuZXtjMD_lcxG7JxIQc4M3LKB23ezdZyH7B5O9iRoUzebDr8MNSCDBhYdsEJba_lmDJhA
@@ -194,7 +194,7 @@
 				  <address-id type="integer">1</address-id>
 				  <business-id type="integer">9</business-id>
 				  <created-at type="datetime">2011-05-30T15:10:00Z</created-at>
-				  <description>Some description</description>
+				  <about>Some description</about>
 				  <foursquare-reference nil="true"></foursquare-reference>
 				  <google-reference>CnRiAAAAyacZ9xcMdwb30jhW6-gtu1IFBwPpT4m8fshrRRQHwu0eDMJKBCvRhDyE-cpDrQK3WVJgDiCDNhWsfemeWTMWJqx7HAtZdLnUS_uqCgb6Xrg1PtntO1Sui-z2hOVM7iTszm8RpvpuZXtjMD_lcxG7JxIQc4M3LKB23ezdZyH7B5O9iRoUzebDr8MNSCDBhYdsEJba_lmDJhA</google-reference>
 				  <id type="integer">10</id>

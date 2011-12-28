@@ -8,7 +8,7 @@
 #  long            :decimal(15, 10)
 #  lat             :decimal(15, 10)
 #  business_id     :integer(4)
-#  description     :text
+#  about           :text
 #  created_at      :datetime
 #  updated_at      :datetime
 #  place_type_id   :integer(4)
@@ -44,7 +44,7 @@ class Place < ActiveRecord::Base
   accepts_nested_attributes_for :items
   accepts_nested_attributes_for :open_hours
 
-  attr_accessible :name, :long, :lat, :description, :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance , :is_primary
+  attr_accessible :name, :long, :lat, :about , :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance , :is_primary
   attr_accessor :items_list
   validates :name , :presence=>{:message=> "Branch name can not be blank"}
   validates :long, :lat , :presence=>{:message=>"Co-ordinates is can not be located"}
@@ -56,7 +56,7 @@ class Place < ActiveRecord::Base
   validates_associated :address
 
   scope :with_address,joins(:address=>[:city=>:country])
-                      .select("places.id,places.name,places.long,places.lat,places.description,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
+                      .select("places.id,places.name,places.long,places.lat,places.about,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
                                addresses.zipcode,addresses.cross_street,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")
   before_save :add_amenities_name_and_place_name_to_place_tag_lists
