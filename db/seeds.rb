@@ -1,12 +1,13 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Mayor.create(:name => 'Daley', :city => cities.first)
+puts 'creating roles'
+Role::AS.values.each do |name|
+  Role.find_or_create_by_name(:name => name )
+end
+
 puts 'Create an admin account'
-User.create(:username => "admin", :name => "Admin", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
+user = User.new(:username => "admin", :name => "Admin", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
+user.roles << Role.find_by_name(Role::AS[:admin])
+user.save!
+
 puts "Create transaction types and actions"
 transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect", :fee_amount=>0.0, :fee_percentage=>0.0)
 %w( Engagement Redeem ).each do |name|
@@ -48,9 +49,7 @@ Target.find_or_create_by_name(:name=>"returning_comers")
 puts "Create Default user roles here"
 #check this is working or not
 #%w( admin owner operator principal accountant manager branch_manager cashier consumer).each do |name|
-Role::AS.values.each do |name|
-  Role.find_or_create_by_name(:name => name )
-end
+
 puts "Creating system login methods"
 %w(facebook email_and_password phone_and_password qrcode ).each do |name|
   LoginMethod.find_or_create_by_name(:name => name )
