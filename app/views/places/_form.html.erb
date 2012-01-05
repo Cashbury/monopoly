@@ -127,7 +127,8 @@
       </legend>
       <p>
         <%= f.label :phone ,:class=>"" %>
-        <span class="code"><%= @place.country_code %></span><%= f.text_field :phone, :class=>"title double phone", :value => @place.phone_without_code%>
+	<div>Country code: <span class="code"><%= @place.country_code %></span> </div>
+        <%= f.text_field :phone, :class=>"title double", :value => @place.phone_without_code%>
       </p>
     </fieldset>
 
