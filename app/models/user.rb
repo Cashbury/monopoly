@@ -248,9 +248,10 @@ class User < ActiveRecord::Base
 
       #save this engagement action to logs
       log_group=LogGroup.create!(:created_on=>date) if log_group.nil?
+      business_id = campaign.program.business.id
       if place_id.blank?
         unless lat.blank? || lng.blank?
-          place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
+          place_id=Place.where(:business_id => business_id).closest(:origin=>[lat.to_f,lng.to_f]).first.id
         end
       end
       Log.create!(:user_id        =>self.id,
@@ -259,7 +260,7 @@ class User < ActiveRecord::Base
                   :engagement_id  =>associatable.id,
                   :qr_code_id     =>qr_code.try(:id),
                   :campaign_id    =>campaign.id,
-                  :business_id    =>campaign.program.business.id,
+                  :business_id    =>business_id,
                   :transaction_id =>transaction.id,
                   :place_id       =>place_id,
                   :gained_amount  =>after_fees_amount,
