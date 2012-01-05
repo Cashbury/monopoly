@@ -5,6 +5,13 @@ class PlacesController < ApplicationController
 
   def index
     @places = search_places
+    @businesses = Business.where(:id => @places.map(&:business_id))
+    @brands = Brand.where(:id => @businesses.map(&:brand_id))
+    @places.sort!{|p1, p2| 
+      b1 = @businesses.select{|b| b.id == p1.business_id}.first
+      b2 = @businesses.select{|b| b.id == p2.business_id}.first
+      b1.brand_id <=> b2.brand_id
+    }
 
     respond_to do |format|
       format.html

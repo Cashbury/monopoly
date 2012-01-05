@@ -2,6 +2,7 @@
 
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
+    <th>Image</th>
     <th>Name</th>
     <th>Description</th>
     <th></th>
@@ -9,6 +10,10 @@
 
 <% @brands.each do |brand| %>
   <tr>
+    <td>
+      <% image_url = brand.brand_image.try(:photo).try(:url, :normal) %>
+      <%= image_tag image_url if image_url %>
+    </td>
     <td><%= link_to brand.name, brand %></td>
     <td><%= brand.description %></td>
     <td>

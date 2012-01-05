@@ -43,21 +43,26 @@ $(function(){
 <table class="mono-table" border="0" cellpadding="0" cellspacing="0">
   <tr>
     <th>Image</th>
+    <th>Brand</th>
     <th>Name</th>
     <th>City</th>
     <th>Country</th>
     <th>Associated to</th>
-    <th>Phone Number</th>
     <th>&nbsp</th>
   </tr>
   <% for place in @places %>
+  <% business = @businesses.select{|b| b.id == place.business_id}[0] %>
+  <% brand = @brands.select{|b| b.id == business.brand_id}[0] %>
     <tr>
-     <td><%= image_tag place.try(:place_images).try(:first).try(:photo).try(:url,:thumb) unless place.try(:place_images).try(:first).try(:photo).try(:url,:thumb).nil? %>&nbsp</td>
+      <td>
+	<% image_url = brand.brand_image.try(:photo).try(:url, :normal) %>
+	<%= image_tag image_url if image_url %>&nbsp;
+      </td>
+      <td><%= link_to brand.name , brand %></td>     
       <td><%= link_to place.name , place %></td>
       <td><%= place.address.try(:city).try(:name) %></td>
       <td><%= place.address.try(:city).try(:country).try(:name) %></td>
-      <td><%= place.business.try(:name) %></td>
-      <td><%= place.phone %></td>
+      <td><%= business.try(:name) %></td>
       <td><%= link_to "Edit", edit_place_path(place), :class=>"button" %></td>
     </tr>
   <% end %>
