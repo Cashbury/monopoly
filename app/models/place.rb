@@ -240,7 +240,7 @@ class Place < ActiveRecord::Base
     phone_number = self.phone
     return '' if !phone_number
     code = country_code
-    phone_number.gsub(code, '')
+    phone_number.gsub(/^#{Regexp.escape(code)}/, '')
   end
 
 

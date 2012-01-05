@@ -77,7 +77,8 @@ $(document).ready(function () {
     </p>
     <p>
       <%= f.label :telephone_number %>
-      <%= f.text_field :telephone_number , :class=>"title" %>
+    <div>Country code: <span class="code"><%= @user.country.try(:phone_country_code) %></span> </div>
+      <%= f.text_field :telephone_number , :class=>"title", :value => @user.phone_without_code %>
     </p>
     <div class="legal_type_class">
       <%= label_tag "Legal IDs" %>
@@ -170,6 +171,18 @@ $(document).ready(function () {
 <% end %>
 
 <script type="text/javascript">
+$('#user_home_town').change(function(e) {
+    var value = e.target.value;
+    if (value != '') {
+	$.get('/countries/'+value+'/country_code', undefined, function(e) {
+	    var code = e['country_code'];
+	    $('.code').html(code);
+	});
+    }
+    else {
+	$('.code').html('');
+    }
+});
 //  jQuery(function(){
 //    jQuery("#activate").live("click",function(e){
 //      jQuery.post("/v1/users/<%= @user.id %>/on");

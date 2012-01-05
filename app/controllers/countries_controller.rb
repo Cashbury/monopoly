@@ -86,6 +86,11 @@ class CountriesController < ApplicationController
     end
   end
 
+  def country_code
+    @country = Country.find(params[:id])    
+    render :json => {:country_code => @country.try(:phone_country_code)||''}
+  end
+
 
   private
   def sort_direction

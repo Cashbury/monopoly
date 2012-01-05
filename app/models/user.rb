@@ -90,13 +90,14 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   after_create :set_default_role
   after_create :initiate_user_code
+  before_save :add_country_code_to_phone
 
   scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
   scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code").group("users.id")
 
 
 
-  validates_format_of :telephone_number, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+  validates_format_of :telephone_number, :with => /^[0-9]+$/, :message=>"Phone should contain numbers only",:allow_blank=>true
   cattr_reader :per_page
   @@per_page = 20
 
@@ -485,4 +486,26 @@ class User < ActiveRecord::Base
       end
     end
   end
+
+  def country_code
+    self.try(:country).try(:phone_country_code)||''
+  end
+  
+  def add_country_code_to_phone
+    if !self.telephone_number.blank?
+      code = country_code
+      phone_number = self.telephone_number
+      unless phone_number.starts_with?(code)
+        self.telephone_number = code + phone_number
+      end
+    end
+  end
+
+  def phone_without_code
+    phone_number = self.telephone_number
+    return '' if !phone_number
+    code = country_code
+    phone_number.gsub(/^#{Regexp.escape(code)}/, '')
+  end
+
 end

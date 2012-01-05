@@ -29,16 +29,31 @@ class Country < ActiveRecord::Base
     code = self.phone_country_code
     original_code = Country.find(self.id).phone_country_code
     yield
+
     if code != original_code
       businesses = Business.where(:country_id => self.id)
       places = Place.where(:business_id => businesses.map(&:id))
 
       places.each do |place|
         phone_number = place.phone
-        phone_number.gsub!(original_code, '')
-        place.phone = phone_number
-        place.save
+        if phone_number
+          phone_number.gsub!(/^#{Regexp.escape(original_code)}/, '')
+          place.phone = phone_number
+          place.save
+        end
       end
+
+      users = User.where(:home_town => self.id)
+
+      users.each do |user|
+        phone_number = user.telephone_number
+        if phone_number
+          phone_number.gsub!(/^#{Regexp.escape(original_code)}/, '')
+          user.telephone_number = phone_number
+          user.save
+        end        
+      end
+
     end
   end
   

@@ -11,7 +11,9 @@ Kazdoor::Application.routes.draw do
   resources :like
 
   resources :states
-  resources :countries
+  resources :countries do
+    get 'country_code', :on =>:member
+  end
   resources :cities
 
   resources :neighborhoods
