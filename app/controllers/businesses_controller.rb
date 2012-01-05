@@ -159,7 +159,7 @@ class BusinessesController < ApplicationController
   end
 
   def check_primary_place
-    @business = Business.where(params[:id]).first
+    @business = Business.where(:id => params[:id]).first
     respond_to do |f|
       f.js
     end
@@ -205,6 +205,11 @@ class BusinessesController < ApplicationController
     end
 
     render :json => @biz
+  end
+
+  def country_code
+    @business = Business.where(:id => params[:id]).first
+    render :json => {:country_code => @business.try(:country).try(:phone_country_code)||''}
   end
 
 

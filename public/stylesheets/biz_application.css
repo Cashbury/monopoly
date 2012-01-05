@@ -114,6 +114,14 @@ input.title.double, select.double{
   float:none;
 }
 
+input.title.phone {
+    width: 350px;
+}
+
+span.code {
+    font-size: 1.5em;
+}
+
 input.title{
   width:193px;
   float:left;

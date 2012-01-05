@@ -51,7 +51,7 @@ class Place < ActiveRecord::Base
   validates :address, :presence=>{:message=>"Address is can not be determined"}
 
   validates :long,:lat , :numericality=>{:message=>"Not proper co-ordinate format" }
-  validates_format_of       :phone, :with => /^(00|\+)[0-9]+$/, :message=>"Number should start with 00 | +",:allow_blank=>true
+  validates_format_of       :phone, :with => /^[0-9]+$/, :message=>"Phone should contain numbers only",:allow_blank=>true
 
   validates_associated :address
 
@@ -60,6 +60,7 @@ class Place < ActiveRecord::Base
                                addresses.zipcode,addresses.cross_street,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")
   before_save :add_amenities_name_and_place_name_to_place_tag_lists
+  before_save :add_country_code_to_phone
   after_save :update_items
   before_validation :clear_photos
 
@@ -219,6 +220,26 @@ class Place < ActiveRecord::Base
 
   def full_address
     [address.street_address, address.city.try(:name), address.city.try(:country).try(:name)].compact.join(", ")
+  end
+
+  def country_code
+    self.try(:business).try(:country).try(:phone_country_code)
+  end
+
+  def add_country_code_to_phone
+    if !self.phone.blank?
+      code = country_code
+      phone_number = self.phone
+      unless phone_number.starts_with?(code)
+        self.phone = code + phone_number
+      end
+    end
+  end
+
+  def phone_without_code
+    phone_number = self.phone
+    code = country_code
+    phone_number.gsub(code, '')
   end
 
 

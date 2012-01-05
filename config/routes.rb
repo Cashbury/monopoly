@@ -91,6 +91,7 @@ Kazdoor::Application.routes.draw do
 	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
 	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
 	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
+          get '/country_code', :action => :country_code, :on =>:member
 	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do

@@ -18,9 +18,28 @@ class Country < ActiveRecord::Base
                                         :medium=>"16x16",
                                         :large=>"32x32"
                                       }
+
+  around_save :update_places_phones
                                       
   def flag_url
     "#{COUNTRIES_FLAGS_PATH}#{self.iso2.to_s.downcase}.png" if self.iso2.present?
+  end
+
+  def update_places_phones
+    code = self.phone_country_code
+    original_code = Country.find(self.id).phone_country_code
+    yield
+    if code != original_code
+      businesses = Business.where(:country_id => self.id)
+      places = Place.where(:business_id => businesses.map(&:id))
+
+      places.each do |place|
+        phone_number = place.phone
+        phone_number.gsub!(original_code, '')
+        place.phone = phone_number
+        place.save
+      end
+    end
   end
   
 end
