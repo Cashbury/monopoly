@@ -223,7 +223,7 @@ class Place < ActiveRecord::Base
   end
 
   def country_code
-    self.try(:business).try(:country).try(:phone_country_code)
+    self.try(:business).try(:country).try(:phone_country_code)||''
   end
 
   def add_country_code_to_phone
@@ -238,6 +238,7 @@ class Place < ActiveRecord::Base
 
   def phone_without_code
     phone_number = self.phone
+    return '' if !phone_number
     code = country_code
     phone_number.gsub(code, '')
   end
