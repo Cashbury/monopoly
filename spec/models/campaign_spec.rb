@@ -1,10 +1,8 @@
-require "rspec"
+require 'spec_helper'
 
-describe "Test targets" do
-
-  it "should do something" do
-
-    #To change this template use File | Settings | File Templates.
-    true.should == false
-  end
+describe Campaign do
+  it "should be able to create campaigns with only valid information " do
+    c = Campaign.new
+    c.should_not be_valid
+    end
 end

@@ -34,8 +34,10 @@ end
   # gem 'rspec-rails'
 # end
 #
+group :test, :development do
+  gem "rspec-rails", "~> 2.6"
+end
 
-gem 'rspec-rails', :group => :test
 gem 'devise', "~>1.1.5"
 #gem 'rails_admin' , :git => 'git://github.com/sferik/rails_admin.git'
 #:path=>'vendor/gems/rails_admin'
