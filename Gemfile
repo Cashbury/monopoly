@@ -36,6 +36,13 @@ end
 #
 group :test, :development do
   gem "rspec-rails", "~> 2.6"
+  gem 'cucumber-rails', '~> 1.2.1'
+  # must have QT installed; follow link below for instructions
+  # https://github.com/thoughtbot/capybara-webkit/wiki/Installing-QT
+  gem 'capybara-webkit'
+  gem 'database_cleaner'
+  gem "factory_girl_rails", "~> 1.4.0"
+  gem 'forgery'
 end
 
 gem 'devise', "~>1.1.5"
@@ -50,7 +57,6 @@ gem "will_paginate", "~> 3.0.pre2"
 group :test do
 gem 'shoulda', '=2.11.3'
 gem 'mocha', '=0.9.12'
-gem 'factory_girl_rails','=1.0.1'
 gem 'rcov','=0.9.9'
 end
 
