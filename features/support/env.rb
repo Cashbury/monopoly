@@ -5,7 +5,7 @@
 # files.
 
 require 'cucumber/rails'
-
+require 'factory_girl/step_definitions'
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd
 # prefer to use XPath just remove this line and adjust any selectors in your
@@ -52,7 +52,14 @@ end
 #     DatabaseCleaner.strategy = :transaction
 #   end
 #
+Before('@no-txn,@selenium,@culerity,@celerity,@javascript') do
+  tables = %w(roles actions transaction_types countries cities program_types engagement_types measurement_types targets login_methods legal_types currencies)
+  DatabaseCleaner.strategy = :truncation, { :except => tables  }
+end
 
+Before('~@no-txn', '~@selenium', '~@culerity', '~@celerity', '~@javascript') do
+  DatabaseCleaner.strategy = :transaction
+end
 # Possible values are :truncation and :transaction
 # The :transaction strategy is faster, but might give you threading problems.
 # See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature

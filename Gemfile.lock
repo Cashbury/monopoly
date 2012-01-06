@@ -53,6 +53,8 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
+    capybara-screenshot (0.1.8)
+      capybara (>= 1.0)
     capybara-webkit (0.7.2)
       capybara (>= 1.0.0, < 1.2)
     carmen (0.2.5)
@@ -193,6 +195,7 @@ DEPENDENCIES
   aws-s3 (= 0.6.2)
   calendar_date_select!
   cancan (= 1.6.5)
+  capybara-screenshot
   capybara-webkit
   carmen (= 0.2.5)
   carrierwave (= 0.5.2)

@@ -41,6 +41,8 @@ class ApplicationController < ActionController::Base
       businesses_url
     elsif current_user.role? Role::AS[:consumer]
       #check here for he state of the application
+      raise "Logging into Cashbury as a consumer is not supported!"
+      # The line below raises an unfriendly nil error since the method doesn't exist anymore(?)
       invite_friends_url
     else
       root_url

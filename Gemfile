@@ -40,6 +40,7 @@ group :test, :development do
   # must have QT installed; follow link below for instructions
   # https://github.com/thoughtbot/capybara-webkit/wiki/Installing-QT
   gem 'capybara-webkit'
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem "factory_girl_rails", "~> 1.4.0"
   gem 'forgery'
