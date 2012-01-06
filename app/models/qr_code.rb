@@ -44,6 +44,8 @@ class QrCode < ActiveRecord::Base
   
   scope :associated_with_engagements , where(:associatable_type=>QrCode::ENGAGEMENT_TYPE)
   scope :associated_with_users , where(:associatable_type=>QrCode::USER_TYPE)
+
+  default_scope :order => 'created_at DESC'
   
   cattr_reader :per_page
   @@per_page = 20
