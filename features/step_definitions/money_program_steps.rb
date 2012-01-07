@@ -18,3 +18,11 @@ Then /^I should not be able to make a new Money program$/ do
     page.should_not have_select("Program type", :options => ["Money"])
   end
 end
+
+Then /^I should not be able to change the Money program into a Marketing program$/ do
+  visit business_programs_path(@current_business)
+  page.should_not have_link "Edit"
+
+  visit business_program_path(@current_business, @current_business.money_program)
+  page.should_not have_link "Edit"
+end
