@@ -1,5 +1,9 @@
 require 'spec_helper'
 
 describe Account do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  it "should create account given valid attributes" do
+    Factory.build(:account).should be_valid
+  end
+
 end
