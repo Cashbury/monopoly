@@ -1,6 +1,7 @@
 class Businesses::ProgramsController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :find_business
+  before_filter :setup_program_types
 
   def index
     @programs = @business.programs
@@ -75,4 +76,10 @@ class Businesses::ProgramsController < ApplicationController
   def find_business
     @business = Business.find(params[:business_id])
   end
+
+  def setup_program_types
+    @program_types = ProgramType.all
+    @program_types.reject! { |pt| pt.id == ProgramType["Money"].id } if @business.has_money_program?
+  end
+
 end

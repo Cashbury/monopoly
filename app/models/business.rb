@@ -70,12 +70,18 @@ class Business < ActiveRecord::Base
     #end
   end
 
+  def has_money_program?
+    money_program.present?
+  end
+
+  def money_program
+    @money_program ||= self.programs.where(:program_type_id => ProgramType['Money'].id).first
+  end
 
   # Returns the first account for this business linked to a "money" program.
   def cashbox
     return @cashbox if @cashbox.present?
-    money_program_type = ProgramType.where(:name => 'Money').first
-    money_program = self.programs.where(:program_type_id => money_program_type.id).first
+    return nil unless has_money_program?
     @cashbox = self.accounts.where(:program_id => money_program.id).first
   end
 

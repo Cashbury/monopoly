@@ -7,3 +7,7 @@ end
 Then /^the business should have a cashbox account$/ do
   @current_business.cashbox.should_not be_nil
 end
+
+Given /^the current business has a Money program$/ do
+  @current_business.programs << Program.create(:program_type => ProgramType["Money"])
+end
