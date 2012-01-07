@@ -23,6 +23,8 @@ class Account < ActiveRecord::Base
   belongs_to :measurement_type
   belongs_to :payment_gateway
   belongs_to :business
+
+  has_one :account_option
   
   has_many :transactions, :foreign_key=>"from_account"
   

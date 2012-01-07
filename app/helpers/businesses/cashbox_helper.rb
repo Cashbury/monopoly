@@ -1,0 +1,2 @@
+module Businesses::CashboxHelper
+end

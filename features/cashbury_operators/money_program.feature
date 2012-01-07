@@ -30,6 +30,17 @@ Feature: Money Program for Cashbury Operators
       | Name |
       | Cadbury Bunnies |
     When I log into the site
-    And I visit the program page for "Cadbury Bunnies"
+    And "Cadbury Bunnies" is the current business
     And the current business has a Money program
     Then I should not be able to change the Money program into a Marketing program
+
+  Scenario: Set the max daily load and spend for a money program account
+    Given I am an Operator
+    And the following business exists:
+      | Name |
+      | Cadbury Bunnies |
+    When I log into the site
+    And "Cadbury Bunnies" is the current business
+    And the current business has a Money program
+    Then I should be able to set the cashbox account load limit to "15"
+    And I should be able to set the cashbox account spend limit to "10"

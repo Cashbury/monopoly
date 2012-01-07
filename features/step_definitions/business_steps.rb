@@ -11,3 +11,8 @@ end
 Given /^the current business has a Money program$/ do
   @current_business.programs << Program.create(:program_type => ProgramType["Money"])
 end
+
+Given /^"([^"]*)" is the current business$/ do |business_name|
+  @current_business = Business.where(:name => business_name).first
+  @current_business.should_not be_nil
+end

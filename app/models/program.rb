@@ -28,7 +28,7 @@ class Program < ActiveRecord::Base
   end
 
   def is_money?
-    self.program_type == ProgramType.where(:name => 'Money').first
+    self.program_type == ProgramType["Money"]
   end
 
   protected

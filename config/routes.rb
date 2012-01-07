@@ -167,6 +167,8 @@ Kazdoor::Application.routes.draw do
       post "/crop_image",:action=>:crop_image
     end
     resources :spend_campaigns,:controller => "businesses/spend_campaigns"
+
+    resource :cashbox, :only => [:show, :edit, :update], :controller => "businesses/cashboxes"
   end
   resources :users_management do
     get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"

@@ -18,8 +18,10 @@
     
     <td><%= link_to 'Show', business_program_path(@business,program) %></td>
     <td>
-    <% unless @program.program_type == ProgramType["Money"] %>
+    <% unless program.program_type == ProgramType["Money"] %>
       <%= link_to 'Edit', edit_business_program_path(@business,program) %>
+    <% else %>
+      <%= link_to 'Cashbox', edit_business_cashbox_path(@business) %>
     <% end %>
     </td>
     <td><%= button_to "Destroy", business_program_path(@business,program), :method=>:delete, :class=>:destroy,:confirm=>"Are you sure?" %></td>
