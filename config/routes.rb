@@ -82,16 +82,6 @@ Kazdoor::Application.routes.draw do
 
 	end
 
-  resources :businesses do
-	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
-	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
-	  get '/update_currencies/:country_id', :action=>:update_currencies, :on=> :collection, :as=>"update_currencies"
-	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
-	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
-	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
-	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
-	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
-	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
 	#       get "stamps", :on => :collection
@@ -142,6 +132,21 @@ Kazdoor::Application.routes.draw do
   end
 
   resources :businesses do
+    collection do
+      get :transactions
+    end
+
+	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
+	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
+	  get '/update_currencies/:country_id', :action=>:update_currencies, :on=> :collection, :as=>"update_currencies"
+	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
+	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
+	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
+	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
+	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
+
+    resources :transactions, :controller => "businesses/transactions", :only => [:index]
+
     resources :measurement_types, :controller => "businesses/measurement_types"
     resources :items, :controller => "businesses/items"
     resources :places, :controller => "businesses/places" do

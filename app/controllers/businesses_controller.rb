@@ -207,6 +207,10 @@ class BusinessesController < ApplicationController
     render :json => @biz
   end
 
+  def transactions
+    @transactions = Transaction.order("created_at DESC")
+  end
+
 
   private
   def set_tag_lists_for_business_places(business)
