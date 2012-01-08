@@ -279,9 +279,10 @@ class UsersManagementController < ApplicationController
   def withdraw_account
     account=Account.find(params[:account_id])
     account=account.withdraw_from_account(params[:amount].to_f,current_user.id)
+    currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
-      flash[:notice]="An amount of #{params[:amount]} points has been withdrawn from account at #{at_text}"
+      flash[:notice]="An amount of #{params[:amount]} #{currency} has been withdrawn from account at #{at_text}"
       redirect_to :action=>:manage_user_accounts, :page=>params[:page]
     else
       flash[:error]="#{account.errors.full_messages.join(' , ')}"
@@ -292,9 +293,10 @@ class UsersManagementController < ApplicationController
   def deposit_account
     account=Account.find(params[:account_id])
     account=account.deposit_to_account(params[:amount].to_f,current_user.id)
+    currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
-      flash[:notice]="An amount of #{params[:amount]} points has been deposited to user account at #{at_text}"
+      flash[:notice]="An amount of #{params[:amount]} #{currency} has been deposited to user account at #{at_text}"
       redirect_to :action=>:manage_user_accounts, :page=>params[:page]
     else
       flash[:error]="#{account.errors.full_messages.join(' , ')}"
