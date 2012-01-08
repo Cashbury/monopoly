@@ -37,6 +37,7 @@ class Business < ActiveRecord::Base
 
 
   has_one :account_holder, :as=>:model, :dependent=> :destroy
+
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   belongs_to :brand
@@ -76,6 +77,11 @@ class Business < ActiveRecord::Base
 
   def money_program
     @money_program ||= self.programs.where(:program_type_id => ProgramType['Money'].id).first
+  end
+
+  def transactions
+    return Transaction.where(:id => -1) if account_holder.blank?
+    Transaction.where(['from_account = ? OR to_account = ?', account_holder.id, account_holder.id])
   end
 
   # Returns the first account for this business linked to a "money" program.
