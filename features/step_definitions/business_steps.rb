@@ -57,3 +57,16 @@ Then /^"([^"]*)" should have a cash account with "([^"]*)"$/ do |email, business
   cash_account = user.cash_account_for(business)
   cash_account.should_not be_nil
 end
+
+Then /^I should be able to see all transactions for "([^"]*)"/ do |business_name|
+  business = Business.find_by_name business_name
+  visit business_transactions_path(business)
+
+  current_path.should == business_transactions_path(business)
+end
+
+Then /^I should be able to see all transactions for all businesses$/ do
+  visit transactions_path
+
+  current_path.should == transactions_path
+end
