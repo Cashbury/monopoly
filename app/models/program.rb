@@ -37,9 +37,11 @@ class Program < ActiveRecord::Base
 
   protected
   def assign_cashbox_account
+    account_holder = business.account_holder || business.create_account_holder
     Account.create :business_id => business_id,
       :program_id => self.id,
       :is_money => true,
-      :amount => 0
+      :amount => 0,
+      :account_holder_id => account_holder.id
   end
 end
