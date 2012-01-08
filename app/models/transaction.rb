@@ -33,4 +33,23 @@ class Transaction < ActiveRecord::Base
 	                      :to_account_balance_before,:to_account_balance_after
 
   delegate :name, :fee_amount, :fee_percentage, :to => :transaction_type
+
+  module States
+    VOID = "void"
+  end
+
+  def in_state?(*states)
+    states.detect { |s| s.to_s == self.state }.present?
+  end
+
+  def void!(voiding_user)
+    Transaction.transaction do
+      self.state = Transaction::States::VOID
+      self.save!
+      Log.create! :user_id => voiding_user.id,
+        :transaction_id => self.id,
+        :frequency => 1,
+        :action_id => Action[Action::CURRENT_ACTIONS[:void]]
+    end
+  end
 end

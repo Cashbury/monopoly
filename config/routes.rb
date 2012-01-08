@@ -131,7 +131,11 @@ Kazdoor::Application.routes.draw do
     resources :reports, :only => [:create, :show, :index]
   end
 
-  resources :transactions, :only => [:index, :show]
+  resources :transactions, :only => [:index, :show] do
+    member do
+      post :void
+    end
+  end
 
   resources :businesses do
 	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"

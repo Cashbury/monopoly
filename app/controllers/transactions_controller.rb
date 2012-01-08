@@ -4,4 +4,11 @@ class TransactionsController < ApplicationController
   def index
     @transactions = Transaction.order('created_at DESC')
   end
+
+  def void
+    transaction = Transaction.find params[:id]
+    transaction.void!(current_user)
+    flash[:notice] = "Transaction voided"
+    redirect_to :back
+  end
 end

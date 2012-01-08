@@ -13,6 +13,8 @@
     <th>Balance After Tx (To Account)</th>
     <th>After Fees Amount</th>
     <th>Created At</th>
+    <th>State</th>
+    <th>&nbsp;</th>
   </tr>
 
 <% transactions.each do |transaction| %>
@@ -34,7 +36,15 @@
     <td><%= transaction.to_account_balance_before%></td>
     <td><%= transaction.to_account_balance_after%></td>
     <td><%= transaction.after_fees_amount%></td>
-    <td><%="#{transaction.created_at.strftime("%I:%M %p")} on #{transaction.created_at.strftime("%b %d , %Y")}"%></td>    
+    <td><%="#{transaction.created_at.strftime("%I:%M %p")} on #{transaction.created_at.strftime("%b %d , %Y")}"%></td>
+    <td>
+      <%= transaction.state || "success" %>
+    </td>
+    <td>
+      <% if !transaction.in_state?(:void) %>
+        <%= button_to "Void", void_transaction_path(transaction) %>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 </table>

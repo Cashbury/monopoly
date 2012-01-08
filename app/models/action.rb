@@ -14,5 +14,10 @@ class Action < ActiveRecord::Base
   belongs_to :transaction_type
   has_many :logs
   
-  CURRENT_ACTIONS={:engagement=>"Engagement", :redeem=>"Redeem", :withdraw=>"Withdraw", :deposit=>"Deposit"}
+  CURRENT_ACTIONS={:engagement=>"Engagement", :redeem=>"Redeem", :withdraw=>"Withdraw", :deposit=>"Deposit", :void => "Void Transaction"}
+
+  def self.[](name)
+    Action.where(:name => name).first
+  end
+
 end
