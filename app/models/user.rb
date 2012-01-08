@@ -78,6 +78,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :pending_receipts, :class_name=>"Receipt" , :join_table => "users_pending_receipts"
   has_and_belongs_to_many :places
+  has_and_belongs_to_many :programs, :join_table => "users_programs"
   
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
@@ -162,7 +163,31 @@ class User < ActiveRecord::Base
 	def has_account_with_campaign?(acch,campaign_id)
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
 	end
+  
+  def enroll(program)
+    User.transaction do
+      self.programs << program
+      if program.program_type == ProgramType['Money']
+        self.create_account_holder if account_holder.blank?
+        Account.create :business_id => program.business_id,
+          :program_id => program.id,
+          :account_holder_id => self.account_holder.id
+      end
+    end
+  end
 
+  def money_program_for(business)
+    money_program = business.money_program
+    self.programs.where(:id => money_program.id).first
+  end
+
+  def cash_account_for(business)
+    money_program = business.money_program
+    Account.where(:business_id => business.id)
+      .where(:program_id => money_program.id)
+      .where(:account_holder_id => self.account_holder.id)
+      .first
+  end
 	def auto_enroll_at(places)
 	  begin
       ids=places.collect{|p| p.business_id}

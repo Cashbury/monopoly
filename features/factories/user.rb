@@ -11,4 +11,8 @@ FactoryGirl.define do
   factory :cashbury_operator, :parent => :cuke_user do
     roles { [Role.where(:name => Role::AS[:operator]).first, Role.where(:name => Role::AS[:consumer]).first] }
   end
+
+  factory :consumer, :parent => :cuke_user do
+    roles { [Role.where(:name => Role::AS[:consumer]).first] }
+  end
 end

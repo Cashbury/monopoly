@@ -459,4 +459,11 @@ class UsersManagementController < ApplicationController
     @places=Place.all
   end
     
+  def enroll_in_money_program
+    user = User.find params[:users_management_id]
+    business = Business.find params[:business_id]
+    user.enroll(business.money_program)
+    flash[:notice] = "Enrolled in Money Program @ #{business.name}"
+    redirect_to users_management_path(user)
+  end
 end

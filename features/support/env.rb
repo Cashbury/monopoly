@@ -32,6 +32,7 @@ Capybara.javascript_driver = :webkit
 ActionController::Base.allow_rescue = false
 
 # need to load db/seeds.rb
+DatabaseCleaner.clean_with :truncation
 load Rails.root.join('db/seeds.rb')
 # Remove/comment out the lines below if your app doesn't have a database.
 # For some databases (like MongoDB and CouchDB) you may need to use :truncation instead.

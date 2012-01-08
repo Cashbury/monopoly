@@ -13,7 +13,7 @@
 
 <% if @program.is_money? %>
 <%# Uhm, ew. %>
-<% account_option = @program.business.cashbox.account_option || AccountOption.new %>
+<% account_option = @program.business.try(:cashbox).try(:account_option) || AccountOption.new %>
   <p>
     <b>Max daily load limit:</b>
     <%= account_option.max_daily_load_limit || "None" %>

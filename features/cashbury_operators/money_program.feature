@@ -1,4 +1,3 @@
-@javascript
 Feature: Money Program for Cashbury Operators
   As a Cashbury Operator
   I want to be able to administrate Money Programs

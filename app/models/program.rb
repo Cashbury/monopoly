@@ -21,6 +21,10 @@ class Program < ActiveRecord::Base
   validates_uniqueness_of :program_type_id, :scope=>[:business_id]  
   
   scope :running_campaigns, where("#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date")
+  scope :money, lambda {
+    pt_id = ProgramType["Money"].id
+    where(:program_type_id => pt_id)
+  }
   after_create :assign_cashbox_account, :if => lambda { |m| m.is_money? }
 
   def program_type_name
