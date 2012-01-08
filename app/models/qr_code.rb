@@ -36,6 +36,8 @@ class QrCode < ActiveRecord::Base
   
   SINGLE_USE_PRE_PRINTED_SIZE = "240x240"
   MULTI_USE_OR_WEB_SIZE       = "300x300"
+
+  ISSUED_BY_SYSTEM = 0
   
   attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type, :size
   before_create :encrypt_code
@@ -117,6 +119,19 @@ class QrCode < ActiveRecord::Base
   def created_by
     (self.issued_by==0) ? "System" :  User.find(self.issued_by).full_name.capitalize
   end
+
+  def self.create_for_campaign(campaign)
+    engagement = campaign.engagements.first
+    business = campaign.program.business
+    QrCode.create(:code_type => QrCode::MULTI_USE, 
+                  :business => business,
+                  :associatable_id => engagement.id,
+                  :associatable_type => QrCode::ENGAGEMENT_TYPE,
+                  :status => true, 
+                  :issued_by => ISSUED_BY_SYSTEM,
+                  :size => WEB_SIZE)
+  end
+
   #def save_image_server_path
 	#	if !File.exists?(File.join("#{Rails.public_path}","images","qrcodes"))
 	#		Dir.mkdir(File.join("#{Rails.public_path}","images","qrcodes"))

@@ -47,6 +47,7 @@ class Businesses::CampaignsController < ApplicationController
     @campaign.name="#{reward_attrs[:name].capitalize} Campaign"
     respond_to do |format|
       if @campaign.save!
+        QrCode.create_for_campaign(@campaign)
         format.html {
           @reward=@campaign.rewards.first
           #save_share_engagement(params[:share])
