@@ -1,6 +1,7 @@
 <% transactions = transaction_list %>
 <table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
+    <th>TX ID</th>
     <th>From Account Holder Name</th>
     <th>To Account Holder Name</th>
     <th>Transaction Type</th>
@@ -22,6 +23,7 @@
     <% to_account_holder=to_account.account_holder%>
     <% from_account_holder_name=from_account_holder.model_type=="User" ? User.find(from_account_holder.model_id).full_name : Business.find(from_account_holder.model_id).name  %>
     <% to_account_holder_name=to_account_holder.model_type=="User" ? User.find(to_account_holder.model_id).full_name : Business.find(to_account_holder.model_id).name  %>      
+    <td><%= transaction.id %></td>
     <td><%=from_account_holder_name%></td>
     <td><%=to_account_holder_name%></td>
     <td><%= transaction.name%></td>
