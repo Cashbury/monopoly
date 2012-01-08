@@ -25,7 +25,7 @@ $(function(){
 //]]>
 </script>
 
-<%= link_to "Transaction logs for all businesses", transactions_businesses_path %>
+<%= link_to "Transaction logs for all businesses", transactions_path %>
 <div style='clear: both'></div>
 <%= form_tag("/businesses", :method=>:GET, :class=>"left") do %>
   <%= text_field_tag "name" ,         params[:name], :placeholder=> "Business name"%>
