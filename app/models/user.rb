@@ -70,9 +70,11 @@ class User < ActiveRecord::Base
   has_many :businesses, :through=>:business_customers
   has_many :login_methods_users
   has_many :login_methods, :through=>"login_methods_users"
+
   has_one  :qr_code, :as=>:associatable, :conditions => {:status=>1}
 
   has_one :account_holder, :as=>:model
+  has_many :accounts, :through => :account_holder
 
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"

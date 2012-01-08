@@ -23,6 +23,7 @@ class Account < ActiveRecord::Base
   belongs_to :measurement_type
   belongs_to :payment_gateway
   belongs_to :business
+  belongs_to :program
 
   has_one :account_option
   
@@ -36,6 +37,9 @@ class Account < ActiveRecord::Base
   
   cattr_reader :per_page
   @@per_page = 20
+
+  delegate :campaign_name, :to => :campaign, :allow_nil => true
+  delegate :program_type_name, :to => :program, :allow_nil => true
   
   def withdraw_from_account(amount,user_id)
     if associated_to_campaign?

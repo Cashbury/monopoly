@@ -268,10 +268,12 @@ class UsersManagementController < ApplicationController
   def manage_user_accounts
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @user=User.find(params[:id])
-    @accounts=Account.joins([:account_holder,"LEFT OUTER JOIN campaigns on campaigns.id=accounts.campaign_id LEFT OUTER JOIN programs on programs.id=campaigns.program_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id LEFT OUTER JOIN businesses ON programs.business_id=businesses.id"])
-                     .where("account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
-                     .select("accounts.id, accounts.amount as amount, accounts.cumulative_amount as cumulative_amount, campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, accounts.created_at, accounts.business_id")
-                     .paginate(:page => @page,:per_page => Account::per_page )
+    @accounts = @user.accounts.includes(:campaign, :business, :program => [:program_type]).paginate(:page => @page, :per_page => Account::per_page)
+    # This entire block was unnecessary, I think... -- Arron
+    #@accounts=Account.joins([:account_holder,"LEFT OUTER JOIN campaigns on campaigns.id=accounts.campaign_id LEFT OUTER JOIN programs on programs.id=campaigns.program_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id LEFT OUTER JOIN businesses ON programs.business_id=businesses.id"])
+    #                 .where("account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+    #                 .select("accounts.id, accounts.amount as amount, accounts.cumulative_amount as cumulative_amount, campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, accounts.created_at, accounts.business_id")
+    #                 .paginate(:page => @page,:per_page => Account::per_page )
   end
   
   def withdraw_account
