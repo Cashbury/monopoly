@@ -46,6 +46,17 @@ class Transaction < ActiveRecord::Base
     Transaction.transaction do
       self.state = Transaction::States::VOID
       self.save!
+
+      from_account = Account.find self.from_account
+      to_account = Account.find self.to_account
+      refundable = self.before_fees_amount
+
+      from_account.amount += refundable
+      to_account.amount -= refundable
+
+      from_account.save!
+      to_account.save!
+
       Log.create! :user_id => voiding_user.id,
         :transaction_id => self.id,
         :frequency => 1,
