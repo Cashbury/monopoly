@@ -56,7 +56,9 @@ class Users::CashiersController < Users::BaseController
         end
         #Spend based campaign    
         campaign=business.spend_based_campaign
-        if campaign.present? and campaign.engagements.first.end_date > Date.today
+        campaign_engagement = campaign.try(:engagements).try(:first)
+        engagement_valid = (!campaign_engagement.end_date || campaign_engagement.end_date > Date.today)
+        if campaign.present? and engagement_valid
           result=user.made_spend_engagement_at(qr_code, business, campaign, params[:amount].to_f, params[:lat], params[:long], result[:log_group], current_user.id)
           #user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
           #qr_code.scan
