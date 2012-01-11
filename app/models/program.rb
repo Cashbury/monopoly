@@ -25,7 +25,7 @@ class Program < ActiveRecord::Base
     pt_id = ProgramType["Money"].id
     where(:program_type_id => pt_id)
   }
-  after_create :assign_cashbox_account, :if => lambda { |m| m.is_money? }
+  after_create :assign_money_accounts, :if => lambda { |m| m.is_money? }
 
   def program_type_name
     return self.program_type.name
@@ -36,12 +36,19 @@ class Program < ActiveRecord::Base
   end
 
   protected
-  def assign_cashbox_account
+  def assign_money_accounts
     account_holder = business.account_holder || business.create_account_holder
-    Account.create :business_id => business_id,
-      :program_id => self.id,
-      :is_money => true,
-      :amount => 0,
-      :account_holder_id => account_holder.id
+    Account.transaction do
+      Account.create! :business_id => business_id,
+        :program_id => id,
+        :is_money => true,
+        :amount => 0,
+        :account_holder_id => account_holder.id
+      Account.create! :business_id => business_id,
+        :program_id => id,
+        :is_reserve => true,
+        :amount => 0,
+        :account_holder_id => account_holder.id
+    end
   end
 end
