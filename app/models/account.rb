@@ -42,6 +42,52 @@ class Account < ActiveRecord::Base
   delegate :campaign_name, :to => :campaign, :allow_nil => true
   delegate :program_type_name, :to => :program, :allow_nil => true
   
+  def is_owned_by_consumer?
+    account_holder.model.is_a?(User) && account_holder.model.role?(:consumer)
+  end
+
+  def cashout(initiated_by = nil)
+    unless is_owned_by_consumer?
+      raise "Can only cash out a consumer account! (is actually: #{account_holder.model.class.name}: #{account_holder.model.roles.collect(&:name)})"
+    end
+
+    cashout_amount = amount
+    user_account = self
+    business_account = business.reserve_account
+    action = Action["Cashout"]
+
+    user_account.amount -= cashout_amount
+    business_account.amount += cashout_amount
+
+    transaction = Transaction.new(:from_account => user_account.id,
+      :to_account => business_account.id,
+      :before_fees_amount => cashout_amount,
+      :payment_gateway => user_account.payment_gateway,
+      :is_money => true,
+      :from_account_balance_before => cashout_amount,
+      :from_account_balance_after => 0,
+      :to_account_balance_before=> business_account.amount_was,
+      :to_account_balance_after => business_account.amount,
+      :currency => nil,
+      :note => "Account cashout",
+      :transaction_type_id => action.transaction_type_id,
+      :after_fees_amount => cashout_amount,
+      :transaction_fees => action.transaction_type.fee_amount)
+
+    Account.transaction do
+      user_account.save!
+      business_account.save!
+      transaction.save!
+
+      Log.create!(:user_id => initiated_by.try(:id) || account_holder_id,
+        :action_id         => action.id,
+        :business_id       => business_id,
+        :transaction_id    => transaction.id,
+        :frequency         => 1,
+        :created_on        => DateTime.now)
+    end
+  end
+
   def withdraw_from_account(amount,user_id)
     if associated_to_campaign?
       business_account=self.campaign.business_account
