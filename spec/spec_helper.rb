@@ -8,6 +8,12 @@ require 'rspec/autorun'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+# Load factories defined for Cucumber, too.
+# TODO: refactor and put all these factories in one place. Or else.
+Dir[Rails.root.join('features/factories/**/*.rb')].each do |factory|
+  require factory
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #

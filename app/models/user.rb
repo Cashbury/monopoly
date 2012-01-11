@@ -178,6 +178,9 @@ class User < ActiveRecord::Base
     end
   end
 
+  # This method is more of a sanity check
+  # to ensure that self.programs actually contains
+  # the requested program.
   def money_program_for(business)
     money_program = business.money_program
     self.programs.where(:id => money_program.id).first
@@ -198,6 +201,9 @@ class User < ActiveRecord::Base
       accholder=self.account_holder
       businesses.each do |business|
         business.programs.each do |program|
+          if program.is_money? && !self.programs.include?(program)
+            self.enroll(program)
+          end
           program.campaigns.each do |campaign|
             if !campaign.has_target? || self.is_engaged_with_campaign?(campaign) || (campaign.has_target? and self.is_targeted_from?(campaign))
               targeted_campaigns_ids << campaign.id

@@ -79,6 +79,11 @@ class Business < ActiveRecord::Base
     @money_program ||= self.programs.where(:program_type_id => ProgramType['Money'].id).first
   end
 
+  def create_money_program!
+    raise "Business #{self.id} already has money program!" if has_money_program?
+    self.programs.create! :program_type => ProgramType['Money']
+  end
+
   def transactions
     return Transaction.where(:id => -1) if account_holder.blank?
     Transaction.where(['from_account = ? OR to_account = ?', account_holder.id, account_holder.id])

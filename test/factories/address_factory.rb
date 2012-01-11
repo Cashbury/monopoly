@@ -1,7 +1,8 @@
-Factory.define :address do |addr|
-  addr.street_address "street address"
-  addr.neighborhood "neighborhood"
-  addr.country_id {Factory(:country).id}
-  addr.city_id {Factory(:city).id}
-  addr.zipcode "21111"
+FactoryGirl.define do
+  factory :address do
+    street_address "street address"
+    neighborhood "neighborhood"
+    zipcode "21111"
+    city
+  end
 end
