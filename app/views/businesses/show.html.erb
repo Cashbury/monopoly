@@ -104,9 +104,6 @@
         <th>View Enrolled customers</th>
     </tr>
     <% for program in @campaigns %>
-        <% actual_campaign = Campaign.where('name' => program.c_name)[0] %>
-        <%= actual_campaign.name %>
-
         <tr>
             <td><%= program.c_name %></td>
             <td><%= program.pt_name %></td>

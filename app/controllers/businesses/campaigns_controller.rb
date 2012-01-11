@@ -13,6 +13,7 @@ class Businesses::CampaignsController < ApplicationController
   end
 
   def new
+    @customer_type = params[:customer_type]
     @campaign=Campaign.new
     @campaign.engagements.build
     @reward=@campaign.rewards.build
