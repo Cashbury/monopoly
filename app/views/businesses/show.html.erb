@@ -137,8 +137,8 @@
     });
 </script>
 
-
-<div">
+<h3>New Campaigns View</h3>
+<div>
     <div id="tabs">
         <ul>
             <li><a href="#Customer-Acquistion">Customer Acquistion</a></li>
@@ -164,6 +164,7 @@
                         </tr>
                     <% end %>
                 <% end %>
+              <%= link_to "Make an offer", new_business_campaign_path(@business, :customer_type => "new") %><br/>
             </table>
         </div>
         <div id="Customer-Retention">
@@ -186,6 +187,7 @@
                         </tr>
                     <% end %>
                 <% end %>
+                <%= link_to "Make an offer", new_business_campaign_path(@business, :customer_type => "existing") %><br/>
             </table>
         </div>
     </div>
