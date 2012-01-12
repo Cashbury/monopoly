@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/thoughtbot/capybara-webkit
+  revision: 5adab74465f42efcf286f0f94ed5a5d1a04ce6cd
+  specs:
+    capybara-webkit (0.7.2)
+      capybara (>= 1.0.0, < 1.2)
+
+GIT
   remote: http://github.com/paneq/calendar_date_select.git
   revision: 8e7ec79435a68665df40b14bd90f47e6ac5e9135
   branch: rails3test
@@ -55,8 +62,6 @@ GEM
       xpath (~> 0.1.4)
     capybara-screenshot (0.1.8)
       capybara (>= 1.0)
-    capybara-webkit (0.7.2)
-      capybara (>= 1.0.0, < 1.2)
     carmen (0.2.5)
     carrierwave (0.5.2)
       activesupport (~> 3.0)
@@ -196,7 +201,7 @@ DEPENDENCIES
   calendar_date_select!
   cancan (= 1.6.5)
   capybara-screenshot
-  capybara-webkit
+  capybara-webkit!
   carmen (= 0.2.5)
   carrierwave (= 0.5.2)
   cucumber-rails (~> 1.2.1)

@@ -39,7 +39,7 @@ group :test, :development do
   gem 'cucumber-rails', '~> 1.2.1'
   # must have QT installed; follow link below for instructions
   # https://github.com/thoughtbot/capybara-webkit/wiki/Installing-QT
-  gem 'capybara-webkit'
+  gem 'capybara-webkit', :git => "git://github.com/thoughtbot/capybara-webkit"
   gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem "factory_girl_rails", "~> 1.4.0"
