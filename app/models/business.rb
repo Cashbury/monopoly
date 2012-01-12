@@ -76,7 +76,7 @@ class Business < ActiveRecord::Base
   end
 
   def money_program
-    @money_program ||= self.programs.where(:program_type_id => ProgramType['Money'].id).first
+    @money_program ||= self.programs.money.first
   end
 
   def create_money_program!
