@@ -173,6 +173,7 @@ class User < ActiveRecord::Base
         self.create_account_holder if account_holder.blank?
         Account.create :business_id => program.business_id,
           :program_id => program.id,
+          :is_money => true,
           :account_holder_id => self.account_holder.id
       end
     end
@@ -190,8 +191,14 @@ class User < ActiveRecord::Base
     money_program = business.money_program
     Account.where(:business_id => business.id)
       .where(:program_id => money_program.id)
+      .where(:is_money => true)
       .where(:account_holder_id => self.account_holder.id)
       .first
+  end
+
+  def cashout_at(business)
+    raise "Can't cashout without money program (User: #{id})" unless money_program_for(business).present?
+    cash_account_for(business).cashout
   end
 	def auto_enroll_at(places)
 	  begin

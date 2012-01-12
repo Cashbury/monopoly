@@ -1,5 +1,40 @@
 require 'spec_helper'
 
 describe Account do
-  pending "add some examples to (or delete) #{__FILE__}"
+  let(:business) { Factory(:business) }
+  let(:user)     { Factory(:consumer) }
+
+  context "Money Program" do
+    before(:each) do
+      business.create_money_program!
+      user.enroll(business.money_program)
+    end
+
+    it "#cashout should transfer all the money in the user's cashbox account to the business reserve account" do
+      account = user.cash_account_for(business)
+      account.update_attributes :amount => 150
+
+      account.cashout
+      account.amount.should == 0
+
+      business.reserve_account.amount.should == 150
+    end
+
+    it "#load should transfer money from a business reserve account to a user's cashbox account" do
+      account = user.cash_account_for(business)
+
+      account.load(50)
+      account.amount.should == 50
+      business.reserve_account.amount.should == -50
+    end
+
+    it "#spend should transfer money from a user's cashbox account to a business reserve account" do
+      account = user.cash_account_for(business)
+
+      account.spend(50)
+      account.amount.should == -50
+      business.reserve_account.amount.should == 50
+    end
+
+  end
 end

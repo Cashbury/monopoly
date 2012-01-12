@@ -29,7 +29,8 @@ class Account < ActiveRecord::Base
   
   has_many :transactions, :foreign_key=>"from_account"
   
-  validates_uniqueness_of :account_holder_id, :scope => [:program_id, :campaign_id]
+  # Let's not require this just yet -- Arron.
+  #validates_uniqueness_of :account_holder_id, :scope => [:program_id, :campaign_id]
   # Let's not require this just yet -- Arron.
   #validates_presence_of :measurement_type_id
   validates_numericality_of :amount
@@ -41,6 +42,26 @@ class Account < ActiveRecord::Base
   delegate :campaign_name, :to => :campaign, :allow_nil => true
   delegate :program_type_name, :to => :program, :allow_nil => true
   
+  def is_owned_by_consumer?
+    account_holder.model.is_a?(User) && account_holder.model.role?(:consumer)
+  end
+
+  def load(amount, initiated_by = nil)
+    ensure_consumer_account!
+    business.reserve_account.move_money!(amount, self, Action["Load"], initiated_by)
+  end
+
+  def spend(amount, initiated_by = nil)
+    ensure_consumer_account!
+    move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)
+  end
+
+  def cashout(initiated_by = nil)
+    ensure_consumer_account!
+    move_money!(amount, business.reserve_account, Action["Cashout"], initiated_by)
+  end
+  
+
   def withdraw_from_account(amount,user_id)
     if associated_to_campaign?
       business_account=self.campaign.business_account
@@ -162,4 +183,46 @@ class Account < ActiveRecord::Base
     .select("accounts.status,program_types.id as pt_id,businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, accounts.amount as current_amount, accounts.cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ")
     .group("businesses.id")
   end
+
+  protected
+  def ensure_consumer_account!
+    unless is_owned_by_consumer?
+      raise "Can only cash out a consumer account! (is actually: #{account_holder.model.class.name}: #{account_holder.model.roles.collect(&:name)})"
+    end
+  end
+
+  # Moves money from one account to another.
+  def move_money!(move_amount, to_account, action, initiated_by = nil)
+    self.amount -= move_amount
+    to_account.amount += move_amount
+
+    transaction = Transaction.new(:from_account => id,
+      :to_account => to_account.id,
+      :before_fees_amount => move_amount,
+      :payment_gateway => payment_gateway,
+      :is_money => true,
+      :from_account_balance_before => amount_was,
+      :from_account_balance_after => amount,
+      :to_account_balance_before=> to_account.amount_was,
+      :to_account_balance_after => to_account.amount,
+      :currency => nil,
+      :note => "Account #{action.name}",
+      :transaction_type_id => action.transaction_type_id,
+      :after_fees_amount => move_amount,
+      :transaction_fees => action.transaction_type.fee_amount)
+
+    Account.transaction do
+      save!
+      to_account.save!
+      transaction.save!
+
+      Log.create!(:user_id => initiated_by.try(:id) || account_holder_id,
+        :action_id         => action.id,
+        :business_id       => business_id,
+        :transaction_id    => transaction.id,
+        :frequency         => 1,
+        :created_on        => DateTime.now)
+    end
+  end
+
 end
