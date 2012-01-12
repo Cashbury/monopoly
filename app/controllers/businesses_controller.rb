@@ -23,7 +23,6 @@ class BusinessesController < ApplicationController
   end
 
   def show
-    @categories = Category.all
     @campaigns= @business.list_campaigns
     respond_to do |format|
       format.html
