@@ -60,23 +60,31 @@ class Account < ActiveRecord::Base
 
   def load(amount, initiated_by = nil)
     ensure_consumer_account!
+    ensure_cash_or_cashbury_account!
+
     account = self.is_money? ? business.reserve_account : business.cashbury_account
     account.move_money!(amount, self, Action["Load"], initiated_by)
   end
 
   def tip(amount, initiated_by = nil)
     ensure_consumer_account!
+    ensure_cash_account!
+
     move_money!(amount, business.cashbox, Action["Tip"], initiated_by)
   end
 
   def spend(amount, initiated_by = nil)
     ensure_consumer_account!
+    ensure_cash_or_cashbury_account!
+
     account = self.is_money? ? business.reserve_account : business.cashbury_account
     move_money!(amount, account, Action["Spend"], initiated_by)
   end
 
   def cashout(initiated_by = nil)
     ensure_consumer_account!
+    ensure_cash_account!
+
     move_money!(amount, business.reserve_account, Action["Cashout"], initiated_by)
   end
 
@@ -208,6 +216,18 @@ class Account < ActiveRecord::Base
   def ensure_consumer_account!
     unless is_owned_by_consumer?
       raise "Can only cash out a consumer account! (is actually: #{account_holder.model.class.name}: #{account_holder.model.roles.collect(&:name)})"
+    end
+  end
+
+  def ensure_cash_account!
+    unless is_money?
+      raise "Can only be called for a cash account! (is actually: #{self.inspect})"
+    end
+  end
+
+  def ensure_cash_or_cashbury_account!
+    unless is_money? || is_cashbury?
+      raise "Can only be called for a cash or cashbury account! (is actually: #{self.inspect})"
     end
   end
 
