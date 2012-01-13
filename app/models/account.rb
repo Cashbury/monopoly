@@ -75,6 +75,11 @@ class Account < ActiveRecord::Base
     business.reserve_account.move_money!(amount, self, Action["Load"], initiated_by)
   end
 
+  def tip(amount, initiated_by = nil)
+    ensure_consumer_account!
+    move_money!(amount, business.cashbox, Action["Tip"], initiated_by)
+  end
+
   def spend(amount, initiated_by = nil)
     ensure_consumer_account!
     move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)

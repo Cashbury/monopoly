@@ -36,6 +36,14 @@ describe Account do
       business.reserve_account.amount.should == 50
     end
 
+    it "#tip should transfer money from a user's cashbox account to a business cashbox account" do
+      account = user.cash_account_for(business)
+
+      account.tip(50)
+
+      business.cashbox.amount.should == 50
+    end
+
     it "#group_transactions should group transactions together" do
       account = user.cash_account_for(business)
 
@@ -46,6 +54,8 @@ describe Account do
 
       tx_grp.transactions.should have(2).items
     end
+
+
 
   end
 end
