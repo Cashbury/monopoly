@@ -42,28 +42,23 @@ class Account < ActiveRecord::Base
   delegate :campaign_name, :to => :campaign, :allow_nil => true
   delegate :program_type_name, :to => :program, :allow_nil => true
 
-  # This semaphore is used to lock access to the "Account" class
-  # during a group of transactions.
-  cattr_accessor :semaphore
-  @@semaphore = Mutex.new
+  def self.transaction_group
+    Thread.current[:transaction_group]
+  end
 
-  # We use this class-level member to let move_money! know if we're
-  # in an transaction group or not.
-  cattr_accessor :transaction_group
-  @@transaction_group = nil
-
+  def self.transaction_group=(tx_grp)
+    Thread.current[:transaction_group] = tx_grp
+  end
   # Automatically signals to #move_money! that we're in a transaction group
   # so it will create the necessary linkage automatically.
   def self.group_transactions(&block)
-    Account.semaphore.synchronize {
-      Account.transaction do
-        tx_group = TransactionGroup.create!
-        Account.transaction_group = tx_group
-        block.call
-        Account.transaction_group = nil
-        tx_group
-      end
-    }
+    Account.transaction do
+      tx_group = TransactionGroup.create!
+      Account.transaction_group = tx_group
+      block.call
+      Account.transaction_group = nil
+      tx_group
+    end
   end
 
   def is_owned_by_consumer?
