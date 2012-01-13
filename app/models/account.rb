@@ -42,13 +42,6 @@ class Account < ActiveRecord::Base
   delegate :campaign_name, :to => :campaign, :allow_nil => true
   delegate :program_type_name, :to => :program, :allow_nil => true
 
-  def self.transaction_group
-    Thread.current[:transaction_group]
-  end
-
-  def self.transaction_group=(tx_grp)
-    Thread.current[:transaction_group] = tx_grp
-  end
   # Automatically signals to #move_money! that we're in a transaction group
   # so it will create the necessary linkage automatically.
   def self.group_transactions(&block)
@@ -257,4 +250,11 @@ class Account < ActiveRecord::Base
     Account.transaction_group.present?
   end
 
+  def self.transaction_group
+    Thread.current[:transaction_group]
+  end
+
+  def self.transaction_group=(tx_grp)
+    Thread.current[:transaction_group] = tx_grp
+  end
 end
