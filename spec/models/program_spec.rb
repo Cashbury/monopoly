@@ -19,5 +19,11 @@ describe Program do
       business.create_money_program!
       business.reserve_account.should_not be_nil
     end
+
+    it "should create a cashburies account for a business" do
+      business.create_money_program!
+      business.cashbury_account.should_not be_nil
+    end
+
   end
 end

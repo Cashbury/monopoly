@@ -26,6 +26,8 @@ class Transaction < ActiveRecord::Base
   belongs_to :account
   belongs_to :transaction_type
   belongs_to :payment_gateway
+  belongs_to :transaction_group
+
   has_many :receipts
   has_many :logs
 	validates_presence_of :from_account, :to_account,:transaction_type_id, 

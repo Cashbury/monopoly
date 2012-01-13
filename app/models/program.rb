@@ -40,15 +40,22 @@ class Program < ActiveRecord::Base
     account_holder = business.account_holder || business.create_account_holder
     Account.transaction do
       Account.create! :business_id => business_id,
-        :program_id => id,
-        :is_money => true,
-        :amount => 0,
-        :account_holder_id => account_holder.id
+        :program_id                => id,
+        :is_money                  => true,
+        :amount                    => 0,
+        :account_holder_id         => account_holder.id
+
       Account.create! :business_id => business_id,
-        :program_id => id,
-        :is_reserve => true,
-        :amount => 0,
-        :account_holder_id => account_holder.id
+        :program_id                => id,
+        :is_reserve                => true,
+        :amount                    => 0,
+        :account_holder_id         => account_holder.id
+
+      Account.create! :business_id => business_id,
+        :program_id                => id,
+        :is_cashbury               => true,
+        :amount                    => 0,
+        :account_holder_id         => account_holder.id
     end
   end
 end

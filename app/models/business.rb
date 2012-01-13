@@ -102,6 +102,12 @@ class Business < ActiveRecord::Base
     @reserve_account = self.accounts.where(:program_id => money_program.id, :is_reserve => true).first
   end
 
+  def cashbury_account
+    return @cashbury_account if @cashbury_account.present?
+    return nil unless has_money_program?
+    @cashbury_account = self.accounts.where(:program_id => money_program.id, :is_cashbury => true).first
+  end
+
   # This method checks for
   # any place is set to true or not
   # @return [Boolean]

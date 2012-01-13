@@ -175,6 +175,10 @@ class User < ActiveRecord::Base
           :program_id => program.id,
           :is_money => true,
           :account_holder_id => self.account_holder.id
+        Account.create :business_id => program.business_id,
+          :program_id => program.id,
+          :is_cashbury => true,
+          :account_holder_id => self.account_holder.id
       end
     end
   end
@@ -192,6 +196,15 @@ class User < ActiveRecord::Base
     Account.where(:business_id => business.id)
       .where(:program_id => money_program.id)
       .where(:is_money => true)
+      .where(:account_holder_id => self.account_holder.id)
+      .first
+  end
+
+  def cashbury_account_for(business)
+    money_program = business.money_program
+    Account.where(:business_id => business.id)
+      .where(:program_id => money_program.id)
+      .where(:is_cashbury => true)
       .where(:account_holder_id => self.account_holder.id)
       .first
   end
