@@ -60,7 +60,8 @@ class Account < ActiveRecord::Base
 
   def load(amount, initiated_by = nil)
     ensure_consumer_account!
-    business.reserve_account.move_money!(amount, self, Action["Load"], initiated_by)
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    account.move_money!(amount, self, Action["Load"], initiated_by)
   end
 
   def tip(amount, initiated_by = nil)
@@ -70,7 +71,8 @@ class Account < ActiveRecord::Base
 
   def spend(amount, initiated_by = nil)
     ensure_consumer_account!
-    move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    move_money!(amount, account, Action["Spend"], initiated_by)
   end
 
   def cashout(initiated_by = nil)
@@ -218,7 +220,7 @@ class Account < ActiveRecord::Base
       :to_account => to_account.id,
       :before_fees_amount => move_amount,
       :payment_gateway => payment_gateway,
-      :is_money => true,
+      :is_money => self.is_money?,
       :from_account_balance_before => amount_was,
       :from_account_balance_after => amount,
       :to_account_balance_before=> to_account.amount_was,

@@ -28,12 +28,28 @@ describe Account do
       business.reserve_account.amount.should == -50
     end
 
+    it "#load should transfer cashburies from a business cashbury account to a user's cashbury account" do
+      account = user.cashbury_account_for(business)
+
+      account.load(50)
+      account.amount.should == 50
+      business.cashbury_account.amount.should == -50
+    end
+
     it "#spend should transfer money from a user's cashbox account to a business reserve account" do
       account = user.cash_account_for(business)
 
       account.spend(50)
       account.amount.should == -50
       business.reserve_account.amount.should == 50
+    end
+
+    it "#spend should transfer cashburies from a user's cashbury account to a business cashbury account" do
+      account = user.cashbury_account_for(business)
+
+      account.spend(50)
+      account.amount.should == -50
+      business.cashbury_account.amount.should == 50
     end
 
     it "#tip should transfer money from a user's cashbox account to a business cashbox account" do
