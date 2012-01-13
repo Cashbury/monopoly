@@ -33,7 +33,7 @@ transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect"
 end
 
 transaction_type=TransactionType.find_or_create_by_name(:name=>"Accounts Transfer", :fee_amount=>0.0, :fee_percentage=>0.0)
-%w( Withdraw Deposit Cashout Load Spend).each do |name|
+%w( Withdraw Deposit Cashout Load Spend Tip).each do |name|
   Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
 end
 

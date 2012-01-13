@@ -16,7 +16,7 @@
 #  program_id          :integer(4)
 #  business_id         :integer(4)
 #
-
+require 'thread'
 class Account < ActiveRecord::Base
   belongs_to :account_holder
   belongs_to :campaign
@@ -41,7 +41,31 @@ class Account < ActiveRecord::Base
 
   delegate :campaign_name, :to => :campaign, :allow_nil => true
   delegate :program_type_name, :to => :program, :allow_nil => true
-  
+
+  # This semaphore is used to lock access to the "Account" class
+  # during a group of transactions.
+  cattr_accessor :semaphore
+  @@semaphore = Mutex.new
+
+  # We use this class-level member to let move_money! know if we're
+  # in an transaction group or not.
+  cattr_accessor :transaction_group
+  @@transaction_group = nil
+
+  # Automatically signals to #move_money! that we're in a transaction group
+  # so it will create the necessary linkage automatically.
+  def self.group_transactions(&block)
+    Account.semaphore.synchronize {
+      Account.transaction do
+        tx_group = TransactionGroup.create!
+        Account.transaction_group = tx_group
+        block.call
+        Account.transaction_group = nil
+        tx_group
+      end
+    }
+  end
+
   def is_owned_by_consumer?
     account_holder.model.is_a?(User) && account_holder.model.role?(:consumer)
   end
@@ -60,7 +84,7 @@ class Account < ActiveRecord::Base
     ensure_consumer_account!
     move_money!(amount, business.reserve_account, Action["Cashout"], initiated_by)
   end
-  
+
 
   def withdraw_from_account(amount,user_id)
     if associated_to_campaign?
@@ -211,6 +235,9 @@ class Account < ActiveRecord::Base
       :after_fees_amount => move_amount,
       :transaction_fees => action.transaction_type.fee_amount)
 
+    # see Account#group_transactions.
+    transaction.transaction_group = Account.transaction_group if is_group_transaction?
+
     Account.transaction do
       save!
       to_account.save!
@@ -223,6 +250,10 @@ class Account < ActiveRecord::Base
         :frequency         => 1,
         :created_on        => DateTime.now)
     end
+  end
+
+  def is_group_transaction?
+    Account.transaction_group.present?
   end
 
 end

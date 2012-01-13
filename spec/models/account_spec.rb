@@ -36,5 +36,16 @@ describe Account do
       business.reserve_account.amount.should == 50
     end
 
+    it "#group_transactions should group transactions together" do
+      account = user.cash_account_for(business)
+
+      tx_grp = Account.group_transactions do
+        account.load(50)
+        account.spend(50)
+      end
+
+      tx_grp.transactions.should have(2).items
+    end
+
   end
 end
