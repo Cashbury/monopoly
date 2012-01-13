@@ -128,8 +128,8 @@ class Account < ActiveRecord::Base
                                       :note=>"Account transfer (withdraw) from user account",
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
-                                      :transaction_fees=>transaction_type.fee_amount)
-      
+                                      :transaction_fees=>transaction_type.fee_amount,
+                                      :transaction_group_id => (Account.transaction_group.id if is_group_transaction?))
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
@@ -180,7 +180,8 @@ class Account < ActiveRecord::Base
                                       :note=>"Account transfer (deposit) to user account",
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
-                                      :transaction_fees=>transaction_type.fee_amount)
+                                      :transaction_fees=>transaction_type.fee_amount,
+                                      :transaction_group_id => (Account.transaction_group.id if is_group_transaction?))
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
