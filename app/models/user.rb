@@ -183,12 +183,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def create_cash_account_for(business)
-    money_program = business.money_program
-    a = Account.create({:account_holder => self.account_holder, :program => money_program, :business => business, :is_money => true}) 
-    self.accounts << a
-    a
-  end
 
   # This method is more of a sanity check
   # to ensure that self.programs actually contains
