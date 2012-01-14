@@ -77,8 +77,38 @@ class Account < ActiveRecord::Base
     ensure_consumer_account!
     ensure_cash_or_cashbury_account!
 
-    account = self.is_money? ? business.reserve_account : business.cashbury_account
-    move_money!(amount, account, Action["Spend"], initiated_by)
+    # Is this the right thing to do for now?
+    if self.is_money?
+      # Subtract available cahsburies first.
+      cash_account = self
+      cashbury_account = account_holder.model.cashbury_account_for(business)
+
+      if cashbury_account.amount > 0
+        Account.group_transactions do
+          # Cashburies can't pay for the whole thing.
+          if (amount - cashbury_account.amount) > 0
+            # Drain Cashbury account to discount total price.
+            remaining_balance = amount - cashbury_account.amount
+            cashbury_account.spend(cashbury_account.amount, initiated_by)
+
+            # Pay remaining balance with user's cash.
+            cash_account.spend(remaining_balance, initiated_by)
+
+          elsif
+            # Cashburies can pay the total balance.
+            cashbury_account.spend(amount, initiated_by)
+          end
+        end
+
+      else # No cashburies in account, only money.
+        move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)
+      end
+
+    elsif self.is_cashbury?
+      move_money!(amount, business.cashbury_account, Action["Spend"], initiated_by)
+    else
+      raise "Unspendable account type: #{self.inspect}"
+    end
   end
 
   def cashout(initiated_by = nil)
