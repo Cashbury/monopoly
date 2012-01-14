@@ -52,6 +52,38 @@ describe Account do
       business.cashbury_account.amount.should == 50
     end
 
+    it "#spend should pay only with cashburies if possible" do
+      cashbury_account = user.cashbury_account_for(business)
+      cash_account = user.cash_account_for(business)
+
+      cash_account.update_attributes :amount => 20
+      cashbury_account.update_attributes :amount => 15
+
+      cash_account.spend(10)
+
+      cashbury_account.reload
+      cashbury_account.amount.should == 5
+
+      cash_account.reload
+      cash_account.amount.should == 20
+    end
+
+    it "#spend should debit cashburies from a user's account before debiting a user's cash account" do
+      cashbury_account = user.cashbury_account_for(business)
+      cash_account = user.cash_account_for(business)
+
+      cash_account.update_attributes :amount => 10
+      cashbury_account.update_attributes :amount => 5
+
+      cash_account.spend(10)
+
+      cashbury_account.reload
+      cashbury_account.amount.should == 0
+
+      cash_account.reload
+      cash_account.amount.should == 5
+    end
+
     it "#tip should transfer money from a user's cashbox account to a business cashbox account" do
       account = user.cash_account_for(business)
 
