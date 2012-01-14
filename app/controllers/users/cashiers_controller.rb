@@ -22,6 +22,49 @@ class Users::CashiersController < Users::BaseController
       render :text => e.message, :status => 500
     end
   end
+
+  def load_money
+    begin
+      qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
+      if qr_code.present? and qr_code.status #active
+        amount = params[:amount]
+        user=qr_code.user
+        employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
+        business= Business.find(employee.business_id)
+        user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
+        account = user.cash_account_for(business)
+        error_message = ""
+        if account.nil?
+          #create the account at the business if it doesn't exist
+          account = User.create_cash_account_for(business)
+        end
+        account.load(amount,employee)
+        transaction_id = account.transactions.last.id
+        
+        response = {}
+		    response.merge!({:amount             => amount})
+		    response.merge!({:transaction_id     => transaction_id})
+		    response.merge!({:currency_symbol    => business.currency_symbol})
+		    response.merge!({:currency_code      => business.currency_code})
+		    response.merge!({:customer_name      => user.full_name})
+		    response.merge!({:customer_type      => user_type})
+		    user_uid=user.email.split("@facebook").first
+        response.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
+        respond_to do |format|     
+          format.xml {render :xml => s , :status => 200}
+        end
+      else
+        respond_to do |format|     
+          format.xml {render :text => "Invalid Qrcode"  , :status => 200}
+        end
+      end
+    rescue Exception=>e
+      logger.error "Exception #{e.class}: #{e.message}"
+      respond_to do |format|     
+        format.xml {render :text => e.message  , :status => 200}
+      end
+    end
+  end
   
   def ring_up
     begin
