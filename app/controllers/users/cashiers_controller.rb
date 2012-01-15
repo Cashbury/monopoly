@@ -27,7 +27,7 @@ class Users::CashiersController < Users::BaseController
     begin
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
-        amount = params[:amount]
+        amount = params[:amount].nil? ? 0: params[:amount].to_i
         user=qr_code.user
         employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
         business= Business.find(employee.business_id)
@@ -36,12 +36,11 @@ class Users::CashiersController < Users::BaseController
         error_message = ""
         if account.nil?
           #create the account at the business if it doesn't exist
-          User.enroll(business.money_program)
+          user.enroll(business.money_program)
           account = user.cash_account_for(business)
         end
         account.load(amount,employee)
-        transaction_id = account.transactions.last.id
-        
+        transaction_id = Transaction.find_all_by_to_account(account.id).last 
         response = {}
 		    response.merge!({:amount             => amount})
 		    response.merge!({:transaction_id     => transaction_id})
@@ -52,7 +51,7 @@ class Users::CashiersController < Users::BaseController
 		    user_uid=user.email.split("@facebook").first
         response.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
         respond_to do |format|     
-          format.xml {render :xml => s , :status => 200}
+          format.xml {render :xml => response , :status => 200}
         end
       else
         respond_to do |format|     
@@ -60,7 +59,7 @@ class Users::CashiersController < Users::BaseController
         end
       end
     rescue Exception=>e
-      logger.error "Exception #{e.class}: #{e.message}"
+      logger.error "Exception #{e.class}: #{e.message}, #{e.backtrace}"
       respond_to do |format|     
         format.xml {render :text => e.message  , :status => 200}
       end
@@ -105,7 +104,7 @@ class Users::CashiersController < Users::BaseController
 		    user_uid=user.email.split("@facebook").first
         response.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
         respond_to do |format|     
-          format.xml {render :xml => s , :status => 200}
+          format.xml {render :xml => response , :status => 200}
         end
       else
         respond_to do |format|     

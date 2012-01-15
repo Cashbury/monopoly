@@ -4,13 +4,24 @@ Given /^I am an Operator$/ do
   @default_landing_page = "/businesses" # ugly hack yo, fix later
 end
 
-Given /^I am a Cashier$/ do
+Given /^I am a Cashier at "([^"]*)"$/ do |business|
   @user = FactoryGirl.create :cashier
   @user.confirm!
+  e = @user.employees.first
+  e.business = Business.find_by_name business
+  e.save
+  @user.save
 end
 
 Given /^"([^"]*)" is a consumer$/ do |email|
   @consumer = FactoryGirl.create :consumer, :email => email
+  qr_code = QrCode.create
+  qr_code.hash_code ="123456"
+  qr_code.status = true
+  qr_code.save
+  @consumer.qr_code = qr_code
+  account_holder = AccountHolder.create
+  @consumer.account_holder = account_holder
 end
 
 When /^I log into the site$/ do

@@ -18,5 +18,6 @@ FactoryGirl.define do
 
   factory :cashier, :parent => :cuke_user do
     roles { [Role.where(:name => Role::AS[:cashier]).first] }
+    authentication_token 'hello'
   end
 end
