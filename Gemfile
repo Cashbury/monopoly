@@ -44,6 +44,7 @@ group :test, :development do
   gem 'database_cleaner'
   gem "factory_girl_rails", "~> 1.4.0"
   gem 'forgery'
+  gem 'cucumber-api-steps', :require => false
 end
 
 gem 'devise', "~>1.1.5"

@@ -51,6 +51,7 @@ Kazdoor::Application.routes.draw do
       get  '/check_role.:format',:action=>:check_user_role, :on =>:collection
       get  '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
       post '/ring_up.:format', :action=>:ring_up, :on=>:collection
+      post '/load_money.:format', :action=>:load_money, :on=>:collection
       get  '/receipts-merchant.:format', :action=>:list_receipts_history, :on=>:collection
     end
     resource :businesses do

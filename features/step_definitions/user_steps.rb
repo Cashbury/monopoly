@@ -4,8 +4,13 @@ Given /^I am an Operator$/ do
   @default_landing_page = "/businesses" # ugly hack yo, fix later
 end
 
+Given /^I am a Cashier$/ do
+  @user = FactoryGirl.create :cashier
+  @user.confirm!
+end
+
 Given /^"([^"]*)" is a consumer$/ do |email|
-  FactoryGirl.create :consumer, :email => email
+  @consumer = FactoryGirl.create :consumer, :email => email
 end
 
 When /^I log into the site$/ do

@@ -22,7 +22,7 @@ test: &test
   database: kazdoor_test
   username: root
   password:
-  socket: /var/run/mysqld/mysqld.sock
+#  socket: /var/run/mysqld/mysqld.sock
 
 production:
   adapter: mysql2
