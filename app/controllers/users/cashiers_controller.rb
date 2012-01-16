@@ -70,8 +70,8 @@ class Users::CashiersController < Users::BaseController
     begin
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
-        amount = params[:amount]
-        tip = params[:tip]
+        amount = params[:amount].nil? ? 0 : params[:amount].to_i
+        tip = params[:tip].nil? ? 0 : params[:tip].to_i
         total_amount = amount + tip
         user=qr_code.user
         employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   

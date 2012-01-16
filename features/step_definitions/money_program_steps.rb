@@ -49,5 +49,3 @@ Then /^I should be able to set the cashbox account spend limit to "(\d+)"$/ do |
   account_option.max_daily_spend_limit.should == limit.to_i
 end
 
-Then /^I should be able to load the consumer's account with "(\d+)"$/ do |amount|
-end

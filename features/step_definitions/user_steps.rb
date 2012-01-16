@@ -5,15 +5,19 @@ Given /^I am an Operator$/ do
 end
 
 Given /^I am a Cashier at "([^"]*)"$/ do |business|
-  @user = FactoryGirl.create :cashier
-  @user.confirm!
-  e = @user.employees.first
+  @cashier = FactoryGirl.create :cashier
+  @cashier.confirm!
+  e = @cashier.employees.first
   e.business = Business.find_by_name business
   e.save
-  @user.save
+  @cashier.save
 end
 
 Given /^"([^"]*)" is a consumer$/ do |email|
+  @consumer = FactoryGirl.create :consumer, :email => email
+end
+
+Given /^"([^"]*)" is the current consumer$/ do |email|
   @consumer = FactoryGirl.create :consumer, :email => email
   qr_code = QrCode.create
   qr_code.hash_code ="123456"
@@ -23,6 +27,14 @@ Given /^"([^"]*)" is a consumer$/ do |email|
   account_holder = AccountHolder.create
   @consumer.account_holder = account_holder
 end
+
+Given /^the current consumer has a cash account at the current business with a balance of (\d+)$/ do |balance|
+  @consumer.enroll(@current_business.money_program)
+  account = @consumer.cash_account_for(@current_business)
+  employee= @cashier.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
+  account.load(balance.to_i, @cashier)
+end
+
 
 When /^I log into the site$/ do
   visit '/users/sign_in'
