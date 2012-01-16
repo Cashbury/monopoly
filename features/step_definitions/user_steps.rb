@@ -13,6 +13,11 @@ Given /^I am a Cashier at "([^"]*)"$/ do |business|
   @cashier.save
 end
 
+Given /^I am a Consumer$/ do
+  @user = FactoryGirl.create :consumer
+  @user.confirm!
+end
+
 Given /^"([^"]*)" is a consumer$/ do |email|
   @consumer = FactoryGirl.create :consumer, :email => email
 end
@@ -43,5 +48,5 @@ When /^I log into the site$/ do
     fill_in "Password", :with => "password"
     click_button "Sign in"
   end
-  current_path.should == @default_landing_page
+  current_path.should_not == '/users/sign_in'
 end

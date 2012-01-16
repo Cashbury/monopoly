@@ -1,5 +1,5 @@
 <% transactions = transaction_list %>
-<table class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table id='transaction-list' class="mono-table" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <th>TX ID</th>
     <th>From Account Holder Name</th>
@@ -41,8 +41,10 @@
       <%= transaction.state || "success" %>
     </td>
     <td>
-      <% if !transaction.in_state?(:void) %>
-        <%= button_to "Void", void_transaction_path(transaction) %>
+      <% if current_user.role?(Role::AS[:admin]) || current_user.role?(Role::AS[:operator]) %>
+        <% if !transaction.in_state?(:void) %>
+          <%= button_to "Void", void_transaction_path(transaction) %>
+        <% end %>
       <% end %>
     </td>
   </tr>
