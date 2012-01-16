@@ -99,7 +99,9 @@ Kazdoor::Application.routes.draw do
     get '/for_businessid/:id' ,   :action=>:for_businessid,   :on =>:collection, :as=>"for_businessid"
 	end
 
-	resources :users
+	resources :users do
+    resources :transactions, :controller => 'users/transactions'
+  end
 
   resources :templates
 
