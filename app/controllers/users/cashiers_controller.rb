@@ -27,7 +27,7 @@ class Users::CashiersController < Users::BaseController
     begin
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
-        amount = params[:amount].nil? ? 0: params[:amount].to_i
+        amount = params[:amount].nil? ? 0: params[:amount].to_f
         user=qr_code.user
         employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
         business= Business.find(employee.business_id)
@@ -41,6 +41,7 @@ class Users::CashiersController < Users::BaseController
         end
         account.load(amount,employee)
         transaction_id = Transaction.find_all_by_to_account(account.id).last 
+        user.create_load_transaction_receipt(current_user.id, transaction_id)
         response = {}
 		    response.merge!({:amount             => amount})
 		    response.merge!({:transaction_id     => transaction_id})
@@ -70,8 +71,8 @@ class Users::CashiersController < Users::BaseController
     begin
       qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
-        amount = params[:amount].nil? ? 0 : params[:amount].to_i
-        tip = params[:tip].nil? ? 0 : params[:tip].to_i
+        amount = params[:amount].nil? ? 0 : params[:amount].to_f
+        tip = params[:tip].nil? ? 0 : params[:tip].to_f
         total_amount = amount + tip
         user=qr_code.user
         employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
@@ -92,6 +93,7 @@ class Users::CashiersController < Users::BaseController
         end
          
         transaction_id = txn_group.friendly_id
+        user.create_charge_transaction_receipt(current_user.id, transaction_id)
         
         response = {}
 		    response.merge!({:amount             => amount})

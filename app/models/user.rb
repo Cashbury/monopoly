@@ -395,6 +395,20 @@ class User < ActiveRecord::Base
     #  logger.error "Exception #{e.class}: #{e.message}"
     #end
   end
+
+  def create_load_transaction_receipt(cashier_id, txn_id)
+    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Load receipt", :receipt_type=>Receipt::TYPE[:load], :transaction_id => txn_id)
+    self.receipts << receipt
+    self.pending_receipts << receipt
+    save
+  end
+
+  def create_charge_transaction_receipt(cashier_id, txn_id)
+    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Charge receipt", :receipt_type=>Receipt::TYPE[:spend], :transaction_id => txn_id)
+    self.receipts << receipt
+    self.pending_receipts << receipt
+    save
+  end
   
 	def ensure_authentication_token!
     reset_authentication_token! if authentication_token.blank?
