@@ -13,6 +13,7 @@
     <th>SVA Balance</th>    
     <th>Campaign</th>
     <th>Program</th>
+    <th>Type</th>
     <th>Business</th>
     <th>Created On</th>
     <th></th>
@@ -24,6 +25,7 @@
     <td><%= account.amount %></td>
     <td><%= account.campaign_name%></td>
     <td><%= account.program_type_name %></td>
+    <td><%= account_type(account) %></td>
     <td><%= account.business_id.present? ? Business.find(account.business_id).name :  account.b_name %></td>
     <td><%= account.created_at.to_formatted_s(:long) if account.created_at%></td>
     <td>
