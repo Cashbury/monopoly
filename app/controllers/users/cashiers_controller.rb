@@ -31,6 +31,9 @@ class Users::CashiersController < Users::BaseController
         user=qr_code.user
         employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
         business= Business.find(employee.business_id)
+
+        raise "Cannot load money if business is not in Money Program" unless business.has_money_program?
+
         user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         account = user.cash_account_for(business)
         error_message = ""
