@@ -38,6 +38,7 @@ class Users::CashiersController < Users::BaseController
           #create the account at the business if it doesn't exist
           user.enroll(business.money_program)
           account = user.cash_account_for(business)
+          raise "Error auto enrolling user into business money program" if account.blank?
         end
         account.load(amount,employee)
         transaction_id = Transaction.find_all_by_to_account(account.id).last 
