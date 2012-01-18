@@ -278,7 +278,11 @@ class UsersManagementController < ApplicationController
   
   def withdraw_account
     account=Account.find(params[:account_id])
-    account=account.withdraw_from_account(params[:amount].to_f,current_user.id)
+    if account.program_type_name == "Money"
+      account.withdraw(params[:amount].to_f)
+    else
+      account=account.withdraw_from_account(params[:amount].to_f,current_user.id)
+    end
     currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
@@ -292,7 +296,11 @@ class UsersManagementController < ApplicationController
   
   def deposit_account
     account=Account.find(params[:account_id])
-    account=account.deposit_to_account(params[:amount].to_f,current_user.id)
+    if account.program_type_name == "Money"
+      account.deposit(params[:amount].to_f)
+    else
+      account=account.deposit_to_account(params[:amount].to_f,current_user.id)
+    end
     currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 

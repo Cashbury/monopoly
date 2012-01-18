@@ -58,6 +58,20 @@ class Account < ActiveRecord::Base
     account_holder.model.is_a?(User) && account_holder.model.role?(:consumer)
   end
 
+  # EXCLUSIVELY FOR ADMIN CONSOLE
+  # Do not call, no business logic present.
+  def deposit(amount, initiated_by = nil)
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    account.move_money!(amount, self, Action["Deposit"], initiated_by)
+  end
+
+  # EXCLUSIVELY FOR ADMIN CONSOLE
+  # Do not call, no business logic present.
+  def withdraw(amount, initiated_by = nil)
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    self.move_money!(amount, account, Action["Withdraw"], initiated_by)
+  end
+
   def load(amount, initiated_by = nil)
     ensure_consumer_account!
     ensure_cash_or_cashbury_account!
