@@ -26,8 +26,16 @@
     <% from_account_holder_name=from_account_holder.model_type=="User" ? User.find(from_account_holder.model_id).full_name : Business.find(from_account_holder.model_id).name  %>
     <% to_account_holder_name=to_account_holder.model_type=="User" ? User.find(to_account_holder.model_id).full_name : Business.find(to_account_holder.model_id).name  %>      
     <td><%= transaction.id %></td>
-    <td><%=from_account_holder_name%></td>
-    <td><%=to_account_holder_name%></td>
+    <td>
+      <%=from_account_holder_name %> 
+      <br />
+      (<%= account_type(from_account) %> account)
+    </td>
+    <td>
+      <%=to_account_holder_name%>
+      <br />
+      (<%= account_type(from_account) %> account)
+      </td>
     <td><%= transaction.name%></td>
     <td><%= transaction.fee_amount %></td>
     <td><%= transaction.fee_percentage %></td>
