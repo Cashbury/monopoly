@@ -6,7 +6,7 @@ development:
   database: kazdoor_development
   username: root
   password: 
-  socket: /var/run/mysqld/mysqld.sock
+#  socket: /var/run/mysqld/mysqld.sock
 
 
 # Warning: The database defined as "test" will be erased and
@@ -22,7 +22,7 @@ test:
   database: kazdoor_test
   username: root
   password:
-  socket: /var/run/mysqld/mysqld.sock
+#  socket: /var/run/mysqld/mysqld.sock
 
 production:
   adapter: mysql2
