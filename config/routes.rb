@@ -56,7 +56,8 @@ Kazdoor::Application.routes.draw do
       get  '/receipts-merchant.:format', :action=>:list_receipts_history, :on=>:collection
     end
     resource :businesses do
-      get :savings, :on => :collection      
+      get :savings, :on => :collection
+      get :balance, :on => :collection
 
 			get  '/primary_place', :action=>:primary_place, :on =>:collection
 			post '/primary_place',:action=>:primary_place,  :on =>:collection

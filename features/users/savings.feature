@@ -18,6 +18,7 @@ Feature: Savings for Users
       | Name | ID |
       | Cadbury Bunnies | 7 |
     And I have saved "15" dollars by using cashburies at "Cadbury Bunnies"
+    And I have saved "50" dollars by using cashburies at various businesses
     When I send a GET request to "/users/businesses/savings.xml" with the following:
       """
       auth_token=hello&id=7

@@ -49,3 +49,12 @@ Then /^I should be able to set the cashbox account spend limit to "(\d+)"$/ do |
   account_option.max_daily_spend_limit.should == limit.to_i
 end
 
+
+Given /^I am enrolled in the money program at "([^"]*)"$/ do |name|
+  business = Business.find_by_name name
+  business.should_not be_nil
+
+  business.should have_money_program
+
+  @user.enroll(business.money_program)
+end
