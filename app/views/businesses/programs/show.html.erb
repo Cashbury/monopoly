@@ -9,12 +9,29 @@
 <p>
   <b>Business:</b>
   <%= @program.business.name %>
-</p>
+  </p>
 
+<% if @program.is_money? %>
+<%# Uhm, ew. %>
+<% account_option = @program.business.try(:cashbox).try(:account_option) || AccountOption.new %>
+  <p>
+    <b>Max daily load limit:</b>
+    <%= account_option.max_daily_load_limit || "None" %>
+  </p>
+  <p>
+    <b>Max daily spend limit:</b>
+    <%= account_option.max_daily_spend_limit || "None" %>
+  </p>
+<% end %>
 
-<%= link_to 'Edit', edit_business_program_path(@business,@program) %> </br>
+<% unless @program.program_type == ProgramType["Money"] %>
+  <%= link_to 'Edit', edit_business_program_path(@business,@program) %> </br>
+<% else %>
+  <%= link_to 'Cashbox', edit_business_cashbox_path(@business) %>
+<% end %>
 <%= link_to 'Back', business_programs_path(@business) %>
-
-<p>
-   <%= link_to "Show Campaigns", business_program_campaigns_path(@business,@program) %><br />
-</p>
+<% unless @program.program_type == ProgramType["Money"] %>
+  <p>
+     <%= link_to "Show Campaigns", business_program_campaigns_path(@business,@program) %><br />
+ </p>
+<% end %>

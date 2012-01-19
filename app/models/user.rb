@@ -70,14 +70,17 @@ class User < ActiveRecord::Base
   has_many :businesses, :through=>:business_customers
   has_many :login_methods_users
   has_many :login_methods, :through=>"login_methods_users"
+
   has_one  :qr_code, :as=>:associatable, :conditions => {:status=>1}
 
   has_one :account_holder, :as=>:model
+  has_many :accounts, :through => :account_holder
 
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :pending_receipts, :class_name=>"Receipt" , :join_table => "users_pending_receipts"
   has_and_belongs_to_many :places
+  has_and_belongs_to_many :programs, :join_table => "users_programs"
   
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
@@ -163,7 +166,55 @@ class User < ActiveRecord::Base
 	def has_account_with_campaign?(acch,campaign_id)
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
 	end
+  
+  def enroll(program)
+    User.transaction do
+      self.programs << program
+      if program.program_type == ProgramType['Money']
+        self.create_account_holder if account_holder.blank?
+        Account.create :business_id => program.business_id,
+          :program_id => program.id,
+          :is_money => true,
+          :account_holder_id => self.account_holder.id
+        Account.create :business_id => program.business_id,
+          :program_id => program.id,
+          :is_cashbury => true,
+          :account_holder_id => self.account_holder.id
+      end
+    end
+  end
 
+
+  # This method is more of a sanity check
+  # to ensure that self.programs actually contains
+  # the requested program.
+  def money_program_for(business)
+    money_program = business.money_program
+    self.programs.where(:id => money_program.id).first
+  end
+
+  def cash_account_for(business)
+    money_program = business.money_program
+    Account.where(:business_id => business.id)
+      .where(:program_id => money_program.id)
+      .where(:is_money => true)
+      .where(:account_holder_id => self.account_holder.id)
+      .first
+  end
+
+  def cashbury_account_for(business)
+    money_program = business.money_program
+    Account.where(:business_id => business.id)
+      .where(:program_id => money_program.id)
+      .where(:is_cashbury => true)
+      .where(:account_holder_id => self.account_holder.id)
+      .first
+  end
+
+  def cashout_at(business)
+    raise "Can't cashout without money program (User: #{id})" unless money_program_for(business).present?
+    cash_account_for(business).cashout
+  end
 	def auto_enroll_at(places)
 	  begin
       ids=places.collect{|p| p.business_id}
@@ -172,6 +223,9 @@ class User < ActiveRecord::Base
       accholder=self.account_holder
       businesses.each do |business|
         business.programs.each do |program|
+          if program.is_money? && !self.programs.include?(program)
+            self.enroll(program)
+          end
           program.campaigns.each do |campaign|
             if !campaign.has_target? || self.is_engaged_with_campaign?(campaign) || (campaign.has_target? and self.is_targeted_from?(campaign))
               targeted_campaigns_ids << campaign.id
@@ -342,6 +396,20 @@ class User < ActiveRecord::Base
     #rescue Exception=>e
     #  logger.error "Exception #{e.class}: #{e.message}"
     #end
+  end
+
+  def create_load_transaction_receipt(cashier_id, txn_id)
+    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Load receipt", :receipt_type=>Receipt::TYPE[:load], :transaction_id => txn_id)
+    self.receipts << receipt
+    self.pending_receipts << receipt
+    save
+  end
+
+  def create_charge_transaction_receipt(cashier_id, txn_id)
+    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Charge receipt", :receipt_type=>Receipt::TYPE[:spend], :transaction_id => txn_id)
+    self.receipts << receipt
+    self.pending_receipts << receipt
+    save
   end
   
 	def ensure_authentication_token!

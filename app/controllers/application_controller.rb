@@ -37,11 +37,11 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource_or_scope)
     if current_user.role? Role::AS[:principal] && !(current_user.role? Role::AS[:admin])
       primary_place_users_businesses_url
-    elsif (current_user.role? Role::AS[:admin])
+    elsif (current_user.role? Role::AS[:admin]) || (current_user.role? Role::AS[:operator])
       businesses_url
     elsif current_user.role? Role::AS[:consumer]
-      #check here for he state of the application
-      invite_friends_url
+      # for now they go straight to transactions page
+      user_transactions_path(current_user)
     else
       root_url
     end

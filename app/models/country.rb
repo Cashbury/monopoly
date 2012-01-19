@@ -27,7 +27,7 @@ class Country < ActiveRecord::Base
 
   def update_places_phones
     code = self.phone_country_code
-    original_code = Country.find(self.id).phone_country_code
+    original_code = Country.where(:id => self.id).first.try(:phone_country_code)
     yield
 
     if code != original_code

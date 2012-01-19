@@ -7,12 +7,14 @@
 <p><h2><b>Total: <%=@accounts.total_entries%></b></h2></p>
 <br />
   <%= will_paginate @accounts %>
-<br/>
+  <br/>
+<h2>Note: Depositing into and withdrawing from Money program accounts will not trigger underlying business logic rules.</h2>
 <table class="mono-table" width="100%"  border="0" cellspacing="0" cellpadding="0">
   <tr>
     <th>SVA Balance</th>    
     <th>Campaign</th>
     <th>Program</th>
+    <th>Type</th>
     <th>Business</th>
     <th>Created On</th>
     <th></th>
@@ -22,8 +24,9 @@
 <% @accounts.each do |account| %>
   <tr id="account_<%=account.id%>">
     <td><%= account.amount %></td>
-    <td><%= account.c_name%></td>
-    <td><%= account.pt_name %></td>
+    <td><%= account.campaign_name%></td>
+    <td><%= account.program_type_name %></td>
+    <td><%= account_type(account) %></td>
     <td><%= account.business_id.present? ? Business.find(account.business_id).name :  account.b_name %></td>
     <td><%= account.created_at.to_formatted_s(:long) if account.created_at%></td>
     <td>

@@ -37,6 +37,7 @@ class Business < ActiveRecord::Base
 
 
   has_one :account_holder, :as=>:model, :dependent=> :destroy
+
   belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
   belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
   belongs_to :brand
@@ -70,8 +71,42 @@ class Business < ActiveRecord::Base
     #end
   end
 
+  def has_money_program?
+    money_program.present?
+  end
 
+  def money_program
+    @money_program ||= self.programs.money.first
+  end
 
+  def create_money_program!
+    raise "Business #{self.id} already has money program!" if has_money_program?
+    self.programs.create! :program_type => ProgramType['Money']
+  end
+
+  def transactions
+    return Transaction.where(:id => -1) if account_holder.blank?
+    Transaction.where(['from_account = ? OR to_account = ?', account_holder.id, account_holder.id])
+  end
+
+  # Returns the account for this business linked to a "money" program with #is_money == true
+  def cashbox
+    return @cashbox if @cashbox.present?
+    return nil unless has_money_program?
+    @cashbox = self.accounts.where(:program_id => money_program.id, :is_money => true).first
+  end
+
+  def reserve_account
+    return @reserve_account if @reserve_account.present?
+    return nil unless has_money_program?
+    @reserve_account = self.accounts.where(:program_id => money_program.id, :is_reserve => true).first
+  end
+
+  def cashbury_account
+    return @cashbury_account if @cashbury_account.present?
+    return nil unless has_money_program?
+    @cashbury_account = self.accounts.where(:program_id => money_program.id, :is_cashbury => true).first
+  end
 
   # This method checks for
   # any place is set to true or not

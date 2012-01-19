@@ -16,4 +16,9 @@ class ProgramType < ActiveRecord::Base
 	  :marketing=>"Marketing",
 	  :money=>"Money"
 	}
+
+  def self.[](name)
+    ProgramType.where(:name => name).first
+  end
+
 end

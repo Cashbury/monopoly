@@ -16,24 +16,123 @@
 #  program_id          :integer(4)
 #  business_id         :integer(4)
 #
-
+require 'thread'
 class Account < ActiveRecord::Base
   belongs_to :account_holder
   belongs_to :campaign
   belongs_to :measurement_type
   belongs_to :payment_gateway
   belongs_to :business
+  belongs_to :program
+
+  has_one :account_option
   
   has_many :transactions, :foreign_key=>"from_account"
   
-  validates_uniqueness_of :account_holder_id, :scope => :campaign_id
-  validates_presence_of :measurement_type_id
+  # Let's not require this just yet -- Arron.
+  #validates_uniqueness_of :account_holder_id, :scope => [:program_id, :campaign_id]
+  # Let's not require this just yet -- Arron.
+  #validates_presence_of :measurement_type_id
   validates_numericality_of :amount
   
   
   cattr_reader :per_page
   @@per_page = 20
-  
+
+  delegate :campaign_name, :to => :campaign, :allow_nil => true
+  delegate :program_type_name, :to => :program, :allow_nil => true
+
+  # Automatically signals to #move_money! that we're in a transaction group
+  # so it will create the necessary linkage automatically.
+  def self.group_transactions(&block)
+    Account.transaction do
+      tx_group = TransactionGroup.create!
+      Account.transaction_group = tx_group
+      block.call
+      Account.transaction_group = nil
+      tx_group
+    end
+  end
+
+  def is_owned_by_consumer?
+    account_holder.model.is_a?(User) && account_holder.model.role?(:consumer)
+  end
+
+  # EXCLUSIVELY FOR ADMIN CONSOLE
+  # Do not call, no business logic present.
+  def deposit(amount, initiated_by = nil)
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    account.move_money!(amount, self, Action["Deposit"], initiated_by)
+  end
+
+  # EXCLUSIVELY FOR ADMIN CONSOLE
+  # Do not call, no business logic present.
+  def withdraw(amount, initiated_by = nil)
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    self.move_money!(amount, account, Action["Withdraw"], initiated_by)
+  end
+
+  def load(amount, initiated_by = nil)
+    ensure_consumer_account!
+    ensure_cash_or_cashbury_account!
+
+    account = self.is_money? ? business.reserve_account : business.cashbury_account
+    account.move_money!(amount, self, Action["Load"], initiated_by)
+  end
+
+  def tip(amount, initiated_by = nil)
+    ensure_consumer_account!
+    ensure_cash_account!
+
+    move_money!(amount, business.cashbox, Action["Tip"], initiated_by)
+  end
+
+  def spend(amount, initiated_by = nil)
+    ensure_consumer_account!
+    ensure_cash_or_cashbury_account!
+
+    # Is this the right thing to do for now?
+    if self.is_money?
+      # Subtract available cahsburies first.
+      cash_account = self
+      cashbury_account = account_holder.model.cashbury_account_for(business)
+
+      if cashbury_account.amount > 0
+        Account.group_transactions do
+          # Cashburies can't pay for the whole thing.
+          if (amount - cashbury_account.amount) > 0
+            # Drain Cashbury account to discount total price.
+            remaining_balance = amount - cashbury_account.amount
+            cashbury_account.spend(cashbury_account.amount, initiated_by)
+
+            # Pay remaining balance with user's cash.
+            cash_account.spend(remaining_balance, initiated_by)
+
+          elsif
+            # Cashburies can pay the total balance.
+            cashbury_account.spend(amount, initiated_by)
+          end
+        end
+
+      else # No cashburies in account, only money.
+        move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)
+      end
+
+    elsif self.is_cashbury?
+      move_money!(amount, business.cashbury_account, Action["Spend"], initiated_by)
+    else
+      raise "Unspendable account type: #{self.inspect}"
+    end
+  end
+
+  def cashout(initiated_by = nil)
+    ensure_consumer_account!
+    ensure_cash_account!
+
+    move_money!(amount, business.reserve_account, Action["Cashout"], initiated_by)
+  end
+
+
   def withdraw_from_account(amount,user_id)
     if associated_to_campaign?
       business_account=self.campaign.business_account
@@ -71,8 +170,8 @@ class Account < ActiveRecord::Base
                                       :note=>"Account transfer (withdraw) from user account",
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
-                                      :transaction_fees=>transaction_type.fee_amount)
-      
+                                      :transaction_fees=>transaction_type.fee_amount,
+                                      :transaction_group_id => (Account.transaction_group.id if is_group_transaction?))
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
@@ -123,7 +222,8 @@ class Account < ActiveRecord::Base
                                       :note=>"Account transfer (deposit) to user account",
                                       :transaction_type_id=>action.transaction_type_id,
                                       :after_fees_amount=>after_fees_amount,
-                                      :transaction_fees=>transaction_type.fee_amount)
+                                      :transaction_fees=>transaction_type.fee_amount,
+                                      :transaction_group_id => (Account.transaction_group.id if is_group_transaction?))
       log_group=LogGroup.create!(:created_on=>date)
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
@@ -154,5 +254,73 @@ class Account < ActiveRecord::Base
     .where("campaigns.ctype=#{Campaign::CTYPE[:spend]} and programs.program_type_id=#{program_type_id} and account_holders.model_id=#{user_id} and account_holders.model_type='User'")
     .select("accounts.status,program_types.id as pt_id,businesses.name as b_name, countries.name as c_name, program_types.name as pt_name, accounts.amount as current_amount, accounts.cumulative_amount, businesses.id as biz_id, programs.id as p_id, account_holders.model_id as uid ")
     .group("businesses.id")
+  end
+
+  protected
+  def ensure_consumer_account!
+    unless is_owned_by_consumer?
+      raise "Can only cash out a consumer account! (is actually: #{account_holder.model.class.name}: #{account_holder.model.roles.collect(&:name)})"
+    end
+  end
+
+  def ensure_cash_account!
+    unless is_money?
+      raise "Can only be called for a cash account! (is actually: #{self.inspect})"
+    end
+  end
+
+  def ensure_cash_or_cashbury_account!
+    unless is_money? || is_cashbury?
+      raise "Can only be called for a cash or cashbury account! (is actually: #{self.inspect})"
+    end
+  end
+
+  # Moves money from one account to another.
+  def move_money!(move_amount, to_account, action, initiated_by = nil)
+    self.amount -= move_amount
+    to_account.amount += move_amount
+
+    transaction = Transaction.new(:from_account => id,
+      :to_account => to_account.id,
+      :before_fees_amount => move_amount,
+      :payment_gateway => payment_gateway,
+      :is_money => self.is_money?,
+      :from_account_balance_before => amount_was,
+      :from_account_balance_after => amount,
+      :to_account_balance_before=> to_account.amount_was,
+      :to_account_balance_after => to_account.amount,
+      :currency => nil,
+      :note => "Account #{action.name}",
+      :transaction_type_id => action.transaction_type_id,
+      :after_fees_amount => move_amount,
+      :transaction_fees => action.transaction_type.fee_amount)
+
+    # see Account#group_transactions.
+    transaction.transaction_group = Account.transaction_group if is_group_transaction?
+
+    Account.transaction do
+      save!
+      to_account.save!
+      transaction.save!
+
+      Log.create!(:user_id => initiated_by.try(:id) || account_holder_id,
+        :action_id         => action.id,
+        :business_id       => business_id,
+        :transaction_id    => transaction.id,
+        :frequency         => 1,
+        :created_on        => DateTime.now)
+    end
+  end
+
+  def is_group_transaction?
+    Account.transaction_group.present?
+  end
+
+  def self.transaction_group
+    Thread.current[:transaction_group]
+  end
+
+  def self.transaction_group=(tx_grp)
+    Thread.current[:transaction_group] = tx_grp
   end
 end

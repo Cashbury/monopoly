@@ -5,23 +5,26 @@ end
 
 
 
-puts 'Create an admin account'
-admin_user = User.new(:username => "admin", :name => "Admin", :password => "Monopoly", :password_confirmation => "Monopoly", :email => "revolteur@gmail.com", :admin=>true, :confirmed_at=>Date.today)
-admin_user.roles << Role.find_by_name(Role::AS[:admin])
-admin_user.save!
+unless User.where(:email => 'revolteur@gmail.com').exists?
+  puts 'Create an admin account'
+  admin_user = User.new(:username => "admin", :name => "Admin", :password => "Monopoly", :password_confirmation => "Monopoly", :email => "revolteur@gmail.com", :admin=>true, :confirmed_at=>Date.today)
+  admin_user.roles << Role.find_by_name(Role::AS[:admin])
+  admin_user.save!
 
-puts 'confirming admin user has signed up'
-admin_user.confirm!
-admin_user.save!
+  puts 'confirming admin user has signed up'
+  admin_user.confirm!
+  admin_user.save!
+end
+unless User.where(:email => "hb@cashbury.com").exists?
+  puts 'Creating another admin account'
+  new_admin_user = User.new(:username => "admin", :name => "Admin2", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
+  new_admin_user.roles << Role.find_by_name(Role::AS[:admin])
+  new_admin_user.save!
 
-puts 'Creating another admin account'
-new_admin_user = User.new(:username => "admin", :name => "Admin2", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
-new_admin_user.roles << Role.find_by_name(Role::AS[:admin])
-new_admin_user.save!
-
-puts 'confirming new admin has signed up'
-new_admin_user.confirm!
-new_admin_user.save!
+  puts 'confirming new admin has signed up'
+  new_admin_user.confirm!
+  new_admin_user.save!
+end
 
 puts "Create transaction types and actions"
 transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect", :fee_amount=>0.0, :fee_percentage=>0.0)
@@ -30,7 +33,7 @@ transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect"
 end
 
 transaction_type=TransactionType.find_or_create_by_name(:name=>"Accounts Transfer", :fee_amount=>0.0, :fee_percentage=>0.0)
-%w( Withdraw Deposit ).each do |name|
+%w( Withdraw Deposit Cashout Load Spend Tip).each do |name|
   Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
 end
 

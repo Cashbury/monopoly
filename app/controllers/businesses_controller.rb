@@ -211,7 +211,6 @@ class BusinessesController < ApplicationController
     render :json => {:country_code => @business.try(:country).try(:phone_country_code)||''}
   end
 
-
   private
   def set_tag_lists_for_business_places(business)
     business.places.each_with_index do |place,index|

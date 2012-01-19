@@ -53,6 +53,8 @@ Kazdoor::Application.routes.draw do
       get  '/check_role.:format',:action=>:check_user_role, :on =>:collection
       get  '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
       post '/ring_up.:format', :action=>:ring_up, :on=>:collection
+      post '/load_money.:format', :action=>:load_money, :on=>:collection
+      post '/charge_customer.:format', :action=>:charge_customer, :on=>:collection
       get  '/receipts-merchant.:format', :action=>:list_receipts_history, :on=>:collection
     end
     resource :businesses do
@@ -84,17 +86,6 @@ Kazdoor::Application.routes.draw do
 
 	end
 
-  resources :businesses do
-	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
-	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
-	  get '/update_currencies/:country_id', :action=>:update_currencies, :on=> :collection, :as=>"update_currencies"
-	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
-	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
-	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
-	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
-	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
-          get '/country_code', :action => :country_code, :on =>:member
-	end
 	# resources :programs do
 	# 	resources :engagements, :controller => "programs/engagements" do
 	#       get "stamps", :on => :collection
@@ -110,7 +101,9 @@ Kazdoor::Application.routes.draw do
     get '/for_businessid/:id' ,   :action=>:for_businessid,   :on =>:collection, :as=>"for_businessid"
 	end
 
-	resources :users
+	resources :users do
+    resources :transactions, :controller => 'users/transactions'
+  end
 
   resources :templates
 
@@ -144,7 +137,25 @@ Kazdoor::Application.routes.draw do
     resources :reports, :only => [:create, :show, :index]
   end
 
+  resources :transactions, :only => [:index, :show] do
+    member do
+      post :void
+    end
+  end
+
   resources :businesses do
+	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
+	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
+	  get '/update_currencies/:country_id', :action=>:update_currencies, :on=> :collection, :as=>"update_currencies"
+	  get "update_countries.:format",:action=>:update_countries, :on =>:collection, :as =>"update_countries"
+	  get "check_primary_place/:id", :action=>:check_primary_place , :on =>:collection ,:as =>"check_primary_place"
+	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
+	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
+	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
+          get '/country_code', :action => :country_code, :on =>:member
+
+    resources :transactions, :controller => "businesses/transactions", :only => [:index]
+
     resources :measurement_types, :controller => "businesses/measurement_types"
     resources :items, :controller => "businesses/items"
     resources :places, :controller => "businesses/places" do
@@ -170,6 +181,8 @@ Kazdoor::Application.routes.draw do
       post "/crop_image",:action=>:crop_image
     end
     resources :spend_campaigns,:controller => "businesses/spend_campaigns"
+
+    resource :cashbox, :only => [:show, :edit, :update], :controller => "businesses/cashboxes"
   end
   resources :users_management do
     get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
@@ -190,6 +203,8 @@ Kazdoor::Application.routes.draw do
     get  "view_tx_details/log/:log_id", :action=>:view_tx_details, :on=>:member, :as=>"view_tx_details"
     get  "check_txs_updates/:qr_code_id", :action=> :check_txs_updates, :on=>:member, :as=>"check_txs_updates"
     get  "transactions_report", :action=> :aggregate_transactions_report, :on=>:member, :as=>"aggregate_transactions_report"
+
+    post :enroll_in_money_program
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}

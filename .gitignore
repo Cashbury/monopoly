@@ -21,4 +21,5 @@ config/database.yml
 public/images/qrcodes/*.png
 .project
 .redcar
+.idea
 .rvmrc

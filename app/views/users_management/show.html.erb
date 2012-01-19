@@ -127,8 +127,28 @@
 <div id="listing_businesses_container">
   <%=render :partial=>"listing_enrollments_container"%>
 </div>
+<%= form_tag users_management_enroll_in_money_program_path(@user) do %>
+  <%# Quick hack for support; refactor properly, later %>
+  <%
+    ignore_ids = @user.programs.money.collect(&:business_id)
+    ignore_ids << -1
+    has_many_program_ids = Program.where(:program_type_id => ProgramType["Money"].id).collect(&:business_id)
+    @businesses = Business.where(['id NOT IN (?)', ignore_ids])
+    @businesses = @businesses.where(:id => has_many_program_ids) if has_many_program_ids.size > 0
+  %>
+  <fieldset>
+    <legend>Money Program Enrollment</legend>
+    <%= label_tag :business_name, "Business Name" %>
+    <%= select_tag 'business_id', options_for_select(@businesses.map { |b| [b.name, b.id] }) %>
+    <br />
+    <% if @businesses.size > 0 %>
+      <%= submit_tag 'Enroll' %>
+    <% end %>
+  </fieldset>
+<% end %>
 <p><%=link_to "Deposit/Withdraw to/from SVA accounts @ businesses", manage_user_accounts_users_management_path(@user)%></p>
 <p><%=link_to "Redeem a reward @ businesses", redeem_rewards_users_management_path(@user)%></p>
 <p><%=link_to "Engage @ campaign @ businesses", list_engagements_users_management_path(@user)%></p>
 <p><%=link_to "Show Logged Actions", logged_actions_users_management_path(@user)%></p>
 <p><%=link_to "Aggregate Transactions Report", aggregate_transactions_report_users_management_path(@user)%></p>
+<p><%= link_to 'Transactions', user_transactions_path(@user) %></p>
