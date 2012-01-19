@@ -69,7 +69,11 @@ class Users::BusinessesController < ApplicationController
 
       balance = cashbury_acc.amount + cash_acc.amount
 
-      result = { :balance => balance }
+      result = {
+        :cashburies => cashbury_acc.amount,
+        :cash => cash_acc.amount,
+        :balance => balance 
+      }
       respond_to do |format|
         format.xml { render :xml => result }
       end
