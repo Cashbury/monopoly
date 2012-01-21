@@ -135,6 +135,32 @@
     });
 </script>
 
+<h3>Money Program</h3>
+<% if @business.has_money_program? %>
+  <h4>Cashbox balance: <%= number_to_currency(@business.cashbox.amount) %> </h4>
+
+  <div>
+    <%= number_to_currency(@business.total_cash_loaded_by_customers) %> loaded by
+    <%= @business.total_customers_that_loaded_money %> customers.
+  </div>
+
+  <div>
+    <%= number_to_currency(@business.total_cash_spent_by_customers) %> spent by
+    <%= @business.total_customers_that_spent_money %>
+  </div>
+
+  <div>
+    <%= @business.total_customers_with_cash_in_pocket %>
+    still have 
+    <%= number_to_currency(@business.total_cash_carried_by_customers) %>
+    loaded.
+  </div>
+  <p><%= link_to 'Transaction logs', business_transactions_path(@business) %></p>
+<% else %>
+  <p>Your business is not enrolled in a money program.</p>
+<% end %>
+
+
 <h3>New Campaigns View</h3>
 <div>
     <div id="tabs">
