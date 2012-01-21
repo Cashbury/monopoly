@@ -37,7 +37,7 @@ class Transaction < ActiveRecord::Base
   delegate :name, :fee_amount, :fee_percentage, :to => :transaction_type
 
   module States
-    VOID = "void"
+    VOID = "voided"
   end
 
   def in_state?(*states)
