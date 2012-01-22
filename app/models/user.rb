@@ -230,6 +230,11 @@ class User < ActiveRecord::Base
       .first
   end
 
+  def cashbury_accounts
+    Account.where(:is_cashbury => true)
+      .where(:account_holder_id => self.account_holder.id)
+  end
+
   def cashout_at(business)
     raise "Can't cashout without money program (User: #{id})" unless money_program_for(business).present?
     cash_account_for(business).cashout

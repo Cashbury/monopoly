@@ -60,13 +60,13 @@ class Users::CashiersController < Users::BaseController
         end
       else
         respond_to do |format|     
-          format.xml {render :text => "Invalid Qrcode"  , :status => 200}
+          format.xml {render :text => "Invalid Qrcode"  , :status => 422 }
         end
       end
     rescue Exception=>e
       logger.error "Exception #{e.class}: #{e.message}, #{e.backtrace}"
       respond_to do |format|     
-        format.xml {render :text => e.message  , :status => 200}
+        format.xml {render :text => e.message  , :status => 500 }
       end
     end
   end
@@ -120,7 +120,7 @@ class Users::CashiersController < Users::BaseController
     rescue Exception=>e
       logger.error "Exception #{e.class}: #{e.message}"
       respond_to do |format|     
-        format.xml {render :text => e.message  , :status => 200}
+        format.xml {render :text => e.message  , :status => 500 }
       end
     end
   end
@@ -180,13 +180,13 @@ class Users::CashiersController < Users::BaseController
         end
       else
         respond_to do |format|     
-          format.xml {render :text => "Invalid Qrcode"  , :status => 200}
+          format.xml {render :text => "Invalid Qrcode"  , :status => 422}
         end
       end
     rescue Exception=>e
       logger.error "Exception #{e.class}: #{e.message}"
       respond_to do |format|     
-        format.xml {render :text => e.message  , :status => 200}
+        format.xml {render :text => e.message  , :status => 500}
       end
     end
   end

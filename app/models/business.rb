@@ -108,6 +108,59 @@ class Business < ActiveRecord::Base
     @cashbury_account = self.accounts.where(:program_id => money_program.id, :is_cashbury => true).first
   end
 
+  def total_cash_loaded_by_customers
+    program = money_program
+    Transaction.where(:from_account => reserve_account.id)
+      .where(:is_money => true)
+      .where(:transaction_type_id => [Action["Load"].transaction_type_id, Action["Deposit"].transaction_type_id])
+      .sum(:after_fees_amount)
+  end
+
+  def total_cash_spent_by_customers
+    program = money_program
+    Transaction.where(:to_account => reserve_account.id)
+      .where(:is_money => true)
+      .where(:transaction_type_id => Action["Spend"].transaction_type_id)
+      .sum(:before_fees_amount)
+  end
+
+  def total_customers_that_loaded_money
+    program = money_program
+    Transaction.where(:from_account => reserve_account.id)
+      .where(:is_money => true)
+      .where(:transaction_type_id => [Action["Load"].transaction_type_id, Action["Deposit"].transaction_type_id])
+      .select(:to_account).collect(&:to_account).uniq.size
+  end
+
+  def total_customers_that_spent_money
+    program = money_program
+    Transaction.where(:to_account => reserve_account.id)
+      .where(:is_money => true)
+      .where(:transaction_type_id => Action["Spend"].transaction_type_id)
+      .select(:from_account).collect(&:from_account).uniq.size
+  end
+
+  def total_cash_carried_by_customers
+    Account.where(:program_id => money_program.id)
+      .where(:business_id => id)
+      .where(:is_money => true)
+      .sum(:amount)
+  end
+
+  def total_customers_with_cash_in_pocket
+    Account.where(:program_id => money_program.id)
+      .where(:business_id => id)
+      .where(:is_money => true)
+      .where('amount > 0')
+      .count
+  end
+
+  def money_program_customers
+    acc_ids = Account.select(:account_holder_id).where(:business_id => id, :program_id => money_program.id).collect(&:account_holder_id)
+    user_ids = AccountHolder.where(:id => acc_ids).collect(&:model_id)
+    User.where(:id => user_ids)
+  end
+
   # This method checks for
   # any place is set to true or not
   # @return [Boolean]

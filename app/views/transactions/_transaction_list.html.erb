@@ -50,7 +50,7 @@
     </td>
     <td>
       <% if current_user.role?(Role::AS[:admin]) || current_user.role?(Role::AS[:operator]) %>
-        <% if !transaction.in_state?(:void) %>
+        <% if !transaction.in_state?(:voided) %>
           <%= button_to "Void", void_transaction_path(transaction) %>
         <% end %>
       <% end %>

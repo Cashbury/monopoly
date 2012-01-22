@@ -18,6 +18,11 @@ Given /^I am a Consumer$/ do
   @user.confirm!
 end
 
+Given /^I am a Consumer with the auth token "([^"]*)"$/ do |auth_token|
+  @user = FactoryGirl.create :consumer, :authentication_token => auth_token
+  @user.confirm!
+end
+
 Given /^"([^"]*)" is a consumer$/ do |email|
   @consumer = FactoryGirl.create :consumer, :email => email
 end
