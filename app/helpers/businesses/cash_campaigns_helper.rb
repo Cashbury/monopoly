@@ -1,0 +1,2 @@
+module Businesses::CashCampaignsHelper
+end

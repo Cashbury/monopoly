@@ -1,0 +1,7 @@
+.campaign_types li{
+    list-style-type: none;
+}
+
+.campaign_types li input {
+    float: left;
+}

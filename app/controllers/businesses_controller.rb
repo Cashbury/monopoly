@@ -1,7 +1,7 @@
 class BusinessesController < ApplicationController
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_hours , :only => [ :new , :create , :edit , :update]
-  before_filter :prepare_business, :only=> [:show, :edit, :update, :destroy, :list_campaign_transactions, :list_enrolled_customers, :list_all_enrolled_customers ]
+  before_filter :prepare_business, :only=> [:show, :edit, :update, :destroy, :list_campaign_transactions, :list_enrolled_customers, :list_all_enrolled_customers, :new_campaign_type, :choose_campaign_type ]
   skip_before_filter :authenticate_user!, :only=> [:update_cities, :update_countries]
   @@per_page=20
 
@@ -30,6 +30,21 @@ class BusinessesController < ApplicationController
       format.json { render :text => @business.to_json}
     end
   end
+
+  def choose_campaign_type
+  end  
+
+  def new_campaign_type
+    if params[:type] == 'stamp_card'
+      redirect_to new_business_campaign_path(@business)
+    end
+    if params[:type] == 'cash_reward'
+      redirect_to new_business_spend_campaign_path(@business)
+    end
+    if params[:type] == 'cash_incentive'
+      redirect_to new_business_cash_campaign_path(@business)
+    end
+  end  
 
   def new
     @brands  = Brand.all

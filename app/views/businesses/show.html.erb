@@ -94,32 +94,12 @@
         </tr>
     <% end %>
 </table>
-<h3>Campaigns</h3>
-<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
-    <tr>
-        <th>Campaign</th>
-        <th>Program Type</th>
-        <th>SVA balance</th>
-        <th>View Transactions</th>
-        <th>View Enrolled customers</th>
-    </tr>
-    <% for program in @campaigns %>
-        <tr>
-            <td><%= program.c_name %></td>
-            <td><%= program.pt_name %></td>
-            <td><%= program.biz_balance %></td>
-            <td><%= link_to "View Txs", list_campaign_transactions_business_path(@business, program.c_id) %></td>
-            <td><%= link_to "View Enrolled Customers", list_enrolled_customers_business_path(@business, program.c_id) %></td>
-        </tr>
-    <% end %>
-</table>
 <p>
     <%= link_to "Edit", edit_business_path(@business) %> |
     <%= link_to "View All", businesses_path %> |
     <%= button_to "Destroy", @business, :confirm => 'Are you sure?', :method => :delete %>
 </p>
 <p>
-  <%= link_to "Make an offer", new_business_campaign_path(@business) %><br />
   <%= link_to "Current offers", business_campaigns_path(@business) %><br />
   <%= link_to "Show Programs", business_programs_path(@business) %><br />
   <%= link_to "Show Items", business_items_path(@business)  %><br />
@@ -134,6 +114,9 @@
         $("#tabs").tabs();
     });
 </script>
+<a href="<%= choose_campaign_type_business_path(@business) %>" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="float: right;">
+  <span class="ui-button-text">+ add campaign</span>
+</a>
 
 <h3>New Campaigns View</h3>
 <div>
@@ -162,7 +145,6 @@
                         </tr>
                     <% end %>
                 <% end %>
-              <%= link_to "Make an offer", new_business_campaign_path(@business, :customer_type => "new") %><br/>
             </table>
         </div>
         <div id="Customer-Retention">
@@ -185,7 +167,6 @@
                         </tr>
                     <% end %>
                 <% end %>
-                <%= link_to "Make an offer", new_business_campaign_path(@business, :customer_type => "existing") %><br/>
             </table>
         </div>
     </div>

@@ -142,6 +142,10 @@ class User < ActiveRecord::Base
     role?(Role::AS[:super_admin])
   end
 
+  def consumer?
+    role?(Role::AS[:consumer])
+  end
+
   #for business signup
   def with_brand
     self.brands.build if self.brands.blank?
@@ -184,6 +188,19 @@ class User < ActiveRecord::Base
     end
   end
 
+  def cash_incentive(business, amount)
+    debugger
+    cash_account = self.cashbury_account_for(business)
+    if !cash_account
+      program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Money'])
+      self.enroll(program) 
+      cash_account = self.cashbury_account_for(business)
+    end
+    if cash_account.amount.to_i == 0
+      cash_account.load(amount)
+    end
+  end
+
 
   # This method is more of a sanity check
   # to ensure that self.programs actually contains
@@ -194,6 +211,7 @@ class User < ActiveRecord::Base
   end
 
   def cash_account_for(business)
+    return nil if !self.account_holder
     money_program = business.money_program
     Account.where(:business_id => business.id)
       .where(:program_id => money_program.id)
@@ -203,6 +221,7 @@ class User < ActiveRecord::Base
   end
 
   def cashbury_account_for(business)
+    return nil if !self.account_holder
     money_program = business.money_program
     Account.where(:business_id => business.id)
       .where(:program_id => money_program.id)

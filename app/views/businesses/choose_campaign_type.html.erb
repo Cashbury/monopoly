@@ -1,0 +1,44 @@
+<% content_for :head do %>
+<%= stylesheet_link_tag "choose_campaign_type" %>
+<% end %>
+<%= form_tag(new_campaign_type_business_path(@business)) do %>
+<h1><%= @business.name %> -> Add Campaign</h1>
+<h2>Marketing Goal :: Attach new Customers to my business</h2>
+<i>Select a campaign designed to help you attract new customers</i>
+<ul class="campaign_types">
+  <li>
+    <label>
+    <input type="radio" name="type" value="cash_incentive"/> 
+    <h3>1. Offer a cash incentive</h3>
+    <div>ex: Buy 10 coffee drinks, Get 1 Free</div>
+    <div>How to redeem: Customer flashes the redeem receipt to the merchant</div>
+    </label>
+  </li>
+</ul>
+
+<h2>Marketing Goal :: Retain & Grow my customer base</h2>
+<i>Select a campaign designed to help you retain and grow your existing customer base</i>
+<ul class="campaign_types">
+  <li>
+    <label>
+    <input type="radio" name="type" value="stamp_card"/> 
+    <h3>1. Offer a reword from the menu (Stamp Card)</h3>
+    <div>ex: Buy 10 coffee drinks, Get 1 Free</div>
+    <div>How to redeem: Customer flashes the redeem receipt to the merchant</div>
+    </label>
+  </li>
+  <li>
+    <label>
+    <input type="radio" name="type" value="cash_reward"/> 
+    <h3>2. Offer a cash reward</h3>
+    <div>ex: Spend $100, Get $10 cash back (10% saving)</div>
+    <div>
+      How to redeem: Cash reward is deposited in the user's cash account and
+      discounted at each tender until fully utilized
+    </div>
+    </label>
+  </li>
+</ul>
+<%= submit_tag("Create") %>
+<% end %>
+<%= link_to 'Back to business', business_path(@business) %>

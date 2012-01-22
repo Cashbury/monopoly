@@ -1,0 +1,81 @@
+<style type="text/css" media="screen">
+    div.form_item_div select {
+        margin: 0 5px 0 0
+    }
+
+    div.form_item_div input {
+        padding: 5px 2px;
+        margin: 0 3px 0 0
+    }
+
+    div.form_item_div label {
+        height: 30px;
+        line-height: 30px;
+        padding: 0 5px
+    }
+</style>
+
+<%= form_for([@business, @campaign], :url => business_cash_campaigns_path(@business), :html => {:multipart => true}) do |f| %>
+<%= f.hidden_field :name, :value => 'Cash incentive' %>
+    
+    <% if @campaign.errors.any? %>
+        <div id="error_explanation">
+            <h2><%= pluralize(@campaign.errors.count, "error") %> prohibited this offer from being saved:</h2>
+            <ul>
+                <% @campaign.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+
+  <fieldset >
+    <legend class="section_title">Who is this offer targeted to</legend>
+    <div class="form_item_div"><%= select_tag "target_id", "<option value=''>...Everyone...</option>".html_safe+options_from_collection_for_select(Target.all, "id", "display_name",@campaign.new_record? ? Target.find_by_name("new_comers").try(:id) : f.object.try(:targets).try(:first).try(:id) )%></div>
+  </fieldset>
+
+    <fieldset>
+      <legend class="section_title">Select the branches where this offer will be available
+      </legend>
+      <div class="form_item_div">
+        <% @business.places.each do |place| %>
+        <% listed_places= @campaign.new_record? ? @business.places : @campaign.places %>
+        <%= check_box_tag("campaign[places_list][#{place.id}]", "1", listed_places.detect { |i| i.id == place.id }) %>
+        <%= "#{place.name}" %><br/>
+        <% end %>
+      </div>
+
+    </fieldset> 
+
+  <fieldset >
+  <%= f.fields_for :rewards do |reward| %>
+  <%= reward.hidden_field :name, :value => 'Cash incentive' %>
+  <%= reward.hidden_field :needed_amount, :value => '1' %>
+  <label>
+  <div>How much do you plan to offer</div>
+  <%= reward.text_field :money_amount, {:class=>"basic_info_caption1 inst left", :title=>"10", :id=>"money_amount_id", :placeholder => "Ex: $10"} %>
+  </label>
+  <div class="row">
+    <%= reward.label "Reward Short Description" %><br/>
+    <%= reward.text_field :heading1, :class=>"basic_info_input", :maxlength=>40 %>
+  </div>
+  <div class="row">
+    <%= reward.label "Reward Description" %><br/>
+    <%= reward.text_area :heading2, :class=>"basic_info_input", :id=>"description_field", :maxlength=>84, :rows=>5 %>
+  </div>
+  
+  <div class="row">
+    <%= reward.label "Reward Legal Terms" %><br/>
+    <%= reward.text_area :legal_term, :rows=>3 %>
+  </div>
+  <% end %>
+
+  </fieldset>
+
+   
+
+    <div class="actions">
+      <p><%= f.submit "Make Offer" %></p>
+    </div>
+   
+<% end %>

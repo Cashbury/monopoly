@@ -153,6 +153,8 @@ Kazdoor::Application.routes.draw do
 	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
 	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
           get '/country_code', :action => :country_code, :on =>:member
+          get '/choose_campaign_type', :action => :choose_campaign_type, :on => :member
+          post '/new_campaign_type', :action => :new_campaign_type, :on => :member
 
     resources :transactions, :controller => "businesses/transactions", :only => [:index]
 
@@ -181,6 +183,7 @@ Kazdoor::Application.routes.draw do
       post "/crop_image",:action=>:crop_image
     end
     resources :spend_campaigns,:controller => "businesses/spend_campaigns"
+    resources :cash_campaigns,:controller => "businesses/cash_campaigns"
 
     resource :cashbox, :only => [:show, :edit, :update], :controller => "businesses/cashboxes"
   end
