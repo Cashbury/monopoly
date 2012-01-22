@@ -188,7 +188,8 @@ class Business < ActiveRecord::Base
   end
   
   def country_flag
-    "#{COUNTRIES_FLAGS_PATH}#{self.country.iso2.to_s.downcase}.png" if self.country.present? and self.country.iso2.present?
+    return "#{COUNTRIES_FLAGS_PATH}#{self.country.iso2.to_s.downcase}.png" if self.country.present? and self.country.iso2.present?
+    ''
   end
   
   def list_campaigns
