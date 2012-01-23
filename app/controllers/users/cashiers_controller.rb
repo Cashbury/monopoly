@@ -113,9 +113,7 @@ class Users::CashiersController < Users::BaseController
           format.xml {render :xml => response , :status => 200}
         end
       else
-        respond_to do |format|     
-          format.xml {render :text => "Invalid Qrcode"  , :status => 422}
-        end
+        raise ApiError.new("Invalid QrCode", 422)
       end
     rescue ApiError => ae
       respond_to do |format|
