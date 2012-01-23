@@ -117,7 +117,7 @@ class Users::CashiersController < Users::BaseController
       end
     rescue ApiError => ae
       respond_to do |format|
-        format.xml { render :xml => ae, :status => ae.status }
+        format.xml { render :xml => ae, :status => ae.status_code }
       end
     rescue Exception=>e
       logger.error "Exception #{e.class}: #{e.message}"
