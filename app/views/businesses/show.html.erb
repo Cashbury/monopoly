@@ -114,9 +114,6 @@
         $("#tabs").tabs();
     });
 </script>
-<a href="<%= choose_campaign_type_business_path(@business) %>" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="float: right;">
-  <span class="ui-button-text">+ add campaign</span>
-</a>
 
 <h3>Money Program</h3>
 <% if @business.has_money_program? %>
@@ -143,8 +140,10 @@
   <p>Your business is not enrolled in a money program.</p>
 <% end %>
 
-
-<h3>New Campaigns View</h3>
+<a href="<%= choose_campaign_type_business_path(@business) %>" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" style="float: right;">
+  <span class="ui-button-text">+ add campaign</span>
+</a>
+<h3>Marketing</h3>
 <div>
     <div id="tabs">
         <ul>
@@ -152,7 +151,7 @@
             <li><a href="#Customer-Retention">Customer Retention</a></li>
         </ul>
         <div id="Customer-Acquistion">
-            <table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
+            <table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0" style="width: 840px;">
                 <tr>
                     <th>Campaign</th>
                     <th>Program Type</th>
@@ -160,14 +159,23 @@
                     <th>View Enrolled customers</th>
                 </tr>
                 <% for program in @campaigns %>
-                    <% actual_campaign = Campaign.where('name' => program.c_name)[0] %>
+                    <% actual_campaign = Campaign.where('id' => program.c_id)[0] %>
                     <% if actual_campaign.ctype != 1 && actual_campaign.ctype != 3 %>
                         <tr>
                             <td><%= program.c_name %></td>
-                            <td><%= program.pt_name %></td>
+			    <% if actual_campaign.ctype == Campaign::CTYPE[:cash_incentive] %>
+                            <td><%= program.pt_name %> 
+			      <% if actual_campaign.end_date && (actual_campaign.end_date > DateTime.now) %>
+			      <%= link_to('Stop', stop_campaign_business_cash_campaign_path(@business, actual_campaign), :remote => true, :method => :post) %>
+			      <% else %>
+			      <%= link_to('Start', start_campaign_business_cash_campaign_path(@business, actual_campaign), :remote => true, :method => :post) %>
+			      <% end %>
+			    </td>
+			    <% else%>
+			    <td><%= program.pt_name %></td>
+			    <% end %>
                             <td><%= link_to "View Txs", list_campaign_transactions_business_path(@business, program.c_id) %></td>
                             <td><%= link_to "View Enrolled Customers", list_enrolled_customers_business_path(@business, program.c_id) %></td>
-                            <td>
                         </tr>
                     <% end %>
                 <% end %>
@@ -182,7 +190,7 @@
                     <th>View Enrolled customers</th>
                 </tr>
                 <% for program in @campaigns %>
-                    <% actual_campaign = Campaign.where('name' => program.c_name)[0] %>
+                    <% actual_campaign = Campaign.where('id' => program.c_id)[0] %>
                     <% if actual_campaign.ctype == 1 || actual_campaign.ctype == 3 %>
                         <tr>
                             <td><%= program.c_name %></td>

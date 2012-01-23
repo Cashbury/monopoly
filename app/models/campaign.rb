@@ -47,7 +47,8 @@ class Campaign < ActiveRecord::Base
 	  :spend=>1,
 	  :share=>2,
 	  :buy=>3,
-	  :visit=>4
+	  :visit=>4,
+	  :cash_incentive => 5
 	}
 	
 	def check_if_campaign_exist

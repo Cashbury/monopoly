@@ -14,6 +14,7 @@ class Businesses::CashCampaignsController < ApplicationController
     @campaign = @program.campaigns.build(params[:campaign])
     @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>@business.currency_code||'USD',:business_id=>@business.id)
     @campaign.start_date = Date.today
+    @campaign.end_date = 3.years.from_now.to_date
     respond_to do |format|
       @reward = @campaign.rewards.first
       if !@reward.money_amount
@@ -23,7 +24,9 @@ class Businesses::CashCampaignsController < ApplicationController
         if @campaign.save!
           users = User.all
           users.each do |user|
-            user.cash_incentive(@business, @reward.money_amount) if user.consumer?
+            if user.consumer?
+              user.cash_incentive(@business, @reward.money_amount, @campaign.id)
+            end
           end
           format.html { 
             redirect_to(business_cash_campaign_path(@business,@campaign), 
@@ -41,6 +44,24 @@ class Businesses::CashCampaignsController < ApplicationController
     @reward = @campaign.rewards.first
     respond_to do |format|
       format.html
+    end
+  end
+
+  def start_campaign
+    @campaign = Campaign.find(params[:id])
+    @campaign.end_date = 3.years.from_now.to_date
+    @campaign.save
+    render :update do |page|
+      page << 'window.location.reload();'
+    end
+  end
+  
+  def stop_campaign
+    @campaign = Campaign.find(params[:id])
+    @campaign.end_date = nil
+    @campaign.save
+    render :update do |page|
+      page << 'window.location.reload();'
     end
   end
 

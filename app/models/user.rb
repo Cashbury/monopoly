@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
-  after_create :set_default_role
+  after_create :set_default_role, :add_cash_incentives
   after_create :initiate_user_code
   before_save :add_country_code_to_phone
 
@@ -126,6 +126,19 @@ class User < ActiveRecord::Base
       roles << principal_user unless current_roles.include? principal_user
     else
       roles << consumer unless current_roles.include? consumer
+    end
+  end
+
+  def add_cash_incentives
+    if self.consumer?
+      campaigns = Campaign.where("ctype = ? and end_date > ?", 
+                                 Campaign::CTYPE[:cash_incentive],
+                                 DateTime.now)
+      campaigns.each do |campaign|
+        business = campaign.program.business
+        amount = campaign.program.rewards.first.money_amount.to_i
+        self.cash_incentive(business, amount, campaign.id)
+      end
     end
   end
 
@@ -188,8 +201,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def cash_incentive(business, amount)
-    debugger
+  def cash_incentive(business, amount, campaign_id)
     cash_account = self.cashbury_account_for(business)
     if !cash_account
       program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Money'])
@@ -197,7 +209,7 @@ class User < ActiveRecord::Base
       cash_account = self.cashbury_account_for(business)
     end
     if cash_account.amount.to_i == 0
-      cash_account.load(amount)
+      cash_account.load(amount, nil, campaign_id)
     end
   end
 

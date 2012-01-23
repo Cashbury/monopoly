@@ -72,12 +72,12 @@ class Account < ActiveRecord::Base
     self.move_money!(amount, account, Action["Withdraw"], initiated_by)
   end
 
-  def load(amount, initiated_by = nil)
+  def load(amount, initiated_by = nil, campaign_id = nil)
     ensure_consumer_account!
     ensure_cash_or_cashbury_account!
 
     account = self.is_money? ? business.reserve_account : business.cashbury_account
-    account.move_money!(amount, self, Action["Load"], initiated_by)
+    account.move_money!(amount, self, Action["Load"], initiated_by, campaign_id)
   end
 
   def tip(amount, initiated_by = nil)
@@ -276,7 +276,7 @@ class Account < ActiveRecord::Base
   end
 
   # Moves money from one account to another.
-  def move_money!(move_amount, to_account, action, initiated_by = nil)
+  def move_money!(move_amount, to_account, action, initiated_by = nil, campaign_id = nil)
     self.amount -= move_amount
     to_account.amount += move_amount
 
@@ -302,12 +302,13 @@ class Account < ActiveRecord::Base
       save!
       to_account.save!
       transaction.save!
-
+      
       Log.create!(:user_id => initiated_by.try(:id) || account_holder_id,
         :action_id         => action.id,
         :business_id       => business_id,
         :transaction_id    => transaction.id,
         :frequency         => 1,
+        :campaign_id       => campaign_id,
         :created_on        => DateTime.now)
     end
   end

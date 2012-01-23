@@ -186,7 +186,10 @@ Kazdoor::Application.routes.draw do
       post "/crop_image",:action=>:crop_image
     end
     resources :spend_campaigns,:controller => "businesses/spend_campaigns"
-    resources :cash_campaigns,:controller => "businesses/cash_campaigns"
+    resources :cash_campaigns,:controller => "businesses/cash_campaigns" do
+      post '/start_campaign', :action => :start_campaign, :on => :member
+      post '/stop_campaign', :action => :stop_campaign, :on => :member
+    end
 
     resource :cashbox, :only => [:show, :edit, :update], :controller => "businesses/cashboxes"
   end

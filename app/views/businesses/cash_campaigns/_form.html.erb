@@ -17,6 +17,7 @@
 
 <%= form_for([@business, @campaign], :url => business_cash_campaigns_path(@business), :html => {:multipart => true}) do |f| %>
 <%= f.hidden_field :name, :value => 'Cash incentive' %>
+<%= f.hidden_field :ctype, :value => Campaign::CTYPE[:cash_incentive] %> 
     
     <% if @campaign.errors.any? %>
         <div id="error_explanation">
