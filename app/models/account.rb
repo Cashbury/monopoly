@@ -29,6 +29,9 @@ class Account < ActiveRecord::Base
   
   has_many :transactions, :foreign_key=>"from_account"
   
+
+  scope :money, where(:is_money => true)
+  scope :casbury, where(:is_cashbury => true)
   # Let's not require this just yet -- Arron.
   #validates_uniqueness_of :account_holder_id, :scope => [:program_id, :campaign_id]
   # Let's not require this just yet -- Arron.
