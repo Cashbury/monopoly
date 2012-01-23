@@ -89,7 +89,7 @@ class Users::CashiersController < Users::BaseController
         cashbury_balance = cashbury_account.nil? ? 0: cashbury_account.amount
         available_balance = cash_balance + cashbury_balance
         if available_balance < total_amount
-          raise "Not enough money"
+          raise ApiError.new("Not enough money: balance is #{available_balance} but total amount is #{total_amount}", 422)
         end
         txn_group = Account.group_transactions do
           cash_account.spend(amount)
@@ -114,8 +114,12 @@ class Users::CashiersController < Users::BaseController
         end
       else
         respond_to do |format|     
-          format.xml {render :text => "Invalid Qrcode"  , :status => 200}
+          format.xml {render :text => "Invalid Qrcode"  , :status => 422}
         end
+      end
+    rescue ApiError => ae
+      respond_to do |format|
+        format.xml { render :xml => ae, :status => ae.status }
       end
     rescue Exception=>e
       logger.error "Exception #{e.class}: #{e.message}"
