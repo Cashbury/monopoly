@@ -161,9 +161,9 @@
                 <% for program in @campaigns %>
                     <% actual_campaign = Campaign.where('id' => program.c_id)[0] %>
                     <% if actual_campaign.ctype != 1 && actual_campaign.ctype != 3 %>
-                        <tr>
-                            <td><%= program.c_name %></td>
+                        <tr>                            
 			    <% if actual_campaign.ctype == Campaign::CTYPE[:cash_incentive] %>
+			    <td><%= link_to program.c_name, business_cash_campaign_path(@business, actual_campaign) %></td>
                             <td><%= program.pt_name %> 
 			      <% if actual_campaign.end_date && (actual_campaign.end_date > DateTime.now) %>
 			      <%= link_to('Stop', stop_campaign_business_cash_campaign_path(@business, actual_campaign), :remote => true, :method => :post) %>
@@ -172,6 +172,7 @@
 			      <% end %>
 			    </td>
 			    <% else%>
+			    <td><%= link_to program.c_name, business_campaign_path(@business, actual_campaign) %></td>
 			    <td><%= program.pt_name %></td>
 			    <% end %>
                             <td><%= link_to "View Txs", list_campaign_transactions_business_path(@business, program.c_id) %></td>
@@ -182,7 +183,7 @@
             </table>
         </div>
         <div id="Customer-Retention">
-            <table table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
+            <table table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0" style="width: 840px;">
                 <tr>
                     <th>Campaign</th>
                     <th>Program Type</th>
@@ -193,11 +194,10 @@
                     <% actual_campaign = Campaign.where('id' => program.c_id)[0] %>
                     <% if actual_campaign.ctype == 1 || actual_campaign.ctype == 3 %>
                         <tr>
-                            <td><%= program.c_name %></td>
+                            <td><%= link_to program.c_name, business_spend_campaign_path(@business, actual_campaign) %></td>
                             <td><%= program.pt_name %></td>
                             <td><%= link_to "View Txs", list_campaign_transactions_business_path(@business, program.c_id) %></td>
                             <td><%= link_to "View Enrolled Customers", list_enrolled_customers_business_path(@business, program.c_id) %></td>
-                            <td>
                         </tr>
                     <% end %>
                 <% end %>

@@ -15,7 +15,8 @@
     }
 </style>
 
-<%= form_for([@business, @campaign], :url => business_cash_campaigns_path(@business), :html => {:multipart => true}) do |f| %>
+<%= form_for([@business, @campaign], 
+    :url => @campaign.new_record? ? business_cash_campaigns_path(@business) : business_cash_campaign_path(@business, @campaign), :html => {:multipart => true}) do |f| %>
 <%= f.hidden_field :name, :value => 'Cash incentive' %>
 <%= f.hidden_field :ctype, :value => Campaign::CTYPE[:cash_incentive] %> 
     
@@ -76,7 +77,7 @@
    
 
     <div class="actions">
-      <p><%= f.submit "Make Offer" %></p>
+      <p><%= f.submit @campaign.new_record? ? "Create" : "Update"%></p>
     </div>
    
 <% end %>
