@@ -22,12 +22,7 @@ class Businesses::CashCampaignsController < ApplicationController
         format.html { render :action => "new" }
       else
         if @campaign.save!
-          users = User.all
-          users.each do |user|
-            if user.consumer?
-              user.cash_incentive(@business, @reward.money_amount, @campaign.id)
-            end
-          end
+          Delayed::Job.enqueue(CashIncentiveStarter.new(@campaign.id))
           format.html { 
             redirect_to(business_cash_campaign_path(@business,@campaign), 
                         :notice => 'Campaign was successfully created.')
@@ -51,6 +46,7 @@ class Businesses::CashCampaignsController < ApplicationController
     @campaign = Campaign.find(params[:id])
     @campaign.end_date = 3.years.from_now.to_date
     @campaign.save
+    Delayed::Job.enqueue(CashIncentiveStarter.new(@campaign.id))
     render :update do |page|
       page << 'window.location.reload();'
     end

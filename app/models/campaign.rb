@@ -38,7 +38,7 @@ class Campaign < ActiveRecord::Base
 	before_create :init
 	after_save :update_places
 	
-	scope :running_campaigns, where("#{Date.today} >= start_date && #{Date.today} < end_date")
+	scope :running_campaigns, where("? >= start_date && ? < end_date", Date.today, Date.today)
 	attr_accessor   :places_list,:item_name
 	accepts_nested_attributes_for :engagements
 	accepts_nested_attributes_for :rewards,:allow_destroy => true

@@ -20,7 +20,7 @@ class Program < ActiveRecord::Base
   validates_presence_of :business_id, :program_type_id
   validates_uniqueness_of :program_type_id, :scope=>[:business_id]  
   
-  scope :running_campaigns, where("#{Date.today} > campaigns.start_date && #{Date.today} < campaigns.end_date")
+  scope :running_campaigns, where("? > campaigns.start_date && ? < campaigns.end_date", Date.today, Date.today)
   scope :money, lambda {
     pt_id = ProgramType["Money"].id
     where(:program_type_id => pt_id)

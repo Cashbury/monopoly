@@ -135,9 +135,7 @@ class User < ActiveRecord::Base
                                  Campaign::CTYPE[:cash_incentive],
                                  DateTime.now)
       campaigns.each do |campaign|
-        business = campaign.program.business
-        amount = campaign.program.rewards.first.money_amount.to_i
-        self.cash_incentive(business, amount, campaign.id)
+        Delayed::Job.enqueue(CashIncentive.new(self.id, campaign.id))
       end
     end
   end
@@ -207,8 +205,6 @@ class User < ActiveRecord::Base
       program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Money'])
       self.enroll(program) 
       cash_account = self.cashbury_account_for(business)
-    end
-    if cash_account.amount.to_i == 0
       cash_account.load(amount, nil, campaign_id)
     end
   end
