@@ -72,6 +72,7 @@ class User < ActiveRecord::Base
   has_many :login_methods, :through=>"login_methods_users"
 
   has_one  :qr_code, :as=>:associatable, :conditions => {:status=>1}
+  has_one :business, :through => :employees
 
   has_one :account_holder, :as=>:model
   has_many :accounts, :through => :account_holder

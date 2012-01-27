@@ -62,7 +62,8 @@ class Transaction < ActiveRecord::Base
       Log.create! :user_id => voiding_user.id,
         :transaction_id => self.id,
         :frequency => 1,
-        :action_id => Action["Void"]
+        :action_id => Action["Void"],
+        :business_id => voiding_user.business.id
     end
   end
 end
