@@ -27,6 +27,7 @@ class Transaction < ActiveRecord::Base
   belongs_to :transaction_type
   belongs_to :payment_gateway
   belongs_to :transaction_group
+  belongs_to :action
 
   has_many :receipts
   has_many :logs
@@ -35,6 +36,7 @@ class Transaction < ActiveRecord::Base
 	                      :to_account_balance_before,:to_account_balance_after
 
   delegate :name, :fee_amount, :fee_percentage, :to => :transaction_type
+  delegate :name, to: :action, allow_nil: true, prefix: true
 
   module States
     VOID = "voided"
@@ -63,7 +65,7 @@ class Transaction < ActiveRecord::Base
         :transaction_id => self.id,
         :frequency => 1,
         :action_id => Action["Void"],
-        :business_id => voiding_user.business.id
+        :business => voiding_user.business
     end
   end
 end

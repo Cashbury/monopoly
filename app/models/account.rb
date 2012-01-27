@@ -294,6 +294,7 @@ class Account < ActiveRecord::Base
       :to_account_balance_after => to_account.amount,
       :currency => nil,
       :note => "Account #{action.name}",
+      :action_id => action.id,
       :transaction_type_id => action.transaction_type_id,
       :after_fees_amount => move_amount,
       :transaction_fees => action.transaction_type.fee_amount)

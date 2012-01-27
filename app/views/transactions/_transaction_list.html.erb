@@ -14,6 +14,7 @@
     <th>After Fees Amount</th>
     <th>Created At</th>
     <th>State</th>
+    <th>Action</th>
     <th>&nbsp;</th>
   </tr>
 
@@ -47,6 +48,9 @@
     <td><%="#{transaction.created_at.strftime("%I:%M %p")} on #{transaction.created_at.strftime("%b %d , %Y")}"%></td>
     <td>
       <%= transaction.state || "success" %>
+    </td>
+    <td>
+      <%= transaction.action_name %>
     </td>
     <td>
       <% if current_user.role?(Role::AS[:admin]) || current_user.role?(Role::AS[:operator]) %>
