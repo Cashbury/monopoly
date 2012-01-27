@@ -27,15 +27,25 @@ unless User.where(:email => "hb@cashbury.com").exists?
 end
 
 puts "Create transaction types and actions"
-transaction_type=TransactionType.find_or_create_by_name(:name=>"Loyalty Collect", :fee_amount=>0.0, :fee_percentage=>0.0)
-%w( Engagement Redeem ).each do |name|
-  Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
+
+# { TransactionType => [ACTIONS] }
+transaction_types = {
+  "Loyalty Collect" => %w( Engagement Redeem ),
+  "Accounts Transfer" => %w( Withdraw Deposit ),
+  "Cashout" => %w( Cashout ),
+  "Load" => %w( Load ),
+  "Spend" => %w( Spend ),
+  "Tip"  => %w( Tip ),
+  "Gift" => %w( Gift )
+}
+
+transaction_types.keys.each do |tt_name|
+  tt = TransactionType.find_or_create_by_name(name: tt_name, fee_amount: 0.0, fee_percentage: 0.0)
+  transaction_types[tt_name].each do |action_name|
+    Action.find_or_create_by_name(name: action_name, transaction_type_id: tt.id)
+  end
 end
 
-transaction_type=TransactionType.find_or_create_by_name(:name=>"Accounts Transfer", :fee_amount=>0.0, :fee_percentage=>0.0)
-%w( Withdraw Deposit Cashout Load Spend Tip).each do |name|
-  Action.find_or_create_by_name(:name=>name, :transaction_type_id=>transaction_type.try(:id))
-end
 
 puts 'Creating countries and cities from contries_cities,txt ...'
 open(Rails.root.join('db').join('countries_cities.txt')) do |records|
