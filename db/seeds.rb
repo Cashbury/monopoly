@@ -38,6 +38,7 @@ transaction_types = {
   "Tip"  => %w( Tip ),
   "Gift" => %w( Gift )
 }
+actions = %w( Void )
 
 transaction_types.keys.each do |tt_name|
   tt = TransactionType.find_or_create_by_name(name: tt_name, fee_amount: 0.0, fee_percentage: 0.0)
@@ -46,6 +47,7 @@ transaction_types.keys.each do |tt_name|
   end
 end
 
+actions.each { |action_name| Action.find_or_create_by_name action_name }
 
 puts 'Creating countries and cities from contries_cities,txt ...'
 open(Rails.root.join('db').join('countries_cities.txt')) do |records|
