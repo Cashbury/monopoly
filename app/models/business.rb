@@ -85,8 +85,9 @@ class Business < ActiveRecord::Base
   end
 
   def transactions
-    return Transaction.where(:id => -1) if account_holder.blank?
-    Transaction.where(['from_account = ? OR to_account = ?', account_holder.id, account_holder.id])
+    account_ids = accounts.collect(&:id)
+    account_ids << -1
+    Transaction.where(['from_account IN (?) OR to_account IN (?)', account_ids, account_ids])
   end
 
   # Returns the account for this business linked to a "money" program with #is_money == true

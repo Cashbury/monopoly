@@ -107,7 +107,7 @@ class Users::BusinessesController < ApplicationController
         format.xml { render :xml => result }
       end
     rescue Exception=>e
-      logger.error "A problem occurred: #{e.message}"
+      logger.error "A problem occurred: #{e.message}: #{e.backtrace}"
       render :text => e.message, :status => 500
     end
   end

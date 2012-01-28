@@ -4,6 +4,8 @@ module AccountsHelper
       "Cashbury"
     elsif account.is_money?
       "Cash"
+    elsif account.is_reserve?
+      "Cash - Reserve"
     else
       "Marketing"
     end

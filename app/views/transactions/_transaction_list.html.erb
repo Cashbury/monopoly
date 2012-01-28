@@ -14,6 +14,7 @@
     <th>After Fees Amount</th>
     <th>Created At</th>
     <th>State</th>
+    <th>Action</th>
     <th>&nbsp;</th>
   </tr>
 
@@ -34,7 +35,7 @@
     <td>
       <%=to_account_holder_name%>
       <br />
-      (<%= account_type(from_account) %> account)
+      (<%= account_type(to_account) %> account)
       </td>
     <td><%= transaction.name%></td>
     <td><%= transaction.fee_amount %></td>
@@ -49,8 +50,17 @@
       <%= transaction.state || "success" %>
     </td>
     <td>
+      <%= transaction.action_name %>
+    </td>
+    <td>
       <% if current_user.role?(Role::AS[:admin]) || current_user.role?(Role::AS[:operator]) %>
-        <% if !transaction.in_state?(:voided) %>
+        <% if transaction.in_state?(:voided) %>
+          <% void_log = Log.where(transaction_id: transaction.id, action_id: Action["Void"].id).first %>
+          Voided at <%= void_log.created_at.strftime("%I:%M %p on %m.%d.%y") %> by <%= void_log.user.full_name %>
+          <% if void_log.user.business %>
+            @ <%= void_log.user.business.name %>
+          <% end %>
+        <% else %>
           <%= button_to "Void", void_transaction_path(transaction) %>
         <% end %>
       <% end %>

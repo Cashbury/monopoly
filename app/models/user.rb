@@ -72,6 +72,7 @@ class User < ActiveRecord::Base
   has_many :login_methods, :through=>"login_methods_users"
 
   has_one  :qr_code, :as=>:associatable, :conditions => {:status=>1}
+  has_one :business, :through => :employees
 
   has_one :account_holder, :as=>:model
   has_many :accounts, :through => :account_holder
@@ -219,7 +220,7 @@ class User < ActiveRecord::Base
   end
 
   def cash_account_for(business)
-    return nil if !self.account_holder
+    ensure_account_holder!
     money_program = business.money_program
     Account.where(:business_id => business.id)
       .where(:program_id => money_program.id)
@@ -229,7 +230,7 @@ class User < ActiveRecord::Base
   end
 
   def cashbury_account_for(business)
-    return nil if !self.account_holder
+    ensure_account_holder!
     money_program = business.money_program
     Account.where(:business_id => business.id)
       .where(:program_id => money_program.id)
@@ -239,6 +240,7 @@ class User < ActiveRecord::Base
   end
 
   def cashbury_accounts
+    ensure_account_holder!
     Account.where(:is_cashbury => true)
       .where(:account_holder_id => self.account_holder.id)
   end
@@ -608,4 +610,9 @@ class User < ActiveRecord::Base
     phone_number.gsub(/^#{Regexp.escape(code)}/, '')
   end
 
+  protected
+
+  def ensure_account_holder!
+    self.create_account_holder if account_holder.blank?
+  end
 end
