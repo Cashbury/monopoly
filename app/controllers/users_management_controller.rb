@@ -285,6 +285,7 @@ class UsersManagementController < ApplicationController
     end
     currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
+      Delayed::Job.enqueue(RewardMoneyDeposit.new(account.id))
       at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
       flash[:notice]="An amount of #{params[:amount]} #{currency} has been withdrawn from account at #{at_text}"
       redirect_to :action=>:manage_user_accounts, :page=>params[:page]
@@ -478,4 +479,5 @@ class UsersManagementController < ApplicationController
     flash[:notice] = "Enrolled in Money Program @ #{business.name}"
     redirect_to users_management_path(user)
   end
+
 end

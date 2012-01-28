@@ -202,11 +202,26 @@ class User < ActiveRecord::Base
 
   def cash_incentive(business, amount, campaign_id)
     cash_account = self.cashbury_account_for(business)
+    program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Money'])
+    marketing_program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Marketing'])
     if !cash_account
-      program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Money'])
-      self.enroll(program) 
+      self.enroll(program)
       cash_account = self.cashbury_account_for(business)
-      cash_account.load(amount, nil, campaign_id)
+    end
+    account_holder_id = self.account_holder.id
+    campaign_account = Account.where(:business_id => business.id, 
+                                     :campaign_id => campaign_id,
+                                     :account_holder_id => account_holder_id).first
+    if !campaign_account
+      Account.create(:business_id => business.id,
+      :program_id => marketing_program.id,
+      :account_holder_id => account_holder_id,
+      :campaign_id => campaign_id)
+      # Determining transactions with this business
+      account_ids = Account.where(:account_holder_id => self.account_holder_id).select(:id).map(&:id)
+      transactions_count = business.transactions.where('from_account IN (?) OR to_account IN (?)',
+                                                       account_ids, account_ids).count
+      cash_account.load(amount, nil, campaign_id) if transactions_count == 0
     end
   end
 
