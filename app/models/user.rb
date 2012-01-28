@@ -217,10 +217,11 @@ class User < ActiveRecord::Base
       :program_id => marketing_program.id,
       :account_holder_id => account_holder_id,
       :campaign_id => campaign_id)
-      # Searching for account that have been used in this business
-      used_account = Account.where("business_id = ? and account_holder_id = ? and amount > 0", 
-                                   business.id, account_holder_id).first
-      cash_account.load(amount, nil, campaign_id) if !used_account
+      # Determining transactions with this business
+      account_ids = Account.where(:account_holder_id => self.account_holder_id).select(:id).map(&:id)
+      transactions_count = business.transactions.where('from_account IN (?) OR to_account IN (?)',
+                                                       account_ids, account_ids).count
+      cash_account.load(amount, nil, campaign_id) if transactions_count == 0
     end
   end
 
