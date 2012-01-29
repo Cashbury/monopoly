@@ -218,7 +218,7 @@ class User < ActiveRecord::Base
       :account_holder_id => account_holder_id,
       :campaign_id => campaign_id)
       # Determining transactions with this business
-      account_ids = Account.where(:account_holder_id => self.account_holder_id).select(:id).map(&:id)
+      account_ids = Account.where(:account_holder_id => account_holder_id).select(:id).map(&:id)
       transactions_count = business.transactions.where('from_account IN (?) OR to_account IN (?)',
                                                        account_ids, account_ids).count
       cash_account.load(amount, nil, campaign_id) if transactions_count == 0
