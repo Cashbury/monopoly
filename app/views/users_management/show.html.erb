@@ -154,8 +154,8 @@
     ignore_ids = @user.programs.money.collect(&:business_id)
     ignore_ids << -1
     has_many_program_ids = Program.where(:program_type_id => ProgramType["Money"].id).collect(&:business_id)
-    @businesses = Business.where(['id NOT IN (?)', ignore_ids])
-    @businesses = @businesses.where(:id => has_many_program_ids) if has_many_program_ids.size > 0
+    has_many_program_ids << -1 if has_many_program_ids.size == 0
+    @businesses = Business.where(['id NOT IN (?)', ignore_ids]).where(:id => has_many_program_ids)
   %>
   <fieldset>
     <legend>Money Program Enrollment</legend>
