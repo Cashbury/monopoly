@@ -224,8 +224,8 @@ class QrCodesController < ApplicationController
   end
 
   def search_qrs(page)
-    search = {}
-    search = {:associatable_id =>params[:engagement_id],:associatable_type=>QrCode::ENGAGEMENT_TYPE} unless params[:engagement_id].blank?
+    search = {:associatable_type=>QrCode::ENGAGEMENT_TYPE}
+    search = {:associatable_id =>params[:engagement_id]} unless params[:engagement_id].blank?
     unless params[:print_job_id].blank?
       pj = PrintJob.where(:id=>params[:print_job_id]).first
       qr_code_ids = YAML.load(pj.log)               if pj.respond_to? :log
