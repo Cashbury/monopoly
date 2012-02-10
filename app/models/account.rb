@@ -287,7 +287,7 @@ class Account < ActiveRecord::Base
       :to_account => to_account.id,
       :before_fees_amount => move_amount,
       :payment_gateway => payment_gateway,
-      :is_money => self.is_money?,
+      :is_money => is_money?,
       :from_account_balance_before => amount_was,
       :from_account_balance_after => amount,
       :to_account_balance_before=> to_account.amount_was,

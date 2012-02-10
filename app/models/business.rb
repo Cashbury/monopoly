@@ -112,7 +112,6 @@ class Business < ActiveRecord::Base
   def total_cash_loaded_by_customers
     program = money_program
     Transaction.where(:from_account => reserve_account.id)
-      .where(:is_money => true)
       .where(:transaction_type_id => [Action["Load"].transaction_type_id, Action["Deposit"].transaction_type_id])
       .sum(:after_fees_amount)
   end
@@ -120,7 +119,6 @@ class Business < ActiveRecord::Base
   def total_cash_spent_by_customers
     program = money_program
     Transaction.where(:to_account => reserve_account.id)
-      .where(:is_money => true)
       .where(:transaction_type_id => Action["Spend"].transaction_type_id)
       .sum(:before_fees_amount)
   end
@@ -128,7 +126,6 @@ class Business < ActiveRecord::Base
   def total_customers_that_loaded_money
     program = money_program
     Transaction.where(:from_account => reserve_account.id)
-      .where(:is_money => true)
       .where(:transaction_type_id => [Action["Load"].transaction_type_id, Action["Deposit"].transaction_type_id])
       .select(:to_account).collect(&:to_account).uniq.size
   end
@@ -136,7 +133,6 @@ class Business < ActiveRecord::Base
   def total_customers_that_spent_money
     program = money_program
     Transaction.where(:to_account => reserve_account.id)
-      .where(:is_money => true)
       .where(:transaction_type_id => Action["Spend"].transaction_type_id)
       .select(:from_account).collect(&:from_account).uniq.size
   end

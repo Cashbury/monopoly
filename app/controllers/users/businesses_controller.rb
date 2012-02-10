@@ -106,6 +106,10 @@ class Users::BusinessesController < ApplicationController
       respond_to do |format|
         format.xml { render :xml => result }
       end
+    rescue ApiError => ae
+      respond_to do |format|
+        format.xml { render :xml => ae, :status => ae.status_code }
+      end
     rescue Exception=>e
       logger.error "A problem occurred: #{e.message}: #{e.backtrace}"
       render :text => e.message, :status => 500
