@@ -6,6 +6,7 @@ module MoneyProgramsHelper
 	def cashbury_balance_at(user, business)
 		user.cashbury_account_for(business).amount
 	end
+	
 	def total_balance_at(user, business)
 		cash_balance_at(user, business) + cashbury_balance_at(user, business)
 	end

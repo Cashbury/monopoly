@@ -6,9 +6,9 @@
 			(<%= number_to_currency cash_balance_at(@user, @business) %> cash, <%= number_to_currency cashbury_balance_at(@user, @business) %> cashbury)
 		</div>
 		<br />
-		<%= link_to "Unenroll", unenroll_money_program_path(:user_id => @user, :business_id => @business), :remote => true, :method => :post, :confirm => "Are you sure? Unenrolling a #{@user.full_name} will cash them out at #{@business.name}." %>
-		<%= link_to "View Transations", user_transactions_path(:user_id => @user, :business_id => @business), :remote => true, :method => :post %>
-		<%= link_to "Cash Out", cashout_money_program_path(:user_id => @user, :business_id => @business), :remote => true, :method => :post %>
+		<%= link_to "Unenroll", unenroll_money_program_path(:user_id => @user, :business_id => @business, :format => 'html'), :remote => true, :method => :post, 'data-update' => "#money_program_notice", :confirm => "Are you sure? Unenrolling a #{@user.full_name} will cash them out at #{@business.name}." %>
+		<%= link_to "View Transations", user_transactions_path(@user) %>
+		<%= link_to "Cash Out", cashout_money_program_path(:user_id => @user, :business_id => @business, :format => 'html'), :remote => true, :method => :post, 'data-update' => '#money_program_notice' %>
 		<%= link_to "Deposit", '#money_program_deposit', :onclick => "$('#money_program_deposit').toggle();" %>
 		<%= link_to "Withdraw", '#money_program_withdraw', :onclick => "$('#money_program_withdraw').toggle();" %>
 

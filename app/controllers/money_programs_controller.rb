@@ -12,6 +12,17 @@ class MoneyProgramsController < ApplicationController
 		render 'lookup_user.html'
 	end
 
+	def unenroll
+		ca = @user.cash_account_for(@business)
+		ca.cashout(current_user)
+		@user.programs.delete @business.money_program
+	end
+
+	def cashout
+		ca = @user.cash_account_for(@business)
+		ca.cashout(current_user)
+	end
+
 	def deposit
 		to_account = case params[:account_type]
 		when 'cash'
