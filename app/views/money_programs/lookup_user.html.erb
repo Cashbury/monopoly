@@ -1,0 +1,43 @@
+<% if @user.present? %>
+	<% if @user.money_program_for(@business).present? %>
+		<strong><%= @user.full_name %></strong>
+		<div>
+			Balance: <%= number_to_currency total_balance_at(@user, @business) %>
+			(<%= number_to_currency cash_balance_at(@user, @business) %> cash, <%= number_to_currency cashbury_balance_at(@user, @business) %> cashbury)
+		</div>
+		<br />
+		<%= link_to "Unenroll", unenroll_money_program_path(:user_id => @user, :business_id => @business), :remote => true, :method => :post, :confirm => "Are you sure? Unenrolling a #{@user.full_name} will cash them out at #{@business.name}." %>
+		<%= link_to "View Transations", user_transactions_path(:user_id => @user, :business_id => @business), :remote => true, :method => :post %>
+		<%= link_to "Cash Out", cashout_money_program_path(:user_id => @user, :business_id => @business), :remote => true, :method => :post %>
+		<%= link_to "Deposit", '#money_program_deposit', :onclick => "$('#money_program_deposit').toggle();" %>
+		<%= link_to "Withdraw", '#money_program_withdraw', :onclick => "$('#money_program_withdraw').toggle();" %>
+
+		<div id="money_program_deposit" style='display:none'>
+			<% form_tag deposit_money_program_path(:user_id => @user, :business_id => @business), :remote => true, 'data-update' => '#money_program_notice' do %>
+				<%= radio_button_tag 'account_type', 'cash', true %> Cash
+				<%= radio_button_tag 'account_type', 'cashbury' %> Cashbury
+				<br />
+				Enter the amount you want to deposit: <%= text_field_tag 'amount' %>
+				<%= submit_tag 'OK' %>
+			<% end %>
+		</div>
+		<div id="money_program_withdraw" style='display:none'>
+			<% form_tag withdraw_money_program_path(:user_id => @user, :business_id => @business), :remote => true, 'data-update' => '#money_program_notice' do %>
+				<%= radio_button_tag 'account_type', 'cash', true %> Cash
+				<%= radio_button_tag 'account_type', 'cashbury' %> Cashbury
+				<br />
+				Enter the amount you want to withdraw: <%= text_field_tag 'amount' %>
+				<%= submit_tag 'OK' %>
+			<% end %>
+		</div>
+	<% else %>
+		<p>
+			<strong><%= @user.full_name %></strong> is not enrolled in the money program yet.
+			Please wait until they are automatically enrolled.
+		</p>
+	<% end %>
+<% else %>
+<p>
+	<strong><%= params[:email] %></strong> not found in database.
+</p>
+<% end %>

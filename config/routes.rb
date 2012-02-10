@@ -4,6 +4,17 @@ Kazdoor::Application.routes.draw do
   get "primary_user/new"
   get "primary_user/show"
 
+  resource :money_program do
+    collection do
+      get :refresh_user
+      post :lookup_user
+      post :deposit
+      post :withdraw
+      post :cashout
+      post :unenroll
+    end
+  end
+
   resources :invites , :only=>[:show, :index] do
     get "share_link" , :on=>:collection
   end

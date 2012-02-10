@@ -1,5 +1,14 @@
 //jQuery.noConflict();
 $(document).ready(function () {
+
+	$('[data-remote=true][data-update]').live('ajax:success', function(e, data, status) {
+		var targetElement = $(this).data('update');
+		$(targetElement).html(data);
+	}).live('ajax:error', function() {
+		var targetElement = $(this).data('update');
+		$(targetElement).text('An error occurred; please try your request later.')
+	});
+
   $('.datepicker').live('focus', function () {
     $(this).datepicker({ dateFormat: 'yy-mm-dd' });
   }); 

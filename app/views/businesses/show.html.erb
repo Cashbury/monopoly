@@ -136,6 +136,17 @@
     loaded.
   </div>
   <p><%= link_to 'Transaction logs', business_transactions_path(@business) %></p>
+
+  <p>Lookup customer by email</p>
+  <div id='money_program_notice'>    
+  </div>  
+  <% form_tag lookup_user_money_program_path(:format => 'html'), :remote => true, 'data-update' => '#money_program_lookup' do %>
+    <%= text_field_tag 'email' %>
+    <%= hidden_field_tag 'business_id', @business.id %>
+    <%= submit_tag 'Go' %>
+  <% end %>
+
+  <div id='money_program_lookup'></div>
 <% else %>
   <p>Your business is not enrolled in a money program.</p>
 <% end %>
