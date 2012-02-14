@@ -43,7 +43,6 @@ group :test, :development do
   gem 'capybara-webkit', :git => "git://github.com/thoughtbot/capybara-webkit"
   gem 'capybara-screenshot'
   gem 'database_cleaner'
-  gem "factory_girl_rails", "~> 1.4.0"
   gem 'forgery'
   gem 'cucumber-api-steps', :require => false
 end
@@ -58,9 +57,10 @@ gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
 
 group :test do
-gem 'shoulda', '=2.11.3'
-gem 'mocha', '=0.9.12'
-gem 'rcov','=0.9.9'
+  gem 'shoulda', '=2.11.3'
+  gem 'mocha', '=0.9.12'
+  gem 'rcov','=0.9.9'
+  gem "factory_girl_rails", "~> 1.4.0"
 end
 
 gem 'jquery-rails','=0.2.7'
