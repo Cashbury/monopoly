@@ -44,7 +44,7 @@ class Users::CashiersController < Users::BaseController
           raise "Error auto enrolling user into business money program" if account.blank?
         end
         account.load(amount,employee)
-        transaction_id = Transaction.find_all_by_to_account(account.id).last 
+        transaction_id = Transaction.find_all_by_to_account(account.id).last.id
         user.create_load_transaction_receipt(current_user.id, transaction_id)
         response = {}
 		    response.merge!({:amount             => amount})
