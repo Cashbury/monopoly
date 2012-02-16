@@ -474,7 +474,13 @@ class User < ActiveRecord::Base
 
   def list_customer_pending_receipts
     self.pending_receipts
-        .joins([:transaction,:log_group=>[:logs=>[[:business=>:brand], [:campaign=>:engagements]]]])
+        .joins("inner join transactions on transactions.id = receipts.transaction_id")
+        .joins("inner join logs on logs.transaction_id = receipts.transaction_id")
+        .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
+        .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
+        .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
+        .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
+        .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
         .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
         .where("logs.transaction_id = receipts.transaction_id")
@@ -486,15 +492,26 @@ class User < ActiveRecord::Base
     filters << "businesses.id = ?" and params << business_id if business_id.present?
     params.insert(0, filters.join(" AND ")) 
     self.receipts
-        .joins([:transaction,:log_group=>[:logs=>[[:business=>:brand], [:campaign=>:engagements]]]])
+        .joins("inner join transactions on transactions.id = receipts.transaction_id")
+        .joins("inner join logs on logs.transaction_id = receipts.transaction_id")
+        .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
+        .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
+        .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
+        .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
+        .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
-        .where("logs.transaction_id = receipts.transaction_id")
+        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
         .where(params)
   end
   
   def list_cashier_receipts(no_of_days)
-    Receipt.joins([:transaction,:log_group=>[:logs=>[[:business=>:brand],:user, [:campaign=>:engagements]]]])
+    Receipt.joins("inner join transactions on transactions.id = receipts.transaction_id")
+           .joins("inner join logs on logs.transaction_id = receipts.transaction_id")
+           .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
+           .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
+           .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
+           .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
+           .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
            .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
            .select("users.id as customer_id, businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
            .where("receipts.created_at #{((no_of_days-1).days.ago.utc...Time.now.utc).to_s(:db)} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
