@@ -414,6 +414,14 @@ class User < ActiveRecord::Base
     self.pending_receipts << receipt
     save
   end
+
+  def create_charge_transaction_group_receipt(cashier_id, txn_group_id)
+    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Charge receipt", :receipt_type=>Receipt::TYPE[:spend], :transaction_group_id => txn_group_id)
+    self.receipts << receipt
+    self.pending_receipts << receipt
+    save
+  end
+  
   
 	def ensure_authentication_token!
     reset_authentication_token! if authentication_token.blank?
@@ -474,8 +482,8 @@ class User < ActiveRecord::Base
 
   def list_customer_pending_receipts
     self.pending_receipts
-        .joins("inner join transactions on transactions.id = receipts.transaction_id")
-        .joins("inner join logs on logs.transaction_id = receipts.transaction_id")
+        .joins("inner join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
+        .joins("inner join logs on logs.transaction_id = transactions.id")
         .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
         .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
         .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
@@ -491,9 +499,9 @@ class User < ActiveRecord::Base
     params  = []
     filters << "businesses.id = ?" and params << business_id if business_id.present?
     params.insert(0, filters.join(" AND ")) 
-    self.receipts
-        .joins("inner join transactions on transactions.id = receipts.transaction_id")
-        .joins("inner join logs on logs.transaction_id = receipts.transaction_id")
+    them = self.receipts
+        .joins("inner join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
+        .joins("inner join logs on logs.transaction_id = transactions.id")
         .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
         .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
         .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
@@ -505,8 +513,8 @@ class User < ActiveRecord::Base
   end
   
   def list_cashier_receipts(no_of_days)
-    Receipt.joins("inner join transactions on transactions.id = receipts.transaction_id")
-           .joins("inner join logs on logs.transaction_id = receipts.transaction_id")
+    Receipt.joins("inner join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
+           .joins("inner join logs on logs.transaction_id = transactions.id")
            .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
            .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
            .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")

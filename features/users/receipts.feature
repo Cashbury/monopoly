@@ -14,6 +14,12 @@ Feature: Receipts for User
       """
     Then show me the response
     Then the response status should be "200"
+    When I send a POST request to "/users/cashiers/charge_customer.xml" with the following:
+      """
+      auth_token=hello&amount=5.0&tip=5.0&customer_identifier=123456&long=35.505708&lat=33.803515 
+      """
+    Then show me the response
+    Then the response status should be "200"
     And show me the response
     When I send a GET request to "/users/receipts/receipts-customer.xml" with the following:
       """
