@@ -152,6 +152,10 @@ GEM
       activesupport (= 3.0.3)
       bundler (~> 1.0)
       railties (= 3.0.3)
+    rails-erd (0.4.5)
+      activerecord (~> 3.0)
+      activesupport (~> 3.0)
+      ruby-graphviz (~> 0.9.18)
     railties (3.0.3)
       actionpack (= 3.0.3)
       activesupport (= 3.0.3)
@@ -173,6 +177,7 @@ GEM
       activesupport (>= 3.0)
       railties (>= 3.0)
       rspec (~> 2.8.0)
+    ruby-graphviz (0.9.21)
     rubyzip (0.9.5)
     selenium-webdriver (2.16.0)
       childprocess (>= 0.2.5)
@@ -228,6 +233,7 @@ DEPENDENCIES
   rack (= 1.2.1)
   railroady
   rails (= 3.0.3)
+  rails-erd
   rcov (= 0.9.9)
   rmagick (= 2.13.1)
   rspec-rails (~> 2.6)

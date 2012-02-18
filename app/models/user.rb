@@ -182,7 +182,8 @@ class User < ActiveRecord::Base
 	def has_account_with_campaign?(acch,campaign_id)
 		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
 	end
-  
+
+  # @param program [Object]
   def enroll(program)
     User.transaction do
       self.programs << program

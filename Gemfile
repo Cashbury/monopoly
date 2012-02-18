@@ -34,6 +34,12 @@ end
   # gem 'rspec-rails'
 # end
 #
+
+group :development do
+  gem "rails-erd"
+  gem "railroady"
+end
+
 group :test, :development do
   gem "rspec-rails", "~> 2.6"
   gem 'cucumber-rails', '~> 1.2.1'
@@ -57,9 +63,9 @@ gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
 
 group :test do
-gem 'shoulda', '=2.11.3'
-gem 'mocha', '=0.9.12'
-gem 'rcov','=0.9.9'
+  gem 'shoulda', '=2.11.3'
+  gem 'mocha', '=0.9.12'
+  gem 'rcov','=0.9.9'
 end
 
 gem 'jquery-rails','=0.2.7'

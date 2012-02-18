@@ -254,12 +254,12 @@ class UsersManagementController < ApplicationController
     pt=Program.find(params[:program_id]).program_type
     if pt.name==ProgramType::AS[:marketing]
       @transactions=Log.joins(:transaction=>:transaction_type)
-                       .where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}")
+                       .where(['logs.business_id= ? and logs.campaign_id IS NOT NULL and logs.user_id= ? '], "#{params[:business_id]}","#{params[:id]}")
                        .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
                        .order("transactions.created_at desc")                       
     else
       @transactions=Log.joins(:transaction=>:transaction_type)
-                       .where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}")
+                       .where(["logs.business_id= ? and logs.campaign_id=NULL and logs.user_id= ?"],"#{params[:business_id]}","#{params[:id]}")
                        .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
                        .order("transactions.created_at desc")
     end
@@ -317,8 +317,8 @@ class UsersManagementController < ApplicationController
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @user=User.find(params[:id])
     @rewards= Reward.joins(:campaign=>[:program=>[:program_type,:business],:accounts=>[:account_holder]])
-                    .where("program_types.id=#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id} and rewards.is_active=true and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
-                    .select("(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{params[:id]}) As redeemCount,rewards.id,rewards.name as r_name,campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, campaigns.created_at, (SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,rewards.max_claim, rewards.max_claim_per_user")
+                    .where(["program_types.id= ? and rewards.is_active=true and account_holders.model_id= ? and account_holders.model_type='User'"],"#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id}","#{params[:id]}")
+                    .select(["(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id= ?) As redeemCount,rewards.id,rewards.name as r_name,campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, campaigns.created_at, (SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,rewards.max_claim, rewards.max_claim_per_user"],"#{params[:id]}")
                     .group("rewards.id")
                     .paginate(:page => @page,:per_page => Reward::per_page )
                      
@@ -350,7 +350,7 @@ class UsersManagementController < ApplicationController
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
     @user=User.find(params[:id])
     @engagements= Engagement.joins(:campaign=>[:program=>[:program_type,:business],:accounts=>[:account_holder]])
-                            .where("program_types.id=#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id} and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+                            .where(["program_types.id= ? and account_holders.model_id= ? and account_holders.model_type='User'"],"#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id}","#{params[:id]}")
                             .select("campaigns.ctype,accounts.amount as account_amount,engagements.id,engagements.amount,engagements.name as eng_name,campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, campaigns.created_at")
                             .group("engagements.id")
                             .paginate(:page => @page,:per_page => Reward::per_page )
@@ -389,7 +389,7 @@ class UsersManagementController < ApplicationController
     join_type=@action.name==Action::CURRENT_ACTIONS[:engagement] ? "engagements" : "rewards"
     @logged_actions=Log.select("logs.*,transactions.*,transaction_types.name as tt_name,transaction_types.fee_amount,transaction_types.fee_percentage,rewards.name as reward_name, rewards.needed_amount as spent_amount,actions.name as action_name,engagements.name as ename,businesses.name as bname,engagements.amount,places.name as pname,users.first_name,users.last_name,program_types.name as program_name,campaigns.name as cname,measurement_types.name as amount_type")
                        .joins([:user,[:transaction=>:transaction_type],"LEFT OUTER JOIN actions ON actions.id=logs.action_id LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN engagements ON engagements.id=logs.engagement_id LEFT OUTER JOIN rewards ON rewards.id=logs.reward_id LEFT OUTER JOIN campaigns ON campaigns.id=rewards.campaign_id LEFT OUTER JOIN measurement_types ON campaigns.measurement_type_id=measurement_types.id LEFT OUTER JOIN programs ON campaigns.program_id=programs.id LEFT OUTER JOIN businesses ON businesses.id=programs.business_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id"])                    
-                       .where("logs.user_id=#{params[:id]} and actions.id=#{@action_id}")
+                       .where(["logs.user_id= ? and actions.id= ? "],"#{params[:id]}","#{@action_id}")
                        .order("logs.created_at DESC")
                        .paginate(:page => @page,:per_page => Log::per_page )
     if request.xhr?
@@ -399,7 +399,7 @@ class UsersManagementController < ApplicationController
   
   def manage_user_enrollments
     ids=Program.joins([:program_type, :campaigns=>[:accounts=>:account_holder]])
-               .where("account_holders.model_id=#{params[:user_id]} and account_holders.model_type='User' and program_types.id=#{params[:pt_id]}")
+               .where(["account_holders.model_id= ? and account_holders.model_type='User' and program_types.id= ?"],"#{params[:user_id]}","#{params[:pt_id]}")
                .select("accounts.id")
     if request.xhr?
       if Account.where(:id=>ids).update_all(:status=>params[:enroll].to_i)
@@ -415,14 +415,14 @@ class UsersManagementController < ApplicationController
     @user=User.find(params[:id])
     @business= Business.find(params[:business_id])
     @campaigns=Campaign.joins("LEFT OUTER JOIN accounts ON accounts.campaign_id=campaigns.id LEFT OUTER JOIN account_holders ON account_holders.id=accounts.account_holder_id",:program=>[:program_type,:business])
-                       .where("businesses.id=#{params[:business_id]} and programs.id=#{params[:program_id]} and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
+                       .where(["businesses.id= ? and programs.id= ? and account_holders.model_id= ? and account_holders.model_type='User'"],"#{params[:business_id]}","#{params[:program_id]}","#{params[:id]}")
                        .select("campaigns.id as c_id,campaigns.name as c_name,program_types.name as p_name, businesses.name as b_name, campaigns.created_at,accounts.status AS enrollment_status")
                        .paginate(:page => @page,:per_page => Log::per_page )
   end
   
   def manage_campaign_enrollments
     ids=Campaign.joins(:accounts=>:account_holder)
-                .where("account_holders.model_id=#{params[:user_id]} and account_holders.model_type='User' and campaigns.id=#{params[:c_id]}")
+                .where(["account_holders.model_id= ? and account_holders.model_type='User' and campaigns.id= ?"],"#{params[:user_id]}","#{params[:c_id]}")
                 .select("accounts.id")
     if request.xhr?
       if Account.where(:id=>ids).update_all(:status=>params[:enroll].to_i)
