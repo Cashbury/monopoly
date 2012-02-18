@@ -13,6 +13,16 @@ Given /^I am a Cashier at "([^"]*)"$/ do |business|
   @cashier.save
 end
 
+
+Given /^I am a Cashier at "([^"]*)" with the auth token "([^"]*)"$/ do |business, auth_token|
+  @cashier = FactoryGirl.create :cashier, :authentication_token => auth_token
+  @cashier.confirm!
+  e = @cashier.employees.first
+  e.business = Business.find_by_name business
+  e.save
+  @cashier.save
+end
+
 Given /^I am a Consumer$/ do
   @user = FactoryGirl.create :consumer
   @user.confirm!
@@ -37,6 +47,18 @@ Given /^"([^"]*)" is the current consumer$/ do |email|
   account_holder = AccountHolder.create
   @consumer.account_holder = account_holder
 end
+
+Given /^"([^"]*)" is the current consumer and has an auth token "([^"]*)"$/ do |email, auth_token|
+  @consumer = FactoryGirl.create :consumer, :email => email, :authentication_token => auth_token
+  qr_code = QrCode.create
+  qr_code.hash_code ="123456"
+  qr_code.status = true
+  qr_code.save
+  @consumer.qr_code = qr_code
+  account_holder = AccountHolder.create
+  @consumer.account_holder = account_holder
+end
+
 
 Given /^the current consumer has a cash account at the current business with a balance of (\d+)$/ do |balance|
   @consumer.enroll(@current_business.money_program)

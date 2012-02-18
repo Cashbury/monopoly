@@ -44,7 +44,7 @@ class Users::CashiersController < Users::BaseController
           raise "Error auto enrolling user into business money program" if account.blank?
         end
         account.load(amount,employee)
-        transaction_id = Transaction.find_all_by_to_account(account.id).last 
+        transaction_id = Transaction.find_all_by_to_account(account.id).last.id
         user.create_load_transaction_receipt(current_user.id, transaction_id)
         response = {}
 		    response.merge!({:amount             => amount})
@@ -95,14 +95,13 @@ class Users::CashiersController < Users::BaseController
           cash_account.spend(amount)
           cash_account.tip(tip)
         end
-         
-        transaction_id = txn_group.friendly_id
-        user.create_charge_transaction_receipt(current_user.id, transaction_id)
+      
+        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id)
         
         response = {}
 		    response.merge!({:amount             => amount})
 		    response.merge!({:tip                => tip})
-		    response.merge!({:transaction_id     => transaction_id})
+		    response.merge!({:transaction_id     => txn_group.id})
 		    response.merge!({:currency_symbol    => business.currency_symbol})
 		    response.merge!({:currency_code      => business.currency_code})
 		    response.merge!({:customer_name      => user.full_name})
