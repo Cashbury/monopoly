@@ -24,7 +24,7 @@ set :use_sudo, false
 # repo details
 set :scm, :git
 set :scm_username, "amer"
-set :repository, "git@gitserver:domainname.git"
+set :repository, "git@github.com:Kazdoor/monopoly.git"
 set :branch, "demo2"
 set :git_enable_submodules, 1
 
