@@ -6,6 +6,11 @@ set :rvm_ruby_string, '1.9.2-p290'
 # bundler bootstrap
 require 'bundler/capistrano'
 
+# Multistage
+set :stages, %w(staging production)
+set :default_stage, "staging"
+require 'capistrano/ext/multistage'
+
 # main details
 set :application, "cashnode.cashbury.com"
 set :domain, application
@@ -23,7 +28,7 @@ set :use_sudo, false
 
 # repo details
 set :scm, :git
-set :scm_username, "amer"
+#set :scm_username, "amer"
 set :repository, "git@github.com:Kazdoor/monopoly.git"
 set :branch, "demo2"
 set :git_enable_submodules, 1
