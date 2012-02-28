@@ -82,3 +82,4 @@ gem 'currencies',:require => 'iso4217'
 gem "places" #for google places
 gem 'make_flaggable'
 gem "alphadecimal"
+gem "rake",'=0.8.7'

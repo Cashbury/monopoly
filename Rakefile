@@ -2,20 +2,20 @@
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
 require File.expand_path('../config/application', __FILE__)
-require 'rake/dsl_definition' 
+#require 'rake/dsl_definition' 
 require 'rake'
 
 
 # Rake Fix Code start
-module ::Kazdoor
-  class Application
-    include Rake::DSL
-  end
-end
+#module ::Kazdoor
+#  class Application
+#    include Rake::DSL
+#  end
+#end
 
-module ::RakeFileUtils
-  extend Rake::FileUtilsExt
-end
+#module ::RakeFileUtils
+#  extend Rake::FileUtilsExt
+#end
 # Rake Fix Code end
 
 Kazdoor::Application.load_tasks
