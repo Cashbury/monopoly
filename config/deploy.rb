@@ -69,7 +69,6 @@ task :backup, :roles => :db, :only => { :primary => true } do
   backup_dir =  "~/database_backups"
   run("mkdir -p #{backup_dir}")
   file = "#{backup_dir}/#{filename}"
-  on_rollback { delete file }
   run "mysqldump -u #{db['username']} --password=#{db['password']} #{db['database']} | bzip2 -c > #{file}"  do |ch, stream, data|
     puts data
   end
