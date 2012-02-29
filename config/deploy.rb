@@ -75,7 +75,4 @@ task :backup, :roles => :db, :only => { :primary => true } do
   end
 end
 
-desc "Backup the database before running migrations"
-task :before_migrate do
-  backup
-end
+before ["deploy:migrate","deploy:migrations"], "backup"
