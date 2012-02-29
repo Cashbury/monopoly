@@ -130,6 +130,7 @@ class Users::PlacesController < Users::BaseController
     qr_code=current_user.qr_code
     result={}
     result[:user_id_image_url]=qr_code.try(:qr_code_image).try(:photo).try(:url)
+    result[:user_id]="C$::"+qr_code.try(:hash_code)
     result[:starting_timer_seconds ]=STARTING_TIMER_SEC
     respond_to do |format|       
       format.xml { render :xml => result,:status=>200 }
