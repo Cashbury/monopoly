@@ -6,6 +6,12 @@ set :rvm_ruby_string, '1.9.2-p290'
 # bundler bootstrap
 require 'bundler/capistrano'
 
+# Delayed_jobs
+require "delayed/recipes"
+after "deploy:stop",    "delayed_job:stop"
+after "deploy:start",   "delayed_job:start"
+after "deploy:restart", "delayed_job:restart"
+
 # Multistage
 set :stages, %w(staging production)
 set :default_stage, "staging"
@@ -33,6 +39,10 @@ set :repository, "git@github.com:Kazdoor/monopoly.git"
 set :branch, "demo2"
 set :git_enable_submodules, 1
 
+# More configurations
+set :keep_releases, 0 # When deploy:cleanup keep just 3 releases. Defult is 5
+set :use_sudo, false  # Please stay save.
+
 # Passenger
 namespace :deploy do
   task :start, :roles => :app do
@@ -45,4 +55,27 @@ namespace :deploy do
   task :restart, :roles => :app do
     run "touch #{current_path}/tmp/restart.txt"
   end
+
+end
+
+
+require 'yaml'
+
+desc "Backup the remote production database"
+task :backup, :roles => :db, :only => { :primary => true } do
+  db = YAML::load(ERB.new(IO.read(File.join(File.dirname(__FILE__), 'database.yml'))).result)["#{rails_env}"]
+  release_name = current_release.split("/").last
+  filename = "#{release_name}.#{application}.#{rails_env}.#{db['database']}.`date +'%F.%H-%M-%S'`.sql.bz2"
+  backup_dir =  "~/database_backups"
+  run("mkdir -p #{backup_dir}")
+  file = "#{backup_dir}/#{filename}"
+  on_rollback { delete file }
+  run "mysqldump -u #{db['username']} --password=#{db['password']} #{db['database']} | bzip2 -c > #{file}"  do |ch, stream, data|
+    puts data
+  end
+end
+
+desc "Backup the database before running migrations"
+task :before_migrate do
+  backup
 end
