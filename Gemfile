@@ -2,39 +2,21 @@ source :gemcutter
 source "http://gemcutter.org"
 gem 'rack', "1.2.1"
 gem 'rails', '3.0.3'
-#gem 'mysql2', '~> 0.2.7'
 gem 'mysql2', '=0.2.11'
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
+
 group :development do
   gem 'railroady'
-  #gem 'sqlite3-ruby', :require => 'sqlite3'
+  gem 'guard-rspec'
+  gem 'guard-livereload'
 end
 
-# Use unicorn as the web server
-# gem 'unicorn'
+group :test do
+  gem 'shoulda', '=2.11.3'
+  gem 'mocha', '=0.9.12'
+  gem 'rcov','=0.9.9'
+  gem "factory_girl_rails", "~> 1.4.0"
+end
 
-# Deploy with Capistrano
-gem 'capistrano'
-gem 'capistrano-ext'
-
-# To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
-#gem 'ruby-debug'
-#gem 'ruby-debug19' ,:group => :development
-# Bundle the extra gems:
-# gem 'bj'
-# gem 'nokogiri'
-#gem 'sqlite3-ruby', :require => 'sqlite3'
-# gem 'aws-s3', :require => 'aws/s3'
-
-# Bundle gems for the local environment. Make sure to
-# put test-only gems in this group so their generators
-# and rake tasks are available in development mode:
-# group :development, :test do :path=>'vendor/gems/rails_admin'
-  # gem 'rspec'
-  # gem 'rspec-rails'
-# end
-#
 group :test, :development do
   gem "rspec-rails", "~> 2.6"
   gem 'cucumber-rails', '~> 1.2.1'
@@ -47,22 +29,14 @@ group :test, :development do
   gem 'cucumber-api-steps', :require => false
 end
 
+# Deploy with Capistrano
+gem 'capistrano'
+gem 'capistrano-ext'
+
 gem 'devise', "~>1.1.5"
-#gem 'rails_admin' , :git => 'git://github.com/sferik/rails_admin.git'
-#:path=>'vendor/gems/rails_admin'
-# gem 'sinatra', '1.0'
-# gem 'taps'
 gem 'nifty-generators', '=0.4.5'
 gem "transitions", :require => ["transitions", "active_record/transitions"]
 gem "will_paginate", "~> 3.0.pre2"
-
-group :test do
-  gem 'shoulda', '=2.11.3'
-  gem 'mocha', '=0.9.12'
-  gem 'rcov','=0.9.9'
-  gem "factory_girl_rails", "~> 1.4.0"
-end
-
 gem 'jquery-rails','=0.2.7'
 gem 'carmen','=0.2.5'
 gem 'jquery-rails','=0.2.7'
