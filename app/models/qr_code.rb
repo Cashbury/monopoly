@@ -72,7 +72,7 @@ class QrCode < ActiveRecord::Base
   end
   
   def encrypt_code
-    self.hash_code = ActiveSupport::SecureRandom.hex(10)      # 
+    self.hash_code = "C$::" + ActiveSupport::SecureRandom.hex(10)      # 
     #unique_code = { :engagement_id => engagement.id}.to_yaml
     #save_image_server_path 
     set_qr_code_image                                      
