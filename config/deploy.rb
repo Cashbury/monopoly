@@ -40,7 +40,7 @@ set :branch, "demo2"
 set :git_enable_submodules, 1
 
 # More configurations
-set :keep_releases, 0 # When deploy:cleanup keep just 3 releases. Defult is 5
+set :keep_releases, 3 # When deploy:cleanup keep just 3 releases. Defult is 5
 set :use_sudo, false  # Please stay save.
 
 # Passenger
