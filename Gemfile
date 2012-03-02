@@ -8,6 +8,9 @@ group :development do
   gem 'railroady'
   gem 'guard-rspec'
   gem 'guard-livereload'
+  # Deploy with Capistrano
+  gem 'capistrano'
+  gem 'capistrano-ext'
 end
 
 group :test do
@@ -29,9 +32,6 @@ group :test, :development do
   gem 'cucumber-api-steps', :require => false
 end
 
-# Deploy with Capistrano
-gem 'capistrano'
-gem 'capistrano-ext'
 
 gem 'devise', "~>1.1.5"
 gem 'nifty-generators', '=0.4.5'
