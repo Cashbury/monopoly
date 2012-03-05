@@ -231,15 +231,14 @@ class UsersManagementController < ApplicationController
   
   def reissue_code
     @user=User.find(params[:id])
-    qr_code=@user.qr_code
-    @new_qrcode=qr_code.scan
+    @new_qrcode=@user.qr_code.reissue
     render :text=>(render_to_string :partial=> "user_code_container")
   end
   
   def reissue_code_from_listing_txs
     @user=User.find(params[:id])
     old_qr_code=@user.qr_code
-    @qr_code=old_qr_code.scan
+    @qr_code=old_qr_code.reissue
     render :text=>(render_to_string :partial=> "qrcode_container")
   end
   

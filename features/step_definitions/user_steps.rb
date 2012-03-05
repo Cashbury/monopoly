@@ -77,3 +77,8 @@ When /^I log into the site$/ do
   end
   current_path.should_not == '/users/sign_in'
 end
+
+Given /^Show me the current consumer identifier code$/ do
+  puts "The consumer identifire is '#{@consumer.qr_code.hash_code}'"
+end
+

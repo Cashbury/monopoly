@@ -8,6 +8,8 @@ group :development do
   gem 'railroady'
   gem 'guard-rspec'
   gem 'guard-livereload'
+  gem 'guard-cucumber'
+  gem 'guard-spork'
   # Deploy with Capistrano
   gem 'capistrano'
   gem 'capistrano-ext'

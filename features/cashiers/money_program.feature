@@ -12,6 +12,7 @@ Feature: Money Program for Cashiers
     And "Cadbury Bunnies" is the current business
     And the current business has a Money program
     And "bobjones@cal.edu" is the current consumer
+    And Show me the current consumer identifier code
     And I send a POST request to "/users/cashiers/load_money.xml" with the following:
       """
       auth_token=hello&amount=55.0&customer_identifier=123456&long=35.505708&lat=33.803515 

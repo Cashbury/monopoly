@@ -18,9 +18,9 @@ require 'open-uri'
 class QrCode < ActiveRecord::Base  
   #QrCode dependent on engagement type "stamp"
   belongs_to :associatable,:polymorphic => true #engagement, place, business
-  
+
   has_one :qr_code_image, :as => :uploadable, :dependent => :destroy
-  
+
   STAMP       = "Buy a product/service"
   MULTI_USE   = 1
   SINGLE_USE  = 0
@@ -30,25 +30,25 @@ class QrCode < ActiveRecord::Base
   #                   :path => "qrcodes/:id/:filename"
   PRE_PRINTED_SIZE= 1
   WEB_SIZE=2
-  
+
   USER_TYPE="User"
   ENGAGEMENT_TYPE="Engagement"
-  
+
   SINGLE_USE_PRE_PRINTED_SIZE = "240x240"
   MULTI_USE_OR_WEB_SIZE       = "300x300"
 
   ISSUED_BY_SYSTEM = 0
-  
+
   attr_accessible :associatable_id, :associatable_type, :hash_code , :status ,:code_type, :size
   before_create :encrypt_code
   before_destroy :destroy_image
   after_create :upload_image
-  
+
   scope :associated_with_engagements , where(:associatable_type=>QrCode::ENGAGEMENT_TYPE)
   scope :associated_with_users , where(:associatable_type=>QrCode::USER_TYPE)
 
   default_scope :order => 'created_at DESC'
-  
+
   cattr_reader :per_page
   @@per_page = 20
   def destroy_image
@@ -66,11 +66,11 @@ class QrCode < ActiveRecord::Base
       @image = nil
     end
   end
-  
+
   def upload_image
     @image.save!
   end
-  
+
   def encrypt_code
     self.hash_code = "C$::" + ActiveSupport::SecureRandom.hex(10)      # 
     #unique_code = { :engagement_id => engagement.id}.to_yaml
@@ -83,7 +83,7 @@ class QrCode < ActiveRecord::Base
   def qr_image
     qr_dimension = SINGLE_USE_PRE_PRINTED_SIZE if !size && !code_type
     qr_dimension = MULTI_USE_OR_WEB_SIZE if size || code_type #true means multiUse  
-   "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code   
+    "https://chart.googleapis.com/chart?chs=#{qr_dimension}&cht=qr&choe=UTF-8&chl="+hash_code   
   end
 
   def qr_image_url
@@ -91,23 +91,23 @@ class QrCode < ActiveRecord::Base
   end
 
   def scan
-   unless code_type #singleUse
-    self.status = 0
-    save!
-    #if it is a user's code, after each scan we auto reissue a new single use one
-    QrCode.create(:code_type => QrCode::SINGLE_USE, :status=>1, :associatable_id=>self.associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>self.size) if self.user    
-   end
-   #have add logger methods to logg here
+    unless code_type #singleUse
+      self.status = 0
+      save!
+      #if it is a user's code, after each scan we auto reissue a new single use one
+      QrCode.create(:code_type => QrCode::SINGLE_USE, :status=>1, :associatable_id=>self.associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>self.size) if self.user    
+    end
+    #have add logger methods to logg here
   end
 
   def engagement
     self.associatable if self.associatable.class.to_s == QrCode::ENGAGEMENT_TYPE
   end
-  
+
   def user
     self.associatable if self.associatable.class.to_s == QrCode::USER_TYPE
   end
-  
+
   def business_name
     if engagement.blank?
       "NA"
@@ -115,7 +115,7 @@ class QrCode < ActiveRecord::Base
       engagement.try(:program).try(:business).try(:name) 
     end
   end
-  
+
   def created_by
     (self.issued_by==0) ? "System" :  User.find(self.issued_by).full_name.capitalize
   end
@@ -132,10 +132,35 @@ class QrCode < ActiveRecord::Base
                   :size => WEB_SIZE)
   end
 
+  def single_use?
+    !self.code_type
+  end
+
+  def multi_use?
+    self.code_type
+  end
+
+  def deactivate
+    self.status = 0
+    self.save!
+  end
+
+  # Reissue new Qrcode
+  def reissue
+      raise "this QrCode should be first associated to a user" unless self.user
+      self.deactivate
+      QrCode.create(:code_type => self.code_type,
+                    :status=>1,
+                    :associatable_id=>self.associatable.id,
+                    :associatable_type=>QrCode::USER_TYPE,
+                    :size=>self.size)
+  end
+
+
   #def save_image_server_path
-	#	if !File.exists?(File.join("#{Rails.public_path}","images","qrcodes"))
-	#		Dir.mkdir(File.join("#{Rails.public_path}","images","qrcodes"))
-	#	end
+  #	if !File.exists?(File.join("#{Rails.public_path}","images","qrcodes"))
+  #		Dir.mkdir(File.join("#{Rails.public_path}","images","qrcodes"))
+  #	end
   #  open("#{Rails.public_path}/images/qrcodes/#{hash_code}.png","wb")  do |io|
   #    io << open(URI.parse(qr_image )).read
   #  end
