@@ -98,6 +98,7 @@ class Users::CashiersController < Users::BaseController
         end
       
         user.create_charge_transaction_group_receipt(current_user.id, txn_group.id)
+        user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})
 		    response.merge!({:tip                => tip})
