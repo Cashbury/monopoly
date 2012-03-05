@@ -46,6 +46,7 @@ class Users::CashiersController < Users::BaseController
         account.load(amount,employee)
         transaction_id = Transaction.find_all_by_to_account(account.id).last.id
         user.create_load_transaction_receipt(current_user.id, transaction_id)
+        user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})
 		    response.merge!({:transaction_id     => transaction_id})
@@ -97,7 +98,6 @@ class Users::CashiersController < Users::BaseController
         end
       
         user.create_charge_transaction_group_receipt(current_user.id, txn_group.id)
-        user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})
 		    response.merge!({:tip                => tip})
