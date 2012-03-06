@@ -64,6 +64,7 @@ class Users::PlacesController < Users::BaseController
       unless business.nil?
         programs=business.programs
         currency_symbol=business.currency_symbol
+        @result["places"][index]["offset"]    = place.time_zone_offset
         @result["places"][index]["brand-name"]    =business.try(:brand).try(:name)
         @result["places"][index]["brand-image"]   =business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:normal)) 
         @result["places"][index]["brand-image-fb"]=business.try(:brand).try(:brand_image).nil? ? nil : URI.escape(business.brand.brand_image.photo.url(:thumb))
