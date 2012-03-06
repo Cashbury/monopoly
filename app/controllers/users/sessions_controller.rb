@@ -72,6 +72,7 @@ class Users::SessionsController < Devise::SessionsController
         result[:user][:brand_image_url]=business.brand.brand_image.photo(:normal) if business.brand.brand_image.present?
         result[:user][:flag_url]=business.country.present? ? URI.escape("http://#{request.host_with_port}#{COUNTRIES_FLAGS_PATH}#{business.country.iso2.to_s.downcase}.png") : nil
         result[:user][:currency_code]= business.currency_code
+        result[:user][:currency_symbol]= business.currency_symbol
       end     
       render :xml => result, :status=>200
     else
