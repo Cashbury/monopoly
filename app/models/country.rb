@@ -19,7 +19,6 @@ class Country < ActiveRecord::Base
                                         :large=>"32x32"
                                       }
 
-  around_save :update_places_phones
                                       
   def flag_url
     "#{COUNTRIES_FLAGS_PATH}#{self.iso2.to_s.downcase}.png" if self.iso2.present?
