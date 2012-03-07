@@ -247,7 +247,7 @@ class Place < ActiveRecord::Base
     # it's not possible to print the zone offset with Colon ":" inside
     # in case of useing Ruby version => 1.9.3 you can use "%:z" instead of "%z" and it will do the job
     t = ActiveSupport::TimeZone[self.time_zone].now.strftime("%z")
-    t[0]+t[1]+t[2]+":"+t[3]+t[4] # I know this looks ugly
+    t[0..2]+":"+t[3..4] # I know this looks ugly
   end
 
 
