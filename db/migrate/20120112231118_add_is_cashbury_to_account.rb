@@ -6,7 +6,7 @@ class AddIsCashburyToAccount < ActiveRecord::Migration
   end
 
   def self.down
-    change_table :accounts, do |t|
+    change_table :accounts do |t|
       t.remove :is_cashbury
     end
   end
