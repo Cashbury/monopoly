@@ -356,28 +356,28 @@ class UsersManagementController < ApplicationController
   end
   
   def make_engagement
-    begin
-      @user=User.find(params[:id])
-      engagement=Engagement.where(:id=>params[:engagement_id]).first
+    #begin
+      @user = User.find(params[:id])
+      engagement = Engagement.where(:id => params[:engagement_id]).first
       if engagement.present? and !engagement.is_started
-        flash[:error]="Engagement no longer running!"
+        flash[:error] = "Engagement no longer running!"
       elsif engagement.campaign.spend_campaign?
         if params[:amount].present?
-          @user.made_spend_engagement_at(nil,engagement.campaign.try(:program).try(:business),engagement.campaign,params[:amount].to_f,nil,nil)
+          @user.made_spend_engagement_at(nil, engagement.campaign.try(:program).try(:business), engagement.campaign, params[:amount].to_f, nil, nil, nil, nil)
           flash[:notice]="#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{params[:amount]} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
         else
           flash[:error]="You must enter the ring up amount first"
         end    
       else
         @user.snapped_qrcode(nil,engagement,nil,nil,nil, current_user.id)
-        flash[:notice]="#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{engagement.amount} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
+        flash[:notice] = "#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{engagement.amount} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
       end	
-      redirect_to :action=>:list_engagements, :page=>params[:page]										 
-    rescue Exception=>e
-      logger.error "Exception #{e.class}: #{e.message}"
-      flash[:error]=e.message
-      redirect_to :action=>:list_engagements, :page=>params[:page]										 
-    end
+      redirect_to :action => :list_engagements, :page => params[:page]										 
+    #rescue Exception => e
+    #  logger.error "Exception #{e.class}: #{e.message}"
+    #  flash[:error] = e.message
+    #  redirect_to :action => :list_engagements, :page => params[:page]										 
+    #end
   end
   
   def logged_actions

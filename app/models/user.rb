@@ -430,7 +430,7 @@ class User < ActiveRecord::Base
     end
 	end
 	
-  def made_spend_engagement_at(qr_code,business,spend_campaign,ringup_amount,lat,lng,log_group, issued_by) 
+  def made_spend_engagement_at(qr_code, business, spend_campaign , ringup_amount, lat, lng, log_group, issued_by) 
     #begin
       if spend_campaign.present?
         engagement=spend_campaign.engagements.first
