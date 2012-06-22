@@ -3,15 +3,9 @@
 <script type="text/javascript">
 var total_legals=<%=@total%>;
 var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
-$(document).ready(function () {
-  $('select.birth-year').val(<%=@user.try(:dob).try(:year) %>);
-  $('select.birth-month').val(<%=@user.try(:dob).try(:month) %>);
-  $('select.birth-day').val(<%=@user.try(:dob).try(:day) %>);
-});
+
 </script>
-<style type="text/css">
-  .birthday-picker select{width:auto;margin-right: 5px;}
-  #datepicker fieldset {border:none;padding:0;}
+<style type="text/css">  
   .legals_div select{width:auto;margin:0 10px 0 0;}
   .legals_div input {width:150px;padding-top:2px;}
   .legals_div {position:relative;}
@@ -19,7 +13,7 @@ $(document).ready(function () {
   .ui-tabs {width:442px;margin-bottom:20px;}
 </style>
 <%end%>
-<%= form_for @user, :url=>@user.new_record? ? :users_management_index : :users_management, :html=>{:class=>"mono-form"} do |f| %>
+<%= form_for @user, :url => @user.new_record? ? :users_management_index : :users_management, :html=>{:class=>"mono-form"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -34,13 +28,13 @@ $(document).ready(function () {
     <legend>User Information</legend>
     <p>
     <%= f.label :roles, "Select User Roles" %><br />
-		<% Role.all.each do |role| %>
-			<%= check_box_tag(
+    <% Role.all.each do |role| %>
+      <%= check_box_tag(
                         "user[roles_list][]",
                         role.id,
                         @user.roles.any? ? @user.roles.detect{|r| r.id == role.id} : false, {:class=>"role_box"}) %>
-			<%= "#{role.displayed_role}"%><br />
-		<% end %>
+      <%= "#{role.displayed_role}"%><br />
+    <% end %>
     </p>
     <% if @show_biz_and_place %>
     <p class="businesses_list">
@@ -68,7 +62,7 @@ $(document).ready(function () {
     </p>
     <p>
       <%= f.label "Date of birth" %>
-      <div class="picker" id="datepicker" ></div>
+      <%= f.date_select :dob, prompt: true , start_year: (Date.today.year - 18), end_year: 2012 %>
     </p>
 
     <p>
@@ -77,8 +71,8 @@ $(document).ready(function () {
     </p>
     <p>
       <%= f.label :telephone_number %>
-    <div>Country code: <span class="code"><%= @user.country.try(:phone_country_code) %></span> </div>
-      <%= f.text_field :telephone_number , :class=>"title", :value => @user.phone_without_code %>
+      <span class="code"><%= @user.country.try(:phone_country_code) %></span> <%= f.text_field :telephone_number , :class => "title", :value => @user.phone_without_code %>
+      
     </p>
     <div class="legal_type_class">
       <%= label_tag "Legal IDs" %>
@@ -174,13 +168,13 @@ $(document).ready(function () {
 $('#user_home_town').change(function(e) {
     var value = e.target.value;
     if (value != '') {
-	$.get('/countries/'+value+'/country_code', undefined, function(e) {
-	    var code = e['country_code'];
-	    $('.code').html(code);
-	});
+  $.get('/countries/'+value+'/country_code', undefined, function(e) {
+      var code = e['country_code'];
+      $('.code').html(code);
+  });
     }
     else {
-	$('.code').html('');
+  $('.code').html('');
     }
 });
 //  jQuery(function(){

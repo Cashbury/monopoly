@@ -209,8 +209,8 @@ class Users::CashiersController < Users::BaseController
   end
   
   def list_receipts_history
-    @all_receipts=current_user.list_cashier_receipts(params[:no_of_days].to_i)
-    @dates=[Date.today]
+    @all_receipts = current_user.list_cashier_receipts(params[:no_of_days].to_i)
+    @dates = [Date.today]
     (1..params[:no_of_days].to_i-1).each{|i| @dates << i.days.ago.to_date}
     respond_to do |format|
       format.xml {}

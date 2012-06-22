@@ -347,8 +347,8 @@ class UsersManagementController < ApplicationController
   
   def list_engagements
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @user=User.find(params[:id])
-    @engagements= Engagement.joins(:campaign=>[:program=>[:program_type,:business],:accounts=>[:account_holder]])
+    @user = User.find(params[:id])
+    @engagements= Engagement.joins(:campaign =>[:program => [:program_type,:business],:accounts=>[:account_holder]])
                             .where("program_types.id=#{ProgramType.find_by_name(ProgramType::AS[:marketing]).id} and account_holders.model_id=#{params[:id]} and account_holders.model_type='User'")
                             .select("campaigns.ctype,accounts.amount as account_amount,engagements.id,engagements.amount,engagements.name as eng_name,campaigns.name as c_name, program_types.name as pt_name, businesses.name as b_name, campaigns.created_at")
                             .group("engagements.id")
@@ -356,7 +356,7 @@ class UsersManagementController < ApplicationController
   end
   
   def make_engagement
-    #begin
+    begin
       @user = User.find(params[:id])
       engagement = Engagement.where(:id => params[:engagement_id]).first
       if engagement.present? and !engagement.is_started
@@ -373,11 +373,11 @@ class UsersManagementController < ApplicationController
         flash[:notice] = "#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{engagement.amount} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
       end	
       redirect_to :action => :list_engagements, :page => params[:page]										 
-    #rescue Exception => e
-    #  logger.error "Exception #{e.class}: #{e.message}"
-    #  flash[:error] = e.message
-    #  redirect_to :action => :list_engagements, :page => params[:page]										 
-    #end
+    rescue Exception => e
+      logger.error "Exception #{e.class}: #{e.message}"
+      flash[:error] = e.message
+      redirect_to :action => :list_engagements, :page => params[:page]										 
+    end
   end
   
   def logged_actions

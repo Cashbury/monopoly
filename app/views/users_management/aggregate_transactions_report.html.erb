@@ -47,25 +47,25 @@ $(document).ready(function () {
 var submitUserTransactionsSearch = function(form,page){
   IDBasedFilters=$('input:radio[name=filters]:checked').val();
   businessId = ($('select#filters_business_id').val() == "") ? 0 : $('select#filters_business_id').val();
-	fromDate  = ($('#filters_from_date').val()=="") ? 0 : $('#filters_from_date').val();
-	toDate    = ($('#filters_to_date').val()=="")? 0 : $('#filters_to_date').val();
-	window.location = "/users_management/" + <%=@user.id%> + "/transactions_report?from_date=" + fromDate + "&to_date="+ toDate + "&business_id=" +businessId+"&filters="+IDBasedFilters;
+  fromDate  = ($('#filters_from_date').val()=="") ? 0 : $('#filters_from_date').val();
+  toDate    = ($('#filters_to_date').val()=="")? 0 : $('#filters_to_date').val();
+  window.location = "/users_management/" + <%=@user.id%> + "/transactions_report?from_date=" + fromDate + "&to_date="+ toDate + "&business_id=" +businessId+"&filters="+IDBasedFilters;
 }
 </script>
 <%end%>
 <%= field_set_tag do %>
-	<legend>Filter By</legend>
-	<form id="filter_form">
-		<div class="field"><label style="margin:10px;width:60px;">From Date</label><%= text_field_tag "filters_from_date", @from_date, :class=>"datepicker title" %></div>
+  <legend>Filter By</legend>
+  <form id="filter_form">
+    <div class="field"><label style="margin:10px;width:60px;">From Date</label><%= text_field_tag "filters_from_date", @from_date, :class=>"datepicker title" %></div>
     <div class="field"><label style="margin:10px;width:60px;">To Date</label><%= text_field_tag "filters_to_date", @to_date, :class=>"datepicker title" %> </div>
     <div class="field"><label style="margin:10px;width:60px;">Business</label><%= select_tag "filters_business_id", options_for_select(Business.all.collect {|b| [ b.name, b.id ] },@business_id),{:include_blank=>true} %></div>
     <div class="field">
-      <label style="margin:10px;width:60px;float:none">User ID driven Txs</label><%= radio_button_tag 'filters', 1, @filters==1%>
-      <label style="margin:10px;width:60px;float:none">Non User ID driven Txs</label><%= radio_button_tag 'filters', 2, @filters==2%>
-      <label style="margin:10px;width:60px;float:none">All</label><%= radio_button_tag 'filters', 3, @filters==3 %>
+      <label style="margin:10px;width:60px;float:none" for="filters_1">User ID driven Txs</label><%= radio_button_tag 'filters', 1, @filters==1%>
+      <label style="margin:10px;width:60px;float:none" for="filters_2">Non User ID driven Txs</label><%= radio_button_tag 'filters', 2, @filters==2%>
+      <label style="margin:10px;width:60px;float:none" for="filters_3">All</label><%= radio_button_tag 'filters', 3, @filters == 3 %>
     </div>
-		<p><a href="javascript:void(0)" onclick="submitUserTransactionsSearch($('#filter_form'), 1)" class="button" style="float:right">Filter</a></p>
-	</form>
+    <p><a href="javascript:void(0)" onclick="submitUserTransactionsSearch($('#filter_form'), 1)" class="button" style="float:right">Filter</a></p>
+  </form>
 <%end%>
 <h3><strong>Total: <strong class="total_entries"><%=@all_transactions.total_entries%></strong></strong></h3>    
 <br />
