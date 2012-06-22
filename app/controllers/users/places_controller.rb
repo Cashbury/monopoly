@@ -37,7 +37,12 @@ class Users::PlacesController < Users::BaseController
     
     targeted_campaigns = current_user.auto_enroll_at(@places)
     respond_to do |format|
-      format.xml { render :xml => prepare_result(@places,is_my_city,city,targeted_campaigns) }
+      options = {}
+      options[:places] = @places
+      options[:is_my_city] = is_my_city
+      options[:city] = city
+      options[:targeted_campaigns] = targeted_campaigns
+      format.xml { render :xml => prepare_result(options) }
     end
   end
   
@@ -48,17 +53,17 @@ class Users::PlacesController < Users::BaseController
     end
   end
   
-  def prepare_result(places,is_my_city,city,targeted_campaigns)
+  def prepare_result(options)
     @result={}
-    @result["is_my_city"] = is_my_city
-    if city
-      @result["city-id"] = city.id
-      @result["city-name"] = city.name
-      @result["flag-url"] = URI.escape("http://#{request.host_with_port}#{city.country.flag_url}") if city.country.flag_url.present?
+    @result["is_my_city"] = options[:is_my_city]
+    if options[:city]
+      @result["city-id"] = options[:city].id
+      @result["city-name"] = options[:city].name
+      @result["flag-url"] = URI.escape("http://#{request.host_with_port}#{options[:city].country.flag_url}") if options[:city].country.flag_url.present?
     end
     @result["places"]=[]
-    places.each_with_index do |place,index|
-      @result["places"][index] = place.attributes.reject{|k,v| k=="address_id"}
+    options[:places].each_with_index do |place, index|
+      @result["places"][index] = place.attributes.reject{|k,v| k == "address_id"}
       @result["places"][index]["distance-unit"] = Place::DISTANCE_UNIT
       business = place.business
       @result["places"][index]["user-id-image-url"] = current_user.qr_code && business.activate_users_id ? URI.escape(current_user.qr_code.qr_code_image.photo.url) : nil
@@ -72,18 +77,18 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["is-open"] = place.is_open?
         @result["places"][index]["currency-symbol"]= currency_symbol
         @result["places"][index]["currency-code"]  = business.currency_code
-        @result["places"][index]["open-hours"] = place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to=>oh.to.strftime("%I:%M %p"),:day=>OpenHour::DAYS.key(oh.day_no)}}
+        @result["places"][index]["open-hours"] = place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to => oh.to.strftime("%I:%M %p"),:day => OpenHour::DAYS.key(oh.day_no)}}
         @result["places"][index]["business_has_user_id_card"] = business.try(:activate_users_id)
         @result["places"][index]["images"] = []
         place.place_images.each_with_index do |p_image,i|
-          @result["places"][index]["images"][i] = {"image-thumb-url"=>URI.escape(p_image.photo.url(:thumb)),"image-url"=>URI.escape(p_image.photo.url(:normal))}          
+          @result["places"][index]["images"][i] = {"image-thumb-url" => URI.escape(p_image.photo.url(:thumb)),"image-url" => URI.escape(p_image.photo.url(:normal))}
         end
         @result["places"][index]["accounts"] = []
         @result["places"][index]["rewards"] = []
-        unless targeted_campaigns.empty?
+        unless options[:targeted_campaigns].empty?
           results = programs.joins(:campaigns => [:rewards,:engagements,:places,:accounts => [:measurement_type,:account_holder]])
-                            .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id and users_enjoyed_rewards.user_id=#{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type, engagements.amount as spend_exchange_rule, engagements.end_date as spend_until, rewards.expiry_date as offer_available_until")
-                            .where("campaigns.id IN (#{targeted_campaigns.join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id=#{place.id} and rewards.is_active=true and accounts.status=true")
+                            .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id = rewards.id and users_enjoyed_rewards.user_id = #{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type, engagements.amount as spend_exchange_rule, engagements.end_date as spend_until, rewards.expiry_date as offer_available_until")
+                            .where("campaigns.id IN (#{options[:targeted_campaigns].join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id = #{place.id} and rewards.is_active = true and accounts.status = true")
                            
           results.each_with_index do |result,i|
             reward_obj = Reward.find(result.reward_id)
@@ -98,13 +103,13 @@ class Users::PlacesController < Users::BaseController
                   @result["places"][index]["rewards"][i]["reward-image"]   =reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:normal))
                   @result["places"][index]["rewards"][i]["reward-image-fb"]=reward_image.nil? ? nil : URI.escape(reward_image.photo.url(:thumb))
                   if reward_campaign.spend_campaign?
-                    @result["places"][index]["rewards"][i]["reward_money_amount"]=reward_obj.money_amount * result.spend_exchange_rule.to_f if reward_obj.money_amount.present?
+                    @result["places"][index]["rewards"][i]["reward_money_amount"] = reward_obj.money_amount * result.spend_exchange_rule.to_f if reward_obj.money_amount.present?
                     @result["places"][index]["rewards"][i]["reward_currency_symbol"]=currency_symbol
                     @result["places"][index]["rewards"][i]["reward_currency_code"]  =business.currency_code
                   end
-                  @result["places"][index]["rewards"][i]["is_spend"]=reward_campaign.spend_campaign?
+                  @result["places"][index]["rewards"][i]["is_spend"] = reward_campaign.spend_campaign?
                   how_to_get_amount_text=""  
-                  @result["places"][index]["rewards"][i]["how_to_get_amount"]=reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{attributes["measurement_type"]}\n"}.first
+                  @result["places"][index]["rewards"][i]["how_to_get_amount"] = reward_obj.campaign.engagements.collect{|eng| how_to_get_amount_text+="#{eng.name} gets you #{eng.amount} #{attributes["measurement_type"]}\n"}.first
                 end 
               end
             end
@@ -115,13 +120,13 @@ class Users::PlacesController < Users::BaseController
     @result
   end
   def add_my_phone
-    if current_user.update_attributes(:telephone_number=>params[:phone_number])
+    if current_user.update_attributes(:telephone_number => params[:phone_number])
       respond_to do |format|
-        format.xml { render :xml =>current_user.to_xml(:only=>[:id,:telephone_number]),:status=>200 }
+        format.xml { render :xml => current_user.to_xml(:only => [:id,:telephone_number]),:status=>200 }
       end
     else
       respond_to do |format|
-        error_text=current_user.errors.on(:telephone_number) ? "ERROR:Invalid phone number. Your phone number should start with 00 or + then the country code then the rest of your phone number." : "ERROR:Something went wrong on server"
+        error_text = current_user.errors.on(:telephone_number) ? "ERROR:Invalid phone number. Your phone number should start with 00 or + then the country code then the rest of your phone number." : "ERROR:Something went wrong on server"
         format.xml { render :text => error_text,:status=>200 }
       end
     end
@@ -129,8 +134,8 @@ class Users::PlacesController < Users::BaseController
   
   def get_my_id
     #TODO implement params[:business_id] when user has various qrcodes at businesses
-    qr_code=current_user.qr_code
-    result={}
+    qr_code = current_user.qr_code
+    result = {}
     result[:user_id_image_url] = qr_code.try(:qr_code_image).try(:photo).try(:url)
     result[:user_id] = qr_code.try(:hash_code)
     result[:starting_timer_seconds ] = STARTING_TIMER_SEC
@@ -141,10 +146,10 @@ class Users::PlacesController < Users::BaseController
 
   def running_reward?(attrs)
     (attrs["max_claim_per_user"].nil? || 
-      attrs["max_claim_per_user"] == "0" || 
+      attrs["max_claim_per_user"].to_i == 0 || 
         attrs["redeemCount"].to_i < attrs["max_claim_per_user"].to_i) and 
           (attrs["max_claim"].nil? || 
-            attrs["max_claim"] == "0" || 
+            attrs["max_claim"].to_i == 0 || 
               attrs["numberOfRedeems"].to_i < attrs["max_claim"].to_i) 
   end
 

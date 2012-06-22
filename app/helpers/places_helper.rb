@@ -31,6 +31,6 @@ module PlacesHelper
   end
 
   def open_hours_for_day(day_no)
-    @open_hours.select {|oh| oh.day_no == day_no}
+    @open_hours.select {|key, value| value[:day_no] == day_no}
   end
 end
