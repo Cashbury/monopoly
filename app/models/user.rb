@@ -56,36 +56,36 @@ class User < ActiveRecord::Base
   attr_accessor :role_id
   has_many :templates
   has_many :brands
-  has_many :legal_ids, :as=>:associatable
+  has_many :legal_ids, :as => :associatable
   has_many :followers
-  has_many :businesses, :through=>:followers
-  has_many :invitations, :foreign_key=>"from_user_id"
-  has_many :receipts, :dependent=>:destroy
+  has_many :businesses, :through => :followers
+  has_many :invitations, :foreign_key => "from_user_id"
+  has_many :receipts, :dependent => :destroy
   has_many :employees #same user with different positions
-  has_many :roles, :through=>:employees
+  has_many :roles, :through => :employees
   has_many :logs
   has_many :places
-  has_many :followers, :as=>:followed
+  has_many :followers, :as => :followed
   has_many :business_customers
-  has_many :businesses, :through=>:business_customers
+  has_many :businesses, :through => :business_customers
   has_many :login_methods_users
-  has_many :login_methods, :through=>"login_methods_users"
+  has_many :login_methods, :through => "login_methods_users"
 
-  has_one  :qr_code, :as=>:associatable, :conditions => {:status=>1}
+  has_one  :qr_code, :as => :associatable, :conditions => {:status=>1}
   has_one :business, :through => :employees
 
-  has_one :account_holder, :as=>:model
+  has_one :account_holder, :as =>:model
   has_many :accounts, :through => :account_holder
 
   has_and_belongs_to_many :rewards
-  has_and_belongs_to_many :enjoyed_rewards, :class_name=>"Reward" , :join_table => "users_enjoyed_rewards"
-  has_and_belongs_to_many :pending_receipts, :class_name=>"Receipt" , :join_table => "users_pending_receipts"
+  has_and_belongs_to_many :enjoyed_rewards, :class_name => "Reward" , :join_table => "users_enjoyed_rewards"
+  has_and_belongs_to_many :pending_receipts, :class_name => "Receipt" , :join_table => "users_pending_receipts"
   has_and_belongs_to_many :places
   has_and_belongs_to_many :programs, :join_table => "users_programs"
   
-  belongs_to :mailing_address, :class_name=>"Address" ,:foreign_key=>"mailing_address_id"
-  belongs_to :billing_address, :class_name=>"Address" ,:foreign_key=>"billing_address_id"
-  belongs_to :country, :foreign_key=>"home_town"
+  belongs_to :mailing_address, :class_name => "Address" ,:foreign_key => "mailing_address_id"
+  belongs_to :billing_address, :class_name => "Address" ,:foreign_key => "billing_address_id"
+  belongs_to :country, :foreign_key => "home_town"
 
   #nested attributes
   accepts_nested_attributes_for :brands,
@@ -101,7 +101,7 @@ class User < ActiveRecord::Base
 
 
 
-  validates_format_of :telephone_number, :with => /^[0-9]+$/, :message=>"Phone should contain numbers only",:allow_blank=>true
+  validates_format_of :telephone_number, :with => /^[0-9]+$/, :message => "Phone should contain numbers only", :allow_blank => true
   cattr_reader :per_page
   @@per_page = 20
 
@@ -264,29 +264,30 @@ class User < ActiveRecord::Base
     raise "Can't cashout without money program (User: #{id})" unless money_program_for(business).present?
     cash_account_for(business).cashout
   end
+
 	def auto_enroll_at(places)
 	  begin
-      ids=places.collect{|p| p.business_id}
-      targeted_campaigns_ids=[]
-      businesses=Business.where(:id=>ids)
-      accholder=self.account_holder
+      ids = places.collect{|p| p.business_id}
+      targeted_campaigns_ids = []
+      businesses = Business.where(:id => ids)
+      accholder = self.account_holder
       businesses.each do |business|
         business.programs.each do |program|
           if program.is_money? && !self.programs.include?(program)
             self.enroll(program)
           end
           program.campaigns.each do |campaign|
-            if !campaign.has_target? || self.is_engaged_with_campaign?(campaign) || (campaign.has_target? and self.is_targeted_from?(campaign))
+            if !campaign.cash_incentive? and (!campaign.has_target? || self.is_engaged_with_campaign?(campaign) || (campaign.has_target? and self.is_targeted_from?(campaign)))
               targeted_campaigns_ids << campaign.id
               unless self.has_account_with_campaign?(accholder,campaign.id)
-                accholder=AccountHolder.create!(:model_id=>self.id,:model_type=>self.class.to_s) if accholder.nil?
-                Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type,:account_holder=>accholder)
+                accholder = AccountHolder.create!(:model_id => self.id,:model_type => self.class.to_s) if accholder.nil?
+                Account.create!(:campaign_id => campaign.id,:amount => campaign.initial_amount,:measurement_type => campaign.measurement_type,:account_holder => accholder)
               end
             end
           end
         end
       end
-    rescue Exception=>e
+    rescue Exception => e
       puts "Exception: #{e.message}"
       logger.error "Exception #{e.class}: #{e.message}"
     end
@@ -294,11 +295,11 @@ class User < ActiveRecord::Base
 	end
 
 	def account_holder
-	  AccountHolder.where(:model_id=>self.id,:model_type=>self.class.to_s).first
+	  AccountHolder.where(:model_id => self.id,:model_type => self.class.to_s).first
 	end
 
   def money_account_at_large
-    unless (accholder=self.account_holder).nil?
+    unless (accholder = self.account_holder).nil?
       accholder.accounts.where("accounts.business_id= NULL").first
     end
   end
