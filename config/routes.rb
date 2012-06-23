@@ -158,6 +158,10 @@ Kazdoor::Application.routes.draw do
   end
 
   resources :businesses do
+    
+    post :mark_as_featured
+    post :mark_as_unfeatured
+
 	  get "update_cities/:id", :action=>:update_cities, :on =>:collection, :as =>"update_cities"
 	  get "update_users/:id", :action=>:update_users, :on =>:collection, :as =>"update_users"
 	  get '/update_currencies/:country_id', :action=>:update_currencies, :on=> :collection, :as=>"update_currencies"
@@ -166,9 +170,9 @@ Kazdoor::Application.routes.draw do
 	  get "list_campaign_transactions/:c_id", :action=> :list_campaign_transactions, :on=>:member, :as=> "list_campaign_transactions"
 	  get "list_enrolled_customers/:c_id", :action=> :list_enrolled_customers, :on=>:member, :as=> "list_enrolled_customers"
 	  get "list_all_enrolled_customers", :action=> :list_all_enrolled_customers, :on=> :member, :as=>"list_all_enrolled_customers"
-          get '/country_code', :action => :country_code, :on =>:member
-          get '/choose_campaign_type', :action => :choose_campaign_type, :on => :member
-          post '/new_campaign_type', :action => :new_campaign_type, :on => :member
+    get '/country_code', :action => :country_code, :on =>:member
+    get '/choose_campaign_type', :action => :choose_campaign_type, :on => :member
+    post '/new_campaign_type', :action => :new_campaign_type, :on => :member
 
     resources :transactions, :controller => "businesses/transactions", :only => [:index]
 

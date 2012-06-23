@@ -62,6 +62,14 @@ class Business < ActiveRecord::Base
   validates_associated :places
 
 
+  def mark_as_featured
+    self.update_attribute(:featured, true)
+  end
+
+  def mark_as_unfeatured
+    self.update_attribute(:featured, false)
+  end
+
   def clear_photos
     self.tmp_images.each do |tmp_image|
       tmp_image.upload_type="BusinessImage"

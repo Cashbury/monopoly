@@ -123,6 +123,19 @@ class BusinessesController < ApplicationController
     flash[:notice] = "Successfully destroyed business."
     redirect_to businesses_url
   end
+
+  def mark_as_featured
+    puts params
+    @business = Business.find(params[:business_id])
+    @business.mark_as_featured
+    redirect_to businesses_path, :notice => "Business #{@business.name} is marked as featured"
+  end
+
+  def mark_as_unfeatured
+    @business = Business.find(params[:business_id])
+    @business.mark_as_unfeatured
+    redirect_to businesses_path, :notice => "Business #{@business.name} is marked as Unfeatured"
+  end
   
   def list_campaign_transactions
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i

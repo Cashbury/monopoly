@@ -66,6 +66,7 @@ class Users::PlacesController < Users::BaseController
       @result["places"][index] = place.attributes.reject{|k,v| k == "address_id"}
       @result["places"][index]["distance-unit"] = Place::DISTANCE_UNIT
       business = place.business
+      @result["places"][index]["featured"] = business.featured
       @result["places"][index]["user-id-image-url"] = current_user.qr_code && business.activate_users_id ? URI.escape(current_user.qr_code.qr_code_image.photo.url) : nil
       unless business.nil?
         programs = business.programs
@@ -86,14 +87,15 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["accounts"] = []
         @result["places"][index]["rewards"] = []
         unless options[:targeted_campaigns].empty?
-          results = programs.joins(:campaigns => [:rewards,:engagements,:places,:accounts => [:measurement_type,:account_holder]])
+          results = programs.joins(:campaigns => [:rewards,:places,:accounts => [:measurement_type,:account_holder]])
+                            .joins("LEFT OUTER JOIN engagements ON engagements.campaign_id = campaigns.id")
                             .select("rewards.id as reward_id,rewards.name,rewards.heading1,rewards.heading2,rewards.fb_unlock_msg,rewards.fb_enjoy_msg,rewards.legal_term,rewards.max_claim,rewards.max_claim_per_user,rewards.needed_amount,rewards.money_amount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id = rewards.id and users_enjoyed_rewards.user_id = #{current_user.id}) As redeemCount,(SELECT count(*) from users_enjoyed_rewards where users_enjoyed_rewards.reward_id=rewards.id) As numberOfRedeems,account_holders.model_id,account_holders.model_type,accounts.campaign_id,accounts.amount,accounts.is_money,measurement_types.name as measurement_type, engagements.amount as spend_exchange_rule, engagements.end_date as spend_until, rewards.expiry_date as offer_available_until")
                             .where("campaigns.id IN (#{options[:targeted_campaigns].join(',')}) and account_holders.model_id=#{current_user.id} and account_holders.model_type='User' and ((campaigns.end_date IS NOT null AND '#{Date.today}' BETWEEN campaigns.start_date AND campaigns.end_date) || '#{Date.today}' >= campaigns.start_date) and campaigns_places.place_id = #{place.id} and rewards.is_active = true and accounts.status = true")
                            
           results.each_with_index do |result,i|
             reward_obj = Reward.find(result.reward_id)
             reward_campaign = reward_obj.campaign
-            if (reward_obj.is_available_to?(current_user))              
+            if (reward_obj.is_available_to?(current_user))                
               @result["places"][index]["accounts"] << result.attributes.select {|key, value| key == "amount" || key=="campaign_id" || key=="is_money" || key=="measurement_type"}
               attributes = result.attributes
               if running_reward?(attributes)                

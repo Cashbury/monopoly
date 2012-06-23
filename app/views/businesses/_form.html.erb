@@ -37,7 +37,7 @@ $(function(){
   
   <p>
     <%= f.label "Legal Business Name" %>
-    <%= f.text_field :name , :class=>"title" %>
+    <%= f.text_field :name , :class => "title" %>
   </p>
 
   <div class="legal_type_class">
@@ -64,7 +64,12 @@ $(function(){
     <%= f.label "Activate Users ID" %>
     <%= f.check_box :activate_users_id, :checked => true %>
   </p>
-  
+
+  <p>
+    <%= f.label :featured %>
+    <%= f.check_box :featured  %>
+  </p>
+
   <p>
     <%= f.label :currency %>
     <%= f.select :currency_code, ISO4217::Currency.currencies.values.uniq.collect{|c| ["#{c.name} [#{c.code}]",c.code]} %>

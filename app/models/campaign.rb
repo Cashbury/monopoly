@@ -43,11 +43,11 @@ class Campaign < ActiveRecord::Base
 	accepts_nested_attributes_for :engagements
 	accepts_nested_attributes_for :rewards,:allow_destroy => true
 
-	CTYPE={
-	  :spend=>1,
-	  :share=>2,
-	  :buy=>3,
-	  :visit=>4,
+	CTYPE = {
+	  :spend => 1,
+	  :share => 2,
+	  :buy => 3,
+	  :visit => 4,
 	  :cash_incentive => 5
 	}
 	
@@ -62,12 +62,17 @@ class Campaign < ActiveRecord::Base
   end
   
 	def spend_campaign?
-	  self.ctype==CTYPE[:spend]
+	  self.ctype == CTYPE[:spend]
   end
   
   def buy_campaign?
-    self.ctype==CTYPE[:buy]
+    self.ctype == CTYPE[:buy]
   end
+
+  def cash_incentive?
+    self.ctype == CTYPE[:cash_incentive]
+  end
+
   
 	def is_running?
 	  date=Date.today

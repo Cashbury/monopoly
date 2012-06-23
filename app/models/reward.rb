@@ -141,7 +141,7 @@ class Reward < ActiveRecord::Base
   end
   
   def is_available_to?(user)
-    eng=self.campaign.engagements.first
-    (eng.end_date.nil? and self.expiry_date.nil?) || (eng.end_date.present? and Date.today <= eng.end_date.to_date) || (self.expiry_date.present? and Date.today <= self.expiry_date.to_date and is_unlocked?(user))
+    eng = self.campaign.engagements.first
+    (eng.present? and eng.end_date.nil? and self.expiry_date.nil?) || (eng.present? and eng.end_date.present? and Date.today <= eng.end_date.to_date) || (self.expiry_date.present? and Date.today <= self.expiry_date.to_date and is_unlocked?(user)) || self.campaign.cash_incentive?
   end
 end

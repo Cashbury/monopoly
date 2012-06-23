@@ -47,6 +47,7 @@ $(function(){
     <th>Brand </th>
     <th>Address</th>
     <th>Principal</th>
+    <th>Featured?</th>
     <th>Branches</th>
     <th></th>
   </tr>
@@ -62,10 +63,16 @@ $(function(){
         <%end%>
       </td>
       <td>Rajib Ahmed</td>
+      <td><%= status_icon business.featured %></td>
       <td><%= link_to "(#{business.places.size})", business_places_path(business) %></td>
       <td>
-        <%= link_to "Edit", edit_business_path(business) , :class=> "button"%>
-        <%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete , :class=>"negative button " %>
+        <%= link_to "Edit", edit_business_path(business) , :class => "button"%>
+        <%= link_to "Destroy", business, :confirm => 'Are you sure?', :method => :delete , :class => "negative button" %>
+        <% unless business.featured? %>
+          <%= link_to "Mark as Featured", business_mark_as_featured_path(business) , :class => "positive button", :method => :post %>
+        <% else %>
+          <%= link_to "Mark as Un Featured", business_mark_as_unfeatured_path(business) , :class => "negative button", :method => :post %>
+        <% end -%>
       </td>
     </tr>
   <% end %>
