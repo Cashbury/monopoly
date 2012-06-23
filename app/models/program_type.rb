@@ -10,11 +10,13 @@
 #
 
 class ProgramType < ActiveRecord::Base
-	has_many :programs,:dependent=>:destroy,:foreign_key=>'program_type_id'
+  
+	has_many :programs, :dependent => :destroy, :foreign_key => 'program_type_id'
 	
-	AS={
-	  :marketing=>"Marketing",
-	  :money=>"Money"
+	AS = {
+
+	  :marketing => "Marketing",
+	  :money => "Money"
 	}
 
   def self.[](name)

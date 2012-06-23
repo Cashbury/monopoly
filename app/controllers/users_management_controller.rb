@@ -356,7 +356,7 @@ class UsersManagementController < ApplicationController
   end
   
   def make_engagement
-    begin
+    #begin
       @user = User.find(params[:id])
       engagement = Engagement.where(:id => params[:engagement_id]).first
       if engagement.present? and !engagement.is_started
@@ -373,11 +373,11 @@ class UsersManagementController < ApplicationController
         flash[:notice] = "#{@user.full_name} has made an engagement with #{engagement.campaign.name} and earned #{engagement.amount} #{MeasurementType.find(engagement.campaign.measurement_type_id).name}"
       end	
       redirect_to :action => :list_engagements, :page => params[:page]										 
-    rescue Exception => e
-      logger.error "Exception #{e.class}: #{e.message}"
-      flash[:error] = e.message
-      redirect_to :action => :list_engagements, :page => params[:page]										 
-    end
+    #rescue Exception => e
+    #  logger.error "Exception #{e.class}: #{e.message}"
+    #  flash[:error] = e.message
+    #  redirect_to :action => :list_engagements, :page => params[:page]										 
+    #end
   end
   
   def logged_actions

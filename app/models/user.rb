@@ -254,6 +254,10 @@ class User < ActiveRecord::Base
       .first
   end
 
+  def cashbox_credit_for(business)
+    (cashbury_account_for(business).try(:amount) || 0) + (cash_account_for(business).try(:amount)  || 0)
+  end
+
   def cashbury_accounts
     ensure_account_holder!
     Account.where(:is_cashbury => true)
@@ -305,10 +309,10 @@ class User < ActiveRecord::Base
   end
   
   def engaged_with(associatable, engagement_amount, qr_code, place_id, lat, lng, note, freq=1, log_group, issued_by)
-    campaign=associatable.campaign
-    user_account=campaign.user_account(self)
-    business_account=campaign.business_account
-    date=Date.today.to_s
+    campaign = associatable.campaign
+    user_account = campaign.user_account(self)
+    business_account = campaign.business_account
+    date = Date.today.to_s
     Account.transaction do
       qr_code.scan if qr_code.present?
       #check if user has engaged with biz before else create record for it
@@ -316,81 +320,82 @@ class User < ActiveRecord::Base
         self.business_customers.create(:business_id=>campaign.program.business.id)
       end
       if user_account.nil?
-        accholder=AccountHolder.find_or_create_by_model_id_and_model_type(:model_id=>self.id,:model_type=>self.class.to_s)
-        account=Account.create!(:campaign_id=>campaign.id,:amount=>campaign.initial_amount,:measurement_type=>campaign.measurement_type)
+        accholder= AccountHolder.find_or_create_by_model_id_and_model_type(:model_id => self.id,:model_type => self.class.to_s)
+        account = Account.create!(:campaign_id => campaign.id,:amount => campaign.initial_amount,:measurement_type => campaign.measurement_type)
         accholder.accounts << account
         accholder.save!
-        user_account=account
+        user_account = account
       end
       #debit business account and credit user account
-      action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
+      action = Action.where(:name => Action::CURRENT_ACTIONS[:engagement]).first
       transaction_type=action.transaction_type
       after_fees_amount=transaction_type.fee_amount.nil? || transaction_type.fee_amount.zero? ? engagement_amount : engagement_amount-transaction_type.fee_amount
       after_fees_amount=transaction_type.fee_percentage.nil? || transaction_type.fee_percentage.zero? ? after_fees_amount : after_fees_amount-(after_fees_amount * transaction_type.fee_percentage/100)
       after_fees_amount = after_fees_amount * freq
      
-      business_account_before_balance= business_account.amount
+      business_account_before_balance = business_account.amount
       business_account.decrement!(:amount,engagement_amount * freq)
-      user_account_before_balance= user_account.amount
-      user_account.increment!(:amount,after_fees_amount)
-      user_account.increment!(:cumulative_amount,after_fees_amount)
+      user_account_before_balance = user_account.amount
+      user_account.increment!(:amount, after_fees_amount)
+      user_account.increment!(:cumulative_amount, after_fees_amount)
       
       #save the transaction record
-      transaction=Transaction.create!(:from_account => business_account.id,
-                                      :to_account => user_account.id,
-                                      :before_fees_amount => engagement_amount * freq,
-                                      :payment_gateway => user_account.payment_gateway,
-                                      :is_money => false,
-                                      :from_account_balance_before => business_account_before_balance,
-                                      :from_account_balance_after => business_account.amount,
-                                      :to_account_balance_before => user_account_before_balance,
-                                      :to_account_balance_after => user_account.amount,
-                                      :currency => nil,
-                                      :note => note,
-                                      :transaction_type_id => action.transaction_type_id,
-                                      :after_fees_amount => after_fees_amount,
-                                      :transaction_fees => transaction_type.fee_amount)
+      transaction = Transaction.create!(:from_account => business_account.id,
+                                        :to_account => user_account.id,
+                                        :before_fees_amount => engagement_amount * freq,
+                                        :payment_gateway => user_account.payment_gateway,
+                                        :is_money => false,
+                                        :from_account_balance_before => business_account_before_balance,
+                                        :from_account_balance_after => business_account.amount,
+                                        :to_account_balance_before => user_account_before_balance,
+                                        :to_account_balance_after => user_account.amount,
+                                        :currency => nil,
+                                        :note => note,
+                                        :transaction_type_id => action.transaction_type_id,
+                                        :after_fees_amount => after_fees_amount,
+                                        :transaction_fees => transaction_type.fee_amount)
+
 
       #save this engagement action to logs
-      log_group=LogGroup.create!(:created_on=>date) if log_group.nil?
+      log_group = LogGroup.create!(:created_on => date) if log_group.nil?
       business_id = campaign.program.business.id
       if place_id.blank?
         unless lat.blank? || lng.blank?
-          place_id=Place.where(:business_id => business_id).closest(:origin=>[lat.to_f,lng.to_f]).first.id
+          place_id = Place.where(:business_id => business_id).closest(:origin => [lat.to_f,lng.to_f]).first.id
         end
       end
-      Log.create!(:user_id        =>self.id,
-                  :action_id      =>action.id,
-                  :log_group_id   =>log_group.id,
-                  :engagement_id  =>associatable.id,
-                  :qr_code_id     =>qr_code.try(:id),
-                  :campaign_id    =>campaign.id,
-                  :business_id    =>business_id,
-                  :transaction_id =>transaction.id,
-                  :place_id       =>place_id,
-                  :gained_amount  =>after_fees_amount,
-                  :amount_type    =>user_account.measurement_type,
-                  :frequency      =>freq,
-                  :lat            =>lat,
-                  :lng            =>lng,
-                  :created_on     =>date,
-                  :issued_by      =>issued_by)
-      {:log_group=>log_group,:user_account=>user_account,:campaign=>campaign, :program=>campaign.program, :after_fees_amount=> after_fees_amount, :transaction=> transaction, :place_id=> place_id, :frequency=>freq}
+      Log.create!(:user_id        => self.id,
+                  :action_id      => action.id,
+                  :log_group_id   => log_group.id,
+                  :engagement_id  => associatable.id,
+                  :qr_code_id     => qr_code.try(:id),
+                  :campaign_id    => campaign.id,
+                  :business_id    => business_id,
+                  :transaction_id => transaction.id,
+                  :place_id       => place_id,
+                  :gained_amount  => after_fees_amount,
+                  :amount_type    => user_account.measurement_type,
+                  :frequency      => freq,
+                  :lat            => lat,
+                  :lng            => lng,
+                  :created_on     => date,
+                  :issued_by      => issued_by)
+      {:log_group => log_group,:user_account => user_account,:campaign => campaign, :program => campaign.program, :after_fees_amount => after_fees_amount, :transaction => transaction, :place_id => place_id, :frequency => freq}
     end  
   end
   
 	def snapped_qrcode(qr_code,associatable,place_id,lat,lng, issued_by)
-	  if associatable.class.to_s=="Engagement"
-      result=engaged_with(associatable,associatable.amount,qr_code,place_id,lat,lng,"User made an engagement using QR Code",1,nil,issued_by)          
-    elsif associatable.class.to_s=="User"
-      date=Date.today.to_s
-      action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
+	  if associatable.class.to_s == "Engagement"
+      result = engaged_with( associatable, associatable.amount, qr_code , place_id, lat, lng , "User made an engagement using QR Code",1,nil,issued_by)          
+    elsif associatable.class.to_s == "User"
+      date = Date.today.to_s
+      action = Action.where(:name => Action::CURRENT_ACTIONS[:engagement]).first
       Account.transaction do
         qr_code.scan        
-        log_group=LogGroup.create!(:created_on=>date)
+        log_group = LogGroup.create!(:created_on => date)
         if place_id.blank?
           unless lat.blank? || lng.blank?
-            place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
+            place_id = Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
           end
         end
         Log.create!(:user_id        =>self.id,
@@ -406,15 +411,15 @@ class User < ActiveRecord::Base
           [user_account,campaign,campaign.program,after_fees_amount]
         end
       elsif associatable.class.to_s=="User"
-        date=Date.today.to_s
-        action=Action.where(:name=>Action::CURRENT_ACTIONS[:engagement]).first
+        date = Date.today.to_s
+        action = Action.where(:name => Action::CURRENT_ACTIONS[:engagement]).first
         Account.transaction do
           qr_code.scan
           QrCode.create(:code_type => QrCode::SINGLE_USE,:status=>1,:associatable_id=>associatable.id,:associatable_type=>QrCode::USER_TYPE,:size=>qr_code.size)
-          log_group=LogGroup.create!(:created_on=>date)
+          log_group = LogGroup.create!(:created_on=>date)
           if place_id.blank?
             unless lat.blank? || lng.blank?
-              place_id=Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
+              place_id = Place.closest(:origin=>[lat.to_f,lng.to_f]).first.id
             end
           end
           Log.create!(:user_id        =>self.id,
@@ -432,20 +437,37 @@ class User < ActiveRecord::Base
 	end
 	
   def made_spend_engagement_at(qr_code, business, spend_campaign , ringup_amount, lat, lng, log_group, issued_by) 
-    #begin
+    begin
       if spend_campaign.present?
-        engagement=spend_campaign.engagements.first
-        result=engaged_with(engagement,ringup_amount * engagement.amount,qr_code,nil,lat,lng,"User made a spend based engagement through cashier",1,log_group, issued_by) 
+        engagement = spend_campaign.engagements.first
+        result = engaged_with(engagement, ringup_amount * engagement.amount, qr_code, nil, lat, lng, "User made a spend based engagement through cashier", 1, log_group, issued_by) 
+        reward = spend_campaign.rewards.first
+        if reward.is_unlocked?(self)          
+          options = {
+            :action => :redeem,
+            :amount => reward.money_amount,
+            :from_account => spend_campaign.business_account,
+            :to_account => self.cashbury_account_for(business),
+            :campaign => spend_campaign,
+            :user => self
+          }
+          Transaction.fire(options)
+          reward.is_claimed_by(self,result[:user_account], nil, lat, lng)
+        end
         #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)
-        receipt=Receipt.create(:user_id=>self.id, :cashier_id=>issued_by, :receipt_text=>"", :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
+        receipt = Receipt.create(:user_id => self.id, :cashier_id => issued_by, :receipt_text=>"", :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
         self.receipts << receipt
         self.pending_receipts << receipt
         save
       end
       result
-    #rescue Exception=>e
-    #  logger.error "Exception #{e.class}: #{e.message}"
-    #end
+    rescue Exception=>e
+      logger.error "Exception #{e.class}: #{e.message}"
+    end
+  end
+
+  def unlocked_campaign_reward(user_account, campaign)
+    user_account.amount >= campaign.rewards.first.needed_amount
   end
 
   def create_load_transaction_receipt(cashier_id, txn_id)

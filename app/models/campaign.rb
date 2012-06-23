@@ -27,7 +27,7 @@ class Campaign < ActiveRecord::Base
 	belongs_to :program
 	belongs_to :measurement_type
 
-	validates_presence_of :name,:measurement_type_id,:program_id,:start_date
+	validates_presence_of :name, :measurement_type_id, :program_id, :start_date
 	validates_format_of :start_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy-mm-dd"
 	validates_format_of :end_date, :with => /\d{4}-\d{2}-\d{2}/, :message => "^Date must be in the following format: yyyy-mm-dd",:allow_nil=>true
 	validates_numericality_of :initial_amount
@@ -39,7 +39,7 @@ class Campaign < ActiveRecord::Base
 	after_save :update_places
 	
 	scope :running_campaigns, where("? >= start_date && ? < end_date", Date.today, Date.today)
-	attr_accessor   :places_list,:item_name
+	attr_accessor :places_list,:item_name
 	accepts_nested_attributes_for :engagements
 	accepts_nested_attributes_for :rewards,:allow_destroy => true
 
@@ -52,7 +52,7 @@ class Campaign < ActiveRecord::Base
 	}
 	
 	def check_if_campaign_exist
-    if self.new_record? and self.ctype==Campaign::CTYPE[:spend] and Campaign.joins(:program=>:business).where("ctype=#{Campaign::CTYPE[:spend]} and ((end_date IS NOT null AND '#{Date.today}' BETWEEN start_date AND end_date) || '#{Date.today}' >= start_date) and businesses.id=#{self.program.business.id}").any? 
+    if self.new_record? and self.ctype == Campaign::CTYPE[:spend] and Campaign.joins(:program => :business).where("ctype=#{Campaign::CTYPE[:spend]} and ((end_date IS NOT null AND '#{Date.today}' BETWEEN start_date AND end_date) || '#{Date.today}' >= start_date) and businesses.id=#{self.program.business.id}").any? 
       errors.add_to_base "There is already a spend based campaign running at the business, You could edit it or remove from the system"
     end
   end
@@ -75,7 +75,7 @@ class Campaign < ActiveRecord::Base
 
   
 	def is_running?
-	  date=Date.today
+	  date = Date.today
 	  date >= start_date && date < end_date
 	end
 

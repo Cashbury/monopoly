@@ -8,9 +8,9 @@ class Users::PlacesController < Users::BaseController
         @places=Place.with_address.geo_scope(:origin=>[params[:lat].to_f,params[:long].to_f])
                                   .where("cities.id=#{params[:city_id]}")
                                   .order("distance ASC")
-        is_my_city=!city.nil?                                  
+        is_my_city = !city.nil?                                  
       else
-        city=City.where(:id=>params[:city_id]).first
+        city = City.where(:id=>params[:city_id]).first
         @places=Place.with_address.where("cities.id=#{params[:city_id]}").order("places.name ASC")                                  
       end                             
     elsif !params[:lat].blank? && !params[:long].blank?
@@ -54,7 +54,7 @@ class Users::PlacesController < Users::BaseController
   end
   
   def prepare_result(options)
-    @result={}
+    @result = {}
     @result["is_my_city"] = options[:is_my_city]
     if options[:city]
       @result["city-id"] = options[:city].id
@@ -67,6 +67,7 @@ class Users::PlacesController < Users::BaseController
       @result["places"][index]["distance-unit"] = Place::DISTANCE_UNIT
       business = place.business
       @result["places"][index]["featured"] = business.featured
+      @result["places"][index]["cashbox-balance"] = current_user.cashbox_credit_for(business)
       @result["places"][index]["user-id-image-url"] = current_user.qr_code && business.activate_users_id ? URI.escape(current_user.qr_code.qr_code_image.photo.url) : nil
       unless business.nil?
         programs = business.programs

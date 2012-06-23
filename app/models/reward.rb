@@ -79,57 +79,25 @@ class Reward < ActiveRecord::Base
     # return @items
   end
 
-  def is_claimed_by(user,user_account,place_id,lat,lng)
-    business_account=self.campaign.business_account
-    date=Date.today.to_s
-		Account.transaction do
-		  user.enjoyed_rewards << self
-		  user.save
-		  #debit user account and credit business account
-      action=Action.where(:name=>Action::CURRENT_ACTIONS[:redeem]).first
-      transaction_type=action.transaction_type
-      after_fees_amount=transaction_type.fee_amount.nil? ? self.needed_amount : self.needed_amount-transaction_type.fee_amount
-      after_fees_amount=transaction_type.fee_percentage.nil? ? after_fees_amount : (after_fees_amount-(after_fees_amount * transaction_type.fee_percentage/100))
-
-      user_account_before_balance=user_account.amount
-      user_account.decrement!(:amount,self.needed_amount)
-
-      business_account_before_balance=business_account.amount
-      business_account.increment(:amount,after_fees_amount)
-      business_account.increment(:cumulative_amount,after_fees_amount)
-
-      #save the transaction record
-      transaction=Transaction.create!(:from_account=>user_account.id,
-                                      :to_account=>business_account.id,
-                                      :before_fees_amount=>self.needed_amount,
-                                      :payment_gateway=>user_account.payment_gateway,
-                                      :is_money=>false,
-                                      :from_account_balance_before=>user_account_before_balance,
-                                      :from_account_balance_after=>user_account.amount,
-                                      :to_account_balance_before=>business_account_before_balance,
-                                      :to_account_balance_after=>business_account.amount,
-                                      :currency=>nil,
-                                      :note=>"User claimed a reward",
-                                      :transaction_type_id=>action.transaction_type_id,
-                                      :after_fees_amount=>after_fees_amount,
-                                      :transaction_fees=>transaction_type.fee_amount)
-
-			log_group=LogGroup.create!(:created_on=>date)
-			Log.create!(:user_id        =>user.id,
-                  :action_id      =>action.id,
-                  :log_group_id   =>log_group.id,
-                  :reward_id      =>self.id,
-                  :campaign_id    =>self.campaign.id,
-                  :business_id    =>self.campaign.program.business.id,
-                  :transaction_id =>transaction.id,
-                  :place_id       =>place_id,
-                  :gained_amount  =>after_fees_amount,
-                  :amount_type    =>user_account.measurement_type,
-                  :frequency      =>1,
-                  :lat            =>lat,
-                  :lng            =>lng,
-                  :created_on     =>date)
-		end
+  def is_claimed_by(user, user_account, place_id, lat, lng)
+    business_account = self.campaign.business_account
+    options = {
+      :action => :redeem,
+      :amount => self.needed_amount,
+      :from_account => user_account,
+      :to_account => business_account,
+      :campaign => self.campaign,
+      :user => user,
+      :place_id => place_id,
+      :lat => lat,
+      :lng => lng,
+      :not => "User claimed a reward",
+      :reward => self
+    }
+    puts "gowa is clamied by"
+    Transaction.fire(options)
+    user.enjoyed_rewards << self
+    user.save
   end
   
   def is_unlocked?(user)

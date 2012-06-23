@@ -1,4 +1,5 @@
 class Businesses::CashCampaignsController < ApplicationController
+  
   before_filter :authenticate_user!, :require_admin
   before_filter :prepare_business
 
@@ -9,14 +10,14 @@ class Businesses::CashCampaignsController < ApplicationController
   end
 
   def create
-    @program_type=ProgramType.find_or_create_by_name(:name=>"Marketing")
-    @program     =Program.find_or_create_by_business_id_and_program_type_id(:business_id=>@business.id,:program_type_id=>@program_type.id)
+    @program_type = ProgramType.find_or_create_by_name(:name => ProgramType::AS[:money] )
+    @program      = Program.find_or_create_by_business_id_and_program_type_id(:business_id => @business.id,:program_type_id => @program_type.id)
     @campaign = @program.campaigns.build(params[:campaign])
     if params[:target_id].present?
-      @campaign.has_target=true
+      @campaign.has_target = true
       @campaign.targets << Target.find(params[:target_id])
     end
-    @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name=>@business.currency_code||'USD',:business_id=>@business.id)
+    @campaign.measurement_type=MeasurementType.find_or_create_by_name_and_business_id(:name => @business.currency_code || 'USD',:business_id => @business.id)
     @campaign.start_date = Date.today
     @campaign.end_date = 3.years.from_now.to_date
     respond_to do |format|
@@ -41,17 +42,17 @@ class Businesses::CashCampaignsController < ApplicationController
   def update
     @campaign = Campaign.find(params[:id])
     @campaign.places_list = params[:campaign][:places_list] unless params[:campaign][:places_list].blank?
-    reward_attrs=params[:campaign][:rewards_attributes]["0"]
+    reward_attrs = params[:campaign][:rewards_attributes]["0"]
     if params[:target_id].present?
-      @campaign.has_target=true
+      @campaign.has_target = true
       unless @campaign.targets.empty?
-        @campaign.targets.update_all(:target_id=>params[:target_id])
+        @campaign.targets.update_all(:target_id => params[:target_id])
       else
         @campaign.targets << Target.find(params[:target_id])
       end
     else
       @campaign.targets.delete_all
-      @campaign.has_target=false
+      @campaign.has_target = false
     end
     respond_to do |format|
       if @campaign.update_attributes!(params[:campaign])
