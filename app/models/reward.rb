@@ -93,8 +93,7 @@ class Reward < ActiveRecord::Base
       :lng => lng,
       :not => "User claimed a reward",
       :reward => self
-    }
-    puts "gowa is clamied by"
+    }    
     Transaction.fire(options)
     user.enjoyed_rewards << self
     user.save
