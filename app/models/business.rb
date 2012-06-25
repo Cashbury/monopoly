@@ -199,13 +199,12 @@ class Business < ActiveRecord::Base
   
   def list_campaigns
     self.programs
-        .joins([:program_type,[:campaigns=>[:accounts=>:account_holder]]])
-        .where("account_holders.model_id=#{self.id} and account_holders.model_type='#{self.class.to_s}'")
-        .select("campaigns.name as c_name, program_types.name as pt_name, accounts.amount as biz_balance, campaigns.id as c_id")
+        .joins([:program_type, :campaigns])
+        .select("campaigns.name as c_name, program_types.name as pt_name, campaigns.id as c_id")
   end
   
-  NEW_CUSTOMER=1
-  RETURNING_CUSTOMER=2
+  NEW_CUSTOMER = 1
+  RETURNING_CUSTOMER = 2
  
   def list_all_enrolled_customers(type_id, p_id)
     case type_id

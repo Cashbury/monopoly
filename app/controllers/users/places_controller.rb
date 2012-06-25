@@ -66,8 +66,7 @@ class Users::PlacesController < Users::BaseController
       @result["places"][index] = place.attributes.reject{|k,v| k == "address_id"}
       @result["places"][index]["distance-unit"] = Place::DISTANCE_UNIT
       business = place.business
-      @result["places"][index]["featured"] = business.featured
-      @result["places"][index]["cashbox-balance"] = current_user.cashbox_credit_for(business)
+      @result["places"][index]["featured"] = business.featured      
       @result["places"][index]["user-id-image-url"] = current_user.qr_code && business.activate_users_id ? URI.escape(current_user.qr_code.qr_code_image.photo.url) : nil
       unless business.nil?
         programs = business.programs

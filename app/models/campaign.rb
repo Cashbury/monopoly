@@ -36,6 +36,7 @@ class Campaign < ActiveRecord::Base
   
 	after_create :create_campaign_business_account
 	before_create :init
+  before_create :create_business_money_program, :if => Proc.new {|c| c.cash_incentive? }
 	after_save :update_places
 	
 	scope :running_campaigns, where("? >= start_date && ? < end_date", Date.today, Date.today)
@@ -88,9 +89,16 @@ class Campaign < ActiveRecord::Base
   end
 
 	private
-	def create_campaign_business_account    
-    account_holder  = AccountHolder.find_or_create_by_model_id_and_model_type(:model_id=>self.program.business.id,:model_type=>self.program.business.class.to_s)    
-	  account = Account.find_or_create_by_campaign_id_and_account_holder_id(:campaign_id=>self.id,:amount=>self.initial_biz_amount,:measurement_type=>self.measurement_type,:account_holder_id => account_holder.id)    
+	def create_campaign_business_account 
+    unless self.cash_incentive? # NO marketing account for this type of campaign
+      account_holder = AccountHolder.find_or_create_by_model_id_and_model_type(:model_id => self.program.business.id,:model_type => self.program.business.class.to_s)
+      account = Account.find_or_create_by_campaign_id_and_account_holder_id(:campaign_id => self.id,:amount => self.initial_biz_amount,:measurement_type => self.measurement_type,:account_holder_id => account_holder.id)
+    end
+  end
+
+  def create_business_money_program
+    pt = ProgramType.find_or_create_by_name(:name => ProgramType::AS[:money] )
+    Program.find_or_create_by_business_id_and_program_type_id(:business_id => self.program.business.id,:program_type_id => pt.id)
   end
   
   def update_places
