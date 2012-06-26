@@ -1,8 +1,7 @@
 # RVM bootstrap
-$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 require 'rvm/capistrano'
 set :rvm_ruby_string, '1.9.2-p290'
-
+set :rvm_type, :system
 # bundler bootstrap
 require 'bundler/capistrano'
 
@@ -36,7 +35,7 @@ set :use_sudo, false
 set :scm, :git
 #set :scm_username, "amer"
 set :repository, "git@github.com:Kazdoor/monopoly.git"
-set :branch, "demo2"
+set :branch, "master"
 set :git_enable_submodules, 1
 
 # More configurations
