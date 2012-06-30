@@ -36,7 +36,7 @@ class Campaign < ActiveRecord::Base
   
 	after_create :create_campaign_business_account
 	before_create :init
-  before_create :create_business_money_program, :if => Proc.new {|c| c.cash_incentive? }
+  before_create :ensure_business_money_program, :if => Proc.new {|c| c.cash_incentive? || c.spend_campaign? }
 	after_save :update_places
 	
 	scope :running_campaigns, where("? >= start_date && ? < end_date", Date.today, Date.today)
@@ -96,7 +96,7 @@ class Campaign < ActiveRecord::Base
     end
   end
 
-  def create_business_money_program
+  def ensure_business_money_program
     pt = ProgramType.find_or_create_by_name(:name => ProgramType::AS[:money] )
     Program.find_or_create_by_business_id_and_program_type_id(:business_id => self.program.business.id,:program_type_id => pt.id)
   end

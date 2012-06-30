@@ -200,6 +200,16 @@ class User < ActiveRecord::Base
     end
   end
 
+  def enroll(campaign)
+    User.transaction do      
+      self.create_account_holder if account_holder.blank?
+      Account.find_or_create_by_campaign_id_and_account_holder_id(:campaign_id => campaign.id, 
+                                                                  :amount => campaign.initial_amount,
+                                                                  :measurement_type => campaign.measurement_type,
+                                                                  :account_holder_id => self.account_holder.id)
+    end
+  end
+
   def cash_incentive(business, amount, campaign_id)
     cash_account = self.cashbury_account_for(business)
     program = Program.find_or_create_by_business_id_and_program_type_id(:business_id=>business.id,:program_type_id=>ProgramType['Money'])
@@ -237,21 +247,35 @@ class User < ActiveRecord::Base
   def cash_account_for(business)
     ensure_account_holder!
     money_program = business.money_program
-    Account.where(:business_id => business.id)
-      .where(:program_id => money_program.id)
-      .where(:is_money => true)
-      .where(:account_holder_id => self.account_holder.id)
-      .first
+    account = Account.where(:business_id => business.id)
+                     .where(:program_id => money_program.id)
+                     .where(:is_money => true)
+                     .where(:account_holder_id => self.account_holder.id)
+                     .first
+    if account.nil? 
+      account = Account.create(:business_id => business.id, 
+                               :program_id => money_program.id, 
+                               :is_money => true, 
+                               :account_holder_id => self.account_holder.id )
+    end
+    account
   end
 
   def cashbury_account_for(business)
     ensure_account_holder!
     money_program = business.money_program
-    Account.where(:business_id => business.id)
-      .where(:program_id => money_program.id)
-      .where(:is_cashbury => true)
-      .where(:account_holder_id => self.account_holder.id)
-      .first
+    account = Account.where(:business_id => business.id)
+                     .where(:program_id => money_program.id)
+                     .where(:is_cashbury => true)
+                     .where(:account_holder_id => self.account_holder.id)
+                     .first
+    if account.nil? 
+      account = Account.create(:business_id => business.id, 
+                               :program_id => money_program.id, 
+                               :is_cashbury => true, 
+                               :account_holder_id => self.account_holder.id )
+    end    
+    account
   end
 
   def cashbox_credit_for(business)
@@ -439,42 +463,54 @@ class User < ActiveRecord::Base
   def made_spend_engagement_at(qr_code, business, spend_campaign , ringup_amount, lat, lng, log_group, issued_by) 
     begin
       if spend_campaign.present?
-        engagement = spend_campaign.engagements.first
-        result = engaged_with(engagement, ringup_amount * engagement.amount, qr_code, nil, lat, lng, "User made a spend based engagement through cashier", 1, log_group, issued_by) 
-        reward = spend_campaign.rewards.first
-        if reward.is_unlocked?(self)          
-          options = {
-            :action => :redeem,
-            :amount => reward.money_amount,
-            :from_account => spend_campaign.business_account,
-            :to_account => self.cashbury_account_for(business),
-            :campaign => spend_campaign,
-            :user => self
-          }
-          Transaction.fire(options)
-          reward.is_claimed_by(self,result[:user_account], nil, lat, lng)
-        end
-        #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)        
         cashbury_account = self.cashbury_account_for(business)
-        cashbox_amount = self.cashbox_credit_for(business)        
+        cashbox_amount = self.cashbox_credit_for(business)  
+        tx_savings = 0      
         if cashbox_amount <= ringup_amount 
           tx_savings = cashbox_amount
         else
           tx_savings = ringup_amount
         end
-        cashbury_account.spend(tx_savings) unless tx_savings == 0
+        cashbury_account.spend(tx_savings) unless tx_savings == 0 # 1
+        self.enroll(spend_campaign)
+        engagement = spend_campaign.engagements.first
+        result = engaged_with(engagement, (ringup_amount * engagement.amount - tx_savings), qr_code, nil, lat, lng, "User made a spend based engagement through cashier", 1, log_group, issued_by)  # 2
+        reward = spend_campaign.rewards.first
+        if reward.is_unlocked?(self)
+          current_balance = spend_campaign.user_account(self).amount #after engagement
+          reward_needed_amount = reward.needed_amount          
+          unlocked_credit = (current_balance / reward_needed_amount).to_i * reward.money_amount          
+          options = {
+            :action => :redeem,
+            :amount => unlocked_credit,
+            :from_account => spend_campaign.business_account,
+            :to_account => self.cashbury_account_for(business),
+            :campaign => spend_campaign,
+            :user => self
+          }
+          Transaction.fire(options) # 3
+          (current_balance / reward_needed_amount).to_i.times do |i|            
+            reward.is_claimed_by(self,spend_campaign.user_account(self), nil, lat, lng) # 4
+          end          
+        end
+      #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)        
+        remaining_credit = reward.needed_amount - spend_campaign.user_account(self).amount
         receipt = Receipt.create(:user_id => self.id, 
                                  :cashier_id => issued_by, 
                                  :receipt_text =>"", 
                                  :receipt_type => Receipt::TYPE[:spend], 
-                                 :transaction_id => result[:transaction].id, 
+                                 :current_credit => spend_campaign.user_account(self).amount,
+                                 :transaction_id => result[:transaction].id,
                                  :log_group_id => result[:log_group].id,
-                                 :tx_savings => tx_savings)
+                                 :tx_savings => tx_savings,
+                                 :cashbury_credit_post_tx => self.cashbury_account_for(business).try(:amount).try(:to_f) || 0,
+                                 :unlocked_credit => unlocked_credit || 0,
+                                 :remaining_credit => remaining_credit || 0)
         self.receipts << receipt
         self.pending_receipts << receipt
         save
       end
-      result
+      return result
     rescue Exception => e
       logger.error "Exception #{e.class}: #{e.message}"
     end
@@ -503,13 +539,14 @@ class User < ActiveRecord::Base
     save
   end
 
-  def create_charge_transaction_group_receipt(cashier_id, txn_group_id, tx_savings)
+  def create_charge_transaction_group_receipt(cashier_id, txn_group_id, tx_savings, business)
     receipt = Receipt.create(:user_id => self.id, 
                              :cashier_id => cashier_id, 
                              :receipt_text=>"Charge receipt", 
                              :receipt_type => Receipt::TYPE[:spend], 
                              :transaction_group_id => txn_group_id,
-                             :tx_savings => tx_savings)
+                             :tx_savings => tx_savings,
+                             :cashbury_credit_post_tx => self.cashbury_account_for(business).amount.to_f)
     self.receipts << receipt
     self.pending_receipts << receipt
     save
@@ -583,7 +620,7 @@ class User < ActiveRecord::Base
         .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
         .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.tx_savings")
+        .select("businesses.id as business_id, receipts.current_credit, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.tx_savings, receipts.unlocked_credit, receipts.cashbury_credit_post_tx, receipts.remaining_credit")
         .where("logs.transaction_id = receipts.transaction_id")
   end
   
@@ -601,7 +638,7 @@ class User < ActiveRecord::Base
         .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
         .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.tx_savings")
+        .select("businesses.id as business_id, receipts.current_credit, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.tx_savings, receipts.unlocked_credit, receipts.cashbury_credit_post_tx, receipts.remaining_credit")
         .where(params)
   end
 

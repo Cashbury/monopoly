@@ -98,7 +98,7 @@ class Users::CashiersController < Users::BaseController
           cash_account.tip(tip)
         end
         tx_savings = available_balance <= total_amount ? available_balance : total_amount
-        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id, tx_savings)
+        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id, tx_savings, business)
         user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})
@@ -120,7 +120,7 @@ class Users::CashiersController < Users::BaseController
       respond_to do |format|
         format.xml { render :xml => ae, :status => ae.status_code }
       end
-    rescue Exception=>e
+    rescue Exception =>e
       logger.error "Exception #{e.class}: #{e.message}"
       respond_to do |format|     
         format.xml {render :text => e.message  , :status => 500 }
@@ -148,8 +148,8 @@ class Users::CashiersController < Users::BaseController
               result = user.engaged_with(engagement,engagement.amount,qr_code,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
               engagement_data = {:current_balance => result[:user_account].amount, :campaign_id => result[:campaign].id, :amount => result[:after_fees_amount], :title => engagement.name, :quantity => result[:frequency] }
               engagements.map!{ |x| 
-                if x[:campaign_id]==result[:campaign].id
-                  x[:current_balance]=result[:user_account].amount
+                if x[:campaign_id] == result[:campaign].id
+                  x[:current_balance] = result[:user_account].amount
                   x
                 else
                   x
@@ -159,7 +159,7 @@ class Users::CashiersController < Users::BaseController
             end
           end
         end
-        #Spend based campaign    
+        #Spend based campaign   
         campaign = business.spend_based_campaign
         campaign_engagement = campaign.try(:engagements).try(:first)
         engagement_valid = (!campaign_engagement.end_date || campaign_engagement.end_date > Date.today)

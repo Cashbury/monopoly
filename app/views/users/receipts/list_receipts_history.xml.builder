@@ -4,8 +4,11 @@ xml.customer_receipts do
     xml.receipt do
       business = Business.where(:id => receipt.business_id).first
       brand = business.try(:brand)
-      xml.current_balance   receipt.current_balance
+      xml.current_credit    receipt.current_credit
       xml.tx_savings        receipt.tx_savings
+      xml.unlocked_credit   receipt.unlocked_credit
+      xml.cashbury_credit_post_tx receipt.cashbury_credit_post_tx
+      xml.remaining_credit  receipt.remaining_credit
       xml.earned_points     receipt.earned_points
       xml.spend_money       receipt.spend_money
       xml.fb_engagement_msg receipt.fb_engagement_msg
@@ -20,7 +23,7 @@ xml.customer_receipts do
       xml.brand_image_fb    brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))          
       log_group = LogGroup.where(:id => receipt.log_group_id).first
       if log_group.present?
-        logs=log_group.get_receipt_engagements 
+        logs = log_group.get_receipt_engagements 
         xml.engagements do       
           logs.each_with_index do |log,i|
             xml.engagement do  

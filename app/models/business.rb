@@ -55,6 +55,7 @@ class Business < ActiveRecord::Base
   after_save :update_categories
   before_validation :clear_photos
   before_save :add_business_name_to_biz_tag_list
+  after_create :create_business_money_program
 
   #validates :tag_list, :presence=>true
   validates :brand_id, :presence=>true , :numericality => true
@@ -299,6 +300,11 @@ class Business < ActiveRecord::Base
 
   def add_business_name_to_biz_tag_list
     self.tag_list << self.name
+  end
+
+  def create_business_money_program
+    pt = ProgramType.find_or_create_by_name(:name => ProgramType::AS[:money] )
+    Program.find_or_create_by_business_id_and_program_type_id(:business_id => self.id,:program_type_id => pt.id)
   end
 
 end
