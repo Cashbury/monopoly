@@ -26,16 +26,16 @@ Paperclip.options[:command_path] = '/usr/bin'
   # Devise related setting
   config.action_mailer.default_url_options = { :host => 'localhost:3000' }
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 
-	config.action_mailer.smtp_settings = {
-	  :enable_starttls_auto => true,
-	  :address => "smtp.gmail.com",
-	  :port => 587,
-	  :domain => "www.espace.com.eg",
-	  :authentication => :login,
-	  :user_name => "tester@espace.com.eg",
-	  :password => "t3st3r!@#",
-		:tls => true
-	}
-
+  config.action_mailer.smtp_settings = {
+    :enable_starttls_auto => false,
+    :address => "mail.cashbury.com",
+    :port => 587,
+    :domain => "www.cashbury.com",
+    :authentication => :login,
+    :user_name => "join@cashbury.com",
+    :password => "Registerme",
+  }
 end

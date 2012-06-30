@@ -49,15 +49,17 @@ Kazdoor::Application.configure do
   # Devise related setting
   config.action_mailer.default_url_options = { :host => 'cashnode.cashbury.com' }
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.smtp_settings = {
-    :enable_starttls_auto => true,
-    :address => "smtp.gmail.com",
+    :enable_starttls_auto => false,
+    :address => "mail.cashbury.com",
     :port => 587,
-    :domain => "www.espace.com.eg",
+    :domain => "www.cashbury.com",
     :authentication => :login,
-    :user_name => "tester@espace.com.eg",
-    :password => "t3st3r!@#",
+    :user_name => "join@cashbury.com",
+    :password => "Registerme",
     :tls => true
   }
 end

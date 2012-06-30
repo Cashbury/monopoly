@@ -52,7 +52,7 @@ table {width: 1000px;}
     <td><%= user.sign_in_count %></td>
     <td><%= user.current_sign_in_ip%></td>
     <td><%= user.amount || 0  %></td>
-    <td><%= status_icon user.confirmed_at.nil? %></td>
+    <td><%= status_icon user.confirmed_at.present? %></td>
     <td><%= status_icon user.admin? %></td>
     <td><%= status_icon user.is_fb_enabled %></td>
     <td><%= link_to 'Show', users_management_path(user) ,:class=>"button"%></td>

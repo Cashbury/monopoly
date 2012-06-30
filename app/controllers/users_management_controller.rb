@@ -31,9 +31,7 @@ class UsersManagementController < ApplicationController
       address=Address.create(params[:user][:billing_address_attributes])
       @user.billing_address_id=address.id
     end
-    if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
-      @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
-    end
+    
     @user.places << Place.find(params[:place_id])  if params[:place_id].present?
     respond_to do |format|
       if @user.save
@@ -97,9 +95,7 @@ class UsersManagementController < ApplicationController
         @user.billing_address_id=address.id
       end
     end
-    if params[:birth][:day].present? and params[:birth][:month].present? and params[:birth][:year].present?
-      @user.dob=Date.civil(params[:birth][:year].to_i,params[:birth][:month].to_i,params[:birth][:day].to_i)     
-    end
+    
     respond_to do |format|
       if @user.update_attributes(params[:user])
         LegalId.delete_all("associatable_id=#{@user.id} and associatable_type='User'")
