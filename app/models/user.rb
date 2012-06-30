@@ -255,7 +255,7 @@ class User < ActiveRecord::Base
   end
 
   def cashbox_credit_for(business)
-    (cashbury_account_for(business).try(:amount) || 0) + (cash_account_for(business).try(:amount)  || 0)
+    (cashbury_account_for(business).try(:amount).to_f || 0) + (cash_account_for(business).try(:amount).to_f  || 0)
   end
 
   def cashbury_accounts
@@ -454,14 +454,28 @@ class User < ActiveRecord::Base
           Transaction.fire(options)
           reward.is_claimed_by(self,result[:user_account], nil, lat, lng)
         end
-        #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)
-        receipt = Receipt.create(:user_id => self.id, :cashier_id => issued_by, :receipt_text=>"", :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id)
+        #self.receipts.create(:business_id=>spend_campaign.program.business.id, :place_id=>result[:place_id], :receipt_text=>"", :amount=>result[:after_fees_amount], :receipt_type=>Receipt::TYPE[:spend], :transaction_id=>result[:transaction].id, :log_group_id=>result[:log_group].id, :spend_campaign_id=>spend_campaign.id)        
+        cashbury_account = self.cashbury_account_for(business)
+        cashbox_amount = self.cashbox_credit_for(business)        
+        if cashbox_amount <= ringup_amount 
+          tx_savings = cashbox_amount
+        else
+          tx_savings = ringup_amount
+        end
+        cashbury_account.spend(tx_savings) unless tx_savings == 0
+        receipt = Receipt.create(:user_id => self.id, 
+                                 :cashier_id => issued_by, 
+                                 :receipt_text =>"", 
+                                 :receipt_type => Receipt::TYPE[:spend], 
+                                 :transaction_id => result[:transaction].id, 
+                                 :log_group_id => result[:log_group].id,
+                                 :tx_savings => tx_savings)
         self.receipts << receipt
         self.pending_receipts << receipt
         save
       end
       result
-    rescue Exception=>e
+    rescue Exception => e
       logger.error "Exception #{e.class}: #{e.message}"
     end
   end
@@ -477,15 +491,25 @@ class User < ActiveRecord::Base
     save
   end
 
-  def create_charge_transaction_receipt(cashier_id, txn_id)
-    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Charge receipt", :receipt_type=>Receipt::TYPE[:spend], :transaction_id => txn_id)
+  def create_charge_transaction_receipt(cashier_id, txn_id, tx_savings)
+    receipt = Receipt.create(:user_id => self.id, 
+                             :cashier_id => cashier_id, 
+                             :receipt_text => "Charge receipt", 
+                             :receipt_type => Receipt::TYPE[:spend], 
+                             :transaction_id => txn_id,
+                             :tx_savings => tx_savings)
     self.receipts << receipt
     self.pending_receipts << receipt
     save
   end
 
-  def create_charge_transaction_group_receipt(cashier_id, txn_group_id)
-    receipt = Receipt.create(:user_id => self.id, :cashier_id => cashier_id, :receipt_text=>"Charge receipt", :receipt_type=>Receipt::TYPE[:spend], :transaction_group_id => txn_group_id)
+  def create_charge_transaction_group_receipt(cashier_id, txn_group_id, tx_savings)
+    receipt = Receipt.create(:user_id => self.id, 
+                             :cashier_id => cashier_id, 
+                             :receipt_text=>"Charge receipt", 
+                             :receipt_type => Receipt::TYPE[:spend], 
+                             :transaction_group_id => txn_group_id,
+                             :tx_savings => tx_savings)
     self.receipts << receipt
     self.pending_receipts << receipt
     save
@@ -551,15 +575,15 @@ class User < ActiveRecord::Base
 
   def list_customer_pending_receipts
     self.pending_receipts
-        .joins("inner join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
-        .joins("inner join logs on logs.transaction_id = transactions.id")
-        .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
+        .joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
+        .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
+        .joins("LEFT OUTER JOIN businesses ON businesses.id = logs.business_id ")
         .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
         .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
         .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
         .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.tx_savings")
         .where("logs.transaction_id = receipts.transaction_id")
   end
   
@@ -569,22 +593,22 @@ class User < ActiveRecord::Base
     filters << "businesses.id = ?" and params << business_id if business_id.present?
     params.insert(0, filters.join(" AND ")) 
     them = self.receipts
-        .joins("inner join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
-        .joins("inner join logs on logs.transaction_id = transactions.id")
-        .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
+        .joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
+        .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
+        .joins("LEFT OUTER JOIN businesses ON businesses.id = logs.business_id ")
         .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
         .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
         .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
         .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+        .select("businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.tx_savings")
         .where(params)
   end
 
   def list_cashier_receipts(limit)
-    Receipt.joins("inner join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
-           .joins("inner join logs on logs.transaction_id = transactions.id")
-           .joins("INNER JOIN businesses ON businesses.id = logs.business_id ")
+    Receipt.joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
+           .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
+           .joins("LEFT OUTER JOIN businesses ON businesses.id = logs.business_id ")
            .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
            .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
            .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")

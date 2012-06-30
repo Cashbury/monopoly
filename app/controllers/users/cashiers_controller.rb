@@ -25,16 +25,16 @@ class Users::CashiersController < Users::BaseController
 
   def load_money
     begin
-      qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
+      qr_code = QrCode.associated_with_users.where(:hash_code => params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
         amount = params[:amount].nil? ? 0: params[:amount].to_f
-        user=qr_code.user
-        employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
-        business= Business.find(employee.business_id)
+        user = qr_code.user
+        employee = current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
+        business = Business.find(employee.business_id)
 
         raise "Cannot load money if business is not in Money Program" unless business.has_money_program?
 
-        user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
+        user_type = user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         account = user.cash_account_for(business)
         error_message = ""
         if account.nil?
@@ -74,15 +74,15 @@ class Users::CashiersController < Users::BaseController
 
   def charge_customer
     begin
-      qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
+      qr_code = QrCode.associated_with_users.where(:hash_code => params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
         amount = params[:amount].nil? ? 0 : params[:amount].to_f
         tip = params[:tip].nil? ? 0 : params[:tip].to_f
         total_amount = amount + tip
-        user=qr_code.user
-        employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
-        business= Business.find(employee.business_id)
-        user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
+        user = qr_code.user
+        employee = current_user.employees.where(:role_id => Role.find_by_name(Role::AS[:cashier]).id).first   
+        business = Business.find(employee.business_id)
+        user_type = user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         cash_account = user.cash_account_for(business)
         cashbury_account = user.cashbury_account_for(business)
         available_balance = 0
@@ -92,12 +92,13 @@ class Users::CashiersController < Users::BaseController
         if available_balance < total_amount
           raise ApiError.new("Not enough money: balance is #{available_balance} but total amount is #{total_amount}", 422)
         end
+
         txn_group = Account.group_transactions do
           cash_account.spend(amount)
           cash_account.tip(tip)
         end
-      
-        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id)
+        tx_savings = available_balance <= total_amount ? available_balance : total_amount
+        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id, tx_savings)
         user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})
@@ -129,23 +130,23 @@ class Users::CashiersController < Users::BaseController
   
   def ring_up
     begin
-      qr_code=QrCode.associated_with_users.where(:hash_code=>params[:customer_identifier]).first
+      qr_code = QrCode.associated_with_users.where(:hash_code => params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
-        user=qr_code.user
-        employee= current_user.employees.where(:role_id=>Role.find_by_name(Role::AS[:cashier]).id).first   
-        business= Business.find(employee.business_id)
-        user_type= user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
+        user = qr_code.user
+        employee = current_user.employees.where(:role_id => Role.find_by_name(Role::AS[:cashier]).id).first   
+        business = Business.find(employee.business_id)
+        user_type = user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
         #Loyalty collect campaigns
-        result={}
-        engagements=[]
+        result = {}
+        engagements = []
         unless params[:engagements].blank?
           params[:engagements].each do |record| 
             if record.present?
-              records= record.split(',')
-              engagement_id= records.first;quantity=records.second
-              engagement= Engagement.find(engagement_id)
-              result= user.engaged_with(engagement,engagement.amount,qr_code,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
-              engagement_data={:current_balance=>result[:user_account].amount, :campaign_id=> result[:campaign].id, :amount=> result[:after_fees_amount], :title=> engagement.name, :quantity=> result[:frequency] }
+              records = record.split(',')
+              engagement_id = records.first;quantity=records.second
+              engagement = Engagement.find(engagement_id)
+              result = user.engaged_with(engagement,engagement.amount,qr_code,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
+              engagement_data = {:current_balance => result[:user_account].amount, :campaign_id => result[:campaign].id, :amount => result[:after_fees_amount], :title => engagement.name, :quantity => result[:frequency] }
               engagements.map!{ |x| 
                 if x[:campaign_id]==result[:campaign].id
                   x[:current_balance]=result[:user_account].amount
@@ -159,11 +160,11 @@ class Users::CashiersController < Users::BaseController
           end
         end
         #Spend based campaign    
-        campaign=business.spend_based_campaign
+        campaign = business.spend_based_campaign
         campaign_engagement = campaign.try(:engagements).try(:first)
         engagement_valid = (!campaign_engagement.end_date || campaign_engagement.end_date > Date.today)
         if campaign.present? and engagement_valid
-          result=user.made_spend_engagement_at(qr_code, business, campaign, params[:amount].to_f, params[:lat], params[:long], result[:log_group], current_user.id)
+          result = user.made_spend_engagement_at(qr_code, business, campaign, params[:amount].to_f, params[:lat], params[:long], result[:log_group], current_user.id)
           #user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
           #qr_code.scan
         end
@@ -174,9 +175,9 @@ class Users::CashiersController < Users::BaseController
 		    s.merge!({:currency_code      => business.currency_code})
 		    s.merge!({:customer_name      => user.full_name})
 		    s.merge!({:customer_type      => user_type})
-		    user_uid=user.email.split("@facebook").first
+		    user_uid = user.email.split("@facebook").first
         s.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
-        s.merge!({:engagements        =>engagements})
+        s.merge!({:engagements        => engagements})
         respond_to do |format|     
           format.xml {render :xml => s , :status => 200}
         end
@@ -185,7 +186,7 @@ class Users::CashiersController < Users::BaseController
           format.xml {render :text => "Invalid Qrcode"  , :status => 422}
         end
       end
-    rescue Exception=>e
+    rescue Exception => e
       logger.error "Exception #{e.class}: #{e.message}"
       respond_to do |format|     
         format.xml {render :text => e.message  , :status => 500}
@@ -194,13 +195,13 @@ class Users::CashiersController < Users::BaseController
   end
   
   def list_engagements_items
-   @items= Item.list_engagements_items(params[:business_id])   
-   @result={}  
-   @result["items"]=[]         
+   @items = Item.list_engagements_items(params[:business_id])   
+   @result ={}  
+   @result["items"] = []         
    @items.each_with_index do |item,index|     
-     item_obj=Item.find(item.item_id)
-     @result["items"][index]=item.attributes
-     @result["items"][index]["item-image-url"]=item_obj.item_image ? URI.escape(item_obj.item_image.photo.url(:normal)): nil
+     item_obj = Item.find(item.item_id)
+     @result["items"][index] = item.attributes
+     @result["items"][index]["item-image-url"] = item_obj.item_image ? URI.escape(item_obj.item_image.photo.url(:normal)): nil
    end
    
    respond_to do |format|

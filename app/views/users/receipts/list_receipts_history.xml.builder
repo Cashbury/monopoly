@@ -2,9 +2,10 @@ xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
 xml.customer_receipts do
   @all_receipts.each do |receipt|
     xml.receipt do
-      business= Business.find(receipt.business_id) 
-      brand= business.brand
+      business = Business.where(:id => receipt.business_id).first
+      brand = business.try(:brand)
       xml.current_balance   receipt.current_balance
+      xml.tx_savings        receipt.tx_savings
       xml.earned_points     receipt.earned_points
       xml.spend_money       receipt.spend_money
       xml.fb_engagement_msg receipt.fb_engagement_msg
@@ -14,10 +15,10 @@ xml.customer_receipts do
       xml.date_time         receipt.date_time
       xml.place_name        receipt.place_name
       xml.brand_name        receipt.brand_name
-      xml.currency_symbol   business.currency_symbol
-      xml.currency_code     business.currency_code
+      xml.currency_symbol   business.try(:currency_symbol)
+      xml.currency_code     business.try(:currency_code)
       xml.brand_image_fb    brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))          
-      log_group=LogGroup.where(:id=>receipt.log_group_id).first
+      log_group = LogGroup.where(:id => receipt.log_group_id).first
       if log_group.present?
         logs=log_group.get_receipt_engagements 
         xml.engagements do       
