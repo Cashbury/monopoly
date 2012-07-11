@@ -7,9 +7,9 @@ xml.cashier_receipts do
       xml.receipts do
         sub_receipts.each do |receipt|
           xml.receipt do
-            customer= User.find(receipt.customer_id)
-            business= Business.find(receipt.business_id)
-            brand= business.brand
+            customer = User.find(receipt.customer_id)
+            business = Business.find(receipt.business_id)
+            brand = business.brand
             customer_type= customer.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
             xml.current_balance receipt.current_balance
             xml.earned_points receipt.earned_points
@@ -17,7 +17,8 @@ xml.cashier_receipts do
             xml.fb_engagement_msg receipt.fb_engagement_msg
             xml.receipt_text receipt.receipt_text
             xml.receipt_type receipt.receipt_type
-            xml.transaction_id receipt.transaction_id
+            xml.transaction_id receipt.transaction_id if receipt.transaction_id.present?
+            xml.transaction_group_id receipt.transaction_group_id if receipt.transaction_group_id.present?
             xml.date_time receipt.date_time
             xml.place_name receipt.place_name
             xml.brand_name receipt.brand_name
@@ -26,7 +27,7 @@ xml.cashier_receipts do
             xml.customer_name customer.full_name
             xml.customer_type customer_type
             xml.customer_image_url URI.escape(customer.email.match(/facebook/) ? "https://graph.facebook.com/#{customer.id}/picture" : "/images/user-default.jpg")
-            log_group=LogGroup.where(:id=>receipt.log_group_id).first
+            log_group = LogGroup.where(:id=>receipt.log_group_id).first
             if log_group.present?
               logs=log_group.get_receipt_engagements
               xml.engagements do

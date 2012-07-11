@@ -643,16 +643,20 @@ class User < ActiveRecord::Base
   end
 
   def list_cashier_receipts(limit)
+    #TODO GET spend_amount and current_balance in case of cashier charging ( receipt has transaction group)
+    cashier_role = Role.where(:name => Role::AS[:cashier]).first
     Receipt.joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
            .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
-           .joins("LEFT OUTER JOIN businesses ON businesses.id = logs.business_id ")
+           .joins("LEFT OUTER JOIN roles_users ON receipts.cashier_id = roles_users.user_id and roles_users.role_id = #{cashier_role.id}")
+           .joins("LEFT OUTER JOIN businesses ON roles_users.business_id = businesses.id")
            .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
            .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
            .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
            .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
            .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-           .select("#{self.id} as customer_id, businesses.id as business_id, transactions.to_account_balance_after as current_balance, transactions.after_fees_amount as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
-           .where("cashier_id= #{self.id} and logs.transaction_id = receipts.transaction_id")
+           .joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
+           .select("#{self.id} as customer_id, roles_users.business_id as business_id, transactions.to_account_balance_after as current_balance, (select sum(transactions.after_fees_amount) from transactions where transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id) as earned_points, (transactions.after_fees_amount / engagements.amount) as spend_money, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.transaction_group_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name")
+           .where("cashier_id= #{self.id}")
            .order('receipts.created_at DESC')
            .limit(limit)
            #.where("receipts.created_at #{((no_of_days-1).days.ago.utc...Time.now.utc).to_s(:db)} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
