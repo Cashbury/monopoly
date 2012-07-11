@@ -101,7 +101,7 @@ class Account < ActiveRecord::Base
       cashbury_account = account_holder.model.cashbury_account_for(business)
 
       if cashbury_account.amount > 0
-        Account.group_transactions do
+        #Account.group_transactions do
           # Cashburies can't pay for the whole thing.
           if (amount - cashbury_account.amount) > 0
             # Drain Cashbury account to discount total price.
@@ -115,7 +115,7 @@ class Account < ActiveRecord::Base
             # Cashburies can pay the total balance.
             cashbury_account.spend(amount, initiated_by)
           end
-        end
+        #end
 
       else # No cashburies in account, only money.
         move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)

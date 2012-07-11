@@ -13,7 +13,11 @@ xml.cashier_receipts do
             customer_type= customer.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
             xml.current_balance receipt.current_balance
             xml.earned_points receipt.earned_points
-            xml.spend_money receipt.spend_money
+            if receipt.engagement_amount.present?
+              xml.spend_money receipt.earned_points / receipt.engagement_amount
+            else
+              xml.spend_money receipt.earned_points
+            end
             xml.fb_engagement_msg receipt.fb_engagement_msg
             xml.receipt_text receipt.receipt_text
             xml.receipt_type receipt.receipt_type
