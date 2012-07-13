@@ -55,7 +55,7 @@ class Place < ActiveRecord::Base
 
   validates_associated :address
 
-  scope :with_address,joins(:address=>[:city=>:country])
+  scope :with_address,joins(:address => [:city => :country] )
                       .select("places.id,places.name,places.long,places.lat,places.about,places.address_id,places.is_user_defined,places.business_id,places.time_zone,places.phone,
                                addresses.zipcode,addresses.cross_street,addresses.neighborhood,addresses.street_address as address1,
                                countries.name as country")

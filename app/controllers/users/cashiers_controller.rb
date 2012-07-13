@@ -97,8 +97,8 @@ class Users::CashiersController < Users::BaseController
           cash_account.spend(amount)
           cash_account.tip(tip)
         end
-        tx_savings = available_balance <= total_amount ? available_balance : total_amount
-        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id, tx_savings, business)
+        credit_used = available_balance <= total_amount ? available_balance : total_amount
+        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id, credit_used, business)
         user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})
@@ -108,7 +108,7 @@ class Users::CashiersController < Users::BaseController
 		    response.merge!({:currency_code      => business.currency_code})
 		    response.merge!({:customer_name      => user.full_name})
 		    response.merge!({:customer_type      => user_type})
-		    user_uid=user.email.split("@facebook").first
+		    user_uid = user.email.split("@facebook").first
         response.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
         respond_to do |format|     
           format.xml {render :xml => response , :status => 200}

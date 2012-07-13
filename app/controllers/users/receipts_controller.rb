@@ -7,6 +7,10 @@ class Users::ReceiptsController < Users::BaseController
     all_receipts.uniq.each_with_index do |receipt,index|
       brand= Brand.find(receipt.brand_id)
       business = Business.find(receipt.business_id)
+      place = Place.find(receipt.place_id)
+      if place.present?
+        receipt["date_time"] = receipt.date_time.in_time_zone(place.time_zone)      
+      end  
       result[:receipts][index] = receipt.attributes
       result[:receipts][index][:currency_symbol] = business.currency_symbol
       result[:receipts][index][:currency_code] = business.currency_code

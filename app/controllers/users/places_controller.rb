@@ -78,7 +78,7 @@ class Users::PlacesController < Users::BaseController
         @result["places"][index]["is-open"] = place.is_open?
         @result["places"][index]["currency-symbol"]= currency_symbol
         @result["places"][index]["currency-code"]  = business.currency_code
-        @result["places"][index]["open-hours"] = place.open_hours.collect{|oh| {:from=>oh.from.strftime("%I:%M %p"),:to => oh.to.strftime("%I:%M %p"),:day => OpenHour::DAYS.key(oh.day_no)}}
+        @result["places"][index]["open-hours"] = place.open_hours.collect{|oh| {:from=> oh.from.strftime("%I:%M %p"),:to => oh.to.strftime("%I:%M %p"),:day => OpenHour::DAYS.key(oh.day_no)}}
         @result["places"][index]["business_has_user_id_card"] = business.try(:activate_users_id)
         @result["places"][index]["images"] = []
         place.place_images.each_with_index do |p_image,i|
