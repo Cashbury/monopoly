@@ -98,7 +98,15 @@ class Users::CashiersController < Users::BaseController
           cash_account.tip(tip)
         end
         credit_used = available_balance <= total_amount ? available_balance : total_amount
-        user.create_charge_transaction_group_receipt(current_user.id, txn_group.id, credit_used, business)
+        options = {
+          :cashier_id => current_user.id,
+          :txn_group_id => txn_group.id,
+          :credit_used => credit_used,
+          :business => business,
+          :tip => tip,
+          :ringup_amount => amount
+        }
+        user.create_charge_transaction_group_receipt(options)
         user.qr_code.reissue if user.qr_code.single_use?
         response = {}
 		    response.merge!({:amount             => amount})

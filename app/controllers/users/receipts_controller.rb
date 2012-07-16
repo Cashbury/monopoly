@@ -1,38 +1,18 @@
 class Users::ReceiptsController < Users::BaseController
-  after_filter :delete_all_receipts, :only=>[:index]
+
+  after_filter :delete_all_receipts, :only => [:index]
+  
   def index
-    all_receipts = current_user.list_customer_pending_receipts
-    result = {}
-    result[:receipts] = []
-    all_receipts.uniq.each_with_index do |receipt,index|
-      brand= Brand.find(receipt.brand_id)
-      business = Business.find(receipt.business_id)
-      place = Place.find(receipt.place_id)
-      if place.present?
-        receipt["date_time"] = receipt.date_time.in_time_zone(place.time_zone)      
-      end  
-      result[:receipts][index] = receipt.attributes
-      result[:receipts][index][:currency_symbol] = business.currency_symbol
-      result[:receipts][index][:currency_code] = business.currency_code
-      result[:receipts][index][:brand_image_fb]  = brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))
-      log_group=LogGroup.where(:id => receipt.log_group_id).first
-      if log_group.present?
-        result[:receipts][index][:engagements]=[]
-        logs=log_group.get_receipt_engagements        
-        logs.each_with_index do |log,i|
-          result[:receipts][index][:engagements][i]=log.attributes
-        end
-      end
-    end
-    respond_to do |format|       
-      format.xml { render :xml => result,:status=>200 }
+    @all_receipts = current_user.list_customer_pending_receipts
+    respond_to do |format|
+      format.xml
     end
   end
   
   def list_receipts_history
     @all_receipts = current_user.list_customer_all_receipts(params[:business_id])
     respond_to do |format|
-      format.xml {}
+      format.xml
     end
   end
   
