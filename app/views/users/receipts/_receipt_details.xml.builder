@@ -25,12 +25,15 @@
         xml.cash_out          (receipt.tip.to_f + receipt.amount_rungup.to_f) - receipt.credit_used.to_f
       end
       xml.marketing_program do 
-        xml.current_credit    receipt.current_credit      
-        xml.unlocked_credit   receipt.unlocked_credit
+        if receipt.cash_reward.present?
+          xml.cash_reward       receipt.cash_reward
+          xml.earned_points     receipt.earned_points
+          xml.current_credit    receipt.current_credit      
+          xml.remaining_credit  receipt.remaining_credit
+          xml.unlocked_credit   receipt.unlocked_credit
+          xml.progress_percent  (receipt.current_credit.to_f / ( receipt.current_credit.to_f + receipt.remaining_credit.to_f)) * 100
+        end
         xml.cashbury_act_balance receipt.cashbury_act_balance
-        xml.remaining_credit  receipt.remaining_credit
-        xml.earned_points     receipt.earned_points        
-        xml.cash_reward       receipt.cash_reward
         xml.fb_engagement_msg receipt.fb_engagement_msg       
         xml.currency_symbol   business.try(:currency_symbol)
         xml.currency_code     business.try(:currency_code)      
