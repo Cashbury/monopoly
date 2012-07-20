@@ -10,14 +10,16 @@
 #
 
 class LogGroup < ActiveRecord::Base
+	
 	has_many :logs
 	has_many :receipts
 	
 	
 	def get_receipt_engagements
 	  self.logs
-	      .joins(:engagement=>[:item,:campaign=>[:accounts=>:account_holder]])
-	      .select("accounts.amount as current_balance, campaigns.id as campaign_id,logs.gained_amount as amount, engagements.name as title, logs.frequency as quantity")
-	      .where("account_holders.model_id=logs.user_id and account_holders.model_type='User'")
+	      .joins(:engagement => [:campaign => [:accounts => :account_holder]])
+	      .joins("LEFT OUTER JOIN items ON items.id = engagements.item_id")
+	      .select("accounts.amount as current_balance, campaigns.id as campaign_id, logs.gained_amount as amount, engagements.name as title, logs.frequency as quantity")
+	      .where("account_holders.model_id = logs.user_id and account_holders.model_type = 'User'")
   end
 end

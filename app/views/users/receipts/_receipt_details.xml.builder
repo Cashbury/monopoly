@@ -10,7 +10,7 @@
       end
       xml.transaction_id    receipt.transaction_id if receipt.transaction_id.present?
       xml.transaction_group_id    receipt.transaction_group_id if receipt.transaction_group_id.present?  
-      xml.transaction_type receipt.transaction_type
+      xml.transaction_type receipt.transaction_group_id.present? ? "Spend"  : receipt.transaction_type
       xml.brand_name        receipt.brand_name
       xml.brand_image_fb    brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))
       xml.business_name     business.try(:name)
@@ -36,7 +36,7 @@
         xml.cashbury_act_balance receipt.cashbury_act_balance
         xml.fb_engagement_msg receipt.fb_engagement_msg       
         xml.currency_symbol   business.try(:currency_symbol)
-        xml.currency_code     business.try(:currency_code)      
+        xml.currency_code     business.try(:currency_code)          
         log_group = LogGroup.where(:id => receipt.log_group_id).first
         if log_group.present?
           logs = log_group.get_receipt_engagements 
@@ -45,6 +45,7 @@
               xml.engagement do  
                 xml.current_balance log.current_balance
                 xml.amount          log.amount
+                xml.campaign_id log.campaign_id
                 xml.title           log.title
                 xml.quantity        log.quantity
               end
