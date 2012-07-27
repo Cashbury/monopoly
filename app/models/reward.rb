@@ -82,7 +82,7 @@ class Reward < ActiveRecord::Base
   def is_claimed_by(user, user_account, place_id, lat, lng)
     business_account = self.campaign.business_account
     options = {
-      :action => :redeem,
+      :action => Action[:redeem],
       :amount => self.needed_amount,
       :from_account => user_account,
       :to_account => business_account,

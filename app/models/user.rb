@@ -278,6 +278,22 @@ class User < ActiveRecord::Base
     account
   end
 
+  def tip_account_for(place)
+    ensure_account_holder!
+    account = Account.where(:place_id => place.id)                     
+                     .where(:is_tip => true)
+                     .where(:account_holder_id => self.account_holder.id)
+                     .first
+    if account.nil? 
+      account = Account.create(:business_id => place.business.id,
+                               :place_id => place.id,                                
+                               :is_tip => true, 
+                               :amount => 1000000,
+                               :account_holder_id => self.account_holder.id )
+    end    
+    account
+  end
+
   def cashbox_credit_for(business)
     (cashbury_account_for(business).try(:amount).to_f || 0) + (cash_account_for(business).try(:amount).to_f  || 0)
   end
@@ -459,7 +475,7 @@ class User < ActiveRecord::Base
       end
     end
 	end
-	
+# This methode is only used from admin side to make spend engagement (needs to be refactored)	
   def made_spend_engagement_at(qr_code, business, spend_campaign , ringup_amount, lat, lng, log_group, issued_by) 
     begin
       if spend_campaign.present?
@@ -482,7 +498,7 @@ class User < ActiveRecord::Base
           reward_needed_amount = reward.needed_amount          
           unlocked_credit = (current_balance / reward_needed_amount).to_i * reward.money_amount          
           options = {
-            :action => :redeem,
+            :action => Action[:redeem],
             :amount => unlocked_credit,
             :from_account => spend_campaign.business_account,
             :to_account => self.cashbury_account_for(business),
@@ -544,16 +560,82 @@ class User < ActiveRecord::Base
   def create_charge_transaction_group_receipt(options)
     receipt = Receipt.create(:user_id => self.id, 
                              :cashier_id => options[:cashier_id], 
-                             :receipt_text=>"Charge receipt", 
+                             :receipt_text=> "Charge receipt", 
                              :receipt_type => Receipt::TYPE[:spend], 
                              :transaction_group_id => options[:txn_group_id],
+                             :log_group_id => options[:log_group_id],
                              :credit_used => options[:credit_used],
-                             :cashbury_act_balance => self.cashbury_account_for(options[:business]).amount.to_f,
+                             :cashbury_act_balance => self.cashbury_account_for(options[:business]).amount.to_f || 0,
                              :tip => options[:tip],
-                             :ringup_amount => options[:ringup_amount])
+                             :ringup_amount => options[:ringup_amount],
+                             :remaining_credit => options[:remaining_credit],
+                             :current_credit => options[:current_credit],
+                             :earned_points => options[:earned_points],
+                             :unlocked_credit => options[:unlocked_credit])
     self.receipts << receipt
     self.pending_receipts << receipt
     save
+  end
+
+
+  def spend_engage!(args)
+    #begin
+      result = {}
+      if args[:spend_campaign].present?       
+        self.enroll(args[:spend_campaign])
+        engagement = args[:spend_campaign].engagements.first
+        earned_points = args[:earned_points] * engagement.amount
+        user_account = args[:spend_campaign].user_account(self)
+        biz_account = args[:spend_campaign].business_account
+        options = {
+          :user => self,
+          :campaign => args[:spend_campaign],
+          :action => Action[:spend],
+          :amount => earned_points,
+          :engagement => engagement,
+          :from_account => biz_account,
+          :to_account => user_account,
+          :lat => args[:lat],
+          :lng => args[:lng],
+          :note => "User made a spend based engagement through cashier",
+          :issued_by => args[:issued_by]
+
+        }        
+        Transaction.fire(options)
+        reward = args[:spend_campaign].rewards.first
+        if reward.is_unlocked?(self)
+          current_balance = args[:spend_campaign].user_account(self).amount #after engagement
+          puts "@@@@@@@@ Current Balance: #{current_balance}"
+          reward_needed_amount = reward.needed_amount      
+          puts "@@@@@@@@ Reward needed amount #{reward_needed_amount}"    
+          unlocked_credit = (current_balance / reward_needed_amount).to_i * reward.money_amount          
+          puts "@@@@@@@@ reward credit #{reward.money_amount}"
+          puts "@@@@@@@@ unlocked_credit #{unlocked_credit}"
+          options = {
+            :action => Action[:redeem],
+            :associatable => engagement,
+            :amount => unlocked_credit,
+            :from_account => args[:spend_campaign].business_account,
+            :to_account => self.cashbury_account_for(business),
+            :campaign => args[:spend_campaign],
+            :user => self
+          }
+          Transaction.fire(options) # 3
+          puts "@@@@@@@@@@@ current cashbry acc balance #{self.cashbury_account_for(business).amount.to_f}"
+          (current_balance / reward_needed_amount).to_i.times do |i|            
+            reward.is_claimed_by(self,args[:spend_campaign].user_account(self), nil, args[:lat], args[:lng]) # 4
+          end          
+        end            
+        result = {          
+          :remaining_credit => reward.needed_amount.to_f - args[:spend_campaign].user_account(self).amount.to_f,
+          :current_credit => args[:spend_campaign].user_account(self).amount,
+          :unlocked_credit => unlocked_credit || 0          
+        }       
+      end
+      return result
+    #rescue Exception => e
+    #  logger.error "Exception #{e.class}: #{e.message}"
+    #end
   end
   
   
@@ -617,19 +699,19 @@ class User < ActiveRecord::Base
   def list_customer_pending_receipts
     cashier_role = Role.where(:name => Role::AS[:cashier]).first
     self.pending_receipts
-        .joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
-        .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
+        .joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
+        .joins("LEFT OUTER JOIN transactions ON transactions.transaction_group_id = transaction_groups.id")
+        .joins("LEFT OUTER JOIN transaction_types ON transaction_types.id = transactions.transaction_type_id")            
         .joins("LEFT OUTER JOIN roles_users ON receipts.cashier_id = roles_users.user_id and roles_users.role_id = #{cashier_role.id}")
         .joins("LEFT OUTER JOIN businesses ON roles_users.business_id = businesses.id")
         .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
         .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
+        .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
         .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
         .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
         .joins("LEFT OUTER JOIN rewards on rewards.campaign_id = campaigns.id")
-        .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
-        .joins("LEFT OUTER JOIN transaction_types ON transactions.transaction_type_id = transaction_types.id")
-        .select("DISTINCT(receipts.id), businesses.id as business_id, receipts.current_credit, transactions.after_fees_amount as earned_points, receipts.ringup_amount as amount_rungup, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.credit_used, receipts.unlocked_credit, receipts.cashbury_act_balance, receipts.remaining_credit, transaction_groups.id as transaction_group_id, rewards.money_amount as cash_reward, places.id as place_id, receipts.tip as tip, transaction_types.name as transaction_type")
+        .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")        
+        .select("DISTINCT(receipts.id), businesses.id as business_id, receipts.current_credit, receipts.earned_points, receipts.ringup_amount as amount_rungup, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.credit_used, receipts.unlocked_credit, receipts.cashbury_act_balance, receipts.remaining_credit, transaction_groups.id as transaction_group_id, rewards.money_amount as cash_reward, places.id as place_id, receipts.tip as tip, transaction_types.name as transaction_type")
   end
   
   def list_customer_all_receipts(business_id)
@@ -638,42 +720,42 @@ class User < ActiveRecord::Base
     filters << "businesses.id = ?" and params << business_id if business_id.present?
     params.insert(0, filters.join(" AND ")) 
     cashier_role = Role.where(:name => Role::AS[:cashier]).first
-    them = self.receipts
-        .joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
-        .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
-        .joins("LEFT OUTER JOIN roles_users ON receipts.cashier_id = roles_users.user_id and roles_users.role_id = #{cashier_role.id}")
-        .joins("LEFT OUTER JOIN businesses ON roles_users.business_id = businesses.id")
-        .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
-        .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
-        .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
-        .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
-        .joins("LEFT OUTER JOIN rewards on rewards.campaign_id = campaigns.id")
-        .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-        .joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
-        .joins("LEFT OUTER JOIN transaction_types ON transactions.transaction_type_id = transaction_types.id")
-        .select("DISTINCT(receipts.id), businesses.id as business_id, receipts.current_credit, transactions.after_fees_amount as earned_points, receipts.ringup_amount as amount_rungup, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.credit_used, receipts.unlocked_credit, receipts.cashbury_act_balance, receipts.remaining_credit, transaction_groups.id as transaction_group_id, rewards.money_amount as cash_reward, places.id as place_id, receipts.tip as tip, transaction_types.name as transaction_type")
-        .where(params)        
+    them = self.receipts    
+    .joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
+    .joins("LEFT OUTER JOIN transactions ON transactions.transaction_group_id = transaction_groups.id")
+    .joins("LEFT OUTER JOIN transaction_types ON transaction_types.id = transactions.transaction_type_id")
+    .joins("LEFT OUTER JOIN roles_users ON receipts.cashier_id = roles_users.user_id and roles_users.role_id = 10")
+    .joins("LEFT OUTER JOIN businesses ON roles_users.business_id = businesses.id")
+    .joins("LEFT OUTER JOIN brands ON brands.id = businesses.brand_id")
+    .joins("LEFT OUTER JOIN log_groups ON log_groups.id = receipts.log_group_id")
+    .joins("LEFT OUTER JOIN logs ON logs.log_group_id = log_groups.id")
+    .joins("LEFT OUTER JOIN campaigns ON campaigns.id = logs.campaign_id")
+    .joins("LEFT OUTER JOIN engagements ON engagements.campaign_id = campaigns.id")
+    .joins("LEFT OUTER JOIN rewards ON rewards.campaign_id = campaigns.id")
+    .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
+    .select("DISTINCT(receipts.id), businesses.id as business_id, receipts.current_credit, receipts.earned_points, receipts.ringup_amount as amount_rungup, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.credit_used, receipts.unlocked_credit, receipts.cashbury_act_balance, receipts.remaining_credit, transaction_groups.id as transaction_group_id, rewards.money_amount as cash_reward, places.id as place_id, receipts.tip as tip, transaction_types.name as transaction_type")
+    .where(params)
+    .where("campaigns.ctype = 1")                  
   end
 
   def list_cashier_receipts(limit)    
     cashier_role = Role.where(:name => Role::AS[:cashier]).first
-    Receipt.joins("LEFT OUTER join transactions on (transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id)")
-           .joins("LEFT OUTER join logs on logs.transaction_id = transactions.id")
+    Receipt.joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
+           .joins("LEFT OUTER JOIN transactions ON transactions.transaction_group_id = transaction_groups.id")
+           .joins("LEFT OUTER JOIN transaction_types ON transaction_types.id = transactions.transaction_type_id")           
            .joins("LEFT OUTER JOIN roles_users ON receipts.cashier_id = roles_users.user_id and roles_users.role_id = #{cashier_role.id}")
            .joins("LEFT OUTER JOIN businesses ON roles_users.business_id = businesses.id")
-           .joins("LEFT OUTER join brands on brands.id = businesses.brand_id")
-           .joins("LEFT OUTER join log_groups on log_groups.id = receipts.log_group_id")
-           .joins("LEFT OUTER JOIN campaigns on campaigns.id = logs.campaign_id")
-           .joins("LEFT OUTER JOIN engagements on engagements.campaign_id = campaigns.id")
-           .joins("LEFT OUTER JOIN rewards on rewards.campaign_id = campaigns.id")
-           .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
-           .joins("LEFT OUTER JOIN transaction_groups ON transaction_groups.id = receipts.transaction_group_id")
-           .joins("LEFT OUTER JOIN transaction_types ON transactions.transaction_type_id = transaction_types.id")
-           .select("DISTINCT(receipts.id), #{self.id} as customer_id, roles_users.business_id as business_id, (select sum(transactions.from_account_balance_after) from transactions where transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id) as current_balance, (select sum(transactions.after_fees_amount) from transactions where transactions.id = receipts.transaction_id or transactions.transaction_group_id = receipts.transaction_group_id) as earned_points, engagements.amount as engagement_amount, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.transaction_group_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, places.id as place_id, transaction_types.name as transaction_type, receipts.ringup_amount as amount_rungup, receipts.tip as tip, receipts.credit_used, rewards.money_amount as cash_reward, receipts.current_credit, receipts.remaining_credit, receipts.unlocked_credit, receipts.cashbury_act_balance")
+           .joins("LEFT OUTER join brands ON brands.id = businesses.brand_id")
+           .joins("LEFT OUTER join log_groups ON log_groups.id = receipts.log_group_id")
+           .joins("LEFT OUTER JOIN logs ON logs.log_group_id = log_groups.id")
+           .joins("LEFT OUTER JOIN campaigns ON campaigns.id = logs.campaign_id")
+           .joins("LEFT OUTER JOIN engagements ON engagements.campaign_id = campaigns.id")
+           .joins("LEFT OUTER JOIN rewards ON rewards.campaign_id = campaigns.id")
+           .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")                      
            .where("cashier_id= #{self.id}")
+           .select("DISTINCT(receipts.id), #{self.id} as customer_id, businesses.id as business_id, receipts.earned_points, engagements.amount as engagement_amount, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.receipt_text, receipts.receipt_type, receipts.transaction_id, receipts.created_at as date_time, receipts.transaction_group_id, places.name as place_name, brands.name as brand_name, places.id as place_id, transaction_types.name as transaction_type, receipts.ringup_amount as amount_rungup, receipts.tip as tip, receipts.credit_used, rewards.money_amount as cash_reward, receipts.current_credit, receipts.remaining_credit, receipts.unlocked_credit, receipts.cashbury_act_balance")
            .order('receipts.created_at DESC')
-           .limit(limit)
-           #.where("receipts.created_at #{((no_of_days-1).days.ago.utc...Time.now.utc).to_s(:db)} and logs.transaction_id = receipts.transaction_id and receipts.cashier_id= #{self.id}")
+           .uniq[0..limit-1]           
   end
   
   def engaged(engagement)

@@ -24,6 +24,7 @@ class Account < ActiveRecord::Base
   belongs_to :payment_gateway
   belongs_to :business
   belongs_to :program
+  belongs_to :place
 
   has_one :account_option
   
@@ -83,14 +84,47 @@ class Account < ActiveRecord::Base
     account.move_money!(amount, self, Action["Load"], initiated_by, campaign_id)
   end
 
-  def tip(amount, initiated_by = nil)
-    ensure_consumer_account!
-    ensure_cash_account!
+  def tip(amount, cashier, initiated_by = nil)   
+    if place.communal_tips?      
+      tip_account = ensure_place_tip_account!
+    elsif place.tips_for_employee?      
+      tip_account = ensure_cashier_account!(cashier)
+    end    
 
-    move_money!(amount, business.cashbox, Action["Tip"], initiated_by)
+    move_money!(amount, tip_account, Action["Tip"], initiated_by)
   end
 
-  def spend(amount, initiated_by = nil)
+  def ensure_place_tip_account!    
+    place.ensure_account_holder
+    account = Account.where(:place_id => place.id)                     
+                     .where(:is_tip => true)
+                     .where(:account_holder_id => place.account_holder.id)
+                     .first
+    if account.nil? 
+      account = Account.create(:business_id => place.business.id,
+                               :place_id => place.id,                                
+                               :is_tip => true, 
+                               :account_holder_id => place.account_holder.id )
+    end    
+    account
+  end
+
+  def ensure_cashier_account!(cashier)    
+    cashier.ensure_account_holder!
+    account = Account.where(:place_id => place.id)                     
+                     .where(:is_tip => true)
+                     .where(:account_holder_id => cashier.account_holder.id)
+                     .first
+    if account.nil? 
+      account = Account.create(:business_id => place.business.id,
+                               :place_id => place.id,                                
+                               :is_tip => true, 
+                               :account_holder_id => cashier.account_holder.id )
+    end    
+    account
+  end
+
+  def spend(total_amount, initiated_by = nil)
     ensure_consumer_account!
     ensure_cash_or_cashbury_account!
 
@@ -101,32 +135,33 @@ class Account < ActiveRecord::Base
       cashbury_account = account_holder.model.cashbury_account_for(business)
 
       if cashbury_account.amount > 0
-        #Account.group_transactions do
-          # Cashburies can't pay for the whole thing.
-          if (amount - cashbury_account.amount) > 0
-            # Drain Cashbury account to discount total price.
-            remaining_balance = amount - cashbury_account.amount
-            cashbury_account.spend(cashbury_account.amount, initiated_by)
+        if cashbury_account.amount > total_amount
+          cashbury_account.spend(total_amount, initiated_by)          
+        else
+          remaining_balance = total_amount - cashbury_account.amount
+          cashbury_account.spend(cashbury_account.amount, initiated_by)
+          cash_account.spend(remaining_balance, initiated_by)
+        end
 
-            # Pay remaining balance with user's cash.
-            cash_account.spend(remaining_balance, initiated_by)
-
-          elsif
-            # Cashburies can pay the total balance.
-            cashbury_account.spend(amount, initiated_by)
+      else # No cashburies in account, let's try out the money account
+        if self.amount > 0
+          if self.amount > total_amount
+            move_money!(total_amount, business.reserve_account, Action["Spend"], initiated_by)
+          else
+            diff_credit = total_amount - self.amount
+            move_money!(diff_credit, business.reserve_account, Action["Spend"], initiated_by)
           end
-        #end
-
-      else # No cashburies in account, only money.
-        move_money!(amount, business.reserve_account, Action["Spend"], initiated_by)
+        end
       end
 
-    elsif self.is_cashbury?
-      move_money!(amount, business.cashbury_account, Action["Spend"], initiated_by)
+    elsif self.is_cashbury?      
+      move_money!(total_amount, business.cashbury_account, Action["Spend"], initiated_by)
     else
       raise "Unspendable account type: #{self.inspect}"
     end
   end
+
+
 
   def cashout(initiated_by = nil)
     ensure_consumer_account!
@@ -160,29 +195,29 @@ class Account < ActiveRecord::Base
       user_account.decrement!(:amount,after_fees_amount)
       
       #save the transaction record
-      transaction=Transaction.create!(:from_account=>user_account.id,
-                                      :to_account=>business_account.id,
-                                      :before_fees_amount=>amount,
-                                      :payment_gateway=>user_account.payment_gateway,
-                                      :is_money=>!self.associated_to_campaign?,
-                                      :from_account_balance_before=>user_account_before_balance,
-                                      :from_account_balance_after=>user_account.amount,
-                                      :to_account_balance_before=>business_account_before_balance,
-                                      :to_account_balance_after=>business_account.amount,
-                                      :currency=>nil,
-                                      :note=>"Account transfer (withdraw) from user account",
-                                      :transaction_type_id=>action.transaction_type_id,
-                                      :after_fees_amount=>after_fees_amount,
-                                      :transaction_fees=>transaction_type.fee_amount,
+      transaction=Transaction.create!(:from_account => user_account.id,
+                                      :to_account => business_account.id,
+                                      :before_fees_amount => amount,
+                                      :payment_gateway => user_account.payment_gateway,
+                                      :is_money => !self.associated_to_campaign?,
+                                      :from_account_balance_before => user_account_before_balance,
+                                      :from_account_balance_after => user_account.amount,
+                                      :to_account_balance_before => business_account_before_balance,
+                                      :to_account_balance_after => business_account.amount,
+                                      :currency => nil,
+                                      :note => "Account transfer (withdraw) from user account",
+                                      :transaction_type_id => action.transaction_type_id,
+                                      :after_fees_amount => after_fees_amount,
+                                      :transaction_fees => transaction_type.fee_amount,
                                       :transaction_group_id => (Account.transaction_group.id if is_group_transaction?))
-      log_group=LogGroup.create!(:created_on=>date)
-      Log.create!(:user_id        =>user_id,
-                  :action_id      =>action.id,
-                  :log_group_id   =>log_group.id,
-                  :business_id    =>self.business_id,
-                  :transaction_id =>transaction.id,
-                  :frequency      =>1,
-                  :created_on     =>date)                                      
+      log_group = LogGroup.create!(:created_on => date)
+      Log.create!(:user_id        => user_id,
+                  :action_id      => action.id,
+                  :log_group_id   => log_group.id,
+                  :business_id    => self.business_id,
+                  :transaction_id => transaction.id,
+                  :frequency      => 1,
+                  :created_on     => date)                                      
        self                               
     end
   end  
@@ -227,7 +262,7 @@ class Account < ActiveRecord::Base
                                       :after_fees_amount=>after_fees_amount,
                                       :transaction_fees=>transaction_type.fee_amount,
                                       :transaction_group_id => (Account.transaction_group.id if is_group_transaction?))
-      log_group=LogGroup.create!(:created_on=>date)
+      log_group=LogGroup.create!(:created_on => date)
       Log.create!(:user_id        =>user_id,
                   :action_id      =>action.id,
                   :log_group_id   =>log_group.id,
@@ -306,14 +341,16 @@ class Account < ActiveRecord::Base
       save!
       to_account.save!
       transaction.save!
-      
+      log_group = Log.log_group if Log.is_group_logs?
+      log_group = LogGroup.create!(:created_on => date) if log_group.nil?
       Log.create!(:user_id => initiated_by.try(:id) || account_holder_id,
         :action_id         => action.id,
         :business_id       => business_id,
         :transaction_id    => transaction.id,
         :frequency         => 1,
         :campaign_id       => campaign_id,
-        :created_on        => DateTime.now)
+        :created_on        => DateTime.now,
+        :log_group_id      => log_group.id)
     end
   end
 

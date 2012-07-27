@@ -3,7 +3,7 @@ xml.cashier_receipts do
   @dates.each do |date|
     xml.day do
       xml.date date
-      sub_receipts = @all_receipts.select {|r| r.date_time.to_date == date}.uniq
+      sub_receipts = @all_receipts.select {|r| r.date_time.to_date == date}
       xml.receipts do
         sub_receipts.each do |receipt|
           xml.receipt do
@@ -29,6 +29,8 @@ xml.cashier_receipts do
             xml.place_name     receipt.place_name
             xml.receipt_text receipt.receipt_text
             xml.receipt_type receipt.receipt_type
+            xml.currency_symbol   business.try(:currency_symbol)
+            xml.currency_code     business.try(:currency_code)
             xml.money_program do
               xml.amount_rungup     receipt.amount_rungup
               xml.tip               receipt.tip
@@ -46,9 +48,7 @@ xml.cashier_receipts do
                 xml.progress_percent  (receipt.current_credit.to_f / ( receipt.current_credit.to_f + receipt.remaining_credit.to_f)) * 100
               end
               xml.cashbury_act_balance receipt.cashbury_act_balance              
-              xml.fb_engagement_msg receipt.fb_engagement_msg              
-              xml.currency_symbol   business.try(:currency_symbol)
-              xml.currency_code     business.try(:currency_code)             
+              xml.fb_engagement_msg receipt.fb_engagement_msg                        
               log_group = LogGroup.where(:id => receipt.log_group_id).first
               if log_group.present?
                 logs = log_group.get_receipt_engagements

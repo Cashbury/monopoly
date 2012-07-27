@@ -70,6 +70,10 @@
       <%= f.label :is_primary %>
       <%= f.check_box :is_primary %>
     </p>
+    <p>
+      <%= f.label :tips_mode %>
+      <%= f.select :tips_mode, options_for_select(Place::TIPS_MODES)%>
+    </p>
 
   </fieldset>
 

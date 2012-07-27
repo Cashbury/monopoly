@@ -153,4 +153,27 @@ class Log < ActiveRecord::Base
     #             .select("(select count(*) from logs where users.id=logs.user_id and logs.campaign_id=#{c_id}) as total, CONCAT(users.first_name,' ',users.last_name) as full_name, accounts.created_at as enrolled_since, accounts.amount, accounts.cumulative_amount, measurement_types.name as m_name, accounts.id as account_no ")
     #             .order("total DESC")
   end
+
+
+  def self.group_logs(&block)
+    Log.transaction do
+      log_grp = LogGroup.create!
+      Log.log_group = log_grp
+      block.call
+      Log.log_group = nil
+      log_grp
+    end
+  end
+
+  def self.log_group
+    Thread.current[:log_group]
+  end
+
+  def self.log_group=(log_grp)
+    Thread.current[:log_group] = log_grp
+  end
+
+  def self.is_group_logs?
+    Log.log_group.present?
+  end
 end

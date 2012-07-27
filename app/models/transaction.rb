@@ -82,9 +82,10 @@ class Transaction < ActiveRecord::Base
 
   def self.fire(options)
     date = Date.today.to_s
-    options[:freq] = options[:freq] || 1
-    action = Action.where(:name => Action::CURRENT_ACTIONS[options[:action]]).first
-    transaction_type = action.transaction_type
+    options[:freq] = options[:freq] || 1    
+    #action = Action.where(:name => Action::CURRENT_ACTIONS[options[:action]]).first
+
+    transaction_type = options[:action].transaction_type
     after_fees_amount = transaction_type.fee_amount.nil? || transaction_type.fee_amount.zero? ? options[:amount] : options[:amount] - transaction_type.fee_amount
     after_fees_amount = transaction_type.fee_percentage.nil? || transaction_type.fee_percentage.zero? ? after_fees_amount : after_fees_amount - (after_fees_amount * transaction_type.fee_percentage/100)
     after_fees_amount = after_fees_amount * options[:freq]
@@ -94,6 +95,9 @@ class Transaction < ActiveRecord::Base
     to_account_before_balance = options[:to_account].amount
     options[:to_account].increment!(:amount, after_fees_amount)
     options[:to_account].increment!(:cumulative_amount, after_fees_amount)
+     
+
+    transaction_group = Account.transaction_group if is_group_transaction?
           
     #save the transaction record
     t = create!(:from_account => options[:from_account].id,
@@ -107,11 +111,13 @@ class Transaction < ActiveRecord::Base
                 :to_account_balance_after => options[:to_account].amount,
                 :currency => nil,
                 :note => options[:note],
-                :transaction_type_id => action.transaction_type_id,
+                :transaction_type_id => options[:action].transaction_type_id,
                 :after_fees_amount => after_fees_amount,
-                :transaction_fees => transaction_type.fee_amount)
+                :transaction_fees => transaction_type.fee_amount,
+                :transaction_group_id => transaction_group.try(:id))
 
     #save this engagement action to logs
+    log_group = Log.log_group if Log.is_group_logs?
     log_group = LogGroup.create!(:created_on => date) if log_group.nil?
     business_id = options[:campaign].program.business.id
     if options[:place_id].blank?
@@ -120,7 +126,7 @@ class Transaction < ActiveRecord::Base
       end
     end
     Log.create!(:user_id        => options[:user].id,
-                :action_id      => action.id,
+                :action_id      => options[:action].id,
                 :log_group_id   => log_group.id,
                 :engagement_id  => options[:associatable].try(:id),
                 :reward_id      => options[:reward].try(:id),
@@ -131,10 +137,16 @@ class Transaction < ActiveRecord::Base
                 :place_id       => options[:place_id],
                 :gained_amount  => after_fees_amount,
                 :amount_type    => options[:to_account].measurement_type,
-                :frequency      => options[:freq],
+                :frequency      => options[:freq] || 1,
                 :lat            => options[:lat],
                 :lng            => options[:lng],
                 :created_on     => date,
                 :issued_by      => options[:issued_by])
+    options[:qr_code].scan if options[:qr_code].present?
   end
+
+  def self.is_group_transaction?
+    Account.transaction_group.present?
+  end
+
 end

@@ -28,6 +28,10 @@
   <%= @place.time_zone %>
 </p>
 <p>
+  <strong>Tips Mode:</strong>
+  <%= Place::TIPS_MODES.key(@place.tips_mode.to_sym) %>
+</p>
+<p>
   <strong>Tag List:</strong>
   <%= @place.tag_list %>
 </p>

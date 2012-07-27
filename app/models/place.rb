@@ -37,6 +37,8 @@ class Place < ActiveRecord::Base
   has_many :followers, :as=>:followed
   has_many :place_images,:as => :uploadable, :dependent => :destroy
   has_many :tmp_images,:as => :uploadable, :dependent => :destroy
+  has_one :account_holder, :as =>:model
+  has_many :accounts, :through => :account_holder
 
   accepts_nested_attributes_for :tmp_images
   accepts_nested_attributes_for :address
@@ -44,7 +46,7 @@ class Place < ActiveRecord::Base
   accepts_nested_attributes_for :items
   accepts_nested_attributes_for :open_hours
 
-  attr_accessible :name, :long, :lat, :about , :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance , :is_primary
+  attr_accessible :name, :long, :lat, :about , :business_id, :time_zone,:tag_list,:place_images_attributes,:address_attributes , :items_attributes, :tmp_images_attributes,:phone,:business,:distance , :is_primary, :tips_mode
   attr_accessor :items_list
   validates :name , :presence=>{:message=> "Branch name can not be blank"}
   validates :long, :lat , :presence=>{:message=>"Co-ordinates is can not be located"}
@@ -66,7 +68,24 @@ class Place < ActiveRecord::Base
 
   DISTANCE_UNIT="km"
   validate :validate_time_ranges
+
+  TIPS_MODES = {
+    "Communal" => :communal,
+    "Per Employee" => :employee
+  }
 	
+  def communal_tips?
+    self.tips_mode == :communal.to_s
+  end
+
+  def tips_for_employee?
+    self.tips_mode == :employee.to_s
+  end
+
+  def ensure_account_holder
+    self.create_account_holder if account_holder.blank?
+  end
+
 	def validate_time_ranges
 	  self.open_hours.each do |open_hour|
       if open_hour.from > open_hour.to

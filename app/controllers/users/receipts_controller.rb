@@ -10,7 +10,7 @@ class Users::ReceiptsController < Users::BaseController
   end
   
   def list_receipts_history
-    @all_receipts = current_user.list_customer_all_receipts(params[:business_id])
+    @all_receipts = current_user.list_customer_all_receipts(params[:business_id])    
     respond_to do |format|
       format.xml
     end
