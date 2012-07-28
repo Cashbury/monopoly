@@ -79,17 +79,3 @@ $(function(){
 </table>
 
 <p><%= link_to "New Business", new_business_path , :class=>"positive button" %></p>
-<!-- Testing Code-->
-
-<form action="/users/cashiers/charge_customer.xml?lat=31.247755&long=29.997804" method="POST">
-<label>Customer Identifier</label>
-<input type="text" name="customer_identifier" value=""/>
-<label>Amount</label>
-<input type="text" name="amount" value="10"/>
-<label>Tip</label>
-<input type="text" name="tip" value="5"/>
-<label>engagement id, quantity </label>
-<input type="text" name="engagements[]" value=""/>
-<label>engagement id, quantity </label>
-<input type="text" name="engagements[]" value=""/>
-<input type="submit">
