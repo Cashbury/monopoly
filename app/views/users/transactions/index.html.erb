@@ -1,2 +1,2 @@
-<h1>Your transactions.</h1>
+<% title raw("#{@user.full_name} - Transactions") %>
 <%= render :partial => 'transactions/transaction_list', :object => @transactions %>

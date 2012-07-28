@@ -14,9 +14,7 @@
       xml.brand_name        receipt.brand_name
       xml.brand_image_fb    brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))
       xml.business_name     business.try(:name)
-      xml.place_name        receipt.place_name
-      xml.receipt_text      receipt.receipt_text
-      xml.receipt_type      receipt.receipt_type
+      xml.place_name        receipt.place_name      
       xml.currency_symbol   business.try(:currency_symbol)
       xml.currency_code     business.try(:currency_code)
       xml.money_program do

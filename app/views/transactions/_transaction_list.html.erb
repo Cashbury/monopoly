@@ -25,9 +25,9 @@
     <% from_account_holder = from_account.account_holder%>
     <% to_account_holder = to_account.account_holder%>
     <% from_user =  User.where(:id => from_account_holder.model_id).first %>
-    <% from_account_holder_name = from_account_holder.model_type == "User" ? from_user.try(:full_name) : Business.find(from_account_holder.model_id).name  %>
+    <% from_account_holder_name = from_account_holder.model_type == "User" ? from_user.try(:full_name) : Business.where(:id => from_account_holder.model_id).first.try(:name)  %>
     <% to_user =  User.where(:id => to_account_holder.model_id).first %>
-    <% to_account_holder_name = to_account_holder.model_type == "User" ? to_user.try(:full_name) : Business.find(to_account_holder.model_id).name  %>      
+    <% to_account_holder_name = to_account_holder.model_type == "User" ? to_user.try(:full_name) : Business.where(:id => to_account_holder.model_id).first.try(:name)  %>
     <td><%= transaction.id %></td>
     <td>
       <%=from_account_holder_name %> 

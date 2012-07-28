@@ -73,7 +73,7 @@ class Users::CashiersController < Users::BaseController
   end
 
   def charge_customer
-    #begin
+    begin
       result = {}
       qr_code = QrCode.associated_with_users.where(:hash_code => params[:customer_identifier]).first
       if qr_code.present? and qr_code.status #active
@@ -154,6 +154,7 @@ class Users::CashiersController < Users::BaseController
           current_log = log_group
         end
         
+        # Prepare the receipt/bill
         options = {
           :cashier_id => current_user.id,
           :txn_group_id => txn_group.id,
@@ -186,82 +187,20 @@ class Users::CashiersController < Users::BaseController
       else
         raise ApiError.new("Invalid QrCode", 422)
       end
-    #rescue ApiError => ae
-    #  respond_to do |format|
-    #    format.xml { render :xml => ae, :status => ae.status_code }
-    #  end
-    #rescue Exception =>e
-    #  logger.error "Exception #{e.class}: #{e.message}"
-    #  respond_to do |format|     
-    #    format.xml {render :text => e.message  , :status => 500 }
-    #  end
-    #end
+    rescue ApiError => ae
+      respond_to do |format|
+        format.xml { render :xml => ae, :status => ae.status_code }
+      end
+    rescue Exception =>e
+      logger.error "Exception #{e.class}: #{e.message}"
+      respond_to do |format|     
+        format.xml {render :text => e.message  , :status => 500 }
+      end
+    end
   end
   
   def ring_up
-    begin
-      qr_code = QrCode.associated_with_users.where(:hash_code => params[:customer_identifier]).first
-      if qr_code.present? and qr_code.status #active
-        user = qr_code.user
-        employee = current_user.employees.where(:role_id => Role.find_by_name(Role::AS[:cashier]).id).first   
-        business = Business.find(employee.business_id)
-        user_type = user.engaged_with_business?(business) ? "Returning Customer" : "New Customer"
-        #Loyalty collect campaigns
-        result = {}
-        engagements = []
-        unless params[:engagements].blank?
-          params[:engagements].each do |record| 
-            if record.present?
-              records = record.split(',')
-              engagement_id = records.first;quantity=records.second
-              engagement = Engagement.find(engagement_id)
-              result = user.engaged_with(engagement,engagement.amount,qr_code,nil,params[:lat],params[:long],"User made an engagement through cashier",quantity.to_i, result[:log_group], current_user.id)              
-              engagement_data = {:current_balance => result[:user_account].amount, :campaign_id => result[:campaign].id, :amount => result[:after_fees_amount], :title => engagement.name, :quantity => result[:frequency] }
-              engagements.map!{ |x| 
-                if x[:campaign_id] == result[:campaign].id
-                  x[:current_balance] = result[:user_account].amount
-                  x
-                else
-                  x
-                end
-              }
-              engagements << engagement_data
-            end
-          end
-        end
-        #Spend based campaign   
-        campaign = business.spend_based_campaign
-        campaign_engagement = campaign.try(:engagements).try(:first)
-        engagement_valid = (!campaign_engagement.end_date || campaign_engagement.end_date > Date.today)
-        if campaign.present? and engagement_valid
-          result = user.made_spend_engagement_at(qr_code, business, campaign, params[:amount].to_f, params[:lat], params[:long], result[:log_group], current_user.id)
-          #user.issue_qrcode(current_user.id, qr_code.size, qr_code.code_type)
-          #qr_code.scan
-        end
-        s = {}
-		    s.merge!({:amount             => params[:amount]})
-		    s.merge!({:transaction_id     => result[:transaction].try(:id)})
-		    s.merge!({:currency_symbol    => business.currency_symbol})
-		    s.merge!({:currency_code      => business.currency_code})
-		    s.merge!({:customer_name      => user.full_name})
-		    s.merge!({:customer_type      => user_type})
-		    user_uid = user.email.split("@facebook").first
-        s.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
-        s.merge!({:engagements        => engagements})
-        respond_to do |format|     
-          format.xml {render :xml => s , :status => 200}
-        end
-      else
-        respond_to do |format|     
-          format.xml {render :text => "Invalid Qrcode"  , :status => 422}
-        end
-      end
-    rescue Exception => e
-      logger.error "Exception #{e.class}: #{e.message}"
-      respond_to do |format|     
-        format.xml {render :text => e.message  , :status => 500}
-      end
-    end
+    raise Exception.new("This API should no longer be used! instead use POST /users/cashiers/charge_customer.xml?lat=X&long=X")
   end
   
   def list_engagements_items
@@ -283,7 +222,7 @@ class Users::CashiersController < Users::BaseController
     @all_receipts = current_user.list_cashier_receipts(params[:no_of_days].to_i)   
     @dates = @all_receipts.collect {|r| r.date_time.to_date }.uniq
     respond_to do |format|
-      format.xml {}
+      format.xml
     end
   end
   
