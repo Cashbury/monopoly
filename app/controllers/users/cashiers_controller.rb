@@ -200,7 +200,39 @@ class Users::CashiersController < Users::BaseController
   end
   
   def ring_up
-    raise Exception.new("This API should no longer be used! instead use POST /users/cashiers/charge_customer.xml?lat=X&long=X")
+    begin
+      raise Exception.new("This API should no longer be used! instead use POST /users/cashiers/charge_customer.xml?lat=X&long=X")
+    rescue Exception => e
+      logger.error "Exception #{e.class}: #{e.message}"
+      respond_to do |format|     
+        format.xml { render :text => e.message, :status => 500 }
+      end
+    end
+  end
+
+  def refund
+    begin
+      raise ApiError.new("Receipt ID NOT PRESENT", 422) unless params[:receipt_id].present?
+      receipt = Receipt.find(params[:receipt_id])
+      if receipt.present?
+        Receipt.current_user = current_user
+        receipt.refund!
+        @receipt = Receipt.with_joined_details.where("receipts.id = #{receipt.id}").uniq.first
+        if receipt.unlocked_credit.present? # reward was enjoyed
+          user = receipt.user
+          reward = Reward.find(@receipt.reward_id)
+          user.enjoyed_rewards.delete(reward) if reward.present?
+        end
+      else
+        raise ApiError.new("Receipt not found", 422)
+      end
+      
+    rescue ApiError => ae
+      logger.error "Exception #{ae.class}: #{ae.message}"
+      respond_to do |format|
+        format.xml { render :xml => ae, :status => ae.status_code }
+      end
+    end
   end
   
   def list_engagements_items

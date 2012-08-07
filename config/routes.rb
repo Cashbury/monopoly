@@ -61,12 +61,15 @@ Kazdoor::Application.routes.draw do
 			get '/claim.:format',:action=>:claim, :on =>:member
     end
     resources :cashiers do
-      get  '/check_role.:format',:action=>:check_user_role, :on =>:collection
-      get  '/business/:business_id/items.:format',:action=>:list_engagements_items, :on =>:collection
-      post '/ring_up.:format', :action=>:ring_up, :on=>:collection
-      post '/load_money.:format', :action=>:load_money, :on=>:collection
-      post '/charge_customer.:format', :action=>:charge_customer, :on=>:collection
-      get  '/receipts-merchant.:format', :action=>:list_receipts_history, :on=>:collection
+      collection do
+        get '/check_role.:format', :action => :check_user_role
+        get '/business/:business_id/items.:format', :action => :list_engagements_items
+        post '/ring_up.:format', :action => :ring_up
+        post '/load_money.:format', :action => :load_money
+        post '/charge_customer.:format', :action => :charge_customer
+        get  '/receipts-merchant.:format', :action => :list_receipts_history
+        get '/refund.:format', :action => :refund
+      end
     end
     resource :businesses do
       get :savings, :on => :collection

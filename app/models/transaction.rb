@@ -47,6 +47,9 @@ class Transaction < ActiveRecord::Base
   end
 
   def void!(voiding_user)
+    
+    return if self.state.present? and self.state.voided?
+
     Transaction.transaction do
       self.state = Transaction::States::VOID
       self.save!
@@ -67,6 +70,10 @@ class Transaction < ActiveRecord::Base
         :action_id => Action["Void"],
         :business => voiding_user.business
     end
+  end
+
+  def state
+    s = read_attribute(:state) and return ActiveSupport::StringInquirer.new(s)
   end
 
   # Options:
