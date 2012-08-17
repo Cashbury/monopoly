@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  
 	#protect_from_forgery
   #before_filter :check_permissions
   helper_method :current_user
