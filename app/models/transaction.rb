@@ -39,19 +39,19 @@ class Transaction < ActiveRecord::Base
   delegate :name, to: :action, allow_nil: true, prefix: true
 
   module States
-    VOID = "voided"
+    REFUND = "refunded"
   end
 
   def in_state?(*states)
     states.detect { |s| s.to_s == self.state }.present?
   end
 
-  def void!(voiding_user)
+  def refund!(refunding_user)
     
-    return if self.state.present? and self.state.voided?
+    return if self.state.present? and self.state.refunded?
 
     Transaction.transaction do
-      self.state = Transaction::States::VOID
+      self.state = Transaction::States::REFUND
       self.save!
 
       from_account = Account.find self.from_account
@@ -64,11 +64,11 @@ class Transaction < ActiveRecord::Base
       from_account.save!
       to_account.save!
 
-      Log.create! :user_id => voiding_user.id,
+      Log.create! :user_id => refunding_user.id,
         :transaction_id => self.id,
         :frequency => 1,
-        :action_id => Action["Void"],
-        :business => voiding_user.business
+        :action_id => Action["Refund"],
+        :business => refunding_user.business
     end
   end
 

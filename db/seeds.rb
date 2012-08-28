@@ -38,7 +38,7 @@ transaction_types = {
   "Tip"  => %w( Tip ),
   "Gift" => %w( Gift )
 }
-actions = %w( Void )
+actions = %w( Refund )
 
 transaction_types.keys.each do |tt_name|
   tt = TransactionType.find_or_create_by_name(name: tt_name, fee_amount: 0.0, fee_percentage: 0.0)

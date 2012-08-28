@@ -1,6 +1,6 @@
 class Users::ReceiptsController < Users::BaseController
 
-  after_filter :delete_all_receipts, :only => [:index]
+  #after_filter :delete_all_receipts, :only => [:index]
   
   def index
     @all_receipts = current_user.list_customer_pending_receipts

@@ -39,14 +39,14 @@
       <br />
       (<%= account_type(to_account) %> account)
       </td>
-    <td><%= transaction.name%></td>
+    <td><%= transaction.name %></td>
     <td><%= transaction.fee_amount %></td>
     <td><%= transaction.fee_percentage %></td>
-    <td><%= transaction.from_account_balance_before%></td>
-    <td><%= transaction.from_account_balance_after%></td>
-    <td><%= transaction.to_account_balance_before%></td>
-    <td><%= transaction.to_account_balance_after%></td>
-    <td><%= transaction.after_fees_amount%></td>
+    <td><%= transaction.from_account_balance_before %></td>
+    <td><%= transaction.from_account_balance_after %></td>
+    <td><%= transaction.to_account_balance_before %></td>
+    <td><%= transaction.to_account_balance_after %></td>
+    <td><%= transaction.after_fees_amount %></td>
     <td><%="#{transaction.created_at.strftime("%I:%M %p")} on #{transaction.created_at.strftime("%b %d , %Y")}"%></td>
     <td>
       <%= transaction.state || "success" %>
@@ -56,14 +56,14 @@
     </td>
     <td>
       <% if current_user.role?(Role::AS[:admin]) || current_user.role?(Role::AS[:operator]) %>
-        <% if transaction.in_state?(:voided) %>
-          <% void_log = Log.where(transaction_id: transaction.id, action_id: Action["Void"].id).first %>
-          Voided at <%= void_log.created_at.strftime("%I:%M %p on %m.%d.%y") %> by <%= void_log.user.full_name %>
-          <% if void_log.user.business %>
-            @ <%= void_log.user.business.name %>
+        <% if transaction.in_state?(:refunded) %>
+          <% refund_log = Log.where(transaction_id: transaction.id, action_id: Action["Refund"].id).first %>
+          Refunded at <%= refund_log.created_at.strftime("%I:%M %p on %m.%d.%y") %> by <%= refund_log.user.full_name %>
+          <% if refund_log.user.business %>
+            @ <%= refund_log.user.business.name %>
           <% end %>
         <% else %>
-          <%= button_to "Void", void_transaction_path(transaction) %>
+          <%= button_to "Refund", refund_transaction_path(transaction) %>
         <% end %>
       <% end %>
     </td>

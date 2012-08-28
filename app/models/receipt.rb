@@ -26,13 +26,14 @@ class Receipt < ActiveRecord::Base
                              .joins("LEFT OUTER JOIN places ON logs.place_id = places.id")
                              .select("DISTINCT(receipts.id) as receipt_id, logs.user_id as customer_id, businesses.id as business_id, receipts.current_credit, receipts.earned_points, receipts.ringup_amount as amount_rungup, brands.id as brand_id, engagements.fb_engagement_msg, campaigns.id as campaign_id, logs.user_id, receipts.log_group_id, receipts.transaction_id, receipts.created_at as date_time, places.name as place_name, brands.name as brand_name, receipts.credit_used, receipts.unlocked_credit, receipts.cashbury_act_balance, receipts.remaining_credit, transaction_groups.id as transaction_group_id, rewards.money_amount as cash_reward, places.id as place_id, receipts.tip as tip, transaction_types.name as transaction_type, transactions.state, rewards.id as reward_id") 
                              .where("campaigns.ctype = 1")
+                             .group("receipt_id")
   cattr_accessor :current_user                            
 
   def refund!
     if transaction_group.present?
-      transaction_group.void!(current_user)
+      transaction_group.refund!(current_user)
     elsif transaction.present?
-      transaction.void!(current_user)
+      transaction.refund!(current_user)
     end  
   end                            
 end

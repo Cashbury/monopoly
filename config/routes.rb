@@ -156,7 +156,7 @@ Kazdoor::Application.routes.draw do
 
   resources :transactions, :only => [:index, :show] do
     member do
-      post :void
+      post :refund
     end
   end
 

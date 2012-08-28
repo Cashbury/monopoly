@@ -8,7 +8,7 @@ describe TransactionGroup do
     tx.friendly_id.should be_present
   end
 
-  it "should void all transactions in its group" do
+  it "should refund all transactions in its group" do
     business = Factory(:business)
     user = Factory(:consumer)
     op  = Factory(:cashbury_operator)
@@ -24,11 +24,11 @@ describe TransactionGroup do
 
     tx_grp.transactions.should have(2).items
 
-    tx_grp.void!(op)
+    tx_grp.refund!(op)
 
     tx_grp.transactions.reload
     tx_grp.transactions.each do |tx|
-      tx.state.should == Transaction::States::VOID
+      tx.state.should == Transaction::States::REFUND
     end
 
   end

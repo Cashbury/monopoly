@@ -5,8 +5,8 @@ class TransactionGroup < ActiveRecord::Base
 
   after_create :generate_friendly_id
 
-  def void!(voiding_user)
-    transactions.each { |tx| tx.void!(voiding_user) }
+  def refund!(refunding_user)
+    transactions.each { |tx| tx.refund!(refunding_user) }
   end
 
   protected

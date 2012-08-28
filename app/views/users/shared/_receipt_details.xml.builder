@@ -7,10 +7,14 @@ if place.present?
 else
   xml.date_time receipt.date_time
 end
+if receipt.state == "refunded"
+  xml.state           receipt.state || "succeeded"
+  xml.amount_refunded receipt.tip.to_f + receipt.amount_rungup.to_f
+  xml.amount_refunded_minus_credit receipt.credit_used
+end
 xml.transaction_id    receipt.transaction_id if receipt.transaction_id.present?
 xml.transaction_group_id    receipt.transaction_group_id if receipt.transaction_group_id.present?  
 xml.transaction_type  receipt.transaction_group_id.present? ? "Spend"  : receipt.transaction_type
-xml.state             receipt.state
 xml.brand_name        receipt.brand_name
 xml.brand_image_fb    brand.try(:brand_image).nil? ? nil : URI.escape(brand.brand_image.photo.url(:thumb))
 xml.business_name     business.try(:name)
