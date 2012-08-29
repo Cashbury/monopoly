@@ -27,14 +27,14 @@ module PlacesHelper
   end
 
   def split_hours_disabled(day_no)
-    open_hours_for_day(day_no).length < 2
+    open_hours_for_day(day_no).length < 2    
   end
 
   def open_hours_for_day(day_no)    
-    if @open_hours.is_a? ActiveSupport::HashWithIndifferentAccess
-      @open_hours.select {|k,v| v[:day_no] == day_no}  
+    if @open_hours.is_a?(ActiveSupport::HashWithIndifferentAccess) || @open_hours.is_a?(Hash)
+      @open_hours.select { |k,v| v[:day_no] == day_no }  
     else
-      @open_hours.where(:day_no => day_no)
+      @open_hours.where(:day_no => day_no)      
     end
   end
 end

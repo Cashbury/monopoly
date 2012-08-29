@@ -35,9 +35,9 @@ class PlacesController < ApplicationController
   end
 
   def new
-    @place=Place.new
+    @place = Place.new
     @place.build_address
-    @open_hours={}
+    @open_hours = {}
     ENABLE_DELAYED_UPLOADS ? 3.times { @place.tmp_images.build} : 3.times { @place.place_images.build}
   end
 
