@@ -14,15 +14,14 @@
 </style>
 <%end%>
 <p><%= link_to 'Edit', edit_users_management_path(@user) %> </p>
-<p>Refered signups: <%= @user.sign_up_count.to_s %> </p>
-<% user_uid=@user.email.split("@facebook").first %>
-<%=image_tag @user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture?type=large" : "/images/user-default.jpg", :style=>"float:right;" %>
-<table class="mono-table" style="width:685px" border="0" cellspacing="0" cellpadding="0">
+<% user_uid = @user.email.split("@facebook").first %>
+<%= image_tag @user.picture_url(:large), :style => "float:right;" %>
+<table class="mono-table user_account" style="width:562px" border="0" cellspacing="0" cellpadding="0">
   <caption><h4>User Account</h4></caption>
-  <tr><td style="width:70px"><b>Username: </b></td><td><%= @user.username %></td></tr>
-  <tr><td style="width:70px"><b>First Name: </b></td><td><%= @user.first_name %></td></tr>
-  <tr><td style="width:70px"><b>Last Name: </b></td><td><%= @user.last_name %></td></tr>
-  <tr><td style="width:70px"><b>Password:  </b></td>
+  <tr><td><b>Username: </b></td><td><%= @user.username %></td></tr>
+  <tr><td><b>First Name: </b></td><td><%= @user.first_name %></td></tr>
+  <tr><td><b>Last Name: </b></td><td><%= @user.last_name %></td></tr>
+  <tr><td><b>Password:  </b></td>
   <td>
     <%= form_tag "/users_management/resend_password" do %>
       <div style="display:none;">
@@ -32,60 +31,66 @@
     <% end %>
   </td>
   </tr>
-  <tr><td style="width:70px"><b>Email:  </b></td>
-  <td><%=@user.email%> | <%=@user.confirmed_at.nil? ? "Not confirmed" : "Confirmed" %> | <%= form_tag "/users_management/send_confirmation_email" do %>
+  <tr><td><b>Email:  </b></td>
+  <td><%= @user.email%> | <%=@user.confirmed_at.nil? ? "Not confirmed" : "Confirmed" %> | <%= form_tag "/users_management/send_confirmation_email" do %>
       <div style="display:none;"><%= email_field_tag "user[email]", @user.email%></div>
       <%= link_to "Send Confirmation Email","javascript:void(0)", {:id=>"send_confirmation_email"} %>
     <% end %>
   </td>
   </tr>
-  <tr><td style="width:70px"><b>Telephone Number:  </b></td><td><%= @user.telephone_number %></td></tr>
-  <% unless @user.mailing_address.nil? %>
+  <tr><td><b>Telephone Number:  </b></td><td><%= @user.telephone_number %></td></tr>
   <tr>
-    <td style="width:70px"><b>Mailing Address:  </b></td>
+    <td><b>Mailing Address:  </b></td>
+    <% unless @user.mailing_address.nil? %>
     <td>
-      <b>Street Address: </b><%=@user.mailing_address.street_address%><br/>
-      <b>City: </b><%=@user.mailing_address.city.try(:name)%><br/>
-      <b>Country: </b><%=@user.mailing_address.city.try(:country).try(:name)%><br/>
-      <b>Zipcode: </b><%=@user.mailing_address.zipcode%><br/>
+      <b>Street Address: </b><%= @user.mailing_address.try(:street_address)  %><br/>
+      <b>City: </b><%= @user.mailing_address.city.try(:name) %><br/>
+      <b>Country: </b><%= @user.mailing_address.city.try(:country).try(:name) %><br/>
+      <b>Zipcode: </b><%= @user.mailing_address.zipcode %><br/>
     </td>
+    <% else %>
+      <td> N/A </td> 
+    <% end %>
   </tr>
-  <% end %>
-  <% unless @user.billing_address.nil? %>
+  
   <tr>
-    <td style="width:70px"><b>Billing Address:  </b></td>
-    <td>
-      <b>Street Address: </b><%=@user.billing_address.street_address%><br/>
-      <b>City: </b><%=@user.billing_address.city.try(:name)%><br/>
-      <b>Country: </b><%=@user.billing_address.city.try(:country).try(:name)%><br/>
-      <b>Zipcode: </b><%=@user.billing_address.zipcode%><br/>
-    </td>
+    <td><b>Billing Address:  </b></td>
+    <% unless @user.billing_address.nil? %>
+      <td>
+        <b>Street Address: </b><%=@user.billing_address.street_address%><br/>
+        <b>City: </b><%=@user.billing_address.city.try(:name)%><br/>
+        <b>Country: </b><%=@user.billing_address.city.try(:country).try(:name)%><br/>
+        <b>Zipcode: </b><%=@user.billing_address.zipcode%><br/>
+      </td>
+    <% else %>
+      <td> N/A </td>
+    <% end %>
   </tr>
-  <% end %>
 
-  <tr><td style="width:70px"><b>DOB:  </b></td><td><%= @user.dob || "N/A"%></td></tr>
-  <tr><td style="width:70px"><b>FB feed:  </b></td><td><%= raw fb_feed_status_for( @user  )%></td></tr>
-  <tr><td style="width:70px"><b>Note:  </b></td><td><%= @user.note || "N/A" %></td></tr>
-  <tr><td style="width:70px"><b>Legal Ids:  </b></td>
+  <tr><td><b>DOB:  </b></td><td><%= @user.dob || "N/A"%></td></tr>
+  <tr><td><b>FB feed:  </b></td><td><%= raw fb_feed_status_for( @user  )%></td></tr>
+  <tr><td><b>Note:  </b></td><td><%= @user.note || "N/A" %></td></tr>
+  <tr><td><b>Legal Ids:  </b></td>
     <td>
     <% @user.legal_ids.each do |legal| %>
-    <%=LegalType.find(legal.legal_type_id).displayed_type%> : <%= legal.id_number %><br/>
-    <%end%>
+      <%= LegalType.find(legal.legal_type_id).displayed_type%> : <%= legal.id_number %><br/>
+    <% end %>
     </td>
   </tr>
+  <tr><td><b>Facebook-Account-Linked: </b></td><td><%=@user.is_fb_account ? "Yes" : "No"%></td></tr>
 </table>
 <br/>
 <table class="mono-table" style="width:685px" border="0" cellspacing="0" cellpadding="0">
-  <%=hidden_field_tag :user_id, @user.id %>
+  <%= hidden_field_tag :user_id, @user.id %>
   <caption><h4>System Info</h4></caption>
-  <tr><td style="width:92px"><b>User Types: </b></td><td><%=@user.roles.collect{|r| r.name }.join(' , ')%></td></tr>
-  <tr><td style="width:92px"><b>Home Town: </b></td><td><%=@user.try(:country).try(:name) || "N/A"%></td></tr>
-  <tr><td style="width:92px"><b>Account Status: </b></td>
+  <tr><td style="width:98px"><b>User Types: </b></td><td><%=@user.roles.collect{|r| r.name }.join(' , ')%></td></tr>
+  <tr><td style="width:98px"><b>Home Town: </b></td><td><%=@user.try(:country).try(:name) || "N/A"%></td></tr>
+  <tr><td style="width:98px"><b>Account Status: </b></td>
     <td><span id="status"><%=@user.active ? "Active" : "Inactive"%></span> | <%=link_to "Suspend", "javascript:void(0)", {:id=>"suspend_link"}%> | <%=link_to "Reactivate", "javascript:void(0)", {:id=>"reactivate_link"}%>
     <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
   </tr>
-  <tr><td style="width:92px"><b>User Since: </b></td><td><%=@user.created_at.to_date%></td></tr>
-  <tr><td style="width:92px"><b>Facebook-Account-Linked: </b></td><td><%=@user.is_fb_account ? "Yes" : "No"%></td></tr>
+  <tr><td style="width:98px"><b>User Since: </b></td><td><%=@user.created_at.to_date%></td></tr>  
+  <tr><td style="width:98px"><b>Refered signups: </b></td><td><%= @user.sign_up_count.to_s %></td></tr>  
 </table>
 <%unless @user.qr_code.nil? %>
 <br/>

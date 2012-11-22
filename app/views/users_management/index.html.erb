@@ -30,12 +30,8 @@ table {width: 1000px;}
     <th>Email</th>
     <th>Telephone Number</th>
     <th>Created On</th>
-    <th>Login Count</th>
-    <th>Sign In IP</th>
-    <th>Available Balance Amount</th>
-    <th>Confirmed</th>
-    <th>Admin?</th>
-    <th>FB status</th>
+    <th>Login Count</th>    
+    <th>Active Account</th>    
     <th></th>
     <th></th>
     <th></th>
@@ -43,20 +39,16 @@ table {width: 1000px;}
 
 <% @users.each do |user| %>
   <tr>
-    <% user_uid=user.email.split("@facebook").first %>
-    <td><%= link_to (image_tag user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg"), users_management_path(user) %></td>
-    <td><%= user.full_name%></td>
+    <% user_uid = user.email.split("@facebook").first %>
+    <td><%= link_to (image_tag user.picture_url, height: "50px", width: "50px"), users_management_path(user) %></td>
+    <td><%= user.full_name %></td>
     <td><%= user.email %></td>
     <td><%= user.telephone_number %></td>
-    <td><%= user.created_at.to_formatted_s(:long)%></td>
-    <td><%= user.sign_in_count %></td>
-    <td><%= user.current_sign_in_ip%></td>
-    <td><%= user.amount || 0  %></td>
-    <td><%= status_icon user.confirmed_at.present? %></td>
-    <td><%= status_icon user.admin? %></td>
-    <td><%= status_icon user.is_fb_enabled %></td>
-    <td><%= link_to 'Show', users_management_path(user) ,:class=>"button"%></td>
-    <td><%= link_to 'Edit', edit_users_management_path(user) ,:class=>"button"%></td>
+    <td><%= user.created_at.to_formatted_s(:long) %></td>
+    <td><%= user.sign_in_count %></td>    
+    <td><%= status_icon user.confirmed_at.present? %></td>    
+    <td><%= link_to 'Show', users_management_path(user) ,:class => "button" %></td>
+    <td><%= link_to 'Edit', edit_users_management_path(user) , :class => "button" %></td>
     <td><%= link_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete ,:class=>"button negative" %></td>
   </tr>
 <% end %>

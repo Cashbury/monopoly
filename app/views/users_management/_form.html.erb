@@ -1,19 +1,13 @@
 <% content_for (:head) do %> 
-<%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
-<script type="text/javascript">
-var total_legals=<%=@total%>;
-var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
+  <%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
+  <%= javascript_tag do %>
+    var total_legals= <%= @total %>;
+    var legal_index= <%= @legal_ids.empty? ? 0 : @legal_ids.length %>;
+  <% end -%>
+<% end %>
 
-</script>
-<style type="text/css">  
-  .legals_div select{width:auto;margin:0 10px 0 0;}
-  .legals_div input {width:150px;padding-top:2px;}
-  .legals_div {position:relative;}
-  .legals_div a {position:absolute;right:55px;top:10px}
-  .ui-tabs {width:442px;margin-bottom:20px;}
-</style>
-<%end%>
-<%= form_for @user, :url => @user.new_record? ? :users_management_index : :users_management, :html=>{:class=>"mono-form"} do |f| %>
+
+<%= form_for @user, url: @user.new_record? ? :users_management_index : :users_management, html: { class: "mono-form"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -27,42 +21,50 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
   <fieldset >
     <legend>User Information</legend>
     <p>
-    <%= f.label :roles, "Select User Roles" %><br />
-    <% Role.all.each do |role| %>
-      <%= check_box_tag(
-                        "user[roles_list][]",
-                        role.id,
-                        @user.roles.any? ? @user.roles.detect{|r| r.id == role.id} : false, {:class=>"role_box"}) %>
-      <%= "#{role.displayed_role}"%><br />
+      <%= f.label :roles, "Select User Roles" %><br />
+      <% Role.all.each do |role| %>
+        <%= check_box_tag(
+                          "user[roles_list][]",
+                          role.id,
+                          check_role_box?(role), { class: "role_box" }) %>
+        <%= "#{role.displayed_role}"%><br />
+      <% end %>
+    </p>
+    <% if @show_biz_and_place %>
+      <p class="brands_list">
+    <% else %>
+      <p class="brands_list" style="display:none">
     <% end %>
-    </p>
+        <%= label_tag "Brand" %>
+        <%= select_tag :brand_id , "<option value=''>Select brand...</option>".html_safe + options_from_collection_for_select(@brands, "id", "name", params[:brand_id])%>
+      </p>
     <% if @show_biz_and_place %>
-    <p class="businesses_list">
-    <%else%>
-    <p class="businesses_list" style="display:none">
-    <%end%>
-      <%= label_tag "Business" %>
-      <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name",@business_id)%>
-    </p>
+      <p class="businesses_list">
+    <% else %>
+      <p class="businesses_list" style="display:none">
+    <% end %>
+        <%= label_tag "Business" %>
+        <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name", params[:business_id])%>
+      </p>
     <% if @show_biz_and_place %>
-    <p class="places_list">
-    <%else%>
-    <p class="places_list" style="display:none">
-    <%end%>
-      <%= label_tag "Place" %>
-      <%= select_tag :place_id , "<option value=''>Select place...</option>".html_safe +  options_from_collection_for_select(@places, "id", "name",@place_id) %>
-    </p>
+      <p class="places_list">
+    <% else %>
+      <p class="places_list" style="display:none">
+    <% end %>
+        <%= label_tag "Place" %>
+        <%= select_tag :place_id , "<option value=''>Select place...</option>".html_safe +  options_from_collection_for_select(@places, "id", "name", params[:place_id]) %>
+      </p>
     <p>
       <%= f.label :first_name %>
-      <%= f.text_field :first_name , :class=>"title" %>
+      <%= f.text_field :first_name , class: "title" %>
     </p>
     <p>
       <%= f.label :last_name %>
-      <%= f.text_field :last_name , :class=>"title" %>
+      <%= f.text_field :last_name , class: "title" %>
     </p>
     <p>
-      <%= f.label "Date of birth" %>
-      <%= f.date_select :dob, prompt: true , start_year: (Date.today.year - 18), end_year: 2012 %>
+      <%= f.label :dob, "Date of birth" %>
+      <%= f.date_select :dob, prompt: true , start_year: Date.today.year, end_year: (Date.today.year - 100) %>
     </p>
 
     <p>
@@ -71,35 +73,39 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
     </p>
     <p>
       <%= f.label :telephone_number %>
-      <span class="code"><%= @user.country.try(:phone_country_code) %></span> <%= f.text_field :telephone_number , :class => "title", :value => @user.phone_without_code %>
-      
+      <span class="code"><%= @user.country.try(:phone_country_code) %></span> <%= f.text_field :telephone_number , class: "title", value: @user.phone_without_code %>      
     </p>
     <div class="legal_type_class">
       <%= label_tag "Legal IDs" %>
       <% if @legal_ids.empty? %>
-      <div class="legals_div">
-        <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), {:id=>"legal_types_0"}%><%=text_field_tag "legal_ids[]","",{:class=>"title",:id=>"legal_ids_0"}%>
-        <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
-      </div>
-      <%else%>
-      <%@legal_ids.each_with_index do |legal_id,index| %>
-      <div class="legals_div">
-        <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",legal_id.legal_type.id), {:id=>"legal_types_#{index}"}%><%=text_field_tag "legal_ids[]",legal_id.id_number,{:class=>"title",:id=>"legal_ids_#{index}"}%>
-        <%if index==0%>
-        <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
-        <%else%>
-        <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
-        <%end%>
-      </div>
-      <%end%>
-      <%end%>
+        <div class="legals_div">
+          <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), {:id=>"legal_types_0"}%><%=text_field_tag "legal_ids[]","",{:class=>"title",:id=>"legal_ids_0"}%>
+          <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+        </div>
+        <% else %>
+          <% @legal_ids.each_with_index do |legal_id,index| %>
+          <div class="legals_div">
+            <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",legal_id.legal_type.id), {:id=>"legal_types_#{index}"}%><%=text_field_tag "legal_ids[]",legal_id.id_number,{:class=>"title",:id=>"legal_ids_#{index}"}%>
+            <%if index == 0 %>
+            <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+            <% else %>
+            <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
+            <% end %>
+          </div>
+          <% end %>
+      <% end %>            
     </div>
+    <%= f.label :user_image, "Upload Image" %>
+    <%= f.fields_for :user_image do |builder| %>
+      <%= builder.file_field :photo %>          
+    <% end -%>
+    <small>Maximum size of 3MB, Supported images JPG, GIF, PNG, JPEG, BMP</small>
   </fieldset>
   <fieldset>
     <legend>User Account</legend>
     <p>
       <%= f.label :username %>
-      <%= f.text_field :username , :class=>"title U_username" %>
+      <%= f.text_field :username , class: "title U_username" %>
       <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:username) %>
@@ -108,7 +114,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
     </p>
     <p>
       <%= f.label :email %>
-      <%= f.text_field :email , :class=>"title U_email" %>
+      <%= f.text_field :email , class: "title U_email" %>
       <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
       <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
         <%= @user.errors.on(:email) %>
@@ -123,7 +129,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
     </ul>
     <div id="mailing">
       <fieldset style="border:none">
-        <%= f.fields_for :mailing_address,@user.try(:mailing_address) do |mailing_address_form| %>
+        <%= f.fields_for :mailing_address, @user.try(:mailing_address) do |mailing_address_form| %>
           <p>
             <%= mailing_address_form.label :city %>
             <%= mailing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name, mailing_address_form.object.try(:city_id))%>
@@ -136,7 +142,7 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
             <%= mailing_address_form.label :zipcode %>
             <%= mailing_address_form.text_field :zipcode, :class=>"title" %>
           </p>
-        <%end%>
+        <% end %>
       </fieldset>
     </div>
     <div id="billing">
@@ -160,29 +166,21 @@ var legal_index= <%=@legal_ids.empty? ? 0 : @legal_ids.length %>;
   </div>
   <%= toggle_fb_link(@user) %>
   <div class="actions">
-    <%= f.submit @user.new_record? ? "Add" : "Update" %>
+    <%= f.submit @user.new_record? ? "Add" : "Update", class: "submit_btn" %>
   </div>
 <% end %>
 
-<script type="text/javascript">
-$('#user_home_town').change(function(e) {
-    var value = e.target.value;
-    if (value != '') {
-  $.get('/countries/'+value+'/country_code', undefined, function(e) {
-      var code = e['country_code'];
-      $('.code').html(code);
+<%= javascript_tag do %>
+  $('#user_home_town').change(function(e) {
+      var value = e.target.value;
+      if (value != '') {
+    $.get('/countries/'+value+'/country_code', undefined, function(e) {
+        var code = e['country_code'];
+        $('.code').html(code);
+    });
+      }
+      else {
+    $('.code').html('');
+      }
   });
-    }
-    else {
-  $('.code').html('');
-    }
-});
-//  jQuery(function(){
-//    jQuery("#activate").live("click",function(e){
-//      jQuery.post("/v1/users/<%= @user.id %>/on");
-//    });
-//    jQuery("#deactivate").live("click",function(e){
-//      jQuery.post("/v1/users/<%= @user.id %>/off");
-//    });
-//  });
-</script>
+<% end %>

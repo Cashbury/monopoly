@@ -20,11 +20,11 @@ group :test do
   gem 'mocha', '=0.9.12'
   gem 'rcov','=0.9.9'
   gem "factory_girl_rails", "~> 1.4.0"
+  gem 'cucumber-rails', '~> 1.2.1'
 end
 
 group :test, :development do
   gem "rspec-rails", "~> 2.6"
-  gem 'cucumber-rails', '~> 1.2.1'
   # must have QT installed; follow link below for instructions
   # https://github.com/thoughtbot/capybara-webkit/wiki/Installing-QT
   gem 'capybara-webkit', :git => "git://github.com/thoughtbot/capybara-webkit"

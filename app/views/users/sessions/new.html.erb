@@ -1,4 +1,4 @@
-<h2>Sign in</h2>
+<% title "Sign In" %>
 
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :class=>"mono-form") do |f| %>
   <p><%= f.label :email, :class=>"hide" %>
@@ -14,3 +14,17 @@
 <% end %>
 
 <%= render :partial => "devise/shared/links" %>
+
+
+
+<!--<form action="/users/registrations.xml" method="POST">
+  <label>first_name</label>
+  <input type="text" name="first_name" value="Basayel"/>
+  <label>last_name</label>
+  <input type="text" name="last_name" value="Said"/>
+  <label>Email</label>
+  <input type="text" name="email" value="basayel@example.com"/>
+  <label>Password</label>
+  <input type="text" name="password" value="123456"/>
+  <input type="submit"/>
+</form>-->

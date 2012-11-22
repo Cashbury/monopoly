@@ -55,7 +55,7 @@ class Users::CashiersController < Users::BaseController
 		    response.merge!({:customer_name      => user.full_name})
 		    response.merge!({:customer_type      => user_type})
 		    user_uid=user.email.split("@facebook").first
-        response.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
+        response.merge!({:customer_image_url => user.picture_url })
         respond_to do |format|     
           format.xml {render :xml => response , :status => 200}
         end
@@ -180,7 +180,7 @@ class Users::CashiersController < Users::BaseController
 		    response.merge!({:customer_name      => user.full_name})
 		    response.merge!({:customer_type      => user_type})
 		    user_uid = user.email.split("@facebook").first
-        response.merge!({:customer_image_url => URI.escape(user.email.match(/facebook/) ? "https://graph.facebook.com/#{user_uid}/picture" : "/images/user-default.jpg")})
+        response.merge!({:customer_image_url => user.picture_url })
         respond_to do |format|     
           format.xml {render :xml => response , :status => 200}
         end

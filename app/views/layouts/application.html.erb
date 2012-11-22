@@ -9,7 +9,12 @@
 
     <%= stylesheet_link_tag "admin", "css3buttons" %>
     <%= stylesheet_link_tag 'datePicker' %>
-    <%= javascript_include_tag :defaults, 'jquery.enablePlaceholder.min', 'jquery.datePicker-2.1.2', 'jquery.raty' , :cache=>true%>
+    <%= javascript_include_tag :defaults, 'jquery.enablePlaceholder.min', 'jquery.datePicker-2.1.2', 'jquery.raty' , :cache => true %>
+    <%= javascript_include_tag "upload_image/jquery.iframe-transport.js" %>
+    <%= javascript_include_tag "upload_image/jquery.fileupload.js" %>
+    <%= javascript_include_tag "upload_image/jquery.fileupload-ui.js" %>
+    <%= javascript_include_tag "upload_image/image_form.js" %>
+    <%= javascript_include_tag "upload_image/jquery.tmpl.min.js" %>
 
     <%= csrf_meta_tag %>
     <%= yield(:head) %>

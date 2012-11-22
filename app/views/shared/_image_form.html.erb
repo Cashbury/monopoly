@@ -1,0 +1,48 @@
+<div class="side_photo_form" style="float:right">
+  <div class="side_form_link_wrapper" id="fileupload">
+    <div class="fileupload-content">
+      <div class="files">
+        <div class="main_image" >
+          <div class="L-current_image userImg_container">           
+            <%= image_tag(object.picture_url(:large), class: "user_default_image userImg_container") %>
+          </div>
+          <div class="L-default_image" style="display:none;">
+            <%= image_tag(object.default_image(:large), class: "user_default_image userImg_container") %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%= form_for(object, url: path, html: { multipart: true }) do |f| %>
+      <div class="fake_file_input">         
+        <%= f.fields_for :user_image do |builder| %>
+          <%= builder.file_field :photo %>          
+        <% end -%>
+      </div>    
+    <%= link_to "Clear", "javascript:void(0);", class: "side_form_button clear_image_link" %>
+  </div>       
+  <div id="confirm_actions_wrapper" class="L-clear_confirmation" style="display: none;">
+    <div>
+      <span> Sure? </span>
+    </div>
+    <%= link_to "", "javascript:void(0);", class: "side_form_button confirm_actions cancel cancel_clear cancel_image_link" %>
+    <%= link_to "", "javascript:void(0);", class: "side_form_button confirm_actions approve confirm_clear approve_image_link" %>    
+  </div>
+  <% end %>
+  <small>Maximum size of 3MB, Supported images JPG, GIF, PNG, JPEG, BMP</small>
+  <div class="loading_img" id="loader"><%= image_tag "/images/loader.gif", alt: "Cashbury Loader", width: "50px", height: "50px" %></div>
+
+</div>
+
+<script id="template-upload" type="text/x-jquery-tmpl">
+  <div class="template-upload">
+    <div class="preview"></div>
+    <div id="confirm_actions_wrapper">
+      <div>
+        <span>Sure?</span>
+      </div>
+      <%= link_to "", "javascript:void(0);", class: "side_form_button confirm_actions cancel cancel_image_link"%>
+      <%= link_to "", "javascript:void(0);", class: "side_form_button confirm_actions start approve approve_image_link"%>      
+    </div>
+  </div>
+</script>

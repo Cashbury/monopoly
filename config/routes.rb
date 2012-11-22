@@ -212,26 +212,36 @@ Kazdoor::Application.routes.draw do
     resource :cashbox, :only => [:show, :edit, :update], :controller => "businesses/cashboxes"
   end
   resources :users_management do
+    member do
+      post "withdraw_account", :action=>:withdraw_account, :as=>"withdraw_account"
+      post "deposit_account", :action=>:deposit_account, :as=>"deposit_account"
+      post "redeem_rewards", :action=>:redeem_reward_for_user, :as=>"redeem_rewards"
+      post "make_engagement", :action=>:make_engagement, :as=>"make_engagement"
+      get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions, :as =>"list_transactions"
+      get  "list_campaigns/business/:business_id/programs/:program_id",:action=>:list_campaigns, :as =>"list_campaigns"
+      get  "manage_user_accounts", :action=>:manage_user_accounts, :as=>:manage_user_accounts
+      get  "redeem_rewards", :action=>:redeem_rewards, :as=>:redeem_rewards
+      get  "list_engagements", :action=>:list_engagements, :as=>"list_engagements"
+      get  "logged_actions", :action=>:logged_actions, :as=>"logged_actions"
+      get  "all_qr_codes_transactions",:action=>:all_qr_codes_transactions, :as=>"all_qr_codes_transactions"
+      get  "view_tx_details/log/:log_id", :action=>:view_tx_details, :as=>"view_tx_details"
+      get  "check_txs_updates/:qr_code_id", :action=> :check_txs_updates, :as=>"check_txs_updates"
+      get  "transactions_report", :action=> :aggregate_transactions_report, :as=>"aggregate_transactions_report"
+      post :clear_image
+    end
+
     get  "update_cities/:id",:action=>:update_cities , :on =>:collection ,:as =>"update_cities"
     post "check_attribute_availability", :action=>:check_attribute_availability,:on =>:collection ,:as =>"check_attribute_availability"
     post "resend_password", :action=>:resend_password,:on =>:collection ,:as =>"resend_password"
     post "send_confirmation_email", :action=>:send_confirmation_email,:on =>:collection ,:as =>"send_confirmation_email"
-    post "withdraw_account", :action=>:withdraw_account, :on=>:member, :as=>"withdraw_account"
-    post "deposit_account", :action=>:deposit_account, :on=>:member, :as=>"deposit_account"
-    post "redeem_rewards", :action=>:redeem_reward_for_user, :on=>:member, :as=>"redeem_rewards"
-    post "make_engagement", :action=>:make_engagement, :on=>:member, :as=>"make_engagement"
-    get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions,:on =>:member ,:as =>"list_transactions"
-    get  "list_campaigns/business/:business_id/programs/:program_id",:action=>:list_campaigns,:on =>:member ,:as =>"list_campaigns"
-    get  "manage_user_accounts", :action=>:manage_user_accounts, :on=>:member, :as=>:manage_user_accounts
-    get  "redeem_rewards", :action=>:redeem_rewards, :on=>:member, :as=>:redeem_rewards
-    get  "list_engagements", :action=>:list_engagements, :on=>:member, :as=>"list_engagements"
-    get  "logged_actions", :action=>:logged_actions, :on=>:member, :as=>"logged_actions"
-    get  "all_qr_codes_transactions",:action=>:all_qr_codes_transactions, :on=>:member, :as=>"all_qr_codes_transactions"
-    get  "view_tx_details/log/:log_id", :action=>:view_tx_details, :on=>:member, :as=>"view_tx_details"
-    get  "check_txs_updates/:qr_code_id", :action=> :check_txs_updates, :on=>:member, :as=>"check_txs_updates"
-    get  "transactions_report", :action=> :aggregate_transactions_report, :on=>:member, :as=>"aggregate_transactions_report"
 
     post :enroll_in_money_program
+
+
+    collection do 
+      get :edit
+      put :update      
+    end
   end
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
@@ -262,6 +272,7 @@ Kazdoor::Application.routes.draw do
   match "reissue_code_from_listing_txs/:id" =>"users_management#reissue_code_from_listing_txs"
   
   match "/users_management/update_places/:id" =>"users_management#update_places"
+  match "/users_management/update_businesses/:id" =>"users_management#update_businesses"
   match "/users/add_my_phone/:phone_number.:format" =>"users/places#add_my_phone"
   match "/users/:business_id/get_id.:format" =>"users/places#get_my_id"  
 

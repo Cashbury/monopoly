@@ -16,36 +16,61 @@ $(document).ready(function(){
       });   
   });
   $(".role_box").change(function(){
-    //if ($(this).is(":checked")){
-      var role_ids=[];
+    if ($(this).is(":checked")){
+      var role_ids = [];
       $("INPUT[type='checkbox']:checked").each(function(index, domEle) {
         role_ids.push($(domEle).val());
       });
+      $('#loader').hide().unbind("ajaxStart");
       $.ajax({
         type: 'GET',
-        url: '/check_role?role_ids='+role_ids,
+        url: '/check_role?role_ids='+role_ids,        
         success: function(data){
-          if (data=="true"){
+          if (data == "true"){
+            $('.brands_list').show();
             $('.businesses_list').show();
             $('.places_list').show();
           }else{
+            $('#brand_id').val("");
             $('#business_id').val("");
             $('#place_id').val("");
+            $('.brands_list').hide();
             $('.businesses_list').hide();
             $('.places_list').hide();
           }
+          re_enable_loader();
         }
       });
-    //}
+    } else {
+      $('#brand_id').val("");
+      $('#business_id').val("");
+      $('#place_id').val("");
+      $('.brands_list').hide();
+      $('.businesses_list').hide();
+      $('.places_list').hide();
+    }
   });
+
   $(".tabs").tabs({
     select:function(e,ui){
       var data = $(ui.tab).attr("data-c");
     }
   });
+
+  $('select#brand_id').bind('change',function(){
+    var brand_id = $(":selected", this).val();
+    $('#loader').hide().unbind("ajaxStart");
+    $.getScript("/users_management/update_businesses/" + brand_id, function(data, textStatus, jqxhr){
+      re_enable_loader();
+    });
+  });
+
   $('select#business_id').bind('change',function(){
     var business_id = $(":selected", this).val();
-    $.getScript("/users_management/update_places/"+business_id);
+    $('#loader').hide().unbind("ajaxStart");
+    $.getScript("/users_management/update_places/" + business_id, function(data, textStatus, jqxhr){
+      re_enable_loader();
+    });
   });
   
   $('#action_id').live('change',function(){
@@ -110,7 +135,7 @@ $(document).ready(function(){
       url: "/enrollments/"+user_id+"/"+pt_id+"/"+enroll,
       success: function(data){
         loadingImage.hide();
-        if (data==0){
+        if (data == 0){
           ele2.text("Enroll");
           $('#program_status_'+pt_id).html("Un-Enrolled");
         }else{
@@ -251,14 +276,14 @@ $(document).ready(function(){
   });
   
   $('.U_email, .U_username').bind('change',function(){
-    var field=$(this);
-    if(field.val() !=null){
-      var fieldName=field[0].name;
+    var field = $(this);
+    if(field.val() != ""){
+      var fieldName = field[0].name;
       var loadingImage = field.nextAll('img');
       var successContainer = field.nextAll('.L-success');
       var errorContainer = field.nextAll('.L-error');
-      var n1=fieldName.replace("user[","");
-      var attributeName=n1.replace("]","");
+      var n1 = fieldName.replace("user[","");
+      var attributeName = n1.replace("]","");
       loadingImage.show();
       $.ajax({
         url: '/users_management/check_attribute_availability',
@@ -294,3 +319,12 @@ $(document).ready(function(){
     $.getScript("/users_management/update_cities/"+country_id+"?selector_id=user_billing_address_attributes_city_id");
   });
 });
+
+
+function re_enable_loader() {
+  $('#loader').hide().ajaxStart(function() {
+    return $(this).show();
+  }).ajaxStop(function() {
+    return $(this).hide();
+  });
+}

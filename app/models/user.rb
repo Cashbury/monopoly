@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :role_id, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :dob, :home_town
 
   attr_accessor :role_id
   has_many :templates
@@ -73,7 +73,7 @@ class User < ActiveRecord::Base
 
   has_one  :qr_code, :as => :associatable, :conditions => {:status=>1}
   has_one :business, :through => :employees
-
+  has_one :user_image,:as => :uploadable, :dependent => :destroy
   has_one :account_holder, :as =>:model
   has_many :accounts, :through => :account_holder
 
@@ -92,6 +92,7 @@ class User < ActiveRecord::Base
                                 :allow_destroy => true # :reject_if => proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
+  accepts_nested_attributes_for :user_image
   after_create :set_default_role, :add_cash_incentives
   after_create :initiate_user_code
   before_save :add_country_code_to_phone
@@ -116,6 +117,7 @@ class User < ActiveRecord::Base
   def initiate_user_code
     issue_qrcode(0, 0, QrCode::SINGLE_USE)
   end
+
   
   def set_default_role
     current_roles = roles
@@ -791,6 +793,20 @@ class User < ActiveRecord::Base
     return '' if !phone_number
     code = country_code
     phone_number.gsub(/^#{Regexp.escape(code)}/, '')
+  end
+
+  def picture_url(style = :large)   
+    if self.user_image.present? and !self.user_image.new_record?      
+      self.user_image.photo.url(style)
+    elsif self.email.match(/facebook/)
+      "https://graph.facebook.com/#{self.id}/picture?type=#{style.to_s}"
+    else
+      default_image
+    end    
+  end
+
+  def default_image(style = :large)
+    "/images/user-default.png"
   end
 
   protected

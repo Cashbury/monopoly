@@ -1,5 +1,7 @@
 <% title "Editing user" %>
 
+<%= render partial: "shared/image_form", object: @user, locals: { object_type: "user", object: @user, path: users_management_path } %>
+
 <%= render 'form' %>
 
 <%= link_to 'Show', users_management_path(@user) %> |

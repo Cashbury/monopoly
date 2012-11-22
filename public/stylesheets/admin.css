@@ -1,9 +1,10 @@
 /** monopoly forms **/
 .mono-form label{ display:block;margin:0;padding:5px 0 0 0;line-height:1.4em;font-size:1em;}
 .mono-form input, .mono-form label, .mono-form textarea { width: 400px;}
+.mono-form input.role_box { width: 22px;}
 .mono-form input.half{width:193px; display:inline}
 .mono-form .hide{display:none}
-.mono-form select {width:412px}
+.mono-form select {width:132px;}
 .tabs .ui-tabs-panel{padding:5px 0 }
 .mono-form fieldset{-moz-border-radius: 3px;border-radius: 3px; border-color:#d2d2d2; width:410px;  }
 
@@ -20,7 +21,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', end
 background: linear-gradient(top, #eeeeee 0%,#cccccc 67%); /* W3C */}
 .mono-table tr.even{ }
 .mono-table td,.mono-table th{ padding:5px 10px; border-left: 1px solid #ccc; border-top:1px solid #ccc;}
-
+.user_account td{ width: 1px;}
 
 #main_header h1{ margin:20px 0 15px 0; font-size:1.8em;}
 #leftContainer { padding:30px;}
@@ -48,6 +49,10 @@ label.hours_action, label.hours_action input {
     width: 70px;
 }
 
-div.split_time {
-    margin-left: 74px;
-}
+div.split_time { margin-left: 74px; }
+
+.legals_div select{width:auto;margin:0 10px 0 0;}
+.legals_div input {width:150px;padding-top:2px;}
+.legals_div {position:relative;}
+.legals_div a {position:absolute;right:55px;top:10px}
+.ui-tabs {width:440px;margin-bottom:20px;}

@@ -1,34 +1,38 @@
 class UsersManagementController < ApplicationController
+
   before_filter :authenticate_user!, :require_admin
-  before_filter :list_places_and_bizs, :only=>[:new,:create,:edit,:update]
-  @@per_page=20
+  before_filter :list_places_and_bizs, only: [:new,:create,:edit,:update]
+
+  @@per_page = 20
   
   def index
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @users=User.with_account_at_large.with_code.terms(params[:title]).order("users.created_at DESC").paginate(:page => @page,:per_page => User::per_page )
+    @users = User.with_account_at_large.with_code.terms(params[:title]).order("users.created_at DESC").paginate(:page => @page,:per_page => User::per_page )
   end
 
   def new
-    @user=User.new
+    @user = User.new
     @user.build_mailing_address
     @user.build_billing_address
-    @total=LegalType.count
-    @legal_ids=[]
+    @total = LegalType.count
+    @legal_ids = []
+    @user.build_user_image unless @user.user_image.present?
   end
   
   def create
-    @user= User.new(params[:user])
-    if params[:user][:roles_list].any?
+    @user = User.new(params[:user])
+    if params[:user][:roles_list].present? and params[:user][:roles_list].any?
+      @show_biz_and_place = true
       params[:user][:roles_list].each do |role_id|
-        @user.employees.build(:role_id=>role_id,:business_id=>params[:business_id])    
+        @user.employees.build(:role_id => role_id,:business_id => params[:business_id])    
       end
     end
     if params[:user][:mailing_address_attributes].present?
-      address=Address.create(params[:user][:mailing_address_attributes])
-      @user.mailing_address_id=address.id
+      address = Address.create(params[:user][:mailing_address_attributes])
+      @user.mailing_address_id = address.id
     end
     if params[:user][:billing_address_attributes].present?
-      address=Address.create(params[:user][:billing_address_attributes])
+      address = Address.create(params[:user][:billing_address_attributes])
       @user.billing_address_id=address.id
     end
     
@@ -39,35 +43,38 @@ class UsersManagementController < ApplicationController
         unless params[:legal_ids].empty? || params[:legal_types].empty?
           @user.set_legal_ids(params[:legal_types], params[:legal_ids])
         end
-        format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully created.') }
+        format.html { redirect_to(users_management_path(@user), notice: 'User was successfully created.') }
         format.xml  { head :ok }
       else
         @user.build_mailing_address unless @user.mailing_address.present?
         @user.build_billing_address unless @user.billing_address.present?
-        @total=LegalType.count
-        @legal_ids=[]
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
+        @user.build_user_image unless @user.user_image.present?
+        @user.dob = params[:user][:dob]
+        @total = LegalType.count
+        @legal_ids = []
+        format.html { render action: "new" }
+        format.xml  { render xml: @user.errors, status: :unprocessable_entity }
       end
     end
   end
   
   def edit
     @user = User.find(params[:id])
+    @user.build_user_image unless @user.user_image.present?
     @user.build_mailing_address unless @user.mailing_address.present?
     @user.build_billing_address unless @user.billing_address.present?
-    @total=LegalType.count
+    @total = LegalType.count
     #@roles=@user.roles.select {|role| role.require_business?}
-    @roles=@user.employees.select {|employee| employee.business_id.present?}.collect{|e| e.business_id}
-    @show_biz_and_place=@roles.any?
-    @business_id=@roles.first
-    @place_id=@user.places.first.try(:id)
-    @legal_ids=@user.legal_ids
+    @roles = @user.employees.select {|employee| employee.business_id.present?}.collect{|e| e.business_id}
+    @show_biz_and_place = @roles.any?
+    @business_id = @roles.first
+    @place_id = @user.places.first.try(:id)
+    @legal_ids = @user.legal_ids
   end
 
   def update
-    @user= User.find(params[:id])
-    if params[:user][:roles_list].any?
+    @user = User.find(params[:id])
+    if params[:user][:roles_list].present? and params[:user][:roles_list].any?
       @user.employees.delete_all
       params[:user][:roles_list].each do |role_id|
         @user.employees.build(:role_id=>role_id,:business_id=>params[:business_id])    
@@ -83,36 +90,52 @@ class UsersManagementController < ApplicationController
       if @user.mailing_address.present?
         @user.mailing_address.update_attributes(params[:user][:mailing_address_attributes])
       else
-        address=Address.create(params[:user][:mailing_address_attributes])
-        @user.mailing_address_id=address.id
+        address = Address.create(params[:user][:mailing_address_attributes])
+        @user.mailing_address_id = address.id
       end
     end
     if params[:user][:billing_address_attributes].present?      
       if @user.billing_address.present?
         @user.billing_address.update_attributes(params[:user][:billing_address_attributes])
       else
-        address=Address.create(params[:user][:billing_address_attributes])
+        address = Address.create(params[:user][:billing_address_attributes])
         @user.billing_address_id=address.id
       end
     end
-    
     respond_to do |format|
       if @user.update_attributes(params[:user])
-        LegalId.delete_all("associatable_id=#{@user.id} and associatable_type='User'")
-        unless params[:legal_ids].empty? || params[:legal_types].empty?
-          @user.set_legal_ids(params[:legal_types], params[:legal_ids])
+        result = {}
+        result[:current_image] = @user.picture_url(:large)
+        if params[:legal_ids].present? and params[:legal_types].present?
+          unless params[:legal_ids].empty? || params[:legal_types].empty?
+            LegalId.delete_all("associatable_id=#{@user.id} and associatable_type='User'")
+            @user.set_legal_ids(params[:legal_types], params[:legal_ids])
+          end
         end
         format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully updated.') }
+        format.json { render json: result.to_json,text: true, status: 200 }
         format.xml  { head :ok }
       else
+        @user.build_user_image unless @user.user_image.present? 
         @user.build_mailing_address unless @user.mailing_address.present?
         @user.build_billing_address unless @user.billing_address.present?
-        @total=LegalType.count
-        @role_id=@user.roles.try(:first).try(:id)
-        @legal_ids=@user.legal_ids
+        @total = LegalType.count
+        @role_id = @user.roles.try(:first).try(:id)
+        @legal_ids = @user.legal_ids
         format.html { render :action => "edit" }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
+    end
+  end
+
+
+  def clear_image
+    @user = User.find(params[:id])
+    if @user.user_image.present?
+      @user.user_image.destroy
+    end
+    respond_to do |format|
+      format.json { render text: true, status: 200 }
     end
   end
   
@@ -147,27 +170,35 @@ class UsersManagementController < ApplicationController
     @user.destroy
 
     respond_to do |format|
-      format.html { redirect_to(users_management_index_path, :notice=>"User has been deleted") }
+      format.html { redirect_to(users_management_index_path, notice: "User has been deleted") }
       format.xml  { head :ok }
     end
   end
   
   def check_role
-    roles=Role.where(:id=>params[:role_ids].split(','))
-    business_roles=roles.select {|role| role.require_business?}
-    render :text=>business_roles.any?
+    roles = Role.where(id: params[:role_ids].split(','))
+    business_roles = roles.select { |role| role.require_business? }
+    render text: business_roles.any?
   end
   
+
+  def update_businesses
+    @businesses = Business.where(brand_id: params[:id])
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def update_places
-    @places = Place.where(:business_id=> params[:id])
+    @places = Place.where(business_id: params[:id])
     respond_to do |format|
       format.js
     end
   end
   
   def update_cities
-    @cities = City.where(:country_id=> params[:id])
-    @selector_id=params[:selector_id]
+    @cities = City.where(country_id: params[:id])
+    @selector_id = params[:selector_id]
     respond_to do |format|
       format.js
     end
@@ -214,49 +245,49 @@ class UsersManagementController < ApplicationController
   end
   
   def suspend_user
-    user=User.find(params[:id])
+    user = User.find(params[:id])
     user.suspend
-    render :text=>user.active ? "Active" : "Inactive"
+    render text: user.active ? "Active" : "Inactive"
   end
   
   def reactivate_user
-    user=User.find(params[:id])
+    user = User.find(params[:id])
     user.activate
-    render :text=>user.active ? "Active" : "Inactive"
+    render text: user.active ? "Active" : "Inactive"
   end
   
   def reissue_code
-    @user=User.find(params[:id])
-    @new_qrcode=@user.qr_code.reissue
-    render :text=>(render_to_string :partial=> "user_code_container")
+    @user = User.find(params[:id])
+    @new_qrcode = @user.qr_code.reissue
+    render text: (render_to_string partial: "user_code_container")
   end
   
   def reissue_code_from_listing_txs
-    @user=User.find(params[:id])
-    old_qr_code=@user.qr_code
-    @qr_code=old_qr_code.reissue
-    render :text=>(render_to_string :partial=> "qrcode_container")
+    @user = User.find(params[:id])
+    old_qr_code = @user.qr_code
+    @qr_code = old_qr_code.reissue
+    render text: (render_to_string partial: "qrcode_container")
   end
   
   def list_businesses_by_program_type    
-    @results=Account.listing_user_enrollments(params[:uid],params[:program_type_id])
-    render :text=>(render_to_string :partial=> "listing_enrollments_container")
+    @results = Account.listing_user_enrollments(params[:uid], params[:program_type_id])
+    render text: (render_to_string partial: "listing_enrollments_container")
   end
   
   def list_transactions
-    @user=User.find(params[:id]) 
-    @business=Business.find(params[:business_id])   
-    pt=Program.find(params[:program_id]).program_type
-    if pt.name==ProgramType::AS[:marketing]
-      @transactions=Log.joins(:transaction=>:transaction_type)
-                       .where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}")
-                       .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
-                       .order("transactions.created_at desc")                       
+    @user = User.find(params[:id]) 
+    @business = Business.find(params[:business_id])   
+    pt = Program.find(params[:program_id]).program_type
+    if pt.name == ProgramType::AS[:marketing]
+      @transactions = Log.joins(:transaction=>:transaction_type)
+                         .where("logs.business_id=#{params[:business_id]} and logs.campaign_id IS NOT NULL and logs.user_id=#{params[:id]}")
+                         .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+                         .order("transactions.created_at desc")                       
     else
-      @transactions=Log.joins(:transaction=>:transaction_type)
-                       .where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}")
-                       .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
-                       .order("transactions.created_at desc")
+      @transactions = Log.joins(:transaction=>:transaction_type)
+                         .where("logs.business_id=#{params[:business_id]} and logs.campaign_id=NULL and logs.user_id=#{params[:id]}")
+                         .select("transactions.*,transaction_types.name,transaction_types.fee_amount,transaction_types.fee_percentage,user_id,logs.created_at,place_id,engagement_id")
+                         .order("transactions.created_at desc")
     end
   end
   
@@ -272,39 +303,39 @@ class UsersManagementController < ApplicationController
   end
   
   def withdraw_account
-    account=Account.find(params[:account_id])
+    account = Account.find(params[:account_id])
     if account.program_type_name == "Money"
       account.withdraw(params[:amount].to_f)
     else
-      account=account.withdraw_from_account(params[:amount].to_f,current_user.id)
+      account = account.withdraw_from_account(params[:amount].to_f,current_user.id)
     end
     currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
       Delayed::Job.enqueue(RewardMoneyDeposit.new(account.id))
-      at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
-      flash[:notice]="An amount of #{params[:amount]} #{currency} has been withdrawn from account at #{at_text}"
-      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+      at_text = account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
+      flash[:notice] = "An amount of #{params[:amount]} #{currency} has been withdrawn from account at #{at_text}"
+      redirect_to action: :manage_user_accounts, page: params[:page]
     else
-      flash[:error]="#{account.errors.full_messages.join(' , ')}"
-      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+      flash[:error] = "#{account.errors.full_messages.join(' , ')}"
+      redirect_to action: :manage_user_accounts, page: params[:page]
     end
   end
   
   def deposit_account
-    account=Account.find(params[:account_id])
+    account = Account.find(params[:account_id])
     if account.program_type_name == "Money"
       account.deposit(params[:amount].to_f)
     else
-      account=account.deposit_to_account(params[:amount].to_f,current_user.id)
+      account = account.deposit_to_account(params[:amount].to_f,current_user.id)
     end
     currency = account.program_type_name == "Money" ? "dollars" : "points"
     if account
-      at_text=account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
-      flash[:notice]="An amount of #{params[:amount]} #{currency} has been deposited to user account at #{at_text}"
-      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+      at_text = account.associated_to_business? ? account.business.name : account.campaign.try(:name) 
+      flash[:notice] = "An amount of #{params[:amount]} #{currency} has been deposited to user account at #{at_text}"
+      redirect_to :action => :manage_user_accounts, :page => params[:page]
     else
-      flash[:error]="#{account.errors.full_messages.join(' , ')}"
-      redirect_to :action=>:manage_user_accounts, :page=>params[:page]
+      flash[:error] = "#{account.errors.full_messages.join(' , ')}"
+      redirect_to :action => :manage_user_accounts, :page=>params[:page]
     end
   end
   
@@ -321,17 +352,17 @@ class UsersManagementController < ApplicationController
   
   def redeem_reward_for_user
     begin
-      @user=User.find(params[:id])
-      reward=Reward.find(params[:reward_id])
-      user_account=reward.campaign.user_account(@user)
+      @user = User.find(params[:id])
+      reward = Reward.find(params[:reward_id])
+      user_account = reward.campaign.user_account(@user)
       if (reward.max_claim_per_user.nil? || reward.max_claim_per_user=="0"|| params[:redeemCount].to_i < reward.max_claim_per_user.to_i) and (reward.max_claim.nil? || reward.max_claim=="0" || params[:numberOfRedeems].to_i < reward.max_claim.to_i)          
         reward.is_claimed_by(@user,user_account,nil,nil,nil)
         flash[:notice]="#{reward.name} Reward is claimed by #{@user.full_name}"
-        redirect_to :action=>:redeem_rewards, :page=>params[:page]
+        redirect_to :action=>:redeem_rewards, :page => params[:page]
       else
-        per_user=params[:redeemCount].to_i >= reward.max_claim_per_user.to_i ? "per user" : "for all users"
-        flash[:error]="Maximum number of claiming #{reward.name} reward #{per_user} is reached"
-        redirect_to :action=>:redeem_rewards, :page=>params[:page]      
+        per_user = params[:redeemCount].to_i >= reward.max_claim_per_user.to_i ? "per user" : "for all users"
+        flash[:error] = "Maximum number of claiming #{reward.name} reward #{per_user} is reached"
+        redirect_to :action => :redeem_rewards, :page => params[:page]      
       end
     rescue Exception => e
       logger.error "Exception #{e.class}: #{e.message}"
@@ -378,17 +409,17 @@ class UsersManagementController < ApplicationController
   
   def logged_actions
     @page = params[:page].to_i.zero? ? 1 : params[:page].to_i
-    @user=User.find(params[:id])
-    @action_id=params[:action_id].to_i.zero? ? Action.find_by_name(Action::CURRENT_ACTIONS[:engagement]).id : params[:action_id].to_i
-    @action=Action.find(@action_id)
-    join_type=@action.name==Action::CURRENT_ACTIONS[:engagement] ? "engagements" : "rewards"
-    @logged_actions=Log.select("logs.*,transactions.*,transaction_types.name as tt_name,transaction_types.fee_amount,transaction_types.fee_percentage,rewards.name as reward_name, rewards.needed_amount as spent_amount,actions.name as action_name,engagements.name as ename,businesses.name as bname,engagements.amount,places.name as pname,users.first_name,users.last_name,program_types.name as program_name,campaigns.name as cname,measurement_types.name as amount_type")
-                       .joins([:user,[:transaction=>:transaction_type],"LEFT OUTER JOIN actions ON actions.id=logs.action_id LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN engagements ON engagements.id=logs.engagement_id LEFT OUTER JOIN rewards ON rewards.id=logs.reward_id LEFT OUTER JOIN campaigns ON campaigns.id=rewards.campaign_id LEFT OUTER JOIN measurement_types ON campaigns.measurement_type_id=measurement_types.id LEFT OUTER JOIN programs ON campaigns.program_id=programs.id LEFT OUTER JOIN businesses ON businesses.id=programs.business_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id"])                    
-                       .where("logs.user_id=#{params[:id]} and actions.id=#{@action_id}")
-                       .order("logs.created_at DESC")
-                       .paginate(:page => @page,:per_page => Log::per_page )
+    @user =User.find(params[:id])
+    @action_id = params[:action_id].to_i.zero? ? Action.find_by_name(Action::CURRENT_ACTIONS[:engagement]).id : params[:action_id].to_i
+    @action = Action.find(@action_id)
+    join_type = @action.name==Action::CURRENT_ACTIONS[:engagement] ? "engagements" : "rewards"
+    @logged_actions = Log.select("logs.*,transactions.*,transaction_types.name as tt_name,transaction_types.fee_amount,transaction_types.fee_percentage,rewards.name as reward_name, rewards.needed_amount as spent_amount,actions.name as action_name,engagements.name as ename,businesses.name as bname,engagements.amount,places.name as pname,users.first_name,users.last_name,program_types.name as program_name,campaigns.name as cname,measurement_types.name as amount_type")
+                         .joins([:user,[:transaction=>:transaction_type],"LEFT OUTER JOIN actions ON actions.id=logs.action_id LEFT OUTER JOIN places ON logs.place_id=places.id LEFT OUTER JOIN engagements ON engagements.id=logs.engagement_id LEFT OUTER JOIN rewards ON rewards.id=logs.reward_id LEFT OUTER JOIN campaigns ON campaigns.id=rewards.campaign_id LEFT OUTER JOIN measurement_types ON campaigns.measurement_type_id=measurement_types.id LEFT OUTER JOIN programs ON campaigns.program_id=programs.id LEFT OUTER JOIN businesses ON businesses.id=programs.business_id LEFT OUTER JOIN program_types ON program_types.id=programs.program_type_id"])                    
+                         .where("logs.user_id=#{params[:id]} and actions.id=#{@action_id}")
+                         .order("logs.created_at DESC")
+                         .paginate(:page => @page,:per_page => Log::per_page )
     if request.xhr?
-      render :text=>(render_to_string :partial=> "logs",:layout=>false)
+      render :text => (render_to_string :partial => "logs", :layout => false)
     end                         
   end
   
@@ -429,8 +460,8 @@ class UsersManagementController < ApplicationController
   end
   
   def view_all_qrcodes_transactions
-    @all_logs=Log.joins(:qr_code,:business,:place).order("created_at DESC").where(:user_id=>params[:user_id])
-    render :template=>"transactions"
+    @all_logs = Log.joins(:qr_code,:business,:place).order("created_at DESC").where(:user_id=>params[:user_id])
+    render template: "transactions"
   end
   
   def aggregate_transactions_report
@@ -446,25 +477,26 @@ class UsersManagementController < ApplicationController
   
   def check_txs_updates
     @qr_code= QrCode.find(params[:qr_code_id])
-    @latest_transactions= Log.latest_qrcode_transactions(@qr_code.id)
+    @latest_transactions = Log.latest_qrcode_transactions(@qr_code.id)
     @user= User.find(params[:id])
-    result={}
+    result = {}
     if @latest_transactions.any? and @latest_transactions.first.log_id > params[:last_log_id].to_i
-      @qr_code=@user.qr_code
-      result[:qr_code_updates]= render_to_string :partial=> "qrcode_container"
-      result[:txs_rows]= render_to_string :partial=> "transaction_row"
-      result[:new_qrcode]= @qr_code.id
-      result[:size]= @latest_transactions.length
-      result[:last_log_id]= @latest_transactions.first.log_id
+      @qr_code = @user.qr_code
+      result[:qr_code_updates] = render_to_string partial:  "qrcode_container"
+      result[:txs_rows] = render_to_string partial: "transaction_row"
+      result[:new_qrcode] = @qr_code.id
+      result[:size] = @latest_transactions.length
+      result[:last_log_id] = @latest_transactions.first.log_id
     end
     if request.xhr?
-      render :json=>result.to_json
+      render json: result.to_json
     end
   end
   
   def list_places_and_bizs
-    @businesses=Business.all
-    @places=Place.all
+    @brands = Brand.all
+    @businesses = Business.all
+    @places = Place.all
   end
     
   def enroll_in_money_program

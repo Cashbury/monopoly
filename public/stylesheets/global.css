@@ -105,7 +105,7 @@ a.cushbury_logo:hover{;background:url("../images/admin/logo.png") no-repeat;}
 	#side ul{margin:0;padding:0;}
 	#side li{list-style:none;margin:5px 20px 6px 0;float:left;display:block;width:100%}
 	#side li a{color:#979ba4;text-decoration:none;font-size:1.2em;font-weight:bold;float:left;display:block;width:100%}
-	#side li a.menu_item{color:#fcea00}
+	#side li a.menu_item{color:#fcea00}  
 	#side li ul.sub_menu a{color:#979ba4;text-decoration:none;font-size:0.9em;font-weight:bold;float:left;display:block;width:100%}
 	#side h2.settings{color:#fcea00;font-size:1.8em;}
 
@@ -116,7 +116,7 @@ padding: 0 20px 20px;
 width:100%;
 min-width:600px;
 }
-#leftContainer{min-width:600px;float:left;width:968px;position:relative;padding:20px;border: 1px solid #eee;min-height:555px}
+#leftContainer{min-width:600px;float:left;width:984px;position:relative;padding:20px;border: 1px solid #eee;min-height:555px}
 
 #left_main {
 float: left;
@@ -232,3 +232,55 @@ height: 150px;
 }
 
 .info_box .place_address_wrap { clear: left; float: left; }
+/*side forms and side photo forms*/
+.side_photo_form {  padding: 10px;    width: 180px; position:relative; text-align:center;}
+.userImg_container{
+  width:186px;
+  height:186px;
+  overflow: hidden;
+}
+img.user_default_image  { /*width:135px; height:135px;*/ padding:5px; background:url(/assets/white_box_bg.png); -khtml-border-radius: 10px; -moz-border-radius: 10px; -opera-border-radius: 10px; -webkit-border-radius: 10px; border-radius:10px;}
+.side-form { margin: 0; padding: 10px; width: 270px;}
+.add_children_form .side-form {
+  width:auto;
+}
+.side_form_button {-khtml-border-radius: 10px; -moz-border-radius: 10px; -opera-border-radius: 10px; -webkit-border-radius: 10px; border-radius:10px; background: #6098a6; /* for non-css3 browsers */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6098a6', endColorstr='#3f6a76'); /* for IE */
+  background: -webkit-gradient(linear, left top, left bottom, from(#6098a6), to(#3f6a76)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #6098a6,  #3f6a76); /* for firefox 3.6+ */
+  webkit-border-radius:5px; -moz-border-radius:5px; -o-border-radius:5px; -khtml-border-radius:5px; border-radius:5px; 
+  border:1px solid #3f7dac; padding:7px 11px 3px; border:1px solid #3F7DAC; font-weight:bold; font-size:11px; text-shadow:-1px -1px 0 #444; color:#fff !important;line-height: 17px;  margin-top: 10px; position:relative; z-index:9999;margin-left: 80px;}
+  
+a.side_form_button:hover {background: #3f6a76; /* for non-css3 browsers */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3f6a76', endColorstr='#6098a6'); /* for IE */
+  background: -webkit-gradient(linear, left top, left bottom, from(#3f6a76), to(#6098a6)); /* for webkit browsers */
+  background: -moz-linear-gradient(top,  #3f6a76,  #6098a6); /* for firefox 3.6+ */
+  text-decoration:none;}
+.clear_image_link { top: -20px; }  
+.fake_file_input {background: url("/images/fake_file_input.png") no-repeat scroll center top transparent; height: 24px; margin-top: 10px;    width: 62px; margin-left: 25px;}
+.fake_file_input:hover {background-position:0 100%; cursor:pointer;}
+.fake_file_input input{opacity:0;}
+.fake_file_input input[type="file"]:hover{cursor:pointer !important;}
+
+a.side_form_button.confirm_actions {background-image: url("/images/icon/confirm_actions.png");    border: medium none;    color: #444444 !important;    height: 13px;    margin: -5px 32px 0 0;     text-shadow: 1px 1px 0 #FFFFFF; }
+a.confirm_actions.approve {background-position:0 0; }
+a.confirm_actions.cancel {background-position:0 100%; }
+a.confirm_actions.approve:hover {color:#85ad13 !important; background-position:-94px 0;}
+a.confirm_actions.cancel:hover {color:#eb2b06 !important; background-position:-94px 100%;}
+
+.side_form_link_wrapper { margin:10px 0 0px; overflow: hidden;}
+.side_photo_form input.side_form_button {width:130px;}
+.side_photo_form small {width:175px !important;font: 11px/15px Tahoma, Geneva, sans-serif !important;}
+
+.side-form label {width:100%; clear:both; text-indent:5px;}
+.side-form input.input-text {/*width:180px;*/background: url("/images/small_input_bg.jpg") repeat-x scroll 0 0 transparent;    height: 37px;    padding: 0;    text-indent: 10px;width:100%; clear:both}
+
+.side-form .birthday select {margin: 4px 5px 0 0;    padding:8px;}
+.side-form .field_with_errors {float:none;}
+
+.side-form .input_error_message {background:url(/images/icon/input_error.png) no-repeat; color: #FF0000;    font-weight: normal;    line-height: 14px; text-align: justify;    width: 91%; text-indent:0; }
+.switching_code_container {fmargin-top:10px;}
+.edit_info_form .save_btn.margin-top {margin-top:145px;}
+
+.template-upload .preview {display: block;   /* height: 135px; */   overflow: hidden;    width: 135px; border:3px solid #fff; -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;}
+.template-upload .preview img {width:135px;}
