@@ -1,14 +1,13 @@
 <% content_for(:head) do %>
-<style type="text/css" media="screen">
-.mono-table td,.mono-table th{ padding:7px 5px;}
-table {width: 1000px;}
-
-</style>
+  <style type="text/css" media="screen">
+    .mono-table td,.mono-table th{ padding:7px 5px;}
+    table {width: 1000px;}
+  </style>
 <% end %>
 <% if params[:title].present? %>
- <% title_txt= "Users- Search - #{params[:title]}"%>
+  <% title_txt = "Users- Search - #{params[:title]}"%>
 <%else%>
- <% title_txt= "Users"%>
+  <% title_txt = "Users"%>
 <%end%>
 <% title title_txt %>
 <% form_tag(users_management_index_path, {:method => :get}) do %>

@@ -1,0 +1,9 @@
+<td><%= device.udid %></td>
+<td><%= device.active ? "Yes" : "No" %></td>
+<td>
+  <% if device.active %>
+    <%= link_to "De-Authorize", deauthorize_device_path(device), remote: true, class: "authorize_or_deauth_device", device_id: device.id %>
+  <% else %>
+    <%= link_to "Authorize", authorize_device_path(device), remote: true, class: "authorize_or_deauth_device", device_id: device.id %>
+  <% end -%>
+</td>

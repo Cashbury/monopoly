@@ -1,5 +1,9 @@
 $(document).ready(function(){
- $("select#user_role_id").bind('change',function(){
+  $('.authorize_or_deauth_device').bind('ajax:success', function(data) {
+      $("#tr_"+ $(this).device_id).replace(data);
+  });
+
+  $("select#user_role_id").bind('change',function(){
     var role_id = $(this).val();
     $.ajax({
         type: 'GET',

@@ -1,0 +1,16 @@
+<% title "Terms & Conditions" %>
+
+<table class="mono-table" width="100%" border="1" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Description</th>
+  </tr>
+  <% for term in @terms_and_conditions %>
+    <tr>
+      <td><%= term.description %></td>
+      <td><%= link_to "Edit", edit_term_and_condition_path(term) , class: "button" %></td>
+      <td><%= link_to "Destroy", term, confirm: 'Are you sure?', method: :delete , class: "button negative" %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><%= link_to "New Term", new_term_and_condition_path , class: "button positive" %></p>

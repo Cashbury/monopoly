@@ -1,1 +1,3 @@
 .mono-form label { display: inline; }
+.custom_checkbox { width: 99px;  position: absolute;}
+.custom_checkbox_label { display: block; }

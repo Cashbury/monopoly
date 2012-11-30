@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types, :active, :accepted_terms_attributes, :note
 
   attr_accessor :role_id, :place_id, :legal_ids_arr, :legal_types
   has_many :templates
@@ -60,10 +60,11 @@ class User < ActiveRecord::Base
   has_many :followers
   has_many :businesses, :through => :followers
   has_many :invitations, :foreign_key => "from_user_id"
-  has_many :receipts, :dependent => :destroy
+  has_many :receipts, dependent: :destroy
   has_many :employees #same user with different positions
   has_many :roles, :through => :employees
   has_many :logs
+  has_many :devices, dependent: :destroy
   #has_many :places, :validate => false
   has_many :followers, :as => :followed
   has_many :business_customers
@@ -82,7 +83,8 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :pending_receipts, :class_name => "Receipt" , :join_table => "users_pending_receipts"
   has_and_belongs_to_many :places, join_table: "places_users"
   has_and_belongs_to_many :programs, :join_table => "users_programs"
-  
+  has_and_belongs_to_many :accepted_terms, class_name: "TermAndCondition", join_table: "accepted_terms" 
+
   belongs_to :mailing_address, class_name: "Address" , foreign_key: "mailing_address_id"
   belongs_to :billing_address, class_name: "Address" , foreign_key: "billing_address_id"
   belongs_to :country, foreign_key: "home_town"
@@ -94,6 +96,8 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :user_image
   accepts_nested_attributes_for :places
+  accepts_nested_attributes_for :accepted_terms
+
   after_create :set_default_role, :add_cash_incentives
   after_create :initiate_user_code
   before_save :add_country_code_to_phone
@@ -830,6 +834,14 @@ class User < ActiveRecord::Base
     else
       default_image
     end    
+  end
+
+  def facebook_account_id
+      self.email.split("@").first if self.email.match(/facebook/)
+  end
+
+  def last_sign_in_days
+    (Date.today - self.last_sign_in_at.to_date).to_i if self.last_sign_in_at.present?
   end
 
   def default_image(style = :large)

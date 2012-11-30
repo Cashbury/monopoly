@@ -1,0 +1,1 @@
+$("#tr_<%= @device.id %>").html("<%= escape_javascript(render partial: 'device_row', locals: { device: @device }) %>");

@@ -147,7 +147,7 @@ Kazdoor::Application.routes.draw do
     post "spend", :on => :collection
   end
 
-  resources :categories ,:followers
+  resources :categories , :followers, :term_and_conditions
 
 
   resources :accounts do
@@ -213,20 +213,20 @@ Kazdoor::Application.routes.draw do
   end
   resources :users_management do
     member do
-      post "withdraw_account", :action=>:withdraw_account, :as=>"withdraw_account"
-      post "deposit_account", :action=>:deposit_account, :as=>"deposit_account"
-      post "redeem_rewards", :action=>:redeem_reward_for_user, :as=>"redeem_rewards"
-      post "make_engagement", :action=>:make_engagement, :as=>"make_engagement"
+      post "withdraw_account", :action =>:withdraw_account, :as=>"withdraw_account"
+      post "deposit_account", :action =>:deposit_account, :as=>"deposit_account"
+      post "redeem_rewards", :action =>:redeem_reward_for_user, :as=>"redeem_rewards"
+      post "make_engagement", :action =>:make_engagement, :as=>"make_engagement"
       get  "transactions/business/:business_id/programs/:program_id",:action=>:list_transactions, :as =>"list_transactions"
       get  "list_campaigns/business/:business_id/programs/:program_id",:action=>:list_campaigns, :as =>"list_campaigns"
-      get  "manage_user_accounts", :action=>:manage_user_accounts, :as=>:manage_user_accounts
-      get  "redeem_rewards", :action=>:redeem_rewards, :as=>:redeem_rewards
-      get  "list_engagements", :action=>:list_engagements, :as=>"list_engagements"
-      get  "logged_actions", :action=>:logged_actions, :as=>"logged_actions"
-      get  "all_qr_codes_transactions",:action=>:all_qr_codes_transactions, :as=>"all_qr_codes_transactions"
-      get  "view_tx_details/log/:log_id", :action=>:view_tx_details, :as=>"view_tx_details"
-      get  "check_txs_updates/:qr_code_id", :action=> :check_txs_updates, :as=>"check_txs_updates"
-      get  "transactions_report", :action=> :aggregate_transactions_report, :as=>"aggregate_transactions_report"
+      get  "manage_user_accounts", :action =>:manage_user_accounts, :as=>:manage_user_accounts
+      get  "redeem_rewards", :action =>:redeem_rewards, :as=>:redeem_rewards
+      get  "list_engagements", :action =>:list_engagements, :as=>"list_engagements"
+      get  "logged_actions", :action =>:logged_actions, :as=>"logged_actions"
+      get  "all_qr_codes_transactions", :action =>:all_qr_codes_transactions, :as=>"all_qr_codes_transactions"
+      get  "view_tx_details/log/:log_id", :action =>:view_tx_details, :as=>"view_tx_details"
+      get  "check_txs_updates/:qr_code_id", :action => :check_txs_updates, :as=>"check_txs_updates"
+      get  "transactions_report", :action => :aggregate_transactions_report, :as=>"aggregate_transactions_report"
       post :clear_image
     end
 
@@ -241,6 +241,13 @@ Kazdoor::Application.routes.draw do
     collection do 
       get :edit
       put :update      
+    end
+  end
+
+  resources :devices do
+    member do
+      get :authorize
+      get :deauthorize 
     end
   end
 	# resources :places

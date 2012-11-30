@@ -74,6 +74,10 @@
       <%= f.select :home_town, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,f.object.try(:home_town))%>
     </p>
     <p>
+      <%= f.label :note %>
+      <%= f.text_area :note %>
+    </p>
+    <p>
       <%= f.label :telephone_number %>
       <span class="code"><%= @user.country.try(:phone_country_code) %></span> <%= f.text_field :telephone_number , class: "title", value: @user.phone_without_code %>      
     </p>
@@ -121,7 +125,7 @@
   <fieldset>
       <legend>User Account</legend>
       <p>
-        <%= f.label :username %>
+        <%= f.label :username %><br/>
         <%= f.text_field :username , class: "title U_username" %>
         <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
         <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors[:username].any? %>>
@@ -131,12 +135,16 @@
       </p>
       <p>
         <%= f.label :email %>
-        <%= f.text_field :email , class: "title U_email" %>
+        <%= f.text_field :email , class: "title U_email" %></br>
         <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
         <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors[:username].any? %>>
           <%= @user.errors[:email].first %>
         </span>
         <span class="form-note note-success L-success" style="display:none;"></span>
+      </p>
+      <p>
+          <%= f.label :active, class: "custom_checkbox_label" %>
+          <%= f.check_box :active, default: true, class:  "custom_checkbox" %>
       </p>
     </fieldset>
 

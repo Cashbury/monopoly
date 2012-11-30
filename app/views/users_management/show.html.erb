@@ -1,18 +1,18 @@
 <% title "User | #{@user.full_name}" %>
 <% content_for (:head) do %> 
-<%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
-<style>
-	.user-id{ background: #EEEEEE; -moz-border-radius:10px; -webkit-border-radius:10px; width:735px;}
-	.user-id h2{ font-size:20px;}
-	.user-id h2, .user-id .sum{ padding:15px; border-bottom:3px solid #fff;}
-	.user-id .sum{ font-size:20px; padding-left:130px; position:relative;}
-	.user-id .sum img{ position:absolute; left:15px; top:0;}
-	.user-id  h3{ font-size:16px; position:relative; padding:15px 15px 0; }
-	.user-id  h3 a{ position:absolute; right:15px;}
-	.user-id table{padding:0 15px 15px; width:100%;}
-	.user-id table th{ text-align:left;}
-</style>
-<%end%>
+  <%= javascript_include_tag 'users_management_scripts' , 'bday-picker.min'%>
+  <style>
+  	.user-id{ background: #EEEEEE; -moz-border-radius:10px; -webkit-border-radius:10px; width:735px;}
+  	.user-id h2{ font-size:20px;}
+  	.user-id h2, .user-id .sum{ padding:15px; border-bottom:3px solid #fff;}
+  	.user-id .sum{ font-size:20px; padding-left:130px; position:relative;}
+  	.user-id .sum img{ position:absolute; left:15px; top:0;}
+  	.user-id  h3{ font-size:16px; position:relative; padding:15px 15px 0; }
+  	.user-id  h3 a{ position:absolute; right:15px;}
+  	.user-id table{padding:0 15px 15px; width:100%;}
+  	.user-id table th{ text-align:left;}
+  </style>
+<% end %>
 <p><%= link_to 'Edit', edit_users_management_path(@user) %> </p>
 <% user_uid = @user.email.split("@facebook").first %>
 <%= image_tag @user.picture_url(:large), :style => "float:right;" %>
@@ -21,6 +21,7 @@
   <tr><td><b>Username: </b></td><td><%= @user.username %></td></tr>
   <tr><td><b>First Name: </b></td><td><%= @user.first_name %></td></tr>
   <tr><td><b>Last Name: </b></td><td><%= @user.last_name %></td></tr>
+  <tr><td><b>Active: </b></td><td><%= @user.active ? "YES" : "NO" %></td></tr>
   <tr><td><b>Password:  </b></td>
   <td>
     <%= form_tag "/users_management/resend_password" do %>
@@ -67,10 +68,10 @@
     <% end %>
   </tr>
 
-  <tr><td><b>DOB:  </b></td><td><%= @user.dob || "N/A"%></td></tr>
-  <tr><td><b>FB feed:  </b></td><td><%= raw fb_feed_status_for( @user  )%></td></tr>
-  <tr><td><b>Note:  </b></td><td><%= @user.note || "N/A" %></td></tr>
-  <tr><td><b>Legal Ids:  </b></td>
+  <tr><td><b>DOB:  </b></td><td><%= @user.dob || "N/A" %></td></tr>
+  <tr><td><b>Facebook account ID:  </b></td><td><%= @user.facebook_account_id || "N/A" %></td></tr>
+  <tr><td><b>Notes:  </b></td><td><%= @user.note || "N/A" %></td></tr>
+  <tr><td><b>Legal ID:  </b></td>
     <td>
     <% @user.legal_ids.each do |legal| %>
       <%= LegalType.find(legal.legal_type_id).displayed_type%> : <%= legal.id_number %><br/>
@@ -83,14 +84,47 @@
 <table class="mono-table" style="width:685px" border="0" cellspacing="0" cellpadding="0">
   <%= hidden_field_tag :user_id, @user.id %>
   <caption><h4>System Info</h4></caption>
-  <tr><td style="width:98px"><b>User Types: </b></td><td><%=@user.roles.collect{|r| r.name }.join(' , ')%></td></tr>
-  <tr><td style="width:98px"><b>Home Town: </b></td><td><%=@user.try(:country).try(:name) || "N/A"%></td></tr>
+  <tr><td style="width:98px"><b>User Types: </b></td><td><%= @user.roles.collect{|r| r.name }.join(' , ') %></td></tr>
+  <tr><td style="width:98px"><b>Home Town: </b></td><td><%= @user.try(:country).try(:name) || "N/A"%></td></tr>
   <tr><td style="width:98px"><b>Account Status: </b></td>
-    <td><span id="status"><%=@user.active ? "Active" : "Inactive"%></span> | <%=link_to "Suspend", "javascript:void(0)", {:id=>"suspend_link"}%> | <%=link_to "Reactivate", "javascript:void(0)", {:id=>"reactivate_link"}%>
+    <td><span id="status"><%=@user.active ? "Active" : "Inactive" %></span> | <%= link_to "Suspend", "javascript:void(0)", { id: "suspend_link" }%> | <%= link_to "Reactivate", "javascript:void(0)", { id: "reactivate_link"} %>
     <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" /></td>
   </tr>
-  <tr><td style="width:98px"><b>User Since: </b></td><td><%=@user.created_at.to_date%></td></tr>  
-  <tr><td style="width:98px"><b>Refered signups: </b></td><td><%= @user.sign_up_count.to_s %></td></tr>  
+  <tr><td style="width:98px"><b>User Since: </b></td><td><%= @user.created_at.to_date%></td></tr>  
+  <tr><td style="width:98px"><b>Refered signups: </b></td><td><%= @user.sign_up_count.to_s %></td></tr> 
+  <tr><td style="width:98px"><b>Sign In IP address: </b></td><td><%= @user.last_sign_in_ip || "Not signed in yet" %></td></tr>
+  <tr><td style="width:98px"><b>Last Logged In: </b></td><td><%= @user.last_sign_in_at.present? ? @user.last_sign_in_at.strftime("%b %d, %Y")  + " ( since  " + @user.last_sign_in_days.to_s + " days )"  : "Not signed in yet" %></td></tr>  
+  <tr>
+    <td style="width:98px"><b>Devices: </b></td>
+    <td>
+      <% if @user.devices.any? %>
+        <table>
+          <th style="width:100px">UDID</th>
+          <th>Active?</th>
+          <th>Authorize/De-Authorize</th>
+          <% for device in @user.devices %>
+            <tr id="tr_<%= device.id %>">
+              <%= render partial: "devices/device_row", locals: {device: device} %>
+            </tr>
+          <% end -%>
+        </table>
+      <% else %>
+        <td>No devices associated yet</td>
+      <% end -%>
+    </td>
+  </tr>
+  <tr>
+    <td style="width:98px"><b>Accepted T&C: </b></td>
+    <td>
+      <% if @user.accepted_terms.any? %>
+        <% @user.accepted_terms.each_with_index do |term, index| %>
+          <p><%= "#{index+1} - #{term.description}" %></p>
+        <% end -%>
+      <% else %>
+          N/A
+      <% end -%>
+    </td>
+  </tr>
 </table>
 <%unless @user.qr_code.nil? %>
 <br/>
@@ -156,11 +190,11 @@
 <%= form_tag users_management_enroll_in_money_program_path(@user) do %>
   <%# Quick hack for support; refactor properly, later %>
   <%
-    ignore_ids = @user.programs.money.collect(&:business_id)
-    ignore_ids << -1
-    has_many_program_ids = Program.where(:program_type_id => ProgramType["Money"].id).collect(&:business_id)
-    has_many_program_ids << -1 if has_many_program_ids.size == 0
-    @businesses = Business.where(['id NOT IN (?)', ignore_ids]).where(:id => has_many_program_ids)
+      ignore_ids = @user.programs.money.collect(&:business_id)
+      ignore_ids << -1
+      has_many_program_ids = Program.where(:program_type_id => ProgramType["Money"].id).collect(&:business_id)
+      has_many_program_ids << -1 if has_many_program_ids.size == 0
+      @businesses = Business.where(['id NOT IN (?)', ignore_ids]).where(:id => has_many_program_ids)
   %>
   <fieldset>
     <legend>Money Program Enrollment</legend>
@@ -172,9 +206,9 @@
     <% end %>
   </fieldset>
 <% end %>
-<p><%=link_to "Deposit/Withdraw to/from SVA accounts @ businesses", manage_user_accounts_users_management_path(@user)%></p>
-<p><%=link_to "Redeem a reward @ businesses", redeem_rewards_users_management_path(@user)%></p>
-<p><%=link_to "Engage @ campaign @ businesses", list_engagements_users_management_path(@user)%></p>
-<p><%=link_to "Show Logged Actions", logged_actions_users_management_path(@user)%></p>
-<p><%=link_to "Aggregate Transactions Report", aggregate_transactions_report_users_management_path(@user)%></p>
+<p><%= link_to "Deposit/Withdraw to/from SVA accounts @ businesses", manage_user_accounts_users_management_path(@user)%></p>
+<p><%= link_to "Redeem a reward @ businesses", redeem_rewards_users_management_path(@user)%></p>
+<p><%= link_to "Engage @ campaign @ businesses", list_engagements_users_management_path(@user)%></p>
+<p><%= link_to "Show Logged Actions", logged_actions_users_management_path(@user)%></p>
+<p><%= link_to "Aggregate Transactions Report", aggregate_transactions_report_users_management_path(@user)%></p>
 <p><%= link_to 'Transactions', user_transactions_path(@user) %></p>
