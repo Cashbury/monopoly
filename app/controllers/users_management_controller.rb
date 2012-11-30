@@ -26,14 +26,6 @@ class UsersManagementController < ApplicationController
   def create
     @user = User.new(params[:user])
     @show_biz_and_place = params[:user][:place_id].present?
-    if params[:user][:mailing_address_attributes].present?
-      address = Address.create(params[:user][:mailing_address_attributes])
-      @user.mailing_address_id = address.id
-    end
-    if params[:user][:billing_address_attributes].present?
-      address = Address.create(params[:user][:billing_address_attributes])
-      @user.billing_address_id = address.id
-    end
 
     respond_to do |format|
       if @user.save
@@ -69,22 +61,7 @@ class UsersManagementController < ApplicationController
   def update
     @user = User.find(params[:id])
     @show_biz_and_place = params[:user][:place_id].present?
-    if params[:user][:mailing_address_attributes].present?      
-      if @user.mailing_address.present?
-        @user.mailing_address.update_attributes(params[:user][:mailing_address_attributes])
-      else
-        address = Address.create(params[:user][:mailing_address_attributes])
-        @user.mailing_address_id = address.id
-      end
-    end
-    if params[:user][:billing_address_attributes].present?      
-      if @user.billing_address.present?
-        @user.billing_address.update_attributes(params[:user][:billing_address_attributes])
-      else
-        address = Address.create(params[:user][:billing_address_attributes])
-        @user.billing_address_id=address.id
-      end
-    end
+
     respond_to do |format|
       if @user.update_attributes(params[:user])
         result = {}
@@ -98,7 +75,7 @@ class UsersManagementController < ApplicationController
         @user.build_billing_address unless @user.billing_address.present?
         @total = LegalType.count
         @legal_ids = @user.legal_ids
-        format.html { render :action => "edit" }
+        format.html { render action: "edit" }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
     end
@@ -107,9 +84,8 @@ class UsersManagementController < ApplicationController
 
   def clear_image
     @user = User.find(params[:id])
-    if @user.user_image.present?
-      @user.user_image.destroy
-    end
+    @user.user_image.destroy  if @user.user_image.present?
+
     respond_to do |format|
       format.json { render text: true, status: 200 }
     end
@@ -117,8 +93,8 @@ class UsersManagementController < ApplicationController
   
   def show
     @user = User.find(params[:id])
-    @results=Account.listing_user_enrollments(params[:id],ProgramType.find_by_name(ProgramType::AS[:marketing]).try(:id))    
-    @recent_transactions=Log.get_recent_transactions(params[:id])
+    @results =Account.listing_user_enrollments(params[:id],ProgramType.find_by_name(ProgramType::AS[:marketing]).try(:id))    
+    @recent_transactions = Log.get_recent_transactions(params[:id])
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }

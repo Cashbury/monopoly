@@ -8,7 +8,7 @@
 <% end %>
 
 
-<%= form_for @user, url: @user.new_record? ? :users_management_index : :users_management, html: { class: "mono-form"} do |f| %>
+<%= form_for @user, url: @user.new_record? ? :users_management_index : :users_management, html: { class: "mono-form", multipart: true } do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
@@ -65,7 +65,7 @@
       <%= f.text_field :last_name , class: "title" %>
     </p>
     <p>
-      <%= f.label :dob, "Date of birth" %>
+      <%= f.label :dob, "Date of birth" %><br/>
       <%= f.date_select :dob, prompt: true , start_year: Date.today.year, end_year: (Date.today.year - 100) %>
     </p>
 
@@ -184,7 +184,7 @@
   </div>
   <%= toggle_fb_link(@user) %>
   <div class="actions">
-    <%= f.submit @user.new_record? ? "Add" : "Update", class: "submit_btn" %>
+    <%= f.submit @user.new_record? ? "Add" : "Update", class: "submit_btn #{@user.new_record? ? '' : 'update_btn' }" %>
   </div>
 <% end %>
 

@@ -73,7 +73,7 @@ class User < ActiveRecord::Base
 
   has_one  :qr_code, :as => :associatable, :conditions => {:status=>1}
   has_one :business, :through => :employees
-  has_one :user_image,:as => :uploadable, :dependent => :destroy
+  has_one :user_image, as: :uploadable, dependent: :destroy
   has_one :account_holder, :as =>:model
   has_many :accounts, :through => :account_holder
 
@@ -83,9 +83,9 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :places, join_table: "places_users"
   has_and_belongs_to_many :programs, :join_table => "users_programs"
   
-  belongs_to :mailing_address, :class_name => "Address" ,:foreign_key => "mailing_address_id"
-  belongs_to :billing_address, :class_name => "Address" ,:foreign_key => "billing_address_id"
-  belongs_to :country, :foreign_key => "home_town"
+  belongs_to :mailing_address, class_name: "Address" , foreign_key: "mailing_address_id"
+  belongs_to :billing_address, class_name: "Address" , foreign_key: "billing_address_id"
+  belongs_to :country, foreign_key: "home_town"
 
   #nested attributes
   accepts_nested_attributes_for :brands,

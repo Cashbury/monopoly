@@ -14,7 +14,7 @@ $(function () {
       $(".fake_file_input").hide();
       $(".clear_image_link").hide();
       $(".L-clear_confirmation").show();
-      $(".submit_btn").attr("disabled", "disabled");
+      $(".update_btn").attr("disabled", "disabled");
 
       
       if($("#user_user_image_attributes_id").size() != 0)
@@ -34,7 +34,7 @@ $(function () {
             $(".L-clear_confirmation").hide();
             $(".fake_file_input").show();
             $(".clear_image_link").show();
-            $(".submit_btn").removeAttr("disabled");            
+            $(".update_btn").removeAttr("disabled");            
           }
         },
         error: function(data) {}
@@ -47,14 +47,14 @@ $(function () {
       $(".L-current_image").show();
       $(".fake_file_input").show();
       $(".clear_image_link").show(); 
-      $(".submit_btn").removeAttr("disabled");     
+      $(".update_btn").removeAttr("disabled");     
     });
 
     $("input:file").change(function(){
       $(".clear_image_link").hide();
       $(".fake_file_input").hide();
-      if (!$(".submit_btn").hasClass("L-create"))
-        $(".submit_btn").attr("disabled", "disabled");
+      if (!$(".update_btn").hasClass("L-create"))
+        $(".update_btn").attr("disabled", "disabled");
 
     });    
     $('#loader').hide().ajaxStart(function() {
