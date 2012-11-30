@@ -22,8 +22,8 @@
 
 class Place < ActiveRecord::Base
   include Geokit::Geocoders
-	acts_as_mappable  :lng_column_name => :long
-	acts_as_taggable
+  acts_as_mappable  :lng_column_name => :long
+  acts_as_taggable
   belongs_to :business
   belongs_to :place_type
   belongs_to :address

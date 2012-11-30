@@ -33,7 +33,7 @@ $(document).ready(function(){
           }else{
             $('#brand_id').val("");
             $('#business_id').val("");
-            $('#place_id').val("");
+            $('#user_place_id').val("");
             $('.brands_list').hide();
             $('.businesses_list').hide();
             $('.places_list').hide();
@@ -44,7 +44,7 @@ $(document).ready(function(){
     } else {
       $('#brand_id').val("");
       $('#business_id').val("");
-      $('#place_id').val("");
+      $('#user_place_id').val("");
       $('.brands_list').hide();
       $('.businesses_list').hide();
       $('.places_list').hide();
@@ -197,14 +197,14 @@ $(document).ready(function(){
   });
   
   $('.add_link').click(function(){
-    if (legal_index < total_legals-1){
-      var old_html=$('.legals_div').html();
-      var new_html1=old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
-      new_html2=new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
-      new_html3=new_html2.replace(/add.png/,"remove.png");
-      new_html4=new_html3.replace(/add_link/,"remove_link");
+    if (legal_index <= total_legals-1){
+      var old_html = $('.legals_div').html();
+      var new_html1 = old_html.replace(/legal_types_0/,"legal_types_"+legal_index);
+      new_html2 = new_html1.replace(/legal_ids_0/,"legal_ids_"+legal_index);
+      new_html3 = new_html2.replace(/add.png/,"remove.png");
+      new_html4 = new_html3.replace(/add_link/,"remove_link");
       $('.legal_type_class').append("<div class=\"legals_div\">"+new_html4+"</div>");
-      legal_index=legal_index+1;
+      legal_index = legal_index+1;
     }
   });
   

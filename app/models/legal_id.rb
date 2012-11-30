@@ -14,6 +14,6 @@
 #
 
 class LegalId < ActiveRecord::Base
-	belongs_to :legal_type
-  belongs_to :associatable,:polymorphic => true #user, business
+  belongs_to :legal_type
+  belongs_to :associatable, polymorphic: true #user, business
 end

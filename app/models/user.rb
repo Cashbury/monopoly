@@ -51,9 +51,9 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :dob, :home_town
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types
 
-  attr_accessor :role_id
+  attr_accessor :role_id, :place_id, :legal_ids_arr, :legal_types
   has_many :templates
   has_many :brands
   has_many :legal_ids, :as => :associatable
@@ -64,7 +64,7 @@ class User < ActiveRecord::Base
   has_many :employees #same user with different positions
   has_many :roles, :through => :employees
   has_many :logs
-  has_many :places
+  #has_many :places, :validate => false
   has_many :followers, :as => :followed
   has_many :business_customers
   has_many :businesses, :through => :business_customers
@@ -80,7 +80,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name => "Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :pending_receipts, :class_name => "Receipt" , :join_table => "users_pending_receipts"
-  has_and_belongs_to_many :places
+  has_and_belongs_to_many :places, join_table: "places_users"
   has_and_belongs_to_many :programs, :join_table => "users_programs"
   
   belongs_to :mailing_address, :class_name => "Address" ,:foreign_key => "mailing_address_id"
@@ -93,10 +93,12 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :mailing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :user_image
+  accepts_nested_attributes_for :places
   after_create :set_default_role, :add_cash_incentives
   after_create :initiate_user_code
   before_save :add_country_code_to_phone
-
+  before_save :set_place
+  before_save :set_legal_ids
   scope :with_account_at_large , select("users.*, (SELECT accounts.amount from users left outer join account_holders on users.id=account_holders.model_id left outer join accounts on accounts.account_holder_id=account_holders.id where accounts.business_id=0) AS amount")
   scope :with_code, joins("LEFT OUTER JOIN qr_codes ON qr_codes.associatable_id=users.id and qr_codes.associatable_type='User'").select("qr_codes.hash_code").group("users.id")
 
@@ -104,6 +106,14 @@ class User < ActiveRecord::Base
   validates_format_of :telephone_number, :with => /^[0-9]+$/, :message => "Phone should contain numbers only", :allow_blank => true
   cattr_reader :per_page
   @@per_page = 20
+
+  def set_place
+    if place_id.present?
+      self.places << Place.find(place_id)
+    else
+      self.places.destroy_all
+    end
+  end
 
   def self.terms(terms)
     return scoped if terms.blank?
@@ -741,7 +751,7 @@ class User < ActiveRecord::Base
   def all_transactions(options)
     filters = []
     params  = []
-    filters << "businesses.id = ?"             and params << options[:business_id] unless options[:business_id].nil?
+    filters << "businesses.id = ?" and params << options[:business_id] unless options[:business_id].nil?
     if !options[:from_date].nil? and !options[:to_date].nil?
       filters << "Date(logs.created_at) >= ?"  and params << options[:from_date]
       filters << "Date(logs.created_at) <= ?"  and params << options[:to_date]
@@ -765,13 +775,30 @@ class User < ActiveRecord::Base
              .where(conditions)
                
   end
-  
-  def set_legal_ids(legal_types, legal_ids)
-    legal_types.each_with_index do |legal_type_id, index|
-      if legal_ids[index].present? and legal_type_id.present?
-        LegalId.find_or_create_by_legal_type_id_and_associatable_id_and_associatable_type(:id_number=>legal_ids[index],:associatable_id=>self.id,:associatable_type=>"User",:legal_type_id=>legal_type_id)
+
+  def set_legal_ids
+    all_ids = []
+    if legal_ids_arr.present? and legal_ids_arr.any?
+      legal_types.each_with_index do |legal_type_id, index|
+        if legal_ids_arr[index].present? and legal_type_id.present?
+          legal_id_inst = LegalId.find_or_initialize_by_legal_type_id_and_associatable_id_and_associatable_type( id_number: legal_ids_arr[index],
+                                                                                                                                                                       associatable_id: self.id, 
+                                                                                                                                                                       associatable_type: "User", 
+                                                                                                                                                                       legal_type_id: legal_type_id)
+          if legal_id_inst.present?
+            legal_id_inst.update_attributes( id_number: legal_ids_arr[index])
+            all_ids << legal_id_inst
+          else
+            legal_id_inst = LegalId.new( id_number: legal_ids_arr[index], 
+                                                        associatable_id: self.id, 
+                                                        associatable_type: "User", 
+                                                        legal_type_id: legal_type_id)
+            all_ids << legal_id_inst
+          end
+        end
       end
     end
+    self.legal_ids = all_ids
   end
 
   def country_code
@@ -779,7 +806,7 @@ class User < ActiveRecord::Base
   end
   
   def add_country_code_to_phone
-    if !self.telephone_number.blank?
+    unless self.telephone_number.blank?
       code = country_code
       phone_number = self.telephone_number
       unless phone_number.starts_with?(code)

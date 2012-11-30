@@ -15,43 +15,37 @@ class UsersManagementController < ApplicationController
     @user.build_mailing_address
     @user.build_billing_address
     @total = LegalType.count
-    @legal_ids = []
+    @legal_ids = @user.legal_ids
     @user.build_user_image unless @user.user_image.present?
+    @show_biz_and_place = @user.place_ids.any?
+    @place = @user.places.first
+    @business = @place.try(:business)
+    @brand = @business.try(:brand)
   end
   
   def create
     @user = User.new(params[:user])
-    if params[:user][:roles_list].present? and params[:user][:roles_list].any?
-      @show_biz_and_place = true
-      params[:user][:roles_list].each do |role_id|
-        @user.employees.build(:role_id => role_id,:business_id => params[:business_id])    
-      end
-    end
+    @show_biz_and_place = params[:user][:place_id].present?
     if params[:user][:mailing_address_attributes].present?
       address = Address.create(params[:user][:mailing_address_attributes])
       @user.mailing_address_id = address.id
     end
     if params[:user][:billing_address_attributes].present?
       address = Address.create(params[:user][:billing_address_attributes])
-      @user.billing_address_id=address.id
+      @user.billing_address_id = address.id
     end
-    
-    @user.places << Place.find(params[:place_id])  if params[:place_id].present?
+
     respond_to do |format|
       if @user.save
-        @user.send_confirmation_instructions if @user.persisted? 
-        unless params[:legal_ids].empty? || params[:legal_types].empty?
-          @user.set_legal_ids(params[:legal_types], params[:legal_ids])
-        end
+        @user.send_confirmation_instructions if @user.persisted?
         format.html { redirect_to(users_management_path(@user), notice: 'User was successfully created.') }
         format.xml  { head :ok }
       else
         @user.build_mailing_address unless @user.mailing_address.present?
         @user.build_billing_address unless @user.billing_address.present?
         @user.build_user_image unless @user.user_image.present?
-        @user.dob = params[:user][:dob]
         @total = LegalType.count
-        @legal_ids = []
+        @legal_ids = @user.legal_ids
         format.html { render action: "new" }
         format.xml  { render xml: @user.errors, status: :unprocessable_entity }
       end
@@ -64,28 +58,17 @@ class UsersManagementController < ApplicationController
     @user.build_mailing_address unless @user.mailing_address.present?
     @user.build_billing_address unless @user.billing_address.present?
     @total = LegalType.count
-    #@roles=@user.roles.select {|role| role.require_business?}
     @roles = @user.employees.select {|employee| employee.business_id.present?}.collect{|e| e.business_id}
-    @show_biz_and_place = @roles.any?
-    @business_id = @roles.first
-    @place_id = @user.places.first.try(:id)
+    @show_biz_and_place = @user.place_ids.any?
+    @place = @user.places.first
+    @business = @place.try(:business)
+    @brand = @business.try(:brand)
     @legal_ids = @user.legal_ids
   end
 
   def update
     @user = User.find(params[:id])
-    if params[:user][:roles_list].present? and params[:user][:roles_list].any?
-      @user.employees.delete_all
-      params[:user][:roles_list].each do |role_id|
-        @user.employees.build(:role_id=>role_id,:business_id=>params[:business_id])    
-      end
-      if params[:place_id].present?
-        @user.places.delete_all
-        @user.places << Place.find(params[:place_id])
-      else
-        @user.places.delete_all
-      end
-    end
+    @show_biz_and_place = params[:user][:place_id].present?
     if params[:user][:mailing_address_attributes].present?      
       if @user.mailing_address.present?
         @user.mailing_address.update_attributes(params[:user][:mailing_address_attributes])
@@ -106,13 +89,7 @@ class UsersManagementController < ApplicationController
       if @user.update_attributes(params[:user])
         result = {}
         result[:current_image] = @user.picture_url(:large)
-        if params[:legal_ids].present? and params[:legal_types].present?
-          unless params[:legal_ids].empty? || params[:legal_types].empty?
-            LegalId.delete_all("associatable_id=#{@user.id} and associatable_type='User'")
-            @user.set_legal_ids(params[:legal_types], params[:legal_ids])
-          end
-        end
-        format.html { redirect_to(users_management_path(@user), :notice => 'User was successfully updated.') }
+        format.html { redirect_to(users_management_path(@user), notice: 'User was successfully updated.') }
         format.json { render json: result.to_json,text: true, status: 200 }
         format.xml  { head :ok }
       else
@@ -120,7 +97,6 @@ class UsersManagementController < ApplicationController
         @user.build_mailing_address unless @user.mailing_address.present?
         @user.build_billing_address unless @user.billing_address.present?
         @total = LegalType.count
-        @role_id = @user.roles.try(:first).try(:id)
         @legal_ids = @user.legal_ids
         format.html { render :action => "edit" }
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }

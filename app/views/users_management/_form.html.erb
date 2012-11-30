@@ -1,8 +1,9 @@
 <% content_for (:head) do %> 
+  <%= stylesheet_link_tag "users_management" %>
   <%= javascript_include_tag 'users_management_scripts', 'bday-picker.min'%>
   <%= javascript_tag do %>
-    var total_legals= <%= @total %>;
-    var legal_index= <%= @legal_ids.empty? ? 0 : @legal_ids.length %>;
+    var total_legals = <%= @total %>;
+    var legal_index = <%= @legal_ids.empty? ? 0 : @legal_ids.length %>;
   <% end -%>
 <% end %>
 
@@ -22,12 +23,13 @@
     <legend>User Information</legend>
     <p>
       <%= f.label :roles, "Select User Roles" %><br />
+      <%= hidden_field_tag "user[role_ids][]", nil %>
       <% Role.all.each do |role| %>
         <%= check_box_tag(
-                          "user[roles_list][]",
+                          "user[role_ids][]",
                           role.id,
-                          check_role_box?(role), { class: "role_box" }) %>
-        <%= "#{role.displayed_role}"%><br />
+                          @user.role_ids.include?(role.id), {id: dom_id(role), class: "role_box" }) %>
+        <%= label_tag dom_id(role), "#{role.displayed_role}"%><br />
       <% end %>
     </p>
     <% if @show_biz_and_place %>
@@ -36,7 +38,7 @@
       <p class="brands_list" style="display:none">
     <% end %>
         <%= label_tag "Brand" %>
-        <%= select_tag :brand_id , "<option value=''>Select brand...</option>".html_safe + options_from_collection_for_select(@brands, "id", "name", params[:brand_id])%>
+        <%= select_tag :brand_id , "<option value=''>Select brand...</option>".html_safe + options_from_collection_for_select(@brands, "id", "name", params[:brand_id] || @brand.try(:id))%>
       </p>
     <% if @show_biz_and_place %>
       <p class="businesses_list">
@@ -44,7 +46,7 @@
       <p class="businesses_list" style="display:none">
     <% end %>
         <%= label_tag "Business" %>
-        <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name", params[:business_id])%>
+        <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name", params[:business_id] || @business.try(:id) )%>
       </p>
     <% if @show_biz_and_place %>
       <p class="places_list">
@@ -52,7 +54,7 @@
       <p class="places_list" style="display:none">
     <% end %>
         <%= label_tag "Place" %>
-        <%= select_tag :place_id , "<option value=''>Select place...</option>".html_safe +  options_from_collection_for_select(@places, "id", "name", params[:place_id]) %>
+        <%= f.select :place_id , "<option value=''>Select place...</option>".html_safe +  options_from_collection_for_select(@places, "id", "name", (params[:user].present? and params[:user][:place_id]) || @place.try(:id)) %>
       </p>
     <p>
       <%= f.label :first_name %>
@@ -77,51 +79,67 @@
     </p>
     <div class="legal_type_class">
       <%= label_tag "Legal IDs" %>
-      <% if @legal_ids.empty? %>
-        <div class="legals_div">
-          <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), {:id=>"legal_types_0"}%><%=text_field_tag "legal_ids[]","",{:class=>"title",:id=>"legal_ids_0"}%>
-          <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
-        </div>
+        <% if params[:user].present? and params[:user][:legal_ids_arr].present? and params[:user][:legal_ids_arr].any? %>
+          <% params[:user][:legal_ids_arr].each_with_index do |legal_id,index| %>
+            <div class="legals_div">
+              <%= select_tag "user[legal_types][]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",params[:user][:legal_types][index]), { id: "legal_types_#{index}"} %><%= text_field_tag "user[legal_ids_arr][]",legal_id, { class: "title", id: "legal_ids_#{index}" }%>
+              <%if index == 0 %>
+              <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+              <% else %>
+              <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
+              <% end %>
+            </div>
+          <% end %>
+        <% elsif @legal_ids.empty? %>
+          <div class="legals_div">
+            <%= select_tag "user[legal_types][]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type"), { id: "legal_types_0"}%><%= text_field_tag "user[legal_ids_arr][]","", { class: "title", id: "legal_ids_0" }%>
+            <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+          </div>
         <% else %>
           <% @legal_ids.each_with_index do |legal_id,index| %>
-          <div class="legals_div">
-            <%= select_tag "legal_types[]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",legal_id.legal_type.id), {:id=>"legal_types_#{index}"}%><%=text_field_tag "legal_ids[]",legal_id.id_number,{:class=>"title",:id=>"legal_ids_#{index}"}%>
-            <%if index == 0 %>
-            <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
-            <% else %>
-            <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
-            <% end %>
-          </div>
+            <div class="legals_div">
+              <%= select_tag "user[legal_types][]" , "<option value=''>...Select Legal Type...</option>".html_safe +  options_from_collection_for_select(LegalType.all, "id", "displayed_type",legal_id.legal_type.id), {:id=>"legal_types_#{index}"}%><%= text_field_tag "user[legal_ids_arr][]",legal_id.id_number, { class: "title", id: "legal_ids_#{index}" }%>
+              <%if index == 0 %>
+              <a href="javascript:void(0)" class="add_link"><img style="margin-top:3px" src="/images/add.png"/> </a>
+              <% else %>
+              <a href="javascript:void(0)" class="remove_link"><img style="margin-top:3px" src="/images/remove.png"/> </a>
+              <% end %>
+            </div>
           <% end %>
       <% end %>            
     </div>
-    <%= f.label :user_image, "Upload Image" %>
-    <%= f.fields_for :user_image do |builder| %>
-      <%= builder.file_field :photo %>          
+
+    <% if f.object.new_record? %>
+        <%= f.label :user_image, "Upload Image" %>
+        <%= f.fields_for :user_image do |builder| %>
+          <%= builder.file_field :photo %>          
+        <% end -%>
+        <small>Maximum size of 3MB, Supported images JPG, GIF, PNG, JPEG, BMP</small>
     <% end -%>
-    <small>Maximum size of 3MB, Supported images JPG, GIF, PNG, JPEG, BMP</small>
   </fieldset>
+
   <fieldset>
-    <legend>User Account</legend>
-    <p>
-      <%= f.label :username %>
-      <%= f.text_field :username , class: "title U_username" %>
-      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
-      <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
-        <%= @user.errors.on(:username) %>
-      </span>
-      <span class="form-note note-success L-success" style="display:none;"></span>
-    </p>
-    <p>
-      <%= f.label :email %>
-      <%= f.text_field :email , class: "title U_email" %>
-      <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
-      <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors.on(:username) %>>
-        <%= @user.errors.on(:email) %>
-      </span>
-      <span class="form-note note-success L-success" style="display:none;"></span>
-    </p>
-  </fieldset>
+      <legend>User Account</legend>
+      <p>
+        <%= f.label :username %>
+        <%= f.text_field :username , class: "title U_username" %>
+        <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
+        <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors[:username].any? %>>
+          <%= @user.errors[:username].first %>
+        </span>
+        <span class="form-note note-success L-success" style="display:none;"></span>
+      </p>
+      <p>
+        <%= f.label :email %>
+        <%= f.text_field :email , class: "title U_email" %>
+        <img src="/images/loading.gif" width="16" height="16" alt="Loading" style="display:none;" />
+        <span class="form-note note-error L-error" <%= 'style="display:none;"' unless @user.errors[:username].any? %>>
+          <%= @user.errors[:email].first %>
+        </span>
+        <span class="form-note note-success L-success" style="display:none;"></span>
+      </p>
+    </fieldset>
+
   <div class="tabs">
     <ul>
       <li><a href="#mailing" data-c="Mailing">Mailing Address</a></li>
