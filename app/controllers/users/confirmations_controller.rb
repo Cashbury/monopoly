@@ -5,6 +5,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     with_unconfirmed_confirmable do
       if @confirmable.has_no_password?
         @confirmable.attempt_set_password(params[:user])
+        @confirmable.is_terms_agreed = params[:user][:is_terms_agreed]
         if @confirmable.valid?
           do_confirm
         else

@@ -109,15 +109,15 @@
           <% end -%>
         </table>
       <% else %>
-        <td>No devices associated yet</td>
+        No devices associated yet
       <% end -%>
     </td>
   </tr>
   <tr>
     <td style="width:98px"><b>Accepted T&C: </b></td>
     <td>
-      <% if @user.accepted_terms.any? %>
-        <% @user.accepted_terms.each_with_index do |term, index| %>
+      <% if @user.is_terms_agreed and TermAndCondition.count > 0 %>
+        <% TermAndCondition.all.each_with_index do |term, index| %>
           <p><%= "#{index+1} - #{term.description}" %></p>
         <% end -%>
       <% else %>

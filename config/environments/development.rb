@@ -28,7 +28,7 @@ Paperclip.options[:command_path] = '/usr/bin'
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-
+  ActionMailer::Base.default :from => "Cashbury <mail@cashbury.com>"
   config.action_mailer.smtp_settings = {
     :enable_starttls_auto => false,
     :address => "mail.cashbury.com",

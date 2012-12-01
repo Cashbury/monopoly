@@ -43,17 +43,18 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
 
-  devise :database_authenticatable, :registerable,:token_authenticatable,
-         :recoverable, :rememberable, :trackable, :validatable,:confirmable
+  devise :database_authenticatable, :registerable, :token_authenticatable,
+         :recoverable, :rememberable, :trackable, :validatable, :confirmable
 
 
   make_flagger :flag_once => true
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types, :active, :accepted_terms_attributes, :note
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types, :active, :accepted_terms_attributes, :note, :is_terms_agreed
 
   attr_accessor :role_id, :place_id, :legal_ids_arr, :legal_types
+
   has_many :templates
   has_many :brands
   has_many :legal_ids, :as => :associatable
@@ -83,7 +84,6 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :pending_receipts, :class_name => "Receipt" , :join_table => "users_pending_receipts"
   has_and_belongs_to_many :places, join_table: "places_users"
   has_and_belongs_to_many :programs, :join_table => "users_programs"
-  has_and_belongs_to_many :accepted_terms, class_name: "TermAndCondition", join_table: "accepted_terms" 
 
   belongs_to :mailing_address, class_name: "Address" , foreign_key: "mailing_address_id"
   belongs_to :billing_address, class_name: "Address" , foreign_key: "billing_address_id"
@@ -96,7 +96,6 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :billing_address,:reject_if =>:all_blank
   accepts_nested_attributes_for :user_image
   accepts_nested_attributes_for :places
-  accepts_nested_attributes_for :accepted_terms
 
   after_create :set_default_role, :add_cash_incentives
   after_create :initiate_user_code
@@ -108,6 +107,8 @@ class User < ActiveRecord::Base
 
 
   validates_format_of :telephone_number, :with => /^[0-9]+$/, :message => "Phone should contain numbers only", :allow_blank => true
+  validates :is_terms_agreed, :inclusion => {:in => [true], :message => "You must agree to our terms and conditions"}, if: Proc.new {|u| !u.new_record?}
+
   cattr_reader :per_page
   @@per_page = 20
 
@@ -194,9 +195,9 @@ class User < ActiveRecord::Base
     save!
   end
 
-	def has_account_with_campaign?(acch,campaign_id)
-		!acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
-	end
+  def has_account_with_campaign?(acch,campaign_id)
+    !acch.nil? && !acch.accounts.where(:campaign_id=>campaign_id).empty?
+  end
   
   def enroll(program)
     User.transaction do
@@ -324,8 +325,8 @@ class User < ActiveRecord::Base
     cash_account_for(business).cashout
   end
 
-	def auto_enroll_at(places)
-	  begin
+  def auto_enroll_at(places)
+    begin
       ids = places.collect{|p| p.business_id}
       targeted_campaigns_ids = []
       businesses = Business.where(:id => ids)
@@ -353,9 +354,9 @@ class User < ActiveRecord::Base
     targeted_campaigns_ids
 	end
 
-	def account_holder
-	  AccountHolder.where(:model_id => self.id,:model_type => self.class.to_s).first
-	end
+  def account_holder
+    AccountHolder.where(:model_id => self.id,:model_type => self.class.to_s).first
+  end
 
   def money_account_at_large
     unless (accholder = self.account_holder).nil?

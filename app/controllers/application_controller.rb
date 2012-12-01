@@ -36,9 +36,10 @@ class ApplicationController < ActionController::Base
   #end
 
   def after_sign_in_path_for(resource_or_scope)
-    if current_user.role? Role::AS[:principal] && !(current_user.role? Role::AS[:admin])
+    puts "@@@@@@@@@@@ YOOOOY"
+    if current_user.role? Role::AS[:principal] and !(current_user.role? Role::AS[:admin])
       primary_place_users_businesses_url
-    elsif (current_user.role? Role::AS[:admin]) || (current_user.role? Role::AS[:operator])
+    elsif (current_user.role? Role::AS[:admin]) or (current_user.role? Role::AS[:operator])
       businesses_url
     elsif current_user.role? Role::AS[:consumer]
       # for now they go straight to transactions page

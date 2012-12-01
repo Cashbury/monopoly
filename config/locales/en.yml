@@ -8,3 +8,15 @@ en:
     uploads:
       must_be_set: Must be set
       not_supported: format is not supported, please use one of the following
+
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+              is_terms_agreed:
+                inclusion: "You must agree to our terms and conditions"
+
+    attributes:
+      user:
+        is_terms_agreed: ""
