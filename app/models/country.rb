@@ -19,7 +19,8 @@ class Country < ActiveRecord::Base
                                         :large=>"32x32"
                                       }
 
-                                      
+   scope :has_phone_codes, where("phone_country_code IS NOT NULL")
+   
   def flag_url
     "#{COUNTRIES_FLAGS_PATH}#{self.iso2.to_s.downcase}.png" if self.iso2.present?
   end
@@ -56,4 +57,7 @@ class Country < ActiveRecord::Base
     end
   end
   
+  def display_phone_code
+    "#{self.phone_country_code} - #{self.name}"
+  end
 end

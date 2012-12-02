@@ -34,12 +34,15 @@
   </tr>
   <tr><td><b>Email:  </b></td>
   <td><%= @user.email%> | <%=@user.confirmed_at.nil? ? "Not confirmed" : "Confirmed" %> | <%= form_tag "/users_management/send_confirmation_email" do %>
-      <div style="display:none;"><%= email_field_tag "user[email]", @user.email%></div>
-      <%= link_to "Send Confirmation Email","javascript:void(0)", {:id=>"send_confirmation_email"} %>
+      <div style="display:none;"><%= email_field_tag "user[email]", @user.email %></div>
+      <%= link_to "Send Confirmation Email","javascript:void(0)", { id: "send_confirmation_email" } %>
     <% end %>
   </td>
   </tr>
-  <tr><td><b>Telephone Number:  </b></td><td><%= @user.telephone_number %></td></tr>
+  <tr>
+    <td><b>Telephone Number:  </b></td>
+    <td><%= @user.phone_number_with_country_code %></td>
+  </tr>
   <tr>
     <td><b>Mailing Address:  </b></td>
     <% unless @user.mailing_address.nil? %>

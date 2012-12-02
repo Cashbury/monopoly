@@ -1,4 +1,18 @@
 $(document).ready(function(){
+  
+  $('#user_home_town').change(function(e) {
+      var value = e.target.value;
+      if (value != '') {
+        $.get('/countries/'+value+'/country_code', undefined, function(e) {
+            var code = e['country_code'];
+            $('.code').html(code);
+        });
+      }
+      else {
+        $('.code').html('');
+      }
+  });
+
   $('.authorize_or_deauth_device').bind('ajax:success', function(data) {
       $("#tr_"+ $(this).device_id).replace(data);
   });

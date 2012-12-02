@@ -26,7 +26,8 @@ class UsersManagementController < ApplicationController
   def create
     @user = User.new(params[:user])
     @show_biz_and_place = params[:user][:place_id].present?
-
+    @user.is_terms_agreed = true
+    
     respond_to do |format|
       if @user.save
         @user.send_confirmation_instructions if @user.persisted?
@@ -60,6 +61,7 @@ class UsersManagementController < ApplicationController
   def update
     @user = User.find(params[:id])
     @show_biz_and_place = params[:user][:place_id].present?
+    @user.is_terms_agreed = true
 
     respond_to do |format|
       if @user.update_attributes(params[:user])

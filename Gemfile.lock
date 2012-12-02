@@ -170,6 +170,7 @@ GEM
     paperclip (2.3.11)
       activerecord (>= 2.3.0)
       activesupport (>= 2.3.2)
+    phone (1.1)
     places (0.0.1)
       hashie
       httparty
@@ -269,6 +270,7 @@ DEPENDENCIES
   mysql2 (= 0.2.11)
   nifty-generators (= 0.4.5)
   paperclip (= 2.3.11)
+  phone
   places
   rack (= 1.2.1)
   railroady

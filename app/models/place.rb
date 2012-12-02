@@ -171,7 +171,7 @@ class Place < ActiveRecord::Base
 
   def self.save_place_by_geolocation(location,user)
     address = Geokit::Geocoders::GoogleGeocoder.geocode(location[:location])
-    puts "@@@@@@@@@@@@@@ #{address.country}"
+    
     country = Country.find_by_name( address.country )
     city = City.find_or_create_by_name_and_country_id(:name=>address.city, :country_id=>country.id)
 

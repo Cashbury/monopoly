@@ -7,7 +7,7 @@ end
 
 unless User.where(:email => 'revolteur@gmail.com').exists?
   puts 'Create an admin account'
-  admin_user = User.new(:username => "admin", :name => "Admin", :password => "Monopoly", :password_confirmation => "Monopoly", :email => "revolteur@gmail.com", :admin=>true, :confirmed_at=>Date.today)
+  admin_user = User.new(:username => "admin", :name => "Admin", :password => "Monopoly", :password_confirmation => "Monopoly", :email => "revolteur@gmail.com", :admin=>true, :confirmed_at=>Date.today, is_terms_agreed: true)
   admin_user.roles << Role.find_by_name(Role::AS[:admin])
   admin_user.save!
 
@@ -17,7 +17,7 @@ unless User.where(:email => 'revolteur@gmail.com').exists?
 end
 unless User.where(:email => "hb@cashbury.com").exists?
   puts 'Creating another admin account'
-  new_admin_user = User.new(:username => "admin", :name => "Admin2", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today)
+  new_admin_user = User.new(:username => "admin", :name => "Admin2", :password => "c@$hbury", :password_confirmation => "c@$hbury", :email => "hb@cashbury.com", :admin=>true, :confirmed_at=>Date.today, is_terms_agreed: true)
   new_admin_user.roles << Role.find_by_name(Role::AS[:admin])
   new_admin_user.save!
 
@@ -95,3 +95,33 @@ puts "Seeding DB with currencies"
 #  end
 #end
 ISO4217::Currency.load_file(Rails.root.join('db').join('currencies.yml'))
+
+open(Rails.root.join('db').join('countries_dialcodes.txt')) do |records|
+  records.read.each_line do |record|
+    details = record.strip.split(",")
+    country_name = details.first.strip
+    dialcode = details.last.strip
+    if (c = Country.where("name LIKE '#{country_name}%'").first).present?
+      c.update_attribute(:phone_country_code, "+#{dialcode}")
+    end
+  end
+end
+
+#######################
+puts <<FOOTER
+
+Seeding complete! Several tables were seeded:
+  Important Models:
+    - Role
+    - TransactionType
+    - Action
+    - City
+    - Country
+    - Admin
+    - ProgramType
+    - EngagementType
+    - MeasurementType
+    - LoginMethod
+    - LegalType
+
+FOOTER

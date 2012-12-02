@@ -71,15 +71,16 @@
 
     <p>
       <%= f.label :home_town %>
-      <%= f.select :home_town, "<option value=''>..Select Country..</option>".html_safe + options_from_collection_for_select(Country.all , :id, :name,f.object.try(:home_town))%>
+      <%= f.collection_select :home_town,  Country.all , :id, :name, include_blank: "Select Country" %>
     </p>
     <p>
       <%= f.label :note %>
       <%= f.text_area :note %>
     </p>
     <p>
-      <%= f.label :telephone_number %>
-      <span class="code"><%= @user.country.try(:phone_country_code) %></span> <%= f.text_field :telephone_number , class: "title", value: @user.phone_without_code %>      
+      <%= f.label :telephone_number %><br/>
+      <span class="code"><%= @user.country.try(:phone_country_code) %></span> 
+      <%= f.text_field :telephone_number , class: "title", value: @user.phone_without_code , style: "width: 263px;" %>      
     </p>
     <div class="legal_type_class">
       <%= label_tag "Legal IDs" %>
@@ -173,7 +174,7 @@
     </div>
     <div id="billing">
       <fieldset style="border:none">
-        <%= f.fields_for :billing_address,@user.try(:billing_address) do |billing_address_form| %>
+        <%= f.fields_for :billing_address, @user.try(:billing_address) do |billing_address_form| %>
           <p>
             <%= billing_address_form.label :city %>
             <%= billing_address_form.select :city_id, "<option value=''>..Select City..</option>".html_safe + options_from_collection_for_select(City.all, :id, :name,billing_address_form.object.try(:city_id))%>
@@ -190,23 +191,10 @@
       </fieldset>
     </div>
   </div>
+
   <%= toggle_fb_link(@user) %>
+
   <div class="actions">
     <%= f.submit @user.new_record? ? "Add" : "Update", class: "submit_btn #{@user.new_record? ? '' : 'update_btn' }" %>
   </div>
-<% end %>
-
-<%= javascript_tag do %>
-  $('#user_home_town').change(function(e) {
-      var value = e.target.value;
-      if (value != '') {
-    $.get('/countries/'+value+'/country_code', undefined, function(e) {
-        var code = e['country_code'];
-        $('.code').html(code);
-    });
-      }
-      else {
-    $('.code').html('');
-      }
-  });
 <% end %>
