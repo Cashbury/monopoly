@@ -51,7 +51,9 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me,:first_name,:last_name,
-                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types, :active, :accepted_terms_attributes, :note, :is_terms_agreed, :phone_code
+                  :authentication_token, :brands_attributes, :username, :telephone_number, :home_town, :mailing_address_id, :billing_address_id , :is_fb_status_enabled, :user_image_attributes, :role_ids, :place_ids, :dob, :home_town,  :mailing_address_attributes, :billing_address_attributes, :place_id, :places_attributes, :legal_ids_arr, :legal_types, :active, 
+                  :accepted_terms_attributes, :note, :is_terms_agreed, :phone_code, :gender,
+                  :issued_by, :is_fb_account
 
   attr_accessor :role_id, :place_id, :legal_ids_arr, :legal_types
 
@@ -82,7 +84,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :rewards
   has_and_belongs_to_many :enjoyed_rewards, :class_name => "Reward" , :join_table => "users_enjoyed_rewards"
   has_and_belongs_to_many :pending_receipts, :class_name => "Receipt" , :join_table => "users_pending_receipts"
-  has_and_belongs_to_many :places, join_table: "places_users"
+  has_and_belongs_to_many :places
   has_and_belongs_to_many :programs, :join_table => "users_programs"
 
   belongs_to :mailing_address, class_name: "Address" , foreign_key: "mailing_address_id"
@@ -100,6 +102,7 @@ class User < ActiveRecord::Base
   after_create :set_default_role, :add_cash_incentives
   after_create :initiate_user_code
   #before_save :add_country_code_to_phone
+
   before_save :set_place
   before_save :set_legal_ids
 
@@ -108,20 +111,36 @@ class User < ActiveRecord::Base
 
 
   validates_format_of :telephone_number, with: /^[0-9]+$/, message:  "Phone should contain numbers only", :allow_blank => true
-  validates :is_terms_agreed, inclusion: { in:  [true], message: "You must agree to our terms and conditions"}, if: Proc.new {|u| !u.new_record?}
-
+  validates :is_terms_agreed, inclusion: { in:  [true], message: "You must agree to our terms and conditions"}
+  validates :email, presence: true, email: true
+  validates :password, presence: true,
+                                  length: { within: 6..20 },
+                                  if: :password_required?
   cattr_reader :per_page
   @@per_page = 20
+
+
+  def password_required?
+    (((!self.email.match(/facebook/) || encrypted_password.present?)) && !persisted?) || reset_password_token.present?
+  end
 
   def phone_number_with_country_code
     "#{self.phone_code}#{self.telephone_number}"
   end
 
+  def is_active?
+    self.active and (self.confirmed_at.present? if self.need_confirmation?)
+  end
+
+  def need_confirmation?
+    !self.is_fb_account
+  end
+
   def set_place
     if place_id.present?
       self.places << Place.find(place_id)
-    else
-      self.places.destroy_all
+    #else     
+    #  self.places.clear
     end
   end
 
@@ -198,6 +217,12 @@ class User < ActiveRecord::Base
   def suspend
     self.active=false
     save!
+  end
+
+  def cashier_at_business
+    #cashier_role = Role.find_by_name(Role::AS[:cashier])
+    #self.employees.where(role_id: cashier_role.id).first.business
+    self.places.first.try(:business)
   end
 
   def has_account_with_campaign?(acch,campaign_id)
@@ -655,7 +680,7 @@ class User < ActiveRecord::Base
   end
   
   
-	def ensure_authentication_token!
+  def ensure_authentication_token!
     reset_authentication_token! if authentication_token.blank?
   end
 
@@ -836,15 +861,15 @@ class User < ActiveRecord::Base
   def picture_url(style = :large)   
     if self.user_image.present? and !self.user_image.new_record?      
       self.user_image.photo.url(style)
-    elsif self.email.match(/facebook/)
-      "https://graph.facebook.com/#{self.id}/picture?type=#{style.to_s}"
+    elsif self.is_fb_account
+      "https://graph.facebook.com/#{self.facebook_account_id}/picture?type=#{style.to_s}"
     else
-      default_image
+      APP_CONFIG["domain"] + default_image
     end    
   end
 
   def facebook_account_id
-      self.email.split("@").first if self.email.match(/facebook/)
+    self.email.split("@").first if self.email.match(/facebook/)
   end
 
   def last_sign_in_days

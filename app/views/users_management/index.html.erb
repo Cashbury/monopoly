@@ -45,10 +45,10 @@
     <td><%= user.telephone_number %></td>
     <td><%= user.created_at.to_formatted_s(:long) %></td>
     <td><%= user.sign_in_count %></td>    
-    <td><%= status_icon user.confirmed_at.present? %></td>    
-    <td><%= link_to 'Show', users_management_path(user) ,:class => "button" %></td>
-    <td><%= link_to 'Edit', edit_users_management_path(user) , :class => "button" %></td>
-    <td><%= link_to 'Destroy', users_management_path(user), :confirm => 'Are you sure?', :method => :delete ,:class=>"button negative" %></td>
+    <td><%= status_icon user.is_active? %></td>    
+    <td><%= link_to 'Show', users_management_path(user) , class: "button" %></td>
+    <td><%= link_to 'Edit', edit_users_management_path(user) , class: "button" %></td>
+    <td><%= link_to 'Destroy', users_management_path(user), confirm: 'Are you sure?', method: :delete , class: "button negative" %></td>
   </tr>
 <% end %>
 </table>
@@ -56,4 +56,4 @@
   <%= will_paginate @users %>
 <br/>
 
-<%= link_to "Add new user", new_users_management_path , :class=>"button"  %>
+<%= link_to "Add new user", new_users_management_path , class: "button"  %>

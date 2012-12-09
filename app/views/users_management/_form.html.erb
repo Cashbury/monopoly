@@ -46,7 +46,7 @@
       <p class="businesses_list" style="display:none">
     <% end %>
         <%= label_tag "Business" %>
-        <%= select_tag :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name", params[:business_id] || @business.try(:id) )%>
+        <%= f.select :business_id , "<option value=''>Select business...</option>".html_safe + options_from_collection_for_select(@businesses, "id", "name", (params[:user].present? and params[:user][:business_id]) || @business.try(:id) )%>
       </p>
     <% if @show_biz_and_place %>
       <p class="places_list">

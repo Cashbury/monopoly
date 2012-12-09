@@ -37,17 +37,19 @@ Kazdoor::Application.routes.draw do
     :confirmations => "users/confirmations"
   }
 
-	devise_scope :user do
-		namespace :users do
-			resources :sessions, :only => [:create, :destroy]
-			resources :registrations, :only=>[:create]
+  devise_scope :user do
+    namespace :users do
+      resources :sessions, :only => [:create, :destroy]
+      resources :registrations, :only=>[:create]
       resources :passwords, :only=>[:create]
       resources :confirmations, :only=>[:update]
-		end
-	end
+    end
+  end
+
   as :user do
     match '/user/confirmation' => 'users/confirmations#update', :via => :put, :as=> :update_user_confirmation
   end
+  
   namespace :users do
 		resources :users_snaps do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection

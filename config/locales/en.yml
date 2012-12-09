@@ -16,6 +16,10 @@ en:
           attributes:
               is_terms_agreed:
                 inclusion: "You must agree to our terms and conditions"
+              email:
+                email:
+                  "not well formatted"
+
 
     attributes:
       user:

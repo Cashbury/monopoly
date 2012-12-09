@@ -17,7 +17,8 @@ class UserImage < Image
   belongs_to :user
   
   has_attached_file :photo,
-                    :styles => {                      
+                    :styles => {
+                      :square  => "50x50>",                      
                       :large => "196x196>"
                     },
                     :processors => [:cropper],

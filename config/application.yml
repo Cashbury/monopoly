@@ -3,18 +3,21 @@ staging:
   foursquare_api_key: 1
   application_version: 1.0beta
   yelp_key : W6ZJv3oMzMqhTXvo9Mfg0Q
+  domain: http://staging.cashbury.com
 
 development:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
   application_version: 1.0beta
   yelp_key : W6ZJv3oMzMqhTXvo9Mfg0Q
+  domain: "http://localhost:3000"
 
 production:
   google_api_key: AIzaSyBZW7cCUm8GB3293B3_dmK5naTIbHbSvdE
   foursquare_api_key: 1
   application_version: 1.0beta
   yelp_key : W6ZJv3oMzMqhTXvo9Mfg0Q
+  domain: http://www.cashbury.com
 
 test:
   google_api_key: 3
