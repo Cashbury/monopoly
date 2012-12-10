@@ -46,11 +46,14 @@ Kazdoor::Application.routes.draw do
     end
   end
 
-  as :user do
-    match '/user/confirmation' => 'users/confirmations#update', :via => :put, :as=> :update_user_confirmation
-  end
-  
+
   namespace :users do
+    resources :profile, only: [:index] do 
+      collection do
+        put :update 
+      end
+    end
+
 		resources :users_snaps do
 			get '/qr_code/:qr_code_hash.(:format)'   ,:action=>:snap, :on =>:collection
 		end
@@ -103,6 +106,7 @@ Kazdoor::Application.routes.draw do
     get "update_campaigns/:id"    ,:action=>:update_campaigns  , :on =>:collection  ,:as =>"update_campaigns"
     get "update_items/:id"        ,:action=>:update_items     , :on =>:collection  ,:as =>"update_items"
 
+
 	end
 
 	# resources :programs do
@@ -129,17 +133,17 @@ Kazdoor::Application.routes.draw do
   resources :print_jobs
   resources :brands
   resources :brands do
-    get "crop" ,:on =>:member
+    get "crop", on: :member
   end
 
   resources :qr_codes do
-    get "update_businesses/:id"   ,:action=>:update_businesses , :on =>:collection ,:as =>"update_business"
-    get "update_engagements/:id"  ,:action=>:update_engagements , :on =>:collection, :as =>"update_engagements"
-    get "update_programs/:id"     ,:action=>:update_programs , :on =>:collection, :as =>"update_programs"
-    get "update_campaigns/:id"     ,:action=>:update_campaigns, :on =>:collection, :as =>"update_campaigns"
-    post "panel" , :on =>:collection
-    get  "panel"  , :on =>:collection
-    post "printable", :on=>:collection
+    get "update_businesses/:id" , action: :update_businesses, on: :collection , as: "update_business"
+    get "update_engagements/:id", action: :update_engagements, on: :collection, as: "update_engagements"
+    get "update_programs/:id", action: :update_programs, on: :collection, as: "update_programs"
+    get "update_campaigns/:id" , action: :update_campaigns, on: :collection, as: "update_campaigns"
+    post "panel", on: :collection
+    get  "panel", on: :collection
+    post "printable", on: :collection
   end
 
 
@@ -255,30 +259,30 @@ Kazdoor::Application.routes.draw do
 	# resources :places
 	# match "/places/:long/:lat.:format"      => "places#show",:constraints => { :lat => /\d+(\.[\d]+)?/,:long=>/\d+(\.[\d]+)?/}
 	#   match "/places"             						=> "places#index"
-  match '/foryou'             						=> "followers#index" ,:as =>:foryou
-  match '/foryourbiz'         						=> "followers#new"   , :as =>:foryourbiz
+  match '/foryou'             						=> "followers#index", :as => :foryou
+  match '/foryourbiz'         						=> "followers#new", :as => :foryourbiz
   match '/business_signup'                => "home#business_signup"
-  match "/get_opening_hours.:format"      =>"places#get_opening_hours"
-  match "/get_users.:format"              =>"businesses#get_users"
-  match "/get_places.:format"             =>"businesses#get_places"
+  match "/get_opening_hours.:format"      => "places#get_opening_hours"
+  match "/get_users.:format"              => "businesses#get_users"
+  match "/get_places.:format"             => "businesses#get_places"
 
-  match "/associatable/:id/qrcodes"       =>"qr_codes#list_all_associatable_qrcodes"
+  match "/associatable/:id/qrcodes"       => "qr_codes#list_all_associatable_qrcodes"
 
-  match "/show_code/:id"                  =>"qr_codes#show_code"
-  match "/update_places"                  =>"places#update_places"
-  match "/auto_business"                  =>"businesses#auto_business"
-  match "/check_status/:id"               =>"qr_codes#check_code_status"
+  match "/show_code/:id"                  => "qr_codes#show_code"
+  match "/update_places"                  => "places#update_places"
+  match "/auto_business"                  => "businesses#auto_business"
+  match "/check_status/:id"               => "qr_codes#check_code_status"
 
-  match "/code/:hash_code"                =>"qr_codes#show"
+  match "/code/:hash_code"                => "qr_codes#show"
   #match "check_role/:role_id"             =>"users_management#check_role"
-  match "check_role"                      =>"users_management#check_role"
-  match "suspend_user/:id"                =>"users_management#suspend_user"
-  match "reactivate_user/:id"             =>"users_management#reactivate_user"
-  match "list_by_program_type/:program_type_id/:uid" =>"users_management#list_businesses_by_program_type"
+  match "check_role"                      => "users_management#check_role"
+  match "suspend_user/:id"                => "users_management#suspend_user"
+  match "reactivate_user/:id"             => "users_management#reactivate_user"
+  match "list_by_program_type/:program_type_id/:uid" => "users_management#list_businesses_by_program_type"
   match "enrollments/:user_id/:pt_id/:enroll" => "users_management#manage_user_enrollments"
   match "campaign_enrollments/:user_id/:c_id/:enroll" => "users_management#manage_campaign_enrollments"
-  match "reissue_code/:id"                =>"users_management#reissue_code"
-  match "reissue_code_from_listing_txs/:id" =>"users_management#reissue_code_from_listing_txs"
+  match "reissue_code/:id"                => "users_management#reissue_code"
+  match "reissue_code_from_listing_txs/:id" => "users_management#reissue_code_from_listing_txs"
   
   match "/users_management/update_places/:id" =>"users_management#update_places"
   match "/users_management/update_businesses/:id" =>"users_management#update_businesses"
@@ -302,7 +306,10 @@ Kazdoor::Application.routes.draw do
   match "/v1/engagements/:id.:format"     => "businesses#get_engagement"
 
 
-
+  as :user do
+    match '/user/confirmation' => 'users/confirmations#update', :via => :put, :as=> :update_user_confirmation
+  end
+  
   #match "/v1/countries.format"               =>"countries#index"
   #match "/v1/cities/:country_id/:city_id/"  =>"cities#city_by_country"
 

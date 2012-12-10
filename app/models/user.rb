@@ -57,6 +57,9 @@ class User < ActiveRecord::Base
 
   attr_accessor :role_id, :place_id, :legal_ids_arr, :legal_types
 
+  @@per_page = 20
+  GENDERS = ['male', 'female']
+
   has_many :templates
   has_many :brands
   has_many :legal_ids, :as => :associatable
@@ -116,9 +119,10 @@ class User < ActiveRecord::Base
   validates :password, presence: true,
                                   length: { within: 6..20 },
                                   if: :password_required?
-  cattr_reader :per_page
-  @@per_page = 20
+  validates_inclusion_of :gender, in: GENDERS, message: "should be either male or female"
 
+  cattr_reader :per_page
+  
 
   def password_required?
     (((!self.email.match(/facebook/) || encrypted_password.present?)) && !persisted?) || reset_password_token.present?

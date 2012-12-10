@@ -63,6 +63,10 @@ Dir[Rails.root.join('features/factories/**/*.rb')].each do |factory|
   require factory
 end
 
+class ActiveSupport::TestCase
+  include Devise::TestHelpers
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -87,3 +91,10 @@ RSpec.configure do |config|
 end
 
 load Rails.root.join('db/seeds.rb')
+
+def create_user_and_sign_in
+  user = Factory.create(:user)
+  user.confirm!   
+  sign_in user 
+  return user
+end

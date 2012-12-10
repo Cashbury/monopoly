@@ -18,7 +18,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         @user = User.new( email: params[:email],
                           password: params[:password],
                           password_confirmation: params[:password],
-                          is_terms_agreed: params[:is_terms_agreed]
+                          is_terms_agreed: params[:is_terms_agreed])
         if @user.save
           @user.ensure_authentication_token!
           render xml: @user.to_xml(only: [:id, :email, :authentication_token]), status: 200

@@ -6,10 +6,6 @@ gem 'mysql2', '=0.2.11'
 
 group :development do
   gem 'railroady'
-  gem 'guard-rspec'
-  gem 'guard-livereload'
-  gem 'guard-cucumber'
-  gem 'guard-spork'
   # Deploy with Capistrano
   gem 'capistrano'
   gem 'capistrano-ext'
@@ -21,7 +17,7 @@ group :test do
   gem 'rcov','=0.9.9'
   gem "factory_girl_rails", "~> 1.4.0"
   gem 'cucumber-rails', '~> 1.2.1'
-   gem "rspec-rails", "~> 2.6"
+  gem 'rspec-rails'
   # must have QT installed; follow link below for instructions
   # https://github.com/thoughtbot/capybara-webkit/wiki/Installing-QT
   gem 'capybara-webkit', :git => "git://github.com/thoughtbot/capybara-webkit"
@@ -29,6 +25,11 @@ group :test do
   gem 'database_cleaner'
   gem 'forgery'
   gem 'cucumber-api-steps', :require => false
+  gem 'faker'
+  gem 'guard-rspec'
+  gem 'guard-livereload'
+  gem 'guard-cucumber'
+  gem 'guard-spork'
 end
 
 
